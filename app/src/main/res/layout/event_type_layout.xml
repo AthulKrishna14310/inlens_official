@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="20dp"
+    >
+
+    <ImageButton
+        android:id="@+id/event_done_btn"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_gravity="end"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/circle"
+        android:backgroundTint="@color/colorAccent"
+        android:src="@drawable/ic_closedialog" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Select Event Type"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="10dp"
+        android:layout_gravity="center_horizontal"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/event_type_ceremony_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="5dp"
+            android:checked="false"
+            android:text="#Ceremony"
+            android:layout_weight="1"
+            android:padding="8dp"
+            android:shadowColor="@color/colorPrimaryDark"
+            android:background="@drawable/radiobutton_background"/>
+
+        <Button
+            android:id="@+id/event_type_hangouts_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="5dp"
+            android:checked="false"
+            android:text="#Hangouts"
+            android:layout_weight="1"
+            android:padding="8dp"
+            android:background="@drawable/radiobutton_background"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/event_type_party_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="5dp"
+            android:checked="false"
+            android:text="#Party"
+            android:padding="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/radiobutton_background" />
+
+        <Button
+            android:id="@+id/event_type_travel_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="5dp"
+            android:checked="false"
+            android:text="#Travel"
+            android:layout_weight="1"
+            android:padding="8dp"
+            android:background="@drawable/radiobutton_background" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/event_type_wedding_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="5dp"
+            android:checked="false"
+            android:text="#Wedding"
+            android:layout_weight="1"
+            android:padding="8dp"
+            android:background="@drawable/radiobutton_background"/>
+
+        <Button
+            android:id="@+id/event_type_others_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="5dp"
+            android:checked="false"
+            android:text="Others"
+            android:padding="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/radiobutton_background"/>
+
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/selected_event_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Selected Type :"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_gravity="center_horizontal"
+        />
+
+</LinearLayout>

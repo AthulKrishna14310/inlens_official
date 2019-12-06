@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dimwhite">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <uk.co.senab.photoview.PhotoView
+            android:id="@+id/single_community_imageview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#70000000"
+            />
+
+
+        <ProgressBar
+            android:id="@+id/single_community_progressbar"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            style="@style/Widget.AppCompat.ProgressBar"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/white"
+            android:layout_centerInParent="true"/>
+
+    </RelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/single_community_delete_imagebutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/colorAccent"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="110dp"
+        android:layout_marginEnd="10dp"
+        android:src="@drawable/ic_delete"
+        android:tint="@color/white"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/single_community_share_imagebutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/colorAccent"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="50dp"
+        android:layout_marginEnd="10dp"
+        android:src="@drawable/ic_share"
+        android:tint="@color/white"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+
+        />
+
+    <TextView
+        android:id="@+id/single_community_uploadby_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="10dp"
+        android:text="By: UserName "
+        android:textColor="@color/white"
+        android:maxLength="30"
+        android:textSize="14sp"
+        android:minWidth="60dp"
+        android:padding="5dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/curved_corners"
+        android:backgroundTint="@color/colorAccent"
+        android:visibility="gone"
+
+        />
+
+</RelativeLayout>

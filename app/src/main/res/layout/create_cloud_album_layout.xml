@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:background="@color/grey_5" android:layout_width="fill_parent" android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/CoverPhoto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:srcCompat="@drawable/border" />
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0.0dip"
+        android:layout_weight="1.0">
+
+        <ImageButton
+            android:id="@+id/create_cloud_album_backbutton"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@color/grey_5"
+            android:foreground="@drawable/ic_back_24dp"
+            android:rotation="180"
+            android:visibility="visible" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_smlarge">
+
+            <View
+                android:layout_width="0.0dip"
+                android:layout_height="@dimen/spacing_xlarge" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/spacing_medium"
+                android:layout_marginBottom="@dimen/spacing_middle"
+                android:text="Create Cloud-Album"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+                android:textColor="@color/colorAccent"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="200dp"
+                android:layout_height="4.0dip"
+                android:layout_marginLeft="@dimen/spacing_medium"
+                android:background="@color/colorAccent" />
+
+            <View
+                android:layout_width="0.0dip"
+                android:layout_height="@dimen/spacing_mxlarge" />
+
+            <android.support.v7.widget.CardView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/spacing_small"
+                android:visibility="visible"
+                app:cardCornerRadius="2.0dip"
+                app:cardElevation="1.0dip">
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_mlarge">
+
+                    <View
+                        android:layout_width="0.0dip"
+                        android:layout_height="@dimen/spacing_xlarge" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ALBUM NAME"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
+                        android:textColor="@color/grey_40" />
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/AlbumTitleEditText"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="-4.0dip"
+                        android:layout_marginRight="-4.0dip"
+                        android:inputType="text"
+                        android:maxLength="50"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+                        android:textColor="@color/colorAccent"
+                        android:textStyle="bold"
+                        android:imeOptions="actionNext"
+                        android:theme="@style/EditText.Grey"
+                        />
+
+                    <View
+                        android:layout_width="0.0dip"
+                        android:layout_height="@dimen/spacing_mlarge" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ALBUM DESCRIPTION"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
+                        android:textColor="@color/grey_40" />
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/AlbumDescriptionEditText"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="-4.0dip"
+                        android:layout_marginRight="-4.0dip"
+                        android:maxLength="50"
+                        android:maxLines="1"
+                        android:inputType="text"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+                        android:textColor="@color/colorAccent"
+                        android:textStyle="bold"
+                        android:imeOptions="actionDone"
+                        android:theme="@style/EditText.Grey" />
+
+                    <View
+                        android:layout_width="0.0dip"
+                        android:layout_height="@dimen/spacing_middle" />
+
+                    <android.support.v7.widget.AppCompatCheckBox
+                        android:id="@+id/TimeEditText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="-4.0dip"
+                        android:layout_marginTop="@dimen/spacing_middle"
+                        android:layout_marginRight="-4.0dip"
+                        android:text="Check to select album-expiry date"
+                        android:textColor="@color/colorAccent"
+                        android:textStyle="bold"
+                        android:theme="@style/Checkbox.Blue" />
+
+                    <View
+                        android:layout_width="0.0dip"
+                        android:layout_height="@dimen/spacing_middle" />
+
+                    <android.support.v7.widget.AppCompatCheckBox
+                        android:id="@+id/EventTypeText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="-4.0dip"
+                        android:layout_marginTop="@dimen/spacing_middle"
+                        android:layout_marginRight="-4.0dip"
+                        android:text="Check to select album-event type"
+                        android:textColor="@color/colorAccent"
+                        android:textStyle="bold"
+                        android:theme="@style/Checkbox.Blue" />
+                    <ProgressBar
+                        android:id="@+id/UploadProgress"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:layout_margin="6dp"
+                        android:visibility="invisible" />
+
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <View
+                android:layout_width="0.0dip"
+                android:layout_height="@dimen/spacing_large" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <com.balysv.materialripple.MaterialRippleLayout
+        style="@style/RippleStyleWhite"
+        android:layout_width="fill_parent"
+        android:layout_height="?actionBarSize"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorPrimaryDark">
+
+        <TextView
+            android:id="@+id/DoneButtonTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="DONE"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
+            android:textColor="@android:color/white" />
+    </com.balysv.materialripple.MaterialRippleLayout>
+</LinearLayout>

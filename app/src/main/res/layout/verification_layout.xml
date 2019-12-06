@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@android:color/transparent">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        app:cardCornerRadius="15dp"
+        android:elevation="0dp"
+        android:layout_margin="10dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/verification_back_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/circle_accent"
+                android:src="@drawable/ic_arrow_back"
+                android:tint="@color/white"
+                android:padding="5dp"/>
+
+            <TextView
+                android:id="@+id/verification_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:text="Manual Verification"
+                android:textSize="20sp"
+                android:layout_margin="20dp"
+                android:textColor="#000000"/>
+
+            <EditText
+                android:id="@+id/verification_edittext"
+                android:layout_width="200dp"
+                android:layout_height="60dp"
+                android:background="@drawable/circle_accent_small_radius"
+                android:layout_gravity="center_horizontal"
+                android:hint="Type in verification code"
+                android:gravity="center"
+                android:textSize="14sp"
+                android:inputType="number"
+                android:layout_margin="20dp"
+                android:layout_marginTop="20dp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"/>
+
+
+            <ImageButton
+                android:id="@+id/verification_done_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_done"
+                android:background="@drawable/circle_accent"
+                android:padding="5dp"
+                android:layout_margin="20dp"
+                />
+
+            <ProgressBar
+                android:id="@+id/verification_progressbar"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="20dp"
+                android:indeterminate="true"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:indeterminateTint="@color/colorAccent"
+                style="@style/Base.Widget.AppCompat.ProgressBar"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/verification_counter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="20dp"
+                android:text="Timeout : 60 s"
+                android:textColor="@color/brightdark"/>
+
+            <Button
+                android:id="@+id/verification_manual_verify_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/circle_accent_small_radius"
+                android:padding="5dp"
+                android:text="Manual Verification"
+                android:textColor="#ffffff"
+                android:textSize="12sp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:gravity="center"
+                android:backgroundTint="@color/colorAccent"/>
+
+            <TextView
+                android:id="@+id/verification_textviewnote"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:textSize="14sp"
+                android:layout_marginTop="10dp"
+                android:layout_margin="20dp"
+                android:textColor="@android:color/holo_red_light"
+                android:text="*NOTE \nGo  for manual verification if automatic verification failed."/>
+
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+</RelativeLayout>

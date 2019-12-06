@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/gallery_item_imageview"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:adjustViewBounds="true"
+        android:background="#ffffff"
+        android:scaleType="center"
+        android:layout_margin=".5dp"
+        android:layout_centerInParent="true"/>
+
+    <ImageButton
+        android:id="@+id/gallery_item_selected_imagebutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_done"
+        android:background="@drawable/circle_accent"
+        android:padding="10dp"
+        android:layout_centerInParent="true"
+        android:backgroundTint="@color/colorGreen"
+        android:visibility="gone"/>
+
+</RelativeLayout>

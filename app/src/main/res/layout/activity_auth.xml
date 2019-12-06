@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activities.AuthActivity">
+    <TextView
+        android:id="@+id/appname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="Inlens"
+        android:layout_below="@id/appicon"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="25sp" />
+
+
+    <ImageView
+        android:id="@+id/appicon"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp"
+        android:src="@drawable/inlens_logo_m" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true">
+
+        <LinearLayout
+            android:id="@+id/auth_container"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/dimdark_curved_border">
+
+            <TextView
+                android:id="@+id/auth_countrycode_picker"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_margin="5dp"
+                android:layout_marginStart="10dp"
+                android:padding="5dp"
+                android:text="Country"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:background="@drawable/circle_accent_small_radius"
+                android:visibility="gone">
+            </TextView>
+
+            <EditText
+                android:id="@+id/auth_edittext"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:background="@android:color/transparent"
+                android:hint="Phone Number"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:textSize="14sp"
+                android:inputType="number"
+                android:maxLength="12"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:visibility="gone"/>
+
+            <ImageButton
+                android:id="@+id/auth_next_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_forward"
+                android:background="@drawable/circle_accent"
+                android:padding="5dp"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="5dp"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/appabout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/auth_container"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
+            android:text="By Inlens Team."
+            android:textColor="@color/colorAccent"
+            android:textSize="14sp" />
+
+
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>

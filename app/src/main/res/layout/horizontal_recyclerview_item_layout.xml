@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:id="@+id/horizontal_recyclerview_item_imageview_wrapper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/circle_accent"
+        android:layout_margin="5dp"
+        >
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/horizontal_recyclerview_item_imageview"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            app:civ_border_width="2dp"
+            android:background="@drawable/ic_camera_shutter"
+            app:civ_border_color="@color/colorAccent"
+            android:backgroundTint="@color/white"
+            />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/horizontal_recyclerview_item_name_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        android:maxLength="6"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/horizontal_recyclerview_item_imageview_wrapper"
+        android:text="album name"/>
+
+</RelativeLayout>

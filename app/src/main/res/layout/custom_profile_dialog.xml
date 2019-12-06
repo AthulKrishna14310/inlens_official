@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorPrimary"
+    app:cardBackgroundColor="@android:color/white">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:layout_margin="10dp"
+        android:background="@android:color/white">
+
+        <ImageButton
+            android:id="@+id/custom_profile_dialog_closebtn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/ic_close_album"
+            android:padding="5dp" />
+
+        <TextView
+            android:id="@+id/custom_profile_dialog_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/custom_profile_dialog_closebtn"
+            android:layout_centerHorizontal="true"
+            android:fontFamily="sans-serif"
+            android:text="Username"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/custom_profile_dialog_line"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_below="@id/custom_profile_dialog_username"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="3dp"
+            android:background="@android:color/black"
+            android:orientation="horizontal">
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/custom_profile_dialog_image_progressbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/custom_profile_dialog_line"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/custom_profile_dialog_userprofilepic"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:layout_alignParentStart="true"
+                android:src="@drawable/ic_account_200dp"
+                />
+
+            <ProgressBar
+                android:id="@+id/custom_profile_dialog_progressbar"
+                android:layout_width="30dp"
+                android:indeterminateTint="@color/colorAccent"
+                style="@style/Base.Widget.AppCompat.ProgressBar"
+                android:layout_height="30dp"
+                android:layout_centerInParent="true"
+                android:indeterminate="true" />
+
+            <ImageButton
+                android:id="@+id/custom_profile_dialog_profilechangebtn"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_alignEnd="@id/custom_profile_dialog_userprofilepic"
+                android:layout_alignBottom="@id/custom_profile_dialog_userprofilepic"
+                android:layout_margin="10dp"
+                android:background="@drawable/circle"
+                android:backgroundTint="#ffffff"
+                android:src="@drawable/ic_photo_camera" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/custom_profile_dialog_useremail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/custom_profile_dialog_image_progressbar"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
+            android:fontFamily="sans-serif"
+            android:text="UserEmail"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

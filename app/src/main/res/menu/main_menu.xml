@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+
+
+ <item android:id="@+id/profile_pic"
+     android:title="User Profile"
+     android:icon="@drawable/ic_account_main_menu"/>
+
+ <item android:id="@+id/invite"
+     android:title="Invite Friends"
+     android:icon="@drawable/ic_card_giftcard_main_menu"/>
+
+ <item
+     android:id="@+id/working_tour"
+     android:icon="@drawable/ic_app_working_tour_main_menu"
+     android:title="App Tutorial" />
+
+ <item android:id="@+id/quit_cloud_album"
+     android:title="Quit Current Cloud-Album"
+     android:icon="@drawable/ic_launch_main_menu"/>
+
+
+
+</menu>

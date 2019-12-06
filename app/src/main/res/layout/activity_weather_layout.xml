@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_weather_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+   >
+
+
+    <Button
+        android:id="@+id/WeatherCheckedButton"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="#3E3D63"
+        android:elevation="24dp"
+        android:text="Attach with your image"
+        android:textColor="@android:color/white" />
+
+    <CheckedTextView
+        android:id="@+id/txtPressure"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/txtCelcius"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="25dp"
+        android:checkMark="?android:attr/listChoiceIndicatorSingle"
+        android:checked="false"
+        android:clickable="true"
+        android:text="Pressure"
+        android:textStyle="normal|bold" />
+
+    <CheckedTextView
+        android:id="@+id/txtCloud"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/txtPressure"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="25dp"
+        android:checkMark="?android:attr/listChoiceIndicatorSingle"
+        android:text="Cloud"
+        android:textStyle="normal|bold" />
+
+    <CheckedTextView
+        android:id="@+id/txtMaxTemperature"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/txtCloud"
+        android:layout_marginTop="25dp"
+        android:checkMark="?android:attr/listChoiceIndicatorSingle"
+        android:text="Maximum temperature"
+        android:textStyle="normal|bold"
+        android:visibility="invisible"
+        android:layout_alignParentLeft="true" />
+
+    <CheckedTextView
+        android:id="@+id/txtMinimumTemperature"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/txtMaxTemperature"
+        android:layout_marginTop="25dp"
+        android:checkMark="?android:attr/listChoiceIndicatorSingle"
+        android:text="Minimum Temperature"
+        android:textStyle="normal|bold"
+        android:visibility="invisible"
+        android:layout_alignParentLeft="true" />
+
+    <CheckedTextView
+        android:id="@+id/txtWind"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/weathericon"
+        android:layout_alignRight="@+id/weathericon"
+        android:layout_below="@+id/txtCloud"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="25dp"
+        android:checkMark="?android:attr/listChoiceIndicatorSingle"
+        android:text="Current wind speed"
+        android:textStyle="normal|bold" />
+
+    <CheckedTextView
+        android:id="@+id/txtDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/weathericon"
+        android:layout_alignRight="@+id/weathericon"
+        android:layout_below="@+id/weathericon"
+        android:layout_marginTop="38dp"
+        android:checkMark="?android:attr/listChoiceIndicatorSingle"
+        android:paddingLeft="3dp"
+        android:text="Description"
+        android:textSize="14sp"
+        android:textStyle="normal|bold" />
+
+    <CheckedTextView
+        android:id="@+id/txtCelcius"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="205dp"
+        android:checkMark="?android:attr/listChoiceIndicatorSingle"
+        android:text="Celcius"
+        android:textStyle="normal|bold" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/weathericon"
+        android:layout_alignParentRight="true" />
+
+    <CheckedTextView
+        android:id="@+id/txtTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentStart="false"
+        android:layout_below="@+id/txtDescription"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="20dp"
+        android:checkMark="?android:attr/listChoiceIndicatorSingle"
+        android:text="Time"
+        android:textStyle="normal|bold" />
+
+    <CheckedTextView
+        android:id="@+id/txtHumidity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/txtTime"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="25dp"
+        android:checkMark="?android:attr/listChoiceIndicatorSingle"
+        android:text="Humidity"
+        android:textStyle="normal|bold" />
+
+
+</RelativeLayout>

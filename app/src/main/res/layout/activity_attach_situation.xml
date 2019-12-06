@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activities.AttachSituation">
+
+
+    <ImageView
+        android:id="@+id/PhotoViewSituation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:contentDescription="TODO"
+        android:layout_above="@+id/SituationAttach"
+        app:srcCompat="@android:color/black"
+        android:layout_alignParentLeft="true" />
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/SituationAttach"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:background="@android:color/white">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ProgressBar
+                android:id="@+id/LocationProgress"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="30dp" />
+
+            <Button
+                android:id="@+id/AddWeather"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="100dp"
+                android:background="@drawable/ic_weather_icon_upload_task" />
+
+            <Button
+                android:id="@+id/AddLocationButton"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="30dp"
+                android:background="@drawable/add_location" />
+
+            <TextView
+                android:id="@+id/UploadButton"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_alignParentLeft="false"
+                android:layout_alignParentRight="false"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="false"
+                android:layout_marginLeft="250dp"
+                android:layout_marginRight="10dp"
+                android:text="Upload"
+                android:textColor="#3E3D63"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/CaptionEditText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:hint="@string/caption_hint"
+            android:textColor="#3E3D63"
+            android:textSize="14sp" />
+
+    </android.support.design.widget.TextInputLayout>
+
+
+</RelativeLayout>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/delete_photo" android:title="Delete Photo" android:icon="@drawable/ic_deleted"/>
+    <item android:id="@+id/copy_link" android:title="Share Photo Link" android:icon="@drawable/ic_album_link"/>
+
+</menu>
