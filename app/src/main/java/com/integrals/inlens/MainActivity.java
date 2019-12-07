@@ -1232,7 +1232,7 @@ public class MainActivity extends AppCompatActivity {
         @NonNull
         @Override
         public MainCommunityViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.horizontal_recyclerview_item_layout, parent, false);
+            View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.album_card, parent, false);
             return new MainHorizontalAdapter.MainCommunityViewHolder(view);
         }
 
@@ -1264,75 +1264,76 @@ public class MainActivity extends AppCompatActivity {
             });
 
             holder.AlbumNameTextView.setText(CommunityDetails.get(position).getTitle());
+            holder.AlbumDescriptionTextView.setText(CommunityDetails.get(position).getDescription());
 
-
-            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            holder.AlbumOptions.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onLongClick(View view) {
-
-                    final PopupMenu menu = new PopupMenu(MainActivity.this, holder.itemView);
-
-                    if(CommunityDetails.get(position).getCommunityID().equals(CurrentDeadCommunityID))
-                    {
-                        menu.getMenuInflater().inflate(R.menu.community_menu_without_quit, menu.getMenu());
-
-                    }
-                    else if(CommunityDetails.get(position).getCommunityID().equals(CurrentActiveCommunityID))
-                    {
-                        menu.getMenuInflater().inflate(R.menu.community_menu_with_quit, menu.getMenu());
-
-                    }
-                    else
-                    {
-                        menu.getMenuInflater().inflate(R.menu.community_menu_quit, menu.getMenu());
-
-                    }
-                    menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem menuItem) {
+                public void onClick(View view) {
 
 
-                            if (menuItem.getItemId() == R.id.community_menu_add_photos) {
-                                Intent intent = new Intent(MainActivity.this, InlensGalleryActivity.class);
-                                intent.putExtra("CommunityID", CommunityDetails.get(position).getCommunityID());
-                                intent.putExtra("CommunityName", CommunityDetails.get(position).getTitle());
-                                intent.putExtra("CommunityStartTime", CommunityDetails.get(position).getStartTime());
-                                intent.putExtra("CommunityEndTime", CommunityDetails.get(position).getEndTime());
-                                startActivity(intent);
-                                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                            }
-                            if (menuItem.getItemId() == R.id.community_menu_add_participant) {
-                                if (CommunityDetails.get(position).getCommunityID().equals(CurrentActiveCommunityID) || CommunityDetails.get(position).getCommunityID().equals(CurrentDeadCommunityID)) {
-                                    QRCodeInit(CommunityDetails.get(position).getCommunityID());
-                                } else {
-                                    Toast.makeText(MainActivity.this, "Inactive album.", Toast.LENGTH_SHORT).show();
+                        final PopupMenu menu = new PopupMenu(MainActivity.this, holder.itemView);
+
+                        if(CommunityDetails.get(position).getCommunityID().equals(CurrentDeadCommunityID))
+                        {
+                            menu.getMenuInflater().inflate(R.menu.community_menu_without_quit, menu.getMenu());
+
+                        }
+                        else if(CommunityDetails.get(position).getCommunityID().equals(CurrentActiveCommunityID))
+                        {
+                            menu.getMenuInflater().inflate(R.menu.community_menu_with_quit, menu.getMenu());
+
+                        }
+                        else
+                        {
+                            menu.getMenuInflater().inflate(R.menu.community_menu_quit, menu.getMenu());
+
+                        }
+                        menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                            @Override
+                            public boolean onMenuItemClick(MenuItem menuItem) {
+
+
+                                if (menuItem.getItemId() == R.id.community_menu_add_photos) {
+                                    Intent intent = new Intent(MainActivity.this, InlensGalleryActivity.class);
+                                    intent.putExtra("CommunityID", CommunityDetails.get(position).getCommunityID());
+                                    intent.putExtra("CommunityName", CommunityDetails.get(position).getTitle());
+                                    intent.putExtra("CommunityStartTime", CommunityDetails.get(position).getStartTime());
+                                    intent.putExtra("CommunityEndTime", CommunityDetails.get(position).getEndTime());
+                                    startActivity(intent);
+                                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                                }
+                                if (menuItem.getItemId() == R.id.community_menu_add_participant) {
+                                    if (CommunityDetails.get(position).getCommunityID().equals(CurrentActiveCommunityID) || CommunityDetails.get(position).getCommunityID().equals(CurrentDeadCommunityID)) {
+                                        QRCodeInit(CommunityDetails.get(position).getCommunityID());
+                                    } else {
+                                        Toast.makeText(MainActivity.this, "Inactive album.", Toast.LENGTH_SHORT).show();
+                                    }
+
+                                }
+                                if (menuItem.getItemId() == R.id.community_menu_change_cover) {
+                                    COVER_CHANGE = true;
+                                    PostKeyForEdit = CommunityDetails.get(position).getCommunityID();
+                                    CropImage.activity()
+                                            .setGuidelines(CropImageView.Guidelines.ON)
+                                            .setAspectRatio((int) 360, 180)
+                                            .setFixAspectRatio(true)
+                                            .start(MainActivity.this);
+                                }
+                                if (menuItem.getItemId() == R.id.community_menu_quit_community) {
+
+                                    quitCloudAlbum(0);
                                 }
 
+                                return false;
                             }
-                            if (menuItem.getItemId() == R.id.community_menu_change_cover) {
-                                COVER_CHANGE = true;
-                                PostKeyForEdit = CommunityDetails.get(position).getCommunityID();
-                                CropImage.activity()
-                                        .setGuidelines(CropImageView.Guidelines.ON)
-                                        .setAspectRatio((int) 360, 180)
-                                        .setFixAspectRatio(true)
-                                        .start(MainActivity.this);
-                            }
-                            if (menuItem.getItemId() == R.id.community_menu_quit_community) {
-
-                                quitCloudAlbum(0);
-                            }
-
-                            return false;
-                        }
-                    });
+                        });
 
 
-                    menu.show();
+                        menu.show();
 
-                    return false;
+
+
                 }
-
             });
 
 
@@ -1352,14 +1353,16 @@ public class MainActivity extends AppCompatActivity {
         public class MainCommunityViewHolder extends RecyclerView.ViewHolder {
 
 
-            CircleImageView AlbumCoverButton;
+            ImageView AlbumCoverButton,AlbumOptions;
             TextView AlbumNameTextView;
+            TextView AlbumDescriptionTextView;
 
             public MainCommunityViewHolder(View itemView) {
                 super(itemView);
-
-                AlbumCoverButton = itemView.findViewById(R.id.horizontal_recyclerview_item_imageview);
-                AlbumNameTextView = itemView.findViewById(R.id.horizontal_recyclerview_item_name_textview);
+                AlbumOptions=itemView.findViewById(R.id.albumcard_options);
+                AlbumCoverButton = itemView.findViewById(R.id.albumcard_image_view);
+                AlbumNameTextView = itemView.findViewById(R.id.album_card_textview);
+                AlbumDescriptionTextView=itemView.findViewById(R.id.albumcard_description);
             }
 
 
