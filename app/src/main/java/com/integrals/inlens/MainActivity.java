@@ -151,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
     private RelativeLayout NoInternetView;
     private boolean GotoGallery = false;
 
+    private int Position=0;
 
     public MainActivity() {
     }
@@ -273,47 +274,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        /*
-        MainMenuButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-
-                new BottomSheet.Builder(MainActivity.this).title(" Options").sheet(R.menu.main_menu).listener(new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case R.id.profile_pic:
-                                startActivity(new Intent(MainActivity.this, ProfileActivity.class));
-                                overridePendingTransition(R.anim.activity_fade_in, R.anim.activity_fade_out);
-                                break;
-                            case R.id.working_tour: {
-                                startActivity(new Intent(MainActivity.this, WorkingIntroActivity.class).putExtra("ShowTour", "no"));
-                                overridePendingTransition(R.anim.activity_fade_in, R.anim.activity_fade_out);
-                                break;
-                            }
-                            case R.id.quit_cloud_album:
-                                quitCloudAlbum(0);
-                                break;
-
-                            case R.id.invite:
-                                final Intent SharingIntent = new Intent(Intent.ACTION_SEND);
-                                SharingIntent.setType("text/plain");
-                                SharingIntent.putExtra(Intent.EXTRA_TEXT, "Inlens \n\n" + "" +
-                                        "Use Inlens to save your beautiful memories " +
-                                        "spent with your loved ones." +
-                                        " " + "\nhttps://play" +
-                                        ".google" +
-                                        ".com/store/apps/details?id=com.integrals.inlens");
-                                startActivity(SharingIntent);
-
-                        }
-                    }
-                }).show();
-
-            }
-        });
-         */
 
 
         MainSearchButton.setOnClickListener(new View.OnClickListener() {
@@ -1246,20 +1207,26 @@ public class MainActivity extends AppCompatActivity {
 
             }
 
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
+
+
+            holder.AlbumCoverButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
                     if(getCurrentCommunityinVerticialRecyclerview() != null && !getCurrentCommunityinVerticialRecyclerview().equals(CommunityDetails.get(position).getCommunityID()))
                     {
+
+
                         MainVerticalRecyclerView.setVisibility(View.GONE);
                         SetVerticalRecyclerView(CommunityDetails.get(position).getCommunityID());
                         MainVerticalRecyclerView.clearAnimation();
                         MainVerticalRecyclerView.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(),android.R.anim.fade_in));
                         MainVerticalRecyclerView.getAnimation().start();
                         MainVerticalRecyclerView.setVisibility(View.VISIBLE);
-                    }
 
+                        holder.Indicator.setVisibility(View.VISIBLE);
+                        Position=holder.getLayoutPosition();
+
+                    }
                 }
             });
 
@@ -1356,6 +1323,7 @@ public class MainActivity extends AppCompatActivity {
             ImageView AlbumCoverButton,AlbumOptions;
             TextView AlbumNameTextView;
             TextView AlbumDescriptionTextView;
+            Button   Indicator;
 
             public MainCommunityViewHolder(View itemView) {
                 super(itemView);
@@ -1363,6 +1331,7 @@ public class MainActivity extends AppCompatActivity {
                 AlbumCoverButton = itemView.findViewById(R.id.albumcard_image_view);
                 AlbumNameTextView = itemView.findViewById(R.id.album_card_textview);
                 AlbumDescriptionTextView=itemView.findViewById(R.id.albumcard_description);
+                Indicator=itemView.findViewById(R.id.indication_button);
             }
 
 
