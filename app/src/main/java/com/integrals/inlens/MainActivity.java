@@ -750,7 +750,7 @@ public class MainActivity extends AppCompatActivity {
 
         NoAlbumTextView.setVisibility(View.GONE);
         MainLoadingProgressBar.setVisibility(View.VISIBLE);
-        MainHorizontalRecyclerview.setVisibility(View.GONE);
+
 
         Ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -1207,25 +1207,21 @@ public class MainActivity extends AppCompatActivity {
 
             }
 
+            if(holder.getLayoutPosition()==Position){
+                holder.Indicator.setVisibility(View.VISIBLE);
 
+                SetVerticalRecyclerView(CommunityDetails.get(Position).getCommunityID());
+
+
+            }
 
             holder.AlbumCoverButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if(getCurrentCommunityinVerticialRecyclerview() != null && !getCurrentCommunityinVerticialRecyclerview().equals(CommunityDetails.get(position).getCommunityID()))
                     {
-
-
-                        MainVerticalRecyclerView.setVisibility(View.GONE);
-                        SetVerticalRecyclerView(CommunityDetails.get(position).getCommunityID());
-                        MainVerticalRecyclerView.clearAnimation();
-                        MainVerticalRecyclerView.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(),android.R.anim.fade_in));
-                        MainVerticalRecyclerView.getAnimation().start();
-                        MainVerticalRecyclerView.setVisibility(View.VISIBLE);
-
-                        holder.Indicator.setVisibility(View.VISIBLE);
                         Position=holder.getLayoutPosition();
-
+                        ShowAllAlbums();
                     }
                 }
             });
