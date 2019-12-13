@@ -1,5 +1,6 @@
 package com.integrals.inlens.Activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -10,6 +11,8 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -67,12 +70,13 @@ public class UserNameInfoActivity extends AppCompatActivity {
                 if(dataSnapshot.hasChild("Name"))
                 {
                     Name = dataSnapshot.child("Name").getValue().toString();
-                    UserNameEdittext.setText(Name);
+                    UserNameEdittext.append(Name);
+
                 }
                 if(dataSnapshot.hasChild("Email"))
                 {
                     Email = dataSnapshot.child("Email").getValue().toString();
-                    UserEmailEdittext.setText(Email);
+                    UserEmailEdittext.append(Email);
                 }
             }
 
@@ -81,6 +85,8 @@ public class UserNameInfoActivity extends AppCompatActivity {
 
             }
         });
+
+
 
         UserNameDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,7 +160,6 @@ public class UserNameInfoActivity extends AppCompatActivity {
         });
 
     }
-
 
     private void ShowCustomToast(String Title, String Message, boolean isProgressbarShown, int duration) {
 
