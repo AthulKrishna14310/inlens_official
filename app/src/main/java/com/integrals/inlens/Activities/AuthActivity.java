@@ -12,9 +12,11 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,6 +47,7 @@ import com.integrals.inlens.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class AuthActivity extends AppCompatActivity {
@@ -65,6 +68,7 @@ public class AuthActivity extends AppCompatActivity {
     private Toast toast;
     private Button VerifyGoManualButton;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks Callbacks;
+    private CountDownTimer countDownTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +95,7 @@ public class AuthActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                GetDefaultCountry();
 
                 if(!AuthCodeButton.isShown() && !AuthEditText.isShown())
                 {
@@ -112,7 +117,7 @@ public class AuthActivity extends AppCompatActivity {
                     if(!TextUtils.isEmpty(ChoosenCode))
                     {
                         PhoneAuthProvider.getInstance().verifyPhoneNumber(ChoosenCode+AuthEditText.getText().toString(),60, TimeUnit.SECONDS, AuthActivity.this,Callbacks);
-                        new CountDownTimer(60000, 1000) {
+                        countDownTimer = new CountDownTimer(60000, 1000) {
 
                             public void onTick(long millisUntilFinished) {
                                 VerifyCounter.setText(String.format("Timeout in : %d s", millisUntilFinished / 1000));
@@ -172,6 +177,7 @@ public class AuthActivity extends AppCompatActivity {
                 VerifyTextViewNote.setText("*NOTE \nVerification failed. Please try after sometime.");
                 VerifyTextViewNote.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(),android.R.anim.fade_in));
                 VerifyTextViewNote.setVisibility(View.VISIBLE);
+                ShowCustomToast("Authentication Failed"," Unable to connect to database.",false,1000);
             }
 
             @Override
@@ -181,6 +187,40 @@ public class AuthActivity extends AppCompatActivity {
             }
         };
 
+
+    }
+
+    private void GetDefaultCountry() {
+
+        try
+        {
+
+            TelephonyManager tm = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+            String countryCodeValue = tm.getNetworkCountryIso();
+
+            //Locale loc = new Locale("",countryCodeValue);
+            //String country = loc.getDisplayCountry();
+            //ShowCustomToast("Country Detected !!","Inlens has detected your country as "+country,false,2000);
+
+            for(int i=0;i<CountryList.size();i++)
+            {
+                if(CountryList.get(i).getCountryName().toLowerCase().equals(countryCodeValue))
+                {
+                    CountryItem  countryItem = CountryList.get(i);
+                    AuthCodeButton.setText(countryItem.getCountryName().toUpperCase()+" "+ String.format("+ %s", countryItem.getCountryCode()));
+                    ChoosenCode = String.format("+%s", countryItem.getCountryCode());
+                    break;
+                }
+
+            }
+
+
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
 
     }
 
@@ -201,6 +241,8 @@ public class AuthActivity extends AppCompatActivity {
                 }
                 else  if(!task.isSuccessful())
                 {
+                    countDownTimer.cancel();
+
                     try {
                         throw task.getException();
                     }
@@ -221,16 +263,18 @@ public class AuthActivity extends AppCompatActivity {
                     catch (RuntimeException e)
                     {
                         VerifyTextViewNote.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(),android.R.anim.fade_out));
-                        VerifyTextViewNote.setText("*NOTE \nVerification failed. Please try after sometime.");
+                        VerifyTextViewNote.setText("*NOTE \nVerification failed due to runtime exception. Please try after sometime.");
                         VerifyTextViewNote.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(),android.R.anim.fade_in));
                         VerifyTextViewNote.setVisibility(View.VISIBLE);
+
                     }
                     catch (Exception e)
                     {
                         VerifyTextViewNote.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(),android.R.anim.fade_out));
-                        VerifyTextViewNote.setText("*NOTE \nVerification failed. Please try after sometime.");
+                        VerifyTextViewNote.setText("*NOTE \nVerification failed due to unknown exception. Please try after sometime.");
                         VerifyTextViewNote.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(),android.R.anim.fade_in));
                         VerifyTextViewNote.setVisibility(View.VISIBLE);
+
                     }
 
 
@@ -291,6 +335,8 @@ public class AuthActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 VerificationDialog.dismiss();
+                countDownTimer.cancel();
+
             }
         });
 

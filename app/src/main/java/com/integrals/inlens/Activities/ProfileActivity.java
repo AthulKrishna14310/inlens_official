@@ -415,8 +415,11 @@ public class ProfileActivity extends AppCompatActivity {
                             {
                                 for (DataSnapshot snapshot : dataSnapshot.child("posts").getChildren())
                                 {
-                                    String uri = snapshot.child("uri").getValue().toString();
-                                    AllImages.add(uri);
+                                    if(snapshot.hasChild("uri"))
+                                    {
+                                        String uri = snapshot.child("uri").getValue().toString();
+                                        AllImages.add(uri);
+                                    }
                                 }
                             }
 
