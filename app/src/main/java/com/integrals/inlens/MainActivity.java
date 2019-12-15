@@ -17,7 +17,9 @@ import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
+import android.support.annotation.MenuRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -84,6 +86,8 @@ import com.google.zxing.common.BitMatrix;
 import com.integrals.inlens.Activities.AuthActivity;
 import com.integrals.inlens.Activities.InlensGalleryActivity;
 import com.integrals.inlens.Activities.ProfileActivity;
+import com.integrals.inlens.Helper.BottomSheetFragment;
+import com.integrals.inlens.Helper.BottomSheetFragment_Inactive;
 import com.integrals.inlens.Helper.PreOperationCheck;
 import com.integrals.inlens.Models.CommunityModel;
 import com.integrals.inlens.Models.PostModel;
@@ -102,6 +106,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import com.integrals.inlens.Activities.CreateCloudAlbum;
 import com.integrals.inlens.Activities.QRCodeReader;
 import com.integrals.inlens.Activities.SharedImageActivity;
+
+import org.michaelbel.bottomsheet.BottomSheet;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -472,7 +478,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void QRCodeInit(final String CommunityID) {
+    public void QRCodeInit(final String CommunityID) {
 
         QRCodeDialog = new Dialog(MainActivity.this, android.R.style.Theme_Light_NoTitleBar);
         QRCodeDialog.setCancelable(true);
@@ -939,7 +945,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void quitCloudAlbum(int ForceQuit) {
+    public void quitCloudAlbum(int ForceQuit) {
 
 
         PreOperationCheck checker = new PreOperationCheck();
@@ -1232,70 +1238,114 @@ public class MainActivity extends AppCompatActivity {
             holder.AlbumOptions.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                          Position=holder.getLayoutPosition();
+
+//
+//                        final PopupMenu menu = new PopupMenu(MainActivity.this, holder.itemView);
+//
+//                        if(CommunityDetails.get(position).getCommunityID().equals(CurrentDeadCommunityID))
+//                        {
+//                            menu.getMenuInflater().inflate(R.menu.community_menu_without_quit, menu.getMenu());
+//
+//                        }
+//                        else if(CommunityDetails.get(position).getCommunityID().equals(CurrentActiveCommunityID))
+//                        {
+//                            menu.getMenuInflater().inflate(R.menu.community_menu_with_quit, menu.getMenu());
+//
+//                        }
+//                        else
+//                        {
+//                            menu.getMenuInflater().inflate(R.menu.community_menu_quit, menu.getMenu());
+//
+//                        }
+//                        menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//                            @Override
+//                            public boolean onMenuItemClick(MenuItem menuItem) {
+//
+//
+//                                if (menuItem.getItemId() == R.id.community_menu_add_photos) {
+//                                    Intent intent = new Intent(MainActivity.this, InlensGalleryActivity.class);
+//                                    intent.putExtra("CommunityID", CommunityDetails.get(position).getCommunityID());
+//                                    intent.putExtra("CommunityName", CommunityDetails.get(position).getTitle());
+//                                    intent.putExtra("CommunityStartTime", CommunityDetails.get(position).getStartTime());
+//                                    intent.putExtra("CommunityEndTime", CommunityDetails.get(position).getEndTime());
+//                                    startActivity(intent);
+//                                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+//                                }
+//                                if (menuItem.getItemId() == R.id.community_menu_add_participant) {
+//                                    if (CommunityDetails.get(position).getCommunityID().equals(CurrentActiveCommunityID) || CommunityDetails.get(position).getCommunityID().equals(CurrentDeadCommunityID)) {
+//                                        QRCodeInit(CommunityDetails.get(position).getCommunityID());
+//                                    } else {
+//                                        Toast.makeText(MainActivity.this, "Inactive album.", Toast.LENGTH_SHORT).show();
+//                                    }
+//
+//                                }
+//                                if (menuItem.getItemId() == R.id.community_menu_change_cover) {
+//                                    COVER_CHANGE = true;
+//                                    PostKeyForEdit = CommunityDetails.get(position).getCommunityID();
+//                                    CropImage.activity()
+//                                            .setGuidelines(CropImageView.Guidelines.ON)
+//                                            .setAspectRatio((int) 360, 180)
+//                                            .setFixAspectRatio(true)
+//                                            .start(MainActivity.this);
+//                                }
+//                                if (menuItem.getItemId() == R.id.community_menu_quit_community) {
+//
+//                                    quitCloudAlbum(0);
+//                                }
+//
+//                                return false;
+//                            }
+//                        });
+//
+//
+//                        menu.show();
 
 
-                        final PopupMenu menu = new PopupMenu(MainActivity.this, holder.itemView);
-
-                        if(CommunityDetails.get(position).getCommunityID().equals(CurrentDeadCommunityID))
-                        {
-                            menu.getMenuInflater().inflate(R.menu.community_menu_without_quit, menu.getMenu());
-
-                        }
-                        else if(CommunityDetails.get(position).getCommunityID().equals(CurrentActiveCommunityID))
-                        {
-                            menu.getMenuInflater().inflate(R.menu.community_menu_with_quit, menu.getMenu());
-
-                        }
-                        else
-                        {
-                            menu.getMenuInflater().inflate(R.menu.community_menu_quit, menu.getMenu());
-
-                        }
-                        menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                            @Override
-                            public boolean onMenuItemClick(MenuItem menuItem) {
-
-
-                                if (menuItem.getItemId() == R.id.community_menu_add_photos) {
-                                    Intent intent = new Intent(MainActivity.this, InlensGalleryActivity.class);
-                                    intent.putExtra("CommunityID", CommunityDetails.get(position).getCommunityID());
-                                    intent.putExtra("CommunityName", CommunityDetails.get(position).getTitle());
-                                    intent.putExtra("CommunityStartTime", CommunityDetails.get(position).getStartTime());
-                                    intent.putExtra("CommunityEndTime", CommunityDetails.get(position).getEndTime());
-                                    startActivity(intent);
-                                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                                }
-                                if (menuItem.getItemId() == R.id.community_menu_add_participant) {
-                                    if (CommunityDetails.get(position).getCommunityID().equals(CurrentActiveCommunityID) || CommunityDetails.get(position).getCommunityID().equals(CurrentDeadCommunityID)) {
-                                        QRCodeInit(CommunityDetails.get(position).getCommunityID());
-                                    } else {
-                                        Toast.makeText(MainActivity.this, "Inactive album.", Toast.LENGTH_SHORT).show();
-                                    }
-
-                                }
-                                if (menuItem.getItemId() == R.id.community_menu_change_cover) {
-                                    COVER_CHANGE = true;
-                                    PostKeyForEdit = CommunityDetails.get(position).getCommunityID();
-                                    CropImage.activity()
-                                            .setGuidelines(CropImageView.Guidelines.ON)
-                                            .setAspectRatio((int) 360, 180)
-                                            .setFixAspectRatio(true)
-                                            .start(MainActivity.this);
-                                }
-                                if (menuItem.getItemId() == R.id.community_menu_quit_community) {
-
-                                    quitCloudAlbum(0);
-                                }
-
-                                return false;
-                            }
-                        });
-
-
-                        menu.show();
 
 
 
+
+//                    BottomSheet.Builder builder = new BottomSheet.Builder(MainActivity.this);
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                        builder.setTitle("Album options")
+//                                .setItemTextColor(getColor(R.color.red_50))
+//                                .setIconColor(getColor(R.color.colorAccent))
+//
+//                                .setMenu(R.menu.community_menu_with_quit, (dialogInterface, i) -> {
+//
+//                                    if(i==0){
+//                                        Intent intent = new Intent(MainActivity.this, InlensGalleryActivity.class);
+//                                        intent.putExtra("CommunityID", CommunityDetails.get(position).getCommunityID());
+//                                        intent.putExtra("CommunityName", CommunityDetails.get(position).getTitle());
+//                                        intent.putExtra("CommunityStartTime", CommunityDetails.get(position).getStartTime());
+//                                        intent.putExtra("CommunityEndTime", CommunityDetails.get(position).getEndTime());
+//                                        startActivity(intent);
+//                                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+//
+//                                    }
+//
+//                                    if (i==1) {
+//                                    if (CommunityDetails.get(position).getCommunityID().equals(CurrentActiveCommunityID) || CommunityDetails.get(position).getCommunityID().equals(CurrentDeadCommunityID)) {
+//                                        QRCodeInit(CommunityDetails.get(position).getCommunityID());
+//                                    } else {
+//                                        Toast.makeText(MainActivity.this, "Inactive album.", Toast.LENGTH_SHORT).show();
+//                                    }
+//
+//                                }
+//
+//                                })
+//                                .show();
+//                    }
+                    if(CurrentActiveCommunityID.contentEquals(CommunityDetails.get(position).getCommunityID()))
+                    {
+                        BottomSheetFragment bottomSheetFragment = new BottomSheetFragment();
+                        bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
+                    }else{
+                        BottomSheetFragment_Inactive bottomSheetFragment_inactive =new BottomSheetFragment_Inactive();
+                        bottomSheetFragment_inactive.show(getSupportFragmentManager(), bottomSheetFragment_inactive.getTag());
+
+                    }
                 }
             });
 
@@ -1589,7 +1639,333 @@ public class MainActivity extends AppCompatActivity {
         MainScrollView.requestDisallowInterceptTouchEvent(true);
     }
 
+    public String getCurrentUserID() {
+        return CurrentUserID;
+    }
 
+    public void setCurrentUserID(String currentUserID) {
+        CurrentUserID = currentUserID;
+    }
+
+    public String getCurrentActiveCommunityID() {
+        return CurrentActiveCommunityID;
+    }
+
+    public void setCurrentActiveCommunityID(String currentActiveCommunityID) {
+        CurrentActiveCommunityID = currentActiveCommunityID;
+    }
+
+    public String getDummyCurrentActiveCommunityID() {
+        return DummyCurrentActiveCommunityID;
+    }
+
+    public void setDummyCurrentActiveCommunityID(String dummyCurrentActiveCommunityID) {
+        DummyCurrentActiveCommunityID = dummyCurrentActiveCommunityID;
+    }
+
+    public String getCurrentDeadCommunityID() {
+        return CurrentDeadCommunityID;
+    }
+
+    public void setCurrentDeadCommunityID(String currentDeadCommunityID) {
+        CurrentDeadCommunityID = currentDeadCommunityID;
+    }
+
+    public String getResultName() {
+        return ResultName;
+    }
+
+    public void setResultName(String resultName) {
+        ResultName = resultName;
+    }
+
+    public String getResultImage() {
+        return ResultImage;
+    }
+
+    public void setResultImage(String resultImage) {
+        ResultImage = resultImage;
+    }
+
+    public List<CommunityModel> getMyCommunityDetails() {
+        return MyCommunityDetails;
+    }
+
+    public void setMyCommunityDetails(List<CommunityModel> myCommunityDetails) {
+        MyCommunityDetails = myCommunityDetails;
+    }
+
+    public List<PostModel> getMyPostList() {
+        return MyPostList;
+    }
+
+    public void setMyPostList(List<PostModel> myPostList) {
+        MyPostList = myPostList;
+    }
+
+    public DatabaseReference getRef() {
+        return Ref;
+    }
+
+    public void setRef(DatabaseReference ref) {
+        Ref = ref;
+    }
+
+    public FirebaseAuth getInAuthentication() {
+        return InAuthentication;
+    }
+
+    public void setInAuthentication(FirebaseAuth inAuthentication) {
+        InAuthentication = inAuthentication;
+    }
+
+    public ProgressBar getMainLoadingProgressBar() {
+        return MainLoadingProgressBar;
+    }
+
+    public void setMainLoadingProgressBar(ProgressBar mainLoadingProgressBar) {
+        MainLoadingProgressBar = mainLoadingProgressBar;
+    }
+
+    public Dialog getQRCodeDialog() {
+        return QRCodeDialog;
+    }
+
+    public void setQRCodeDialog(Dialog QRCodeDialog) {
+        this.QRCodeDialog = QRCodeDialog;
+    }
+
+    public Dialog getPostDialog() {
+        return PostDialog;
+    }
+
+    public void setPostDialog(Dialog postDialog) {
+        PostDialog = postDialog;
+    }
+
+    public ImageView getPostDialogImageView() {
+        return PostDialogImageView;
+    }
+
+    public void setPostDialogImageView(ImageView postDialogImageView) {
+        PostDialogImageView = postDialogImageView;
+    }
+
+    public ProgressBar getPostDialogProgressbar() {
+        return PostDialogProgressbar;
+    }
+
+    public void setPostDialogProgressbar(ProgressBar postDialogProgressbar) {
+        PostDialogProgressbar = postDialogProgressbar;
+    }
+
+    public String getPostKeyForEdit() {
+        return PostKeyForEdit;
+    }
+
+    public void setPostKeyForEdit(String postKeyForEdit) {
+        PostKeyForEdit = postKeyForEdit;
+    }
+
+    public String getCurrentKeyShowninVerticialRecyclerview() {
+        return CurrentKeyShowninVerticialRecyclerview;
+    }
+
+    public void setCurrentKeyShowninVerticialRecyclerview(String currentKeyShowninVerticialRecyclerview) {
+        CurrentKeyShowninVerticialRecyclerview = currentKeyShowninVerticialRecyclerview;
+    }
+
+    public static int getGalleryPick() {
+        return GALLERY_PICK;
+    }
+
+    public static int getCoverGalleryPick() {
+        return COVER_GALLERY_PICK;
+    }
+
+    public static boolean isCoverChange() {
+        return COVER_CHANGE;
+    }
+
+    public static void setCoverChange(boolean coverChange) {
+        COVER_CHANGE = coverChange;
+    }
+
+    public static boolean isSearchInProgress() {
+        return SEARCH_IN_PROGRESS;
+    }
+
+    public static void setSearchInProgress(boolean searchInProgress) {
+        SEARCH_IN_PROGRESS = searchInProgress;
+    }
+
+    public RelativeLayout getRootForMainActivity() {
+        return RootForMainActivity;
+    }
+
+    public void setRootForMainActivity(RelativeLayout rootForMainActivity) {
+        RootForMainActivity = rootForMainActivity;
+    }
+
+    public int getINTID() {
+        return INTID;
+    }
+
+    public void setINTID(int INTID) {
+        this.INTID = INTID;
+    }
+
+    public RecyclerView getMainHorizontalRecyclerview() {
+        return MainHorizontalRecyclerview;
+    }
+
+    public void setMainHorizontalRecyclerview(RecyclerView mainHorizontalRecyclerview) {
+        MainHorizontalRecyclerview = mainHorizontalRecyclerview;
+    }
+
+    public RecyclerView getMainVerticalRecyclerView() {
+        return MainVerticalRecyclerView;
+    }
+
+    public void setMainVerticalRecyclerView(RecyclerView mainVerticalRecyclerView) {
+        MainVerticalRecyclerView = mainVerticalRecyclerView;
+    }
+
+    public ImageButton getMainNewAlbumButton() {
+        return MainNewAlbumButton;
+    }
+
+    public void setMainNewAlbumButton(ImageButton mainNewAlbumButton) {
+        MainNewAlbumButton = mainNewAlbumButton;
+    }
+
+    public ImageButton getMainScanQrButton() {
+        return MainScanQrButton;
+    }
+
+    public void setMainScanQrButton(ImageButton mainScanQrButton) {
+        MainScanQrButton = mainScanQrButton;
+    }
+
+    public HorizontalScrollView getMainHorizontalScrollView() {
+        return MainHorizontalScrollView;
+    }
+
+    public void setMainHorizontalScrollView(HorizontalScrollView mainHorizontalScrollView) {
+        MainHorizontalScrollView = mainHorizontalScrollView;
+    }
+
+    public ScrollView getMainScrollView() {
+        return MainScrollView;
+    }
+
+    public void setMainScrollView(ScrollView mainScrollView) {
+        MainScrollView = mainScrollView;
+    }
+
+    public TextView getNoAlbumTextView() {
+        return NoAlbumTextView;
+    }
+
+    public void setNoAlbumTextView(TextView noAlbumTextView) {
+        NoAlbumTextView = noAlbumTextView;
+    }
+
+    public Boolean getSHOW_TOUR() {
+        return SHOW_TOUR;
+    }
+
+    public void setSHOW_TOUR(Boolean SHOW_TOUR) {
+        this.SHOW_TOUR = SHOW_TOUR;
+    }
+
+    public CircleImageView getMainProfileImageview() {
+        return MainProfileImageview;
+    }
+
+    public void setMainProfileImageview(CircleImageView mainProfileImageview) {
+        MainProfileImageview = mainProfileImageview;
+    }
+
+    public ImageButton getMainSearchButton() {
+        return MainSearchButton;
+    }
+
+    public void setMainSearchButton(ImageButton mainSearchButton) {
+        MainSearchButton = mainSearchButton;
+    }
+
+    public ImageButton getMainBackButton() {
+        return MainBackButton;
+    }
+
+    public void setMainBackButton(ImageButton mainBackButton) {
+        MainBackButton = mainBackButton;
+    }
+
+    public EditText getMainSearchEdittext() {
+        return MainSearchEdittext;
+    }
+
+    public void setMainSearchEdittext(EditText mainSearchEdittext) {
+        MainSearchEdittext = mainSearchEdittext;
+    }
+
+    public RelativeLayout getMainActionbar() {
+        return MainActionbar;
+    }
+
+    public void setMainActionbar(RelativeLayout mainActionbar) {
+        MainActionbar = mainActionbar;
+    }
+
+    public RelativeLayout getMainSearchView() {
+        return MainSearchView;
+    }
+
+    public void setMainSearchView(RelativeLayout mainSearchView) {
+        MainSearchView = mainSearchView;
+    }
+
+    public CardView getMainToolbar() {
+        return MainToolbar;
+    }
+
+    public void setMainToolbar(CardView mainToolbar) {
+        MainToolbar = mainToolbar;
+    }
+
+    public BroadcastReceiver getBr() {
+        return br;
+    }
+
+    public void setBr(BroadcastReceiver br) {
+        this.br = br;
+    }
+
+    public RelativeLayout getNoInternetView() {
+        return NoInternetView;
+    }
+
+    public void setNoInternetView(RelativeLayout noInternetView) {
+        NoInternetView = noInternetView;
+    }
+
+    public boolean isGotoGallery() {
+        return GotoGallery;
+    }
+
+    public void setGotoGallery(boolean gotoGallery) {
+        GotoGallery = gotoGallery;
+    }
+
+    public int getPosition() {
+        return Position;
+    }
+
+    public void setPosition(int position) {
+        Position = position;
+    }
 }
 
 
