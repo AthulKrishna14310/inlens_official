@@ -130,6 +130,38 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:foreground="?attr/selectableItemBackground"
+        android:orientation="horizontal"
+        android:paddingBottom="8dp"
+        android:paddingLeft="@dimen/spacing_mxlarge"
+        android:paddingRight="@dimen/spacing_mxlarge"
+        android:paddingTop="8dp"
+        android:layout_marginBottom="15dp"
+        android:id="@+id/item_view_participants">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginRight="32dp"
+            android:src="@drawable/ic_people"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="View participants"
+            android:textColor="#737373"
+            android:textSize="16sp"
+
+            />
+
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -145,11 +177,10 @@
         android:id="@+id/item_change_cover">
 
         <ImageView
-            android:layout_width="24dp"
+            android:layout_width="wrap_content"
             android:layout_height="24dp"
             android:layout_marginRight="32dp"
-            android:src="@drawable/ic_cover_alt_black_24dp"
-            />
+            android:src="@drawable/ic_cover_alt_black_24dp" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

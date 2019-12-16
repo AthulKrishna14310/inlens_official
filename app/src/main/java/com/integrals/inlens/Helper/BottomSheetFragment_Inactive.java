@@ -1,28 +1,43 @@
 package com.integrals.inlens.Helper;
 
 
+import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialogFragment;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.integrals.inlens.Activities.InlensGalleryActivity;
 import com.integrals.inlens.MainActivity;
 import com.integrals.inlens.R;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+@SuppressLint("ValidFragment")
 public class BottomSheetFragment_Inactive extends BottomSheetDialogFragment {
+
     public View view;
+    DatabaseReference ParcicipantsRef;
+    Context context;
+    RecyclerView ParticipantsRecyclerView;
+    Dialog BottomSheetParticipantsDialog;
 
-    public BottomSheetFragment_Inactive() {
+    public BottomSheetFragment_Inactive(Context applicationContext) {
         // Required empty public constructor
-    }
+        context = applicationContext;
+        ParcicipantsRef = FirebaseDatabase.getInstance().getReference();
+        BottomSheetParticipantsDialog = new Dialog(context, android.R.style.Theme_Light_NoTitleBar);
 
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,6 +74,18 @@ public class BottomSheetFragment_Inactive extends BottomSheetDialogFragment {
             }
         });
 
+
+        LinearLayout linearLayout3 = view.findViewById(R.id.item_view_participants);
+        linearLayout3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                ParticipantsBottomSheet participantsBottomSheet = new ParticipantsBottomSheet(context,BottomSheetParticipantsDialog,ParticipantsRecyclerView,activity.getMyCommunityDetails().get(activity.getPosition()).getCommunityID(), FirebaseDatabase.getInstance().getReference());
+                participantsBottomSheet.DisplayParticipants();
+                BottomSheetParticipantsDialog.show();
+
+            }
+        });
 
 
         return view;

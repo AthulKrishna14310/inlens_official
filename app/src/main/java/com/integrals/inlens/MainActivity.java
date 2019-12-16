@@ -88,6 +88,7 @@ import com.integrals.inlens.Activities.InlensGalleryActivity;
 import com.integrals.inlens.Activities.ProfileActivity;
 import com.integrals.inlens.Helper.BottomSheetFragment;
 import com.integrals.inlens.Helper.BottomSheetFragment_Inactive;
+import com.integrals.inlens.Helper.ParticipantsAdapter;
 import com.integrals.inlens.Helper.PreOperationCheck;
 import com.integrals.inlens.Models.CommunityModel;
 import com.integrals.inlens.Models.PostModel;
@@ -1339,10 +1340,10 @@ public class MainActivity extends AppCompatActivity {
 //                    }
                     if(CurrentActiveCommunityID.contentEquals(CommunityDetails.get(position).getCommunityID()))
                     {
-                        BottomSheetFragment bottomSheetFragment = new BottomSheetFragment();
+                        BottomSheetFragment bottomSheetFragment = new BottomSheetFragment(MainActivity.this);
                         bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
                     }else{
-                        BottomSheetFragment_Inactive bottomSheetFragment_inactive =new BottomSheetFragment_Inactive();
+                        BottomSheetFragment_Inactive bottomSheetFragment_inactive =new BottomSheetFragment_Inactive(MainActivity.this);
                         bottomSheetFragment_inactive.show(getSupportFragmentManager(), bottomSheetFragment_inactive.getTag());
 
                     }
@@ -1385,6 +1386,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
 
 
     private static String GenarateDeepLinkForInvite(String CommunityID) {

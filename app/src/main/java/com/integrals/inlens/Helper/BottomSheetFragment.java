@@ -1,29 +1,54 @@
 package com.integrals.inlens.Helper;
 
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialogFragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.GridLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.integrals.inlens.Activities.InlensGalleryActivity;
 import com.integrals.inlens.MainActivity;
 import com.integrals.inlens.R;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
-public class BottomSheetFragment extends BottomSheetDialogFragment {
-    public View view;
+import java.util.ArrayList;
+import java.util.List;
 
-    public BottomSheetFragment() {
+public class BottomSheetFragment extends BottomSheetDialogFragment {
+
+    public View view;
+    DatabaseReference ParcicipantsRef;
+    Context context;
+    RecyclerView ParticipantsRecyclerView;
+    Dialog BottomSheetParticipantsDialog;
+
+    public BottomSheetFragment(Context applicationContext) {
         // Required empty public constructor
+        context = applicationContext;
+        ParcicipantsRef = FirebaseDatabase.getInstance().getReference();
+        BottomSheetParticipantsDialog = new Dialog(context, android.R.style.Theme_Light_NoTitleBar);
+
     }
 
 
@@ -102,10 +127,23 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
         });
 
 
+        LinearLayout linearLayout4 =  view.findViewById(R.id.item_view_participants);
+        linearLayout4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                ParticipantsBottomSheet participantsBottomSheet = new ParticipantsBottomSheet(context,BottomSheetParticipantsDialog,ParticipantsRecyclerView,activity.getMyCommunityDetails().get(activity.getPosition()).getCommunityID(), FirebaseDatabase.getInstance().getReference());
+                participantsBottomSheet.DisplayParticipants();
+                BottomSheetParticipantsDialog.show();
+            }
+        });
+
 
 
         return view;
     }
+
+
 
 
 }
