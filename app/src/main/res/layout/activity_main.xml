@@ -130,17 +130,18 @@
                        <LinearLayout
                            android:layout_width="wrap_content"
                            android:layout_height="wrap_content"
-                           android:orientation="vertical">
+                           android:orientation="vertical"
+                           android:layout_margin="6dp">
 
                            <ImageButton
                                android:id="@+id/main_horizontal_new_album_button"
-                               android:layout_width="45dp"
-                               android:layout_height="45dp"
-                               android:layout_margin="5dp"
+                               android:layout_width="50dp"
+                               android:layout_height="50dp"
+                               android:layout_margin="3dp"
                                android:background="@drawable/circle_accent"
                                android:elevation="1dp"
                                android:scaleType="center"
-                               android:src="@drawable/ic_photo_library"
+                               android:src="@drawable/ic_library_add_black_24dp"
                                android:tint="@color/white" />
 
                            <TextView
@@ -148,8 +149,8 @@
                                android:layout_height="wrap_content"
                                android:layout_gravity="center_horizontal"
                                android:gravity="center"
-                               android:text="new"
-                               android:textSize="10sp"
+                               android:text="New"
+                               android:textSize="12sp"
                                android:textStyle="bold" />
 
                        </LinearLayout>
@@ -157,26 +158,28 @@
                        <LinearLayout
                            android:layout_width="wrap_content"
                            android:layout_height="wrap_content"
-                           android:orientation="vertical">
+                           android:orientation="vertical"
+                           android:layout_margin="7dp"
+                           android:background="@color/colorPrimaryDark">
 
                            <ImageButton
                                android:id="@+id/main_horizontal_scan_button"
-                               android:layout_width="45dp"
-                               android:layout_height="45dp"
-                               android:layout_margin="5dp"
+                               android:layout_width="48dp"
+                               android:layout_height="48dp"
+                               android:layout_margin="3dp"
                                android:background="@drawable/circle_accent"
                                android:elevation="1dp"
                                android:scaleType="center"
-                               android:src="@drawable/ic_wifi_tethering"
-                               android:tint="@color/white" />
+                               android:src="@mipmap/ic_scan_album" />
 
                            <TextView
-                               android:layout_width="wrap_content"
+                               android:layout_width="match_parent"
                                android:layout_height="wrap_content"
                                android:layout_gravity="center_horizontal"
                                android:gravity="center"
-                               android:text="scan"
-                               android:textSize="10sp"
+                               android:text="Scan"
+                               android:background="@color/white"
+                               android:textSize="12sp"
                                android:textStyle="bold" />
 
                        </LinearLayout>

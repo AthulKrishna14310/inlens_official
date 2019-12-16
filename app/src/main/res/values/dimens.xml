@@ -223,7 +223,7 @@
     <dimen name="places_autocomplete_toolbar_inset_start">72.0dip</dimen>
     <dimen name="places_autocomplete_vertical_dropdown">8.0dip</dimen>
     <dimen name="spacing_large">15.0dip</dimen>
-    <dimen name="spacing_medium">5.0dip</dimen>
+    <dimen name="spacing_medium">3.0dip</dimen>
     <dimen name="spacing_middle">10.0dip</dimen>
     <dimen name="spacing_mlarge">25.0dip</dimen>
     <dimen name="spacing_mxlarge">25.0dip</dimen>
