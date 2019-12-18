@@ -13,8 +13,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="TASKS" />
-    <uses-permission  android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
-
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <application
         android:name=".inlens"
@@ -24,14 +23,16 @@
         android:roundIcon="@drawable/inlens_logo_m"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activities.InlensGalleryActivity"
-            android:theme="@style/NoActionBarTheme"></activity>
+        <activity android:name=".Activities.PhotoView"></activity>
+        <activity
+            android:name=".Activities.InlensGalleryActivity"
+            android:theme="@style/NoActionBarTheme" />
         <activity
             android:name=".Activities.ProfileActivity"
             android:theme="@style/NoActionBarTheme" />
         <activity android:name=".Activities.WorkingIntroActivity" />
 
-        <receiver android:name=".Notification.MyBroadcastReceiver"></receiver>
+        <receiver android:name=".Notification.MyBroadcastReceiver" />
 
         <activity
             android:name=".MainActivity"

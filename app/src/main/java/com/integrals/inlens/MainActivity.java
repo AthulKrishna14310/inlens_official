@@ -19,6 +19,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.annotation.MenuRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -89,6 +90,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.integrals.inlens.Activities.AuthActivity;
 import com.integrals.inlens.Activities.InlensGalleryActivity;
+import com.integrals.inlens.Activities.PhotoView;
 import com.integrals.inlens.Activities.ProfileActivity;
 import com.integrals.inlens.Helper.BottomSheetFragment;
 import com.integrals.inlens.Helper.BottomSheetFragment_Inactive;
@@ -1253,103 +1255,6 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(View view) {
                           Position=holder.getLayoutPosition();
 
-//
-//                        final PopupMenu menu = new PopupMenu(MainActivity.this, holder.itemView);
-//
-//                        if(CommunityDetails.get(position).getCommunityID().equals(CurrentDeadCommunityID))
-//                        {
-//                            menu.getMenuInflater().inflate(R.menu.community_menu_without_quit, menu.getMenu());
-//
-//                        }
-//                        else if(CommunityDetails.get(position).getCommunityID().equals(CurrentActiveCommunityID))
-//                        {
-//                            menu.getMenuInflater().inflate(R.menu.community_menu_with_quit, menu.getMenu());
-//
-//                        }
-//                        else
-//                        {
-//                            menu.getMenuInflater().inflate(R.menu.community_menu_quit, menu.getMenu());
-//
-//                        }
-//                        menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-//                            @Override
-//                            public boolean onMenuItemClick(MenuItem menuItem) {
-//
-//
-//                                if (menuItem.getItemId() == R.id.community_menu_add_photos) {
-//                                    Intent intent = new Intent(MainActivity.this, InlensGalleryActivity.class);
-//                                    intent.putExtra("CommunityID", CommunityDetails.get(position).getCommunityID());
-//                                    intent.putExtra("CommunityName", CommunityDetails.get(position).getTitle());
-//                                    intent.putExtra("CommunityStartTime", CommunityDetails.get(position).getStartTime());
-//                                    intent.putExtra("CommunityEndTime", CommunityDetails.get(position).getEndTime());
-//                                    startActivity(intent);
-//                                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-//                                }
-//                                if (menuItem.getItemId() == R.id.community_menu_add_participant) {
-//                                    if (CommunityDetails.get(position).getCommunityID().equals(CurrentActiveCommunityID) || CommunityDetails.get(position).getCommunityID().equals(CurrentDeadCommunityID)) {
-//                                        QRCodeInit(CommunityDetails.get(position).getCommunityID());
-//                                    } else {
-//                                        Toast.makeText(MainActivity.this, "Inactive album.", Toast.LENGTH_SHORT).show();
-//                                    }
-//
-//                                }
-//                                if (menuItem.getItemId() == R.id.community_menu_change_cover) {
-//                                    COVER_CHANGE = true;
-//                                    PostKeyForEdit = CommunityDetails.get(position).getCommunityID();
-//                                    CropImage.activity()
-//                                            .setGuidelines(CropImageView.Guidelines.ON)
-//                                            .setAspectRatio((int) 360, 180)
-//                                            .setFixAspectRatio(true)
-//                                            .start(MainActivity.this);
-//                                }
-//                                if (menuItem.getItemId() == R.id.community_menu_quit_community) {
-//
-//                                    quitCloudAlbum(0);
-//                                }
-//
-//                                return false;
-//                            }
-//                        });
-//
-//
-//                        menu.show();
-
-
-
-
-
-
-//                    BottomSheet.Builder builder = new BottomSheet.Builder(MainActivity.this);
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                        builder.setTitle("Album options")
-//                                .setItemTextColor(getColor(R.color.red_50))
-//                                .setIconColor(getColor(R.color.colorAccent))
-//
-//                                .setMenu(R.menu.community_menu_with_quit, (dialogInterface, i) -> {
-//
-//                                    if(i==0){
-//                                        Intent intent = new Intent(MainActivity.this, InlensGalleryActivity.class);
-//                                        intent.putExtra("CommunityID", CommunityDetails.get(position).getCommunityID());
-//                                        intent.putExtra("CommunityName", CommunityDetails.get(position).getTitle());
-//                                        intent.putExtra("CommunityStartTime", CommunityDetails.get(position).getStartTime());
-//                                        intent.putExtra("CommunityEndTime", CommunityDetails.get(position).getEndTime());
-//                                        startActivity(intent);
-//                                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-//
-//                                    }
-//
-//                                    if (i==1) {
-//                                    if (CommunityDetails.get(position).getCommunityID().equals(CurrentActiveCommunityID) || CommunityDetails.get(position).getCommunityID().equals(CurrentDeadCommunityID)) {
-//                                        QRCodeInit(CommunityDetails.get(position).getCommunityID());
-//                                    } else {
-//                                        Toast.makeText(MainActivity.this, "Inactive album.", Toast.LENGTH_SHORT).show();
-//                                    }
-//
-//                                }
-//
-//                                })
-//                                .show();
-//                    }
                     if(CurrentActiveCommunityID.contentEquals(CommunityDetails.get(position).getCommunityID()))
                     {
                         BottomSheetFragment bottomSheetFragment = new BottomSheetFragment(MainActivity.this);
@@ -1600,7 +1505,16 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent i = new Intent(MainActivity.this , PhotoView.class);
+                    i.putParcelableArrayListExtra("data", (ArrayList<? extends Parcelable>) PostList);
+                    i.putExtra("position",position);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(i);
+                }
+            });
         }
 
 
