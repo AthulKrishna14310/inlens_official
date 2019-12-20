@@ -44,8 +44,6 @@ public class NotificationHelper {
 
         NotificationCompat.Builder builder=new NotificationCompat.Builder(context);
         builder.setSmallIcon(R.drawable.inlens_logo_m)
-        .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
-                R.drawable.inlens_logo_m))
                 .setContentTitle("Tap to view recent-images.")
                 .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(recentImageBitmap))
                 .setAutoCancel(true)

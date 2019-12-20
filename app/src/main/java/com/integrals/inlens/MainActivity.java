@@ -4,7 +4,10 @@ package com.integrals.inlens;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,6 +26,7 @@ import android.os.Parcelable;
 import android.support.annotation.MenuRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -96,6 +100,7 @@ import com.integrals.inlens.Helper.BottomSheetFragment;
 import com.integrals.inlens.Helper.BottomSheetFragment_Inactive;
 import com.integrals.inlens.Helper.ParticipantsAdapter;
 import com.integrals.inlens.Helper.PreOperationCheck;
+import com.integrals.inlens.JobScheduler.Scheduler;
 import com.integrals.inlens.Models.CommunityModel;
 import com.integrals.inlens.Models.PostModel;
 import com.integrals.inlens.Notification.AlarmManagerHelper;
@@ -167,6 +172,11 @@ public class MainActivity extends AppCompatActivity {
 
     private int Position=0;
 
+    private static final int JOB_ID = 465;
+    private JobScheduler jobScheduler;
+    private JobInfo jobInfo;
+
+
     public MainActivity() {
     }
 
@@ -174,6 +184,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP)
+        {
+            ComponentName componentName = new ComponentName(this, Scheduler.class);
+            JobInfo.Builder builder = new JobInfo.Builder(JOB_ID,componentName);
+            builder.setPeriodic(5000);
+            builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+            builder.setPersisted(true);
+            jobInfo=builder.build();
+            jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+            jobScheduler.schedule(jobInfo);
+        }
 
         MyCommunityDetails = new ArrayList<>();
 
