@@ -505,12 +505,11 @@ public class CreateCloudAlbum extends AppCompatActivity {
                                 if(task.isSuccessful())
                                 {
 
-                                    SubmitButton.setEnabled(true);
-                                    SetPostImage.setEnabled(true);
+                                    SubmitButton.setEnabled(false);
+                                    SetPostImage.setEnabled(false);
                                     UploadProgress.setVisibility(View.GONE);
-                                    FirebaseDatabase.getInstance().getReference().child("Users").child(UserID).child("dead_community").removeValue();
-                                    //CreateSituation();
-
+                                     FirebaseDatabase.getInstance().getReference().child("Users").child(UserID).child("dead_community").removeValue();
+                                     showDialogue("Succesfully created the Cloud-Album",true);
                                 }
                                 else
                                 {
@@ -735,45 +734,6 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
 
 
-    private void CreateSituation()
-    {
-
-
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("Communities").child(PostKey).child("situations");
-
-        ComNotyRef = FirebaseDatabase.getInstance().getReference().child("Communities").child(PostKey).child("participants");
-
-        final String push_id =databaseReference.push().getKey();
-        Map situationmap = new HashMap();
-        situationmap.put("name","Event Started");
-        situationmap.put("time", ServerValue.TIMESTAMP);
-        situationmap.put("owner", FirebaseAuth.getInstance().getCurrentUser().getUid());
-
-
-        databaseReference.child(push_id).setValue(situationmap).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-
-                if(task.isSuccessful())
-                {
-                    showDialogue("Cloud-Album created successfully",true);
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
-                if(e.toString().contains("FirebaseNetworkException"))
-                    showDialogue("Error creating Cloud-Album. Please check your internet " +
-                            "connection and try again",false);
-
-                else
-                    showDialogue("Unknown error occurred",false);
-            }
-        });
-
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -816,8 +776,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    initiateNotificationService();
-                                    dialog.dismiss();
+                                    finish();
                                 }
                             });
 

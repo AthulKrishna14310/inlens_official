@@ -2,6 +2,7 @@ package com.integrals.inlens.Activities;
 
 import android.content.Context;
 
+import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -69,6 +70,16 @@ public class PhotoView extends AppCompatActivity {
         });
         SetThumbPhoto(getApplicationContext(),blogArrayList,Position);
     }
+
+
+
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+    }
+
+
 
 
     public void SetThumbPhoto(Context context,

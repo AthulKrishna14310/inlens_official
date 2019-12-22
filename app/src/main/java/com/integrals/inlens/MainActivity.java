@@ -1455,7 +1455,7 @@ public class MainActivity extends AppCompatActivity {
             holder.itemView.setAnimation(AnimationUtils.loadAnimation(context,android.R.anim.fade_in));
             holder.itemView.getAnimation().start();
 
-            RequestOptions requestOptions = new RequestOptions().placeholder(R.mipmap.ic_launcher);
+            RequestOptions requestOptions = new RequestOptions().placeholder(R.drawable.ic_photo_camera);
             Glide.with(context)
                     .load(PostList.get(position).getUri())
                     .apply(requestOptions)

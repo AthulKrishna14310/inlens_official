@@ -3,9 +3,11 @@ package com.integrals.inlens.Activities;
 import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -35,6 +37,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.crowdfire.cfalertdialog.CFAlertDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -113,7 +116,22 @@ public class ProfileActivity extends AppCompatActivity {
 
         AllCommunities = new ArrayList<>();
         AllImages = new ArrayList<>();
+        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
+                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                .setTitle("Profile Activity")
+                .setIcon(R.drawable.ic_warning_black_24dp)
+                .setMessage("This activity's  User-Interface  is not implemented and to be fixed in comming update")
+                .setCancelable(false)
+                .addButton("    OK    ", -1,  Color.parseColor("#3E3D63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                        CFAlertDialog.CFAlertActionAlignment.END,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
 
+        builder.show();
         PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.M) {
             BatteryOptimizationTextView.setVisibility(View.GONE);

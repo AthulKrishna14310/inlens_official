@@ -23,7 +23,10 @@
         android:roundIcon="@drawable/inlens_logo_m"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activities.PhotoView"></activity>
+        <activity
+            android:name=".Activities.PhotoView"
+            android:configChanges="orientation|screenSize"
+            ></activity>
         <activity
             android:name=".Activities.InlensGalleryActivity"
             android:theme="@style/NoActionBarTheme" />

@@ -77,6 +77,9 @@ import id.zelory.compressor.Compressor;
 
 public class InlensGalleryActivity extends AppCompatActivity {
 
+    private static final int PORTRAIT = 0;
+    private static final int LANDSCAPE = 1;
+
     private List<GalleryImageModel> AllCommunityImages;
     private static final String FILE_NAME = "UserInfo.ser";
     private RecyclerView GalleryGridView;
@@ -851,8 +854,21 @@ public class InlensGalleryActivity extends AppCompatActivity {
     public Bitmap compressUploadFile(File bitmapFile) {
         try {
             Bitmap result = new Compressor(InlensGalleryActivity.this)
-                    .setQuality(90)
                     .compressToBitmap(bitmapFile);
+            if(orientation(result)==PORTRAIT){
+                result = new Compressor(InlensGalleryActivity.this)
+                        .setQuality(90)
+                        .setMaxHeight(640)
+                        .setMaxWidth(480)
+                        .compressToBitmap(bitmapFile);
+
+            }else{
+                result = new Compressor(InlensGalleryActivity.this)
+                        .setQuality(90)
+                        .setMaxHeight(480)
+                        .setMaxWidth(640)
+                        .compressToBitmap(bitmapFile);
+            }
 
             return result;
 
@@ -861,6 +877,16 @@ public class InlensGalleryActivity extends AppCompatActivity {
         }
 
         return null;
+
+    }
+
+    private int orientation(Bitmap result) {
+
+     if(result.getHeight()>result.getWidth()){
+         return PORTRAIT;
+     }else{
+         return LANDSCAPE;
+     }
 
     }
 }
