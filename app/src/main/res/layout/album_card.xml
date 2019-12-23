@@ -97,3 +97,8 @@
         android:background="@color/indicator_blue"
         android:visibility="invisible" />
 </android.support.v7.widget.CardView>
+
+
+
+
+

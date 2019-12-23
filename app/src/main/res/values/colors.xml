@@ -46,7 +46,7 @@
     <color name="blue_A400">#ff2979ff</color>
     <color name="blue_A700">#ff2962ff</color>
 
-    <color name="indicator_blue">#0A0E60</color>
+    <color name="indicator_blue">#000000</color>
 
     <color name="blue_grey_100">#ffcfd8dc</color>
     <color name="blue_grey_200">#ffb0bec5</color>

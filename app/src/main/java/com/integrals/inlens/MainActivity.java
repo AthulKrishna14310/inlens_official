@@ -1236,7 +1236,7 @@ public class MainActivity extends AppCompatActivity {
         @NonNull
         @Override
         public MainCommunityViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.album_card, parent, false);
+            View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.album_card_, parent, false);
             return new MainHorizontalAdapter.MainCommunityViewHolder(view);
         }
 
@@ -1252,7 +1252,7 @@ public class MainActivity extends AppCompatActivity {
 
             if(holder.getLayoutPosition()==Position){
                 holder.Indicator.setVisibility(View.VISIBLE);
-
+                holder.itemView.setAlpha((float) 0.7);
                 SetVerticalRecyclerView(CommunityDetails.get(Position).getCommunityID());
 
 
@@ -1272,10 +1272,10 @@ public class MainActivity extends AppCompatActivity {
             holder.AlbumNameTextView.setText(CommunityDetails.get(position).getTitle());
             holder.AlbumDescriptionTextView.setText(CommunityDetails.get(position).getDescription());
 
-            holder.AlbumOptions.setOnClickListener(new View.OnClickListener() {
+            holder.AlbumCoverButton.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
-                public void onClick(View view) {
-                          Position=holder.getLayoutPosition();
+                public boolean onLongClick(View view) {
+                    Position=holder.getLayoutPosition();
 
                     if(CurrentActiveCommunityID.contentEquals(CommunityDetails.get(position).getCommunityID()))
                     {
@@ -1286,8 +1286,13 @@ public class MainActivity extends AppCompatActivity {
                         bottomSheetFragment_inactive.show(getSupportFragmentManager(), bottomSheetFragment_inactive.getTag());
 
                     }
+
+
+                    return false;
                 }
             });
+
+
 
 
         }
