@@ -101,7 +101,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
 
         final List<String> MemberImageList = new ArrayList<>();
         final List<String> MemberNamesList = new ArrayList<>();
-
+        ParticipantsRecyclerView.removeAllViews();
         for (String id : ParticipantIdList)
         {
             name="NA";

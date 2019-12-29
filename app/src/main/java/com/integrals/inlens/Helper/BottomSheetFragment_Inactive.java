@@ -90,7 +90,7 @@ public class BottomSheetFragment_Inactive extends BottomSheetDialogFragment {
 
         final List<String> MemberImageList = new ArrayList<>();
         final List<String> MemberNamesList = new ArrayList<>();
-
+        ParticipantsRecyclerView.removeAllViews();
 
 
         for (String id : ParticipantIdList)

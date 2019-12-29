@@ -1262,25 +1262,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
 
-            Ref.child("Communities").child(CommunityDetails.get(position).getCommunityID()).child("participants").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    for(DataSnapshot snapshot : dataSnapshot.getChildren() )
-                    {
-                        if(!ParticipantIDs.contains(snapshot.getKey()))
-                        {
-                            ParticipantIDs.add(snapshot.getKey());
-                        }
-                    }
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
 
             holder.AlbumCoverButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1301,15 +1283,34 @@ public class MainActivity extends AppCompatActivity {
                 public boolean onLongClick(View view) {
                     Position=holder.getLayoutPosition();
 
-                    if(CurrentActiveCommunityID.contentEquals(CommunityDetails.get(position).getCommunityID()))
-                    {
-                        BottomSheetFragment bottomSheetFragment = new BottomSheetFragment(MainActivity.this,ParticipantIDs);
-                        bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
-                    }else{
-                        BottomSheetFragment_Inactive bottomSheetFragment_inactive =new BottomSheetFragment_Inactive(MainActivity.this,ParticipantIDs);
-                        bottomSheetFragment_inactive.show(getSupportFragmentManager(), bottomSheetFragment_inactive.getTag());
+                    ParticipantIDs.clear();
+                    Ref.child("Communities").child(CommunityDetails.get(position).getCommunityID()).child("participants").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    }
+                            for(DataSnapshot snapshot : dataSnapshot.getChildren() )
+                            {
+                                if(!ParticipantIDs.contains(snapshot.getKey()))
+                                {
+                                    ParticipantIDs.add(snapshot.getKey());
+                                }
+                            }
+                            if(CurrentActiveCommunityID.contentEquals(CommunityDetails.get(position).getCommunityID()))
+                            {
+                                BottomSheetFragment bottomSheetFragment = new BottomSheetFragment(MainActivity.this,ParticipantIDs);
+                                bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
+                            }else{
+                                BottomSheetFragment_Inactive bottomSheetFragment_inactive =new BottomSheetFragment_Inactive(MainActivity.this,ParticipantIDs);
+                                bottomSheetFragment_inactive.show(getSupportFragmentManager(), bottomSheetFragment_inactive.getTag());
+
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
 
 
                     return false;
