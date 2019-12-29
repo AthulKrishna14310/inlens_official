@@ -21,16 +21,18 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:gravity="center_vertical"
+            android:layout_gravity="center"
+            android:gravity="center"
             android:text="Emma Richmond"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
             android:textColor="@color/grey_90"
             android:textSize="17sp"
-            android:id="@+id/AlbumTitleBottom"/>
+            android:id="@+id/AlbumTitleBottom"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"/>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_small"
             android:orientation="horizontal">
@@ -39,15 +41,17 @@
                 android:layout_width="match_parent"
                 android:id="@+id/AlbumDescriptionBottom"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="40dp"
                 android:layout_marginBottom="4dp"
-                android:gravity="center_vertical"
+                android:gravity="start"
                 android:text="Hwy, Carthage"
+                android:layout_gravity="center"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:textColor="@color/light_blue_400"
                 android:textSize="14sp"
-
-                android:textStyle="bold" />
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:textStyle="bold"
+                />
 
 
         </LinearLayout>
@@ -64,12 +68,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
-                android:gravity="right"
                 android:text="20"
+                android:gravity="start"
+                android:layout_gravity="center"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:textColor="@color/grey_700"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"/>
         </LinearLayout>
+
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -175,39 +183,6 @@
 
     </LinearLayout>
 
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:foreground="?attr/selectableItemBackground"
-        android:orientation="horizontal"
-        android:paddingBottom="8dp"
-        android:paddingLeft="@dimen/spacing_mxlarge"
-        android:paddingRight="@dimen/spacing_mxlarge"
-        android:paddingTop="8dp"
-        android:layout_marginBottom="15dp"
-        android:id="@+id/item_view_participants">
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginRight="32dp"
-            android:src="@drawable/ic_people"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="View participants"
-            android:textColor="#737373"
-            android:textSize="16sp"
-
-            />
-
-    </LinearLayout>
 
 
     <LinearLayout

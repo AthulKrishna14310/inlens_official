@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateFormat;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +30,7 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @SuppressLint("ValidFragment")
@@ -71,7 +74,8 @@ public class BottomSheetFragment_Inactive extends BottomSheetDialogFragment {
 
         AlbumTitle.setText(activity.getMyCommunityDetails().get(activity.getPosition()).getTitle());
         AlbumDescription.setText(activity.getMyCommunityDetails().get(activity.getPosition()).getDescription());
-        AlbumBottomDate.setText("Album started on " + activity.getMyCommunityDetails().get(activity.getPosition()).getStartTime() + " till " + activity.getMyCommunityDetails().get(activity.getPosition()).getEndTime());
+
+        AlbumBottomDate.setText("Album started on " + getDate(activity.getMyCommunityDetails().get(activity.getPosition()).getStartTime()) + " till " + getDate(activity.getMyCommunityDetails().get(activity.getPosition()).getEndTime()));
 
 
 
@@ -175,5 +179,16 @@ public class BottomSheetFragment_Inactive extends BottomSheetDialogFragment {
         });
 
         return view;
+    }
+
+
+    public String getDate(String timestamp)
+    {
+        long time = Long.parseLong(timestamp);
+        CharSequence Time = DateUtils.getRelativeDateTimeString(context, time, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
+        String timesubstring = Time.toString().substring(Time.length() - 8);
+        Date date = new Date(time);
+        String dateformat = DateFormat.format("dd-MM-yyyy", date).toString();
+        return dateformat + " ," + timesubstring;
     }
 }
