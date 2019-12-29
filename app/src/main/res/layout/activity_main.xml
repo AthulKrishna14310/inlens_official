@@ -164,18 +164,24 @@
                            android:layout_width="wrap_content"
                            android:layout_height="wrap_content"
                            android:orientation="vertical"
-                           android:layout_margin="7dp"
-                           android:background="@color/colorPrimaryDark">
+                           android:layout_margin="7dp">
 
-                           <ImageButton
-                               android:id="@+id/main_horizontal_scan_button"
-                               android:layout_width="48dp"
-                               android:layout_height="48dp"
-                               android:layout_margin="3dp"
+                           <RelativeLayout
+                               android:layout_width="50dp"
+                               android:layout_height="50dp"
                                android:background="@drawable/circle_accent"
-                               android:elevation="1dp"
-                               android:scaleType="center"
-                               android:src="@mipmap/ic_scan_album" />
+                               android:layout_margin="3dp"
+                               >
+
+                               <ImageButton
+                                   android:id="@+id/main_horizontal_scan_button"
+                                   android:layout_width="28dp"
+                                   android:layout_height="28dp"
+                                   android:scaleType="center"
+                                   android:src="@mipmap/ic_scan_album"
+                                   android:layout_centerInParent="true"/>
+
+                           </RelativeLayout>
 
                            <TextView
                                android:layout_width="match_parent"
