@@ -1,6 +1,7 @@
 package com.integrals.inlens.Helper;
 
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import android.view.WindowManager;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -35,19 +37,30 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressLint("ValidFragment")
 public class BottomSheetFragment extends BottomSheetDialogFragment {
 
     public View view;
     DatabaseReference ParcicipantsRef;
     Context context;
     RecyclerView ParticipantsRecyclerView;
-    Dialog BottomSheetParticipantsDialog;
+    MainActivity activity;
+
+
+
+    String name,imgurl;
+    String postKeyForEdit;
+    DatabaseReference getParticipantDatabaseReference;
+
+
 
     public BottomSheetFragment(Context applicationContext) {
-        // Required empty public constructor
+
         context = applicationContext;
         ParcicipantsRef = FirebaseDatabase.getInstance().getReference();
-        BottomSheetParticipantsDialog = new Dialog(context, android.R.style.Theme_Light_NoTitleBar);
+        getParticipantDatabaseReference=FirebaseDatabase.getInstance().getReference();
+
+
 
     }
 
@@ -61,9 +74,95 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        MainActivity activity = (MainActivity) getActivity();
+       activity = (MainActivity) getActivity();
 
         view= inflater.inflate(R.layout.bottom_menu_items, container, false);
+        TextView AlbumTitle =view.findViewById(R.id.AlbumTitleBottom);
+        TextView AlbumDescription=view.findViewById(R.id.AlbumDescriptionBottom);
+        TextView AlbumBottomDate=view.findViewById(R.id.AlbumDateBottom);
+
+        AlbumTitle.setText(activity.getMyCommunityDetails().get(activity.getPosition()).getTitle());
+        AlbumDescription.setText(activity.getMyCommunityDetails().get(activity.getPosition()).getDescription());
+        AlbumBottomDate.setText("Album started on "+activity.getMyCommunityDetails().get(activity.getPosition()).getStartTime()+ " till "+activity.getMyCommunityDetails().get(activity.getPosition()).getEndTime());
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        ParticipantsRecyclerView = view.findViewById(R.id.main_bottomsheet_particpants_bottomsheet_recyclerview);
+        ParticipantsRecyclerView.setHasFixedSize(true);
+        GridLayoutManager Gridmanager = new GridLayoutManager(context, 3);
+        ParticipantsRecyclerView.setLayoutManager(Gridmanager);
+        postKeyForEdit=activity.getMyCommunityDetails().get(activity.getPosition()).getCommunityID();
+
+
+        final List<String> MemberImageList = new ArrayList<>();
+        final List<String> MemberNamesList = new ArrayList<>();
+
+        getParticipantDatabaseReference.child("Communities").child(postKeyForEdit).child("participants").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                MemberImageList.clear();
+                MemberNamesList.clear();
+                ParticipantsRecyclerView.removeAllViews();
+
+                for(DataSnapshot snapshot : dataSnapshot.getChildren() )
+                {
+                    name="NA";
+                    imgurl="NA";
+
+                    getParticipantDatabaseReference.child("Users").child(snapshot.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+
+                            if(dataSnapshot.hasChild("Name"))
+                            {
+                                name=dataSnapshot.child("Name").getValue().toString();
+                                MemberNamesList.add(name);
+
+                            }
+                            else
+                            {
+                                MemberNamesList.add(name);
+                            }
+                            if(dataSnapshot.hasChild("Profile_picture"))
+                            {
+                                imgurl=dataSnapshot.child("Profile_picture").getValue().toString();
+                                MemberImageList.add(imgurl);
+
+                            }
+                            else
+                            {
+                                MemberImageList.add(imgurl);
+
+                            }
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+
+                }
+
+                ParticipantsAdapter participantsAdapter = new ParticipantsAdapter(MemberImageList,MemberNamesList,context);
+                ParticipantsRecyclerView.setAdapter(participantsAdapter);
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
         LinearLayout linearLayout=view.findViewById(R.id.item_add_photos);
         linearLayout.setOnClickListener(new View.OnClickListener() {
@@ -126,24 +225,22 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
             }
         });
 
-
-        LinearLayout linearLayout4 =  view.findViewById(R.id.item_view_participants);
-        linearLayout4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                ParticipantsBottomSheet participantsBottomSheet = new ParticipantsBottomSheet(context,BottomSheetParticipantsDialog,ParticipantsRecyclerView,activity.getMyCommunityDetails().get(activity.getPosition()).getCommunityID(), FirebaseDatabase.getInstance().getReference());
-                participantsBottomSheet.DisplayParticipants();
-                BottomSheetParticipantsDialog.show();
-            }
-        });
+//
+//        LinearLayout linearLayout4 =  view.findViewById(R.id.item_view_participants);
+//        linearLayout4.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                ParticipantsBottomSheet participantsBottomSheet = new ParticipantsBottomSheet(context,BottomSheetParticipantsDialog,ParticipantsRecyclerView,activity.getMyCommunityDetails().get(activity.getPosition()).getCommunityID(), FirebaseDatabase.getInstance().getReference());
+//                participantsBottomSheet.DisplayParticipants();
+//                BottomSheetParticipantsDialog.show();
+//            }
+//        });
 
 
 
         return view;
     }
-
-
 
 
 }

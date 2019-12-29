@@ -19,7 +19,8 @@
             android:layout_height="30dp"
             android:layout_alignParentEnd="true"
             android:background="@drawable/ic_close_album"
-            android:padding="5dp" />
+            android:padding="5dp"
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/main_bottomsheet_particpants_bottomsheet_title"

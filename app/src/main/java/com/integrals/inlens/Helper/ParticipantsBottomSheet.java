@@ -31,7 +31,11 @@ public class ParticipantsBottomSheet {
     String postKeyForEdit;
     DatabaseReference getParticipantDatabaseReference;
 
-    public ParticipantsBottomSheet(Context context, Dialog bottomSheetParticipantsDialog, RecyclerView participantsRecyclerView, String postKeyForEdit, DatabaseReference getParticipantDatabaseReference) {
+    public ParticipantsBottomSheet(Context context,
+                                   Dialog bottomSheetParticipantsDialog,
+                                   RecyclerView participantsRecyclerView,
+                                   String postKeyForEdit,
+                                   DatabaseReference getParticipantDatabaseReference) {
         this.context = context;
         BottomSheetParticipantsDialog = bottomSheetParticipantsDialog;
         ParticipantsRecyclerView = participantsRecyclerView;

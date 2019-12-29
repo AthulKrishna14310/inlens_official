@@ -1252,7 +1252,7 @@ public class MainActivity extends AppCompatActivity {
 
             if(holder.getLayoutPosition()==Position){
                 holder.Indicator.setVisibility(View.VISIBLE);
-                holder.itemView.setAlpha((float) 0.7);
+                holder.itemView.setAlpha((float) 1);
                 SetVerticalRecyclerView(CommunityDetails.get(Position).getCommunityID());
 
 
