@@ -128,6 +128,8 @@ public class MainActivity extends AppCompatActivity {
 
     private String CurrentUserID = "Not Available", CurrentActiveCommunityID = "Not Available", DummyCurrentActiveCommunityID = "Not Available", CurrentDeadCommunityID = "Not Available";
     private String ResultName = "Unknown",ResultImage= "Unknown";
+    private List<String> ParticipantIDs;
+
     private List<CommunityModel> MyCommunityDetails;
     private List<PostModel> MyPostList;
     private DatabaseReference Ref;
@@ -198,6 +200,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         MyCommunityDetails = new ArrayList<>();
+        ParticipantIDs = new ArrayList<>();
+
 
         GotoGallery = getIntent().getBooleanExtra("gallery", false);
 
@@ -692,7 +696,7 @@ public class MainActivity extends AppCompatActivity {
 
                                         Ref.child("Users").child(CurrentUserID).child("Communities").child(substring).setValue(ServerValue.TIMESTAMP);
                                         Ref.child("Users").child(CurrentUserID).child("live_community").setValue(substring);
-                                        Ref.child("Communities").child(substring).child("participants").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("time").setValue(ServerValue.TIMESTAMP);
+                                        Ref.child("Communities").child(substring).child("participants").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(ServerValue.TIMESTAMP);
 
                                     }
 
@@ -1258,6 +1262,26 @@ public class MainActivity extends AppCompatActivity {
 
             }
 
+            Ref.child("Communities").child(CommunityDetails.get(position).getCommunityID()).child("participants").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    for(DataSnapshot snapshot : dataSnapshot.getChildren() )
+                    {
+                        if(!ParticipantIDs.contains(snapshot.getKey()))
+                        {
+                            ParticipantIDs.add(snapshot.getKey());
+                        }
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
             holder.AlbumCoverButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -1279,10 +1303,10 @@ public class MainActivity extends AppCompatActivity {
 
                     if(CurrentActiveCommunityID.contentEquals(CommunityDetails.get(position).getCommunityID()))
                     {
-                        BottomSheetFragment bottomSheetFragment = new BottomSheetFragment(MainActivity.this);
+                        BottomSheetFragment bottomSheetFragment = new BottomSheetFragment(MainActivity.this,ParticipantIDs);
                         bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
                     }else{
-                        BottomSheetFragment_Inactive bottomSheetFragment_inactive =new BottomSheetFragment_Inactive(MainActivity.this);
+                        BottomSheetFragment_Inactive bottomSheetFragment_inactive =new BottomSheetFragment_Inactive(MainActivity.this,ParticipantIDs);
                         bottomSheetFragment_inactive.show(getSupportFragmentManager(), bottomSheetFragment_inactive.getTag());
 
                     }
@@ -1920,6 +1944,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void setPosition(int position) {
         Position = position;
+    }
+
+    public List<String> getParticipantIDs() {
+        return ParticipantIDs;
+    }
+
+    public void setParticipantIDs(List<String> participantIDs) {
+        ParticipantIDs = participantIDs;
     }
 }
 

@@ -48,6 +48,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
     Context context;
     RecyclerView ParticipantsRecyclerView;
     MainActivity activity;
+    List <String> ParticipantIdList;
 
 
 
@@ -57,13 +58,12 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
 
 
 
-    public BottomSheetFragment(Context applicationContext) {
+    public BottomSheetFragment(Context applicationContext, List<String> participantIDs) {
 
         context = applicationContext;
         ParcicipantsRef = FirebaseDatabase.getInstance().getReference();
         getParticipantDatabaseReference=FirebaseDatabase.getInstance().getReference();
-
-
+        ParticipantIdList = participantIDs;
 
     }
 
@@ -102,67 +102,57 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
         final List<String> MemberImageList = new ArrayList<>();
         final List<String> MemberNamesList = new ArrayList<>();
 
-        getParticipantDatabaseReference.child("Communities").child(postKeyForEdit).child("participants").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+        for (String id : ParticipantIdList)
+        {
+            name="NA";
+            imgurl="NA";
 
-                MemberImageList.clear();
-                MemberNamesList.clear();
-                ParticipantsRecyclerView.removeAllViews();
+            getParticipantDatabaseReference.child("Users").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
 
-                for(DataSnapshot snapshot : dataSnapshot.getChildren() )
-                {
-                    name="NA";
-                    imgurl="NA";
-
-                    getParticipantDatabaseReference.child("Users").child(snapshot.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-
-                            if(dataSnapshot.hasChild("Name"))
-                            {
-                                name=dataSnapshot.child("Name").getValue().toString();
-                                MemberNamesList.add(name);
-
-                            }
-                            else
-                            {
-                                MemberNamesList.add(name);
-                            }
-                            if(dataSnapshot.hasChild("Profile_picture"))
-                            {
-                                imgurl=dataSnapshot.child("Profile_picture").getValue().toString();
-                                MemberImageList.add(imgurl);
-
-                            }
-                            else
-                            {
-                                MemberImageList.add(imgurl);
-
-                            }
+                    if(dataSnapshot.hasChild("Name"))
+                    {
+                        name=dataSnapshot.child("Name").getValue().toString();
+                        if(!MemberNamesList.contains(name) || !MemberNamesList.contains(id))
+                        {
+                            MemberNamesList.add(name);
 
                         }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                    }
+                    else
+                    {
+                        MemberNamesList.add(id);
+                    }
+                    if(dataSnapshot.hasChild("Profile_picture"))
+                    {
+                        imgurl=dataSnapshot.child("Profile_picture").getValue().toString();
+                        if(!MemberImageList.contains(imgurl) || !MemberImageList.contains(id))
+                        {
+                            MemberImageList.add(imgurl);
 
                         }
-                    });
+                    }
+                    else
+                    {
+                        MemberImageList.add(id);
+
+                    }
+
 
 
                 }
 
-                ParticipantsAdapter participantsAdapter = new ParticipantsAdapter(MemberImageList,MemberNamesList,context);
-                ParticipantsRecyclerView.setAdapter(participantsAdapter);
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
 
 
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        ParticipantsAdapter adapter = new ParticipantsAdapter(MemberImageList,MemberNamesList,context);
+        ParticipantsRecyclerView.setAdapter(adapter);
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
