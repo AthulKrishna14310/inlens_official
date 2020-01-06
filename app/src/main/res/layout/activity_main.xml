@@ -27,13 +27,9 @@
                    android:id="@+id/mainactivity_toolbar"
                    android:layout_width="match_parent"
                    android:layout_height="wrap_content"
-                   android:layout_alignParentTop="true"
                    android:layout_marginStart="15dp"
                    android:layout_marginTop="10dp"
                    android:layout_marginEnd="15dp"
-                   android:elevation="20dp"
-                   app:cardBackgroundColor="@android:color/white"
-                   app:cardCornerRadius="40dp"
                    app:cardElevation="0dp">
 
                    <RelativeLayout
@@ -58,12 +54,10 @@
                            android:layout_height="40dp"
                            android:layout_alignParentStart="true"
                            android:layout_centerVertical="true"
-                           android:layout_marginStart="2dp"
-                           android:layout_marginTop="2dp"
-                           android:layout_marginEnd="5dp"
-                           android:layout_marginBottom="2dp"
+                           android:layout_margin="5dp"
                            android:background="@android:color/transparent"
-                           android:src="@drawable/ic_account_circle" />
+                           android:src="@drawable/ic_account_circle"
+                           />
 
                        <ImageButton
                            android:id="@+id/mainactivity_actionbar_searchbutton"
@@ -72,7 +66,6 @@
                            android:layout_alignParentEnd="true"
                            android:layout_centerVertical="true"
                            android:layout_margin="5dp"
-                           android:layout_marginEnd="20dp"
                            android:background="@android:color/transparent"
                            android:src="@drawable/ic_search" />
 
