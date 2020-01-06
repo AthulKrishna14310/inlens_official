@@ -132,66 +132,79 @@
                        android:orientation="horizontal"
                        android:scrollbars="none">
 
+
                        <LinearLayout
                            android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
+                           android:layout_height="match_parent"
                            android:orientation="vertical"
-                           android:layout_margin="6dp">
+                           android:layout_marginStart="4dp">
 
-                           <ImageButton
-                               android:id="@+id/main_horizontal_new_album_button"
-                               android:layout_width="50dp"
-                               android:layout_height="50dp"
-                               android:layout_margin="3dp"
-                               android:background="@drawable/circle_accent"
-                               android:elevation="1dp"
-                               android:scaleType="center"
-                               android:src="@drawable/ic_library_add_black_24dp"
-                               android:tint="@color/white" />
-
-                           <TextView
+                           <LinearLayout
                                android:layout_width="wrap_content"
-                               android:layout_height="wrap_content"
+                               android:layout_height="match_parent"
+                               android:orientation="vertical"
                                android:layout_gravity="center_horizontal"
-                               android:gravity="center"
-                               android:text="New"
-                               android:textSize="12sp"
-                               android:textStyle="bold" />
-
-                       </LinearLayout>
-
-                       <LinearLayout
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
-                           android:orientation="vertical"
-                           android:layout_margin="7dp">
-
-                           <RelativeLayout
-                               android:layout_width="50dp"
-                               android:layout_height="50dp"
-                               android:background="@drawable/circle_accent"
-                               android:layout_margin="3dp"
-                               >
+                               android:layout_weight="1">
 
                                <ImageButton
-                                   android:id="@+id/main_horizontal_scan_button"
-                                   android:layout_width="28dp"
-                                   android:layout_height="28dp"
+                                   android:id="@+id/main_horizontal_new_album_button"
+                                   android:layout_width="50dp"
+                                   android:layout_height="50dp"
+                                   android:layout_margin="3dp"
+                                   android:background="@drawable/circle_accent"
+                                   android:elevation="1dp"
                                    android:scaleType="center"
-                                   android:src="@mipmap/ic_scan_album"
-                                   android:layout_centerInParent="true"/>
+                                   android:src="@drawable/ic_library_add_black_24dp"
+                                   android:tint="@color/white" />
 
-                           </RelativeLayout>
+                               <TextView
+                                   android:layout_width="wrap_content"
+                                   android:layout_height="wrap_content"
+                                   android:layout_gravity="center_horizontal"
+                                   android:gravity="center"
+                                   android:text="New"
+                                   android:textSize="12sp"
+                                   android:textStyle="bold" />
 
-                           <TextView
-                               android:layout_width="match_parent"
-                               android:layout_height="wrap_content"
-                               android:layout_gravity="center_horizontal"
-                               android:gravity="center"
-                               android:text="Scan"
-                               android:background="@color/white"
-                               android:textSize="12sp"
-                               android:textStyle="bold" />
+                           </LinearLayout>
+
+                           <LinearLayout
+                               android:layout_width="wrap_content"
+                               android:layout_height="match_parent"
+                               android:orientation="vertical"
+                               android:layout_weight="1"
+                               android:layout_gravity="center_horizontal">
+
+                               <RelativeLayout
+                                   android:layout_width="50dp"
+                                   android:layout_height="50dp"
+                                   android:background="@drawable/circle_accent"
+                                   android:layout_margin="3dp"
+                                   >
+
+                                   <ImageButton
+                                       android:id="@+id/main_horizontal_scan_button"
+                                       android:layout_width="wrap_content"
+                                       android:layout_height="wrap_content"
+                                       android:scaleType="center"
+                                       android:src="@drawable/ic_qr_inlens"
+                                       android:layout_centerInParent="true"
+                                       android:background="@android:color/transparent"/>
+
+                               </RelativeLayout>
+
+                               <TextView
+                                   android:layout_width="match_parent"
+                                   android:layout_height="wrap_content"
+                                   android:layout_gravity="center_horizontal"
+                                   android:gravity="center"
+                                   android:text="Scan"
+                                   android:background="@color/white"
+                                   android:textSize="12sp"
+                                   android:textStyle="bold" />
+
+                           </LinearLayout>
+
 
                        </LinearLayout>
 
