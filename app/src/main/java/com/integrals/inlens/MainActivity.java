@@ -155,7 +155,6 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView MainHorizontalRecyclerview, MainVerticalRecyclerView;
     private ImageButton MainNewAlbumButton, MainScanQrButton;
     private HorizontalScrollView MainHorizontalScrollView;
-    private ScrollView MainScrollView;
 
     private TextView NoAlbumTextView;
 
@@ -170,6 +169,8 @@ public class MainActivity extends AppCompatActivity {
 
     private BroadcastReceiver br;
     private RelativeLayout NoInternetView;
+    private TextView NoInternetTextView;
+
     private boolean GotoGallery = false;
 
     private int Position=0;
@@ -208,9 +209,6 @@ public class MainActivity extends AppCompatActivity {
         MainHorizontalScrollView = findViewById(R.id.main_horizontalscrollview);
         MainHorizontalScrollView.setHorizontalScrollBarEnabled(false);
         MainHorizontalScrollView.setVerticalScrollBarEnabled(false);
-        MainScrollView = findViewById(R.id.main_scrollview);
-        MainScrollView.setHorizontalScrollBarEnabled(false);
-        MainScrollView.setVerticalScrollBarEnabled(false);
 
 
 
@@ -218,11 +216,12 @@ public class MainActivity extends AppCompatActivity {
         MainScanQrButton = findViewById(R.id.main_horizontal_scan_button);
 
         MainHorizontalScrollView.smoothScrollTo(0, 0);
-        MainScrollView.smoothScrollTo(0, 0);
 
         NoAlbumTextView = findViewById(R.id.nocloudalbumtextview);
 
         NoInternetView = findViewById(R.id.main_no_internet_relativelayout);
+        NoInternetTextView = findViewById(R.id.main_no_internet_textview);
+
 
         MainToolbar = findViewById(R.id.mainactivity_toolbar);
 
@@ -456,16 +455,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             SetVerticalRecyclerView(CurrentActiveCommunityID);
         }
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
-                if(MainScrollView.getScrollX() != 0)
-                {
-                    MainScrollView.smoothScrollTo(0, 0);
-                }
-            }
-        }, 100);
 
     }
 
@@ -1219,8 +1208,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (SEARCH_IN_PROGRESS) {
             SetDefaultView();
-        } else if (MainScrollView.getScrollY() != 0) {
-            MainScrollView.smoothScrollTo(0, 0);
         } else if (MainHorizontalScrollView.getScrollX() != 0) {
             MainHorizontalScrollView.smoothScrollTo(0, 0);
         } else {
@@ -1378,15 +1365,27 @@ public class MainActivity extends AppCompatActivity {
                     NetworkInfo.State state = info.getState();
                     if (state == NetworkInfo.State.CONNECTED) {
 
-                        if (MyCommunityDetails.size() == 0) {
-                            ShowAllAlbums();
-                        }
-                        NoInternetView.clearAnimation();
-                        NoInternetView.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_bottom));
-                        NoInternetView.getAnimation().start();
-                        NoInternetView.setVisibility(View.GONE);
+
+                        NoInternetTextView.setText("Back online.");
+                        NoInternetView.setBackgroundColor(Color.parseColor("#ff0f9d58"));
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                NoInternetView.clearAnimation();
+                                NoInternetView.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_bottom));
+                                NoInternetView.getAnimation().start();
+                                NoInternetView.setVisibility(View.GONE);
+
+
+                            }
+                        },1000);
 
                     } else {
+
+                        NoInternetTextView.setText("Internet connection lost.");
+                        NoInternetView.setBackgroundColor(Color.parseColor("#ffc53929"));
 
                         NoInternetView.clearAnimation();
                         NoInternetView.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_up));
@@ -1445,15 +1444,6 @@ public class MainActivity extends AppCompatActivity {
         PostDialogImageView = PostDialog.findViewById(R.id.main_postdialog_imageview);
         PostDialogProgressbar = PostDialog.findViewById(R.id.main_postdialog_progressbar);
 
-
-        PostDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-
-                MainScrollView.requestDisallowInterceptTouchEvent(false);
-
-            }
-        });
 
     }
 
@@ -1616,7 +1606,6 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .into(PostDialogImageView);
 
-        MainScrollView.requestDisallowInterceptTouchEvent(true);
     }
 
     public String getCurrentUserID() {
@@ -1835,13 +1824,6 @@ public class MainActivity extends AppCompatActivity {
         MainHorizontalScrollView = mainHorizontalScrollView;
     }
 
-    public ScrollView getMainScrollView() {
-        return MainScrollView;
-    }
-
-    public void setMainScrollView(ScrollView mainScrollView) {
-        MainScrollView = mainScrollView;
-    }
 
     public TextView getNoAlbumTextView() {
         return NoAlbumTextView;
