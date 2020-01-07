@@ -265,7 +265,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center"
         android:background="@color/quantum_googred700"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/main_no_internet_textview"
