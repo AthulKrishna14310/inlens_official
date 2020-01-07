@@ -155,7 +155,6 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView MainHorizontalRecyclerview, MainVerticalRecyclerView;
     private ImageButton MainNewAlbumButton, MainScanQrButton;
     private HorizontalScrollView MainHorizontalScrollView;
-    private ScrollView MainScrollView;
 
     private TextView NoAlbumTextView;
 
@@ -210,9 +209,6 @@ public class MainActivity extends AppCompatActivity {
         MainHorizontalScrollView = findViewById(R.id.main_horizontalscrollview);
         MainHorizontalScrollView.setHorizontalScrollBarEnabled(false);
         MainHorizontalScrollView.setVerticalScrollBarEnabled(false);
-        MainScrollView = findViewById(R.id.main_scrollview);
-        MainScrollView.setHorizontalScrollBarEnabled(false);
-        MainScrollView.setVerticalScrollBarEnabled(false);
 
 
 
@@ -220,7 +216,6 @@ public class MainActivity extends AppCompatActivity {
         MainScanQrButton = findViewById(R.id.main_horizontal_scan_button);
 
         MainHorizontalScrollView.smoothScrollTo(0, 0);
-        MainScrollView.smoothScrollTo(0, 0);
 
         NoAlbumTextView = findViewById(R.id.nocloudalbumtextview);
 
@@ -459,16 +454,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             SetVerticalRecyclerView(CurrentActiveCommunityID);
         }
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
-                if(MainScrollView.getScrollX() != 0)
-                {
-                    MainScrollView.smoothScrollTo(0, 0);
-                }
-            }
-        }, 100);
 
     }
 
@@ -1222,8 +1207,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (SEARCH_IN_PROGRESS) {
             SetDefaultView();
-        } else if (MainScrollView.getScrollY() != 0) {
-            MainScrollView.smoothScrollTo(0, 0);
         } else if (MainHorizontalScrollView.getScrollX() != 0) {
             MainHorizontalScrollView.smoothScrollTo(0, 0);
         } else {
@@ -1460,15 +1443,6 @@ public class MainActivity extends AppCompatActivity {
         PostDialogProgressbar = PostDialog.findViewById(R.id.main_postdialog_progressbar);
 
 
-        PostDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-
-                MainScrollView.requestDisallowInterceptTouchEvent(false);
-
-            }
-        });
-
     }
 
     public class MainVerticalAdapter extends RecyclerView.Adapter<MainVerticalAdapter.PostGridViewHolder> {
@@ -1630,7 +1604,6 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .into(PostDialogImageView);
 
-        MainScrollView.requestDisallowInterceptTouchEvent(true);
     }
 
     public String getCurrentUserID() {
@@ -1849,13 +1822,6 @@ public class MainActivity extends AppCompatActivity {
         MainHorizontalScrollView = mainHorizontalScrollView;
     }
 
-    public ScrollView getMainScrollView() {
-        return MainScrollView;
-    }
-
-    public void setMainScrollView(ScrollView mainScrollView) {
-        MainScrollView = mainScrollView;
-    }
 
     public TextView getNoAlbumTextView() {
         return NoAlbumTextView;

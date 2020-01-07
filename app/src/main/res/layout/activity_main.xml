@@ -9,245 +9,230 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/main_bottom_nav_parent">
+        android:layout_height="match_parent">
 
-
-        <ScrollView
-            android:id="@+id/main_scrollview"
+        <LinearLayout
+            android:id="@+id/main_header"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-           <LinearLayout
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:orientation="vertical">
+            <android.support.v7.widget.CardView
+                android:id="@+id/mainactivity_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="15dp"
+                app:cardElevation="0dp">
 
-               <android.support.v7.widget.CardView
-                   android:id="@+id/mainactivity_toolbar"
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
-                   android:layout_marginStart="15dp"
-                   android:layout_marginTop="10dp"
-                   android:layout_marginEnd="15dp"
-                   app:cardElevation="0dp">
-
-                   <RelativeLayout
-                       android:id="@+id/mainactivity_actionbar_relativelayout"
-                       android:layout_width="match_parent"
-                       android:layout_height="wrap_content"
-                       android:background="@drawable/search_background_oval">
+                <RelativeLayout
+                    android:id="@+id/mainactivity_actionbar_relativelayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/search_background_oval">
 
 
-                       <TextView
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
-                           android:layout_centerInParent="true"
-                           android:text="@string/app_name"
-                           android:textColor="@color/colorAccent"
-                           android:textSize="20sp"
-                           android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="@string/app_name"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
 
-                       <de.hdodenhof.circleimageview.CircleImageView
-                           android:id="@+id/mainactivity_actionbar_profileimageview"
-                           android:layout_width="40dp"
-                           android:layout_height="40dp"
-                           android:layout_alignParentStart="true"
-                           android:layout_centerVertical="true"
-                           android:layout_margin="5dp"
-                           android:background="@android:color/transparent"
-                           android:src="@drawable/ic_account_circle"
-                           />
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/mainactivity_actionbar_profileimageview"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="5dp"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/ic_account_circle"
+                        />
 
-                       <ImageButton
-                           android:id="@+id/mainactivity_actionbar_searchbutton"
-                           android:layout_width="40dp"
-                           android:layout_height="40dp"
-                           android:layout_alignParentEnd="true"
-                           android:layout_centerVertical="true"
-                           android:layout_margin="5dp"
-                           android:background="@android:color/transparent"
-                           android:src="@drawable/ic_search" />
+                    <ImageButton
+                        android:id="@+id/mainactivity_actionbar_searchbutton"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="5dp"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/ic_search" />
 
-                   </RelativeLayout>
+                </RelativeLayout>
 
-                   <RelativeLayout
-                       android:id="@+id/mainactivity_searchview_relativelayout"
-                       android:layout_width="match_parent"
-                       android:layout_height="50dp"
-                       android:visibility="gone">
+                <RelativeLayout
+                    android:id="@+id/mainactivity_searchview_relativelayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:visibility="gone">
 
-                       <LinearLayout
-                           android:layout_width="match_parent"
-                           android:layout_height="match_parent"
-                           android:layout_marginStart="10dp"
-                           android:layout_marginEnd="10dp"
-                           android:orientation="horizontal">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:orientation="horizontal">
 
-                           <ImageButton
-                               android:id="@+id/mainactivity_searchview_backbutton"
-                               android:layout_width="wrap_content"
-                               android:layout_height="wrap_content"
-                               android:layout_gravity="center_vertical"
-                               android:background="@android:color/transparent"
-                               android:src="@drawable/ic_arrow_back" />
+                        <ImageButton
+                            android:id="@+id/mainactivity_searchview_backbutton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:background="@android:color/transparent"
+                            android:src="@drawable/ic_arrow_back" />
 
-                           <EditText
-                               android:id="@+id/mainactivity_searchview_edittext"
-                               android:layout_width="0dp"
-                               android:layout_height="wrap_content"
-                               android:layout_gravity="center_vertical"
-                               android:layout_marginStart="10dp"
-                               android:layout_marginEnd="10dp"
-                               android:layout_weight="1"
-                               android:background="@android:color/transparent"
-                               android:gravity="center"
-                               android:hint="Search Here"
-                               android:inputType="text" />
+                        <EditText
+                            android:id="@+id/mainactivity_searchview_edittext"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_weight="1"
+                            android:background="@android:color/transparent"
+                            android:gravity="center"
+                            android:hint="Search Here"
+                            android:inputType="text" />
 
-                       </LinearLayout>
+                    </LinearLayout>
 
-                   </RelativeLayout>
-
-
-               </android.support.v7.widget.CardView>
+                </RelativeLayout>
 
 
-               <HorizontalScrollView
-                   android:id="@+id/main_horizontalscrollview"
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
-                   android:layout_marginTop="10dp">
+            </android.support.v7.widget.CardView>
+            <HorizontalScrollView
+                android:id="@+id/main_horizontalscrollview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
 
-                   <LinearLayout
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:orientation="horizontal"
-                       android:scrollbars="none">
-
-
-                       <LinearLayout
-                           android:layout_width="wrap_content"
-                           android:layout_height="match_parent"
-                           android:orientation="vertical"
-                           android:layout_marginStart="4dp">
-
-                           <LinearLayout
-                               android:layout_width="wrap_content"
-                               android:layout_height="match_parent"
-                               android:orientation="vertical"
-                               android:layout_gravity="center_horizontal"
-                               android:layout_weight="1">
-
-                               <ImageButton
-                                   android:id="@+id/main_horizontal_new_album_button"
-                                   android:layout_width="50dp"
-                                   android:layout_height="50dp"
-                                   android:layout_margin="3dp"
-                                   android:background="@drawable/circle_accent"
-                                   android:elevation="1dp"
-                                   android:scaleType="center"
-                                   android:src="@drawable/ic_library_add_black_24dp"
-                                   android:tint="@color/white" />
-
-                               <TextView
-                                   android:layout_width="wrap_content"
-                                   android:layout_height="wrap_content"
-                                   android:layout_gravity="center_horizontal"
-                                   android:gravity="center"
-                                   android:text="New"
-                                   android:textSize="12sp"
-                                   android:textStyle="bold" />
-
-                           </LinearLayout>
-
-                           <LinearLayout
-                               android:layout_width="wrap_content"
-                               android:layout_height="match_parent"
-                               android:orientation="vertical"
-                               android:layout_weight="1"
-                               android:layout_gravity="center_horizontal">
-
-                               <RelativeLayout
-                                   android:layout_width="50dp"
-                                   android:layout_height="50dp"
-                                   android:background="@drawable/circle_accent"
-                                   android:layout_margin="3dp"
-                                   >
-
-                                   <ImageButton
-                                       android:id="@+id/main_horizontal_scan_button"
-                                       android:layout_width="wrap_content"
-                                       android:layout_height="wrap_content"
-                                       android:scaleType="center"
-                                       android:src="@drawable/ic_qr_inlens"
-                                       android:layout_centerInParent="true"
-                                       android:background="@android:color/transparent"/>
-
-                               </RelativeLayout>
-
-                               <TextView
-                                   android:layout_width="match_parent"
-                                   android:layout_height="wrap_content"
-                                   android:layout_gravity="center_horizontal"
-                                   android:gravity="center"
-                                   android:text="Scan"
-                                   android:background="@color/white"
-                                   android:textSize="12sp"
-                                   android:textStyle="bold" />
-
-                           </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:scrollbars="none">
 
 
-                       </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:layout_marginStart="4dp">
 
-                       <LinearLayout
-                           android:layout_width="1dp"
-                           android:layout_height="match_parent"
-                           android:layout_gravity="center_vertical"
-                           android:layout_marginStart="5dp"
-                           android:layout_marginEnd="5dp"
-                           android:background="@color/colorAccent">
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_weight="1">
 
-                       </LinearLayout>
+                            <ImageButton
+                                android:id="@+id/main_horizontal_new_album_button"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_margin="3dp"
+                                android:background="@drawable/circle_accent"
+                                android:elevation="1dp"
+                                android:scaleType="center"
+                                android:src="@drawable/ic_library_add_black_24dp"
+                                android:tint="@color/white" />
 
-                       <RelativeLayout
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:gravity="center"
+                                android:text="New"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
 
-                           <android.support.v7.widget.RecyclerView
-                               android:id="@+id/main_horizontal_recyclerview"
-                               android:layout_width="wrap_content"
-                               android:layout_height="wrap_content"
-                               android:layout_gravity="center_vertical"
-                               android:orientation="horizontal"
-                               android:background="@color/colorAccentlight"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:layout_weight="1"
+                            android:layout_gravity="center_horizontal">
+
+                            <RelativeLayout
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:background="@drawable/circle_accent"
+                                android:layout_margin="3dp"
+                                >
+
+                                <ImageButton
+                                    android:id="@+id/main_horizontal_scan_button"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:scaleType="center"
+                                    android:src="@drawable/ic_qr_inlens"
+                                    android:layout_centerInParent="true"
+                                    android:background="@android:color/transparent"/>
+
+                            </RelativeLayout>
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:gravity="center"
+                                android:text="Scan"
+                                android:background="@color/white"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
 
 
-                       </RelativeLayout>
+                    </LinearLayout>
 
-                   </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@color/colorAccent">
 
-               </HorizontalScrollView>
+                    </LinearLayout>
 
-               <RelativeLayout
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
-                   >
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
 
-                   <android.support.v7.widget.RecyclerView
-                       android:id="@+id/main_recyclerview"
-                       android:layout_width="match_parent"
-                       android:layout_height="wrap_content"
-                       android:layout_marginTop="15dp">
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/main_horizontal_recyclerview"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:background="@color/colorAccentlight"/>
 
-                   </android.support.v7.widget.RecyclerView>
 
-               </RelativeLayout>
+                    </RelativeLayout>
 
-           </LinearLayout>
+                </LinearLayout>
 
-        </ScrollView>
+            </HorizontalScrollView>
+
+        </LinearLayout>
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/main_recyclerview"
+            android:layout_below="@id/main_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp">
+
+        </android.support.v7.widget.RecyclerView>
 
         <TextView
             android:id="@+id/nocloudalbumtextview"
@@ -294,14 +279,6 @@
 
 
     </RelativeLayout>
-
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/main_bottom_nav_parent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:elevation="20dp"/>
 
 
 </RelativeLayout>
