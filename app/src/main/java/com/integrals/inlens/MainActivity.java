@@ -170,6 +170,8 @@ public class MainActivity extends AppCompatActivity {
 
     private BroadcastReceiver br;
     private RelativeLayout NoInternetView;
+    private TextView NoInternetTextView;
+
     private boolean GotoGallery = false;
 
     private int Position=0;
@@ -223,6 +225,7 @@ public class MainActivity extends AppCompatActivity {
         NoAlbumTextView = findViewById(R.id.nocloudalbumtextview);
 
         NoInternetView = findViewById(R.id.main_no_internet_relativelayout);
+        NoInternetTextView = findViewById(R.id.main_no_internet_textview);
 
         MainToolbar = findViewById(R.id.mainactivity_toolbar);
 
@@ -1378,15 +1381,27 @@ public class MainActivity extends AppCompatActivity {
                     NetworkInfo.State state = info.getState();
                     if (state == NetworkInfo.State.CONNECTED) {
 
-                        if (MyCommunityDetails.size() == 0) {
-                            ShowAllAlbums();
-                        }
-                        NoInternetView.clearAnimation();
-                        NoInternetView.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_bottom));
-                        NoInternetView.getAnimation().start();
-                        NoInternetView.setVisibility(View.GONE);
+
+                        NoInternetTextView.setText("Back online.");
+                        NoInternetView.setBackgroundColor(Color.parseColor("#ff0f9d58"));
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                NoInternetView.clearAnimation();
+                                NoInternetView.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_bottom));
+                                NoInternetView.getAnimation().start();
+                                NoInternetView.setVisibility(View.GONE);
+
+
+                            }
+                        },1000);
 
                     } else {
+
+                        NoInternetTextView.setText("Internet connection lost.");
+                        NoInternetView.setBackgroundColor(Color.parseColor("#ffc53929"));
 
                         NoInternetView.clearAnimation();
                         NoInternetView.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_up));
@@ -1402,7 +1417,6 @@ public class MainActivity extends AppCompatActivity {
             registerReceiver(br, intentFilter);
         }
     }
-
 
     @Override
     protected void onDestroy() {

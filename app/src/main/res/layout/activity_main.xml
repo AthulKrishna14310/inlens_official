@@ -278,24 +278,19 @@
         android:id="@+id/main_no_internet_relativelayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center"
-        android:layout_margin="10dp"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/curved_corners"
-        android:backgroundTint="@color/colorPrimaryDark"
-        android:layout_above="@id/main_bottom_nav_parent"
-        android:visibility="gone"
-        >
+        android:background="@color/quantum_googred700"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone">
 
         <TextView
+            android:id="@+id/main_no_internet_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
             android:gravity="center"
-            android:padding="10dp"
+            android:padding="2dp"
             android:text=" Internet connection lost."
             android:textColor="@color/white"
-            android:textSize="20sp" />
+            android:textSize="14sp" />
 
 
     </RelativeLayout>
