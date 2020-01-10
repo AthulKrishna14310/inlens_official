@@ -178,10 +178,10 @@
                                         android:id="@+id/main_horizontal_scan_button"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:scaleType="center"
-                                        android:src="@drawable/ic_qr_inlens"
                                         android:layout_centerInParent="true"
-                                        android:background="@android:color/transparent"/>
+                                        android:background="#00FFFFFF"
+                                        android:scaleType="center"
+                                        android:src="@drawable/ic_qr_inlens" />
 
                                 </RelativeLayout>
 
@@ -230,6 +230,69 @@
                 </HorizontalScrollView>
 
                 <RelativeLayout
+                    android:id="@+id/optionsRelativeLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorAccentlight"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/addParticipantsTxt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:background="@drawable/button_bg"
+                        android:gravity="center"
+                        android:padding="7dp"
+                        android:text="Add Participants"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/addPhotosTxt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_toRightOf="@id/addParticipantsTxt"
+                        android:background="@drawable/button_bg"
+                        android:gravity="center"
+                        android:padding="7dp"
+                        android:text="Add Photos"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/recentImageSwitchTxt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/recentImageNotificationSwitch"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="3dp"
+                        android:text="Image Notification ON"
+                        android:textColor="@color/red_400"
+                        android:textSize="10sp" />
+
+                    <Switch
+                        android:id="@+id/recentImageNotificationSwitch"
+                        android:layout_width="50dp"
+                        android:layout_height="35dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginRight="40dp"
+                        android:layout_marginBottom="5dp"
+                        android:checked="true"
+                        android:textSize="20sp"
+                        android:track="@drawable/search_background_oval" />
+                </RelativeLayout>
+
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     >
@@ -238,7 +301,7 @@
                         android:id="@+id/main_recyclerview"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp">
+                        android:layout_marginTop="5dp">
 
                     </android.support.v7.widget.RecyclerView>
 

@@ -295,6 +295,7 @@ public class InlensGalleryActivity extends AppCompatActivity {
 
                 if (UploadQueue.size() == 0) {
                     Toast.makeText(getApplicationContext(), "No images selected.", Toast.LENGTH_SHORT).show();
+                    findViewById(R.id.textInlensGallery).setVisibility(View.VISIBLE);
                 } else {
 
                     UploadCount = 0;
@@ -393,8 +394,8 @@ public class InlensGalleryActivity extends AppCompatActivity {
                 }
 
                 if (AllCommunityImages.size() == 0) {
-                    Toast.makeText(InlensGalleryActivity.this, "No images found.", Toast.LENGTH_SHORT).show();
-
+                    Toast.makeText(InlensGalleryActivity.this, "No recent photos, Use any camera app to take photos.", Toast.LENGTH_LONG).show();
+                    findViewById(R.id.textInlensGallery).setVisibility(View.VISIBLE);
                 }
 
             }

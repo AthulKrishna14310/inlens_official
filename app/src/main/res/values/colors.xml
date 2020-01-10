@@ -87,7 +87,7 @@
     <color name="colorAccentDark">#fff50057</color>
     <color name="colorAccentLight">#ffff80ab</color>
     <color name="colorChipViewBackground">#ffe0e0e0</color>
-    <color name="colorCloseChip">#ffababab</color>
+    <color name="colorCloseChip">#ABABAB</color>
     <color name="colorPrimaryLight">#ff1e88e5</color>
     <color name="common_google_signin_btn_text_dark_default">@android:color/white</color>
     <color name="common_google_signin_btn_text_dark_disabled">#1f000000</color>

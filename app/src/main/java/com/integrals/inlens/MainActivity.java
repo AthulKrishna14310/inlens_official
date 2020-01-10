@@ -48,6 +48,7 @@ import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.HorizontalScrollView;
@@ -57,6 +58,7 @@ import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -126,7 +128,8 @@ import org.michaelbel.bottomsheet.BottomSheet;
 public class MainActivity extends AppCompatActivity {
 
 
-    private String CurrentUserID = "Not Available", CurrentActiveCommunityID = "Not Available", DummyCurrentActiveCommunityID = "Not Available", CurrentDeadCommunityID = "Not Available";
+    private String CurrentUserID = "Not Available",
+            CurrentActiveCommunityID = "Not Available", DummyCurrentActiveCommunityID = "Not Available", CurrentDeadCommunityID = "Not Available";
     private String ResultName = "Unknown",ResultImage= "Unknown";
     private List<String> ParticipantIDs;
 
@@ -951,14 +954,14 @@ public class MainActivity extends AppCompatActivity {
                         MainVerticalRecyclerView.setAdapter(adapter);
                     } else {
                         MainVerticalRecyclerView.setVisibility(View.GONE);
-                        NoAlbumTextView.setText("Community has no photos");
+                        NoAlbumTextView.setText("Cloud-Album has no photos.\n Long press on the album for options");
                         NoAlbumTextView.setVisibility(View.VISIBLE);
                     }
 
 
                 } else {
                     MainVerticalRecyclerView.setVisibility(View.GONE);
-                    NoAlbumTextView.setText("Community has no photos");
+                    NoAlbumTextView.setText("Cloud-Album has no photos. \n Long press on the album for options");
                     NoAlbumTextView.setVisibility(View.VISIBLE);
                 }
 
@@ -1245,8 +1248,6 @@ public class MainActivity extends AppCompatActivity {
                 holder.Indicator.setVisibility(View.VISIBLE);
                 holder.itemView.setAlpha((float) 1);
                 SetVerticalRecyclerView(CommunityDetails.get(Position).getCommunityID());
-
-
             }
 
 
@@ -1261,7 +1262,46 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             });
+            if(CurrentActiveCommunityID.contentEquals(CommunityDetails.get(Position).getCommunityID())){
+             findViewById(R.id.optionsRelativeLayout).setVisibility(View.VISIBLE);
+             findViewById(R.id.addParticipantsTxt).setOnClickListener(new View.OnClickListener() {
+                 @Override
+                 public void onClick(View view) {
+                     QRCodeInit(getMyCommunityDetails().get(getPosition()).getCommunityID());
+                 }
+             });
 
+             findViewById(R.id.addPhotosTxt).setOnClickListener(new View.OnClickListener() {
+                 @Override
+                 public void onClick(View view) {
+                     Intent intent = new Intent(getApplicationContext(), InlensGalleryActivity.class);
+                     intent.putExtra("CommunityID", getMyCommunityDetails().get(getPosition()).getCommunityID());
+                     intent.putExtra("CommunityName", getMyCommunityDetails().get(getPosition()).getTitle());
+                     intent.putExtra("CommunityStartTime", getMyCommunityDetails().get(getPosition()).getStartTime());
+                     intent.putExtra("CommunityEndTime", getMyCommunityDetails().get(getPosition()).getEndTime());
+                     startActivity(intent);
+                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+
+                 }
+             });
+
+             Switch s=findViewById(R.id.recentImageNotificationSwitch);
+             TextView t=findViewById(R.id.recentImageSwitchTxt);
+             s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                 @Override
+                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                     if(compoundButton.isChecked()){
+                         t.setText("Image Notification ON");
+                     }else{
+                         t.setText("Image Notification OFF");
+                     }
+                 }
+             });
+
+            }else{
+                findViewById(R.id.optionsRelativeLayout).setVisibility(View.GONE);
+
+            }
             holder.AlbumNameTextView.setText(CommunityDetails.get(position).getTitle());
             holder.AlbumDescriptionTextView.setText(CommunityDetails.get(position).getDescription());
 

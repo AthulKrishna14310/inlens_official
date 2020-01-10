@@ -180,7 +180,9 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
                 if (activity.getMyCommunityDetails().get(activity.getPosition()).getCommunityID().equals(activity.getCurrentActiveCommunityID())
                         || activity.getMyCommunityDetails().get(activity.getPosition()).getCommunityID().equals(activity.getCurrentActiveCommunityID())) {
                     activity.QRCodeInit(activity.getMyCommunityDetails().get(activity.getPosition()).getCommunityID());
-                } else {
+
+                }
+                else {
                     Toast.makeText(getContext(), "Inactive album.", Toast.LENGTH_SHORT).show();
                 }
             }
