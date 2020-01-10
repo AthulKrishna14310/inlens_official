@@ -234,7 +234,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/colorAccentlight"
-                    android:visibility="gone">
+                    android:visibility="visible">
 
                     <TextView
                         android:id="@+id/addParticipantsTxt"
@@ -267,7 +267,16 @@
                         android:text="Add Photos"
                         android:textColor="@color/colorPrimaryDark"
                         android:textSize="14sp" />
-
+                    <TextView
+                        android:id="@+id/recentImageTimerTxt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/recentImageNotificationSwitch"
+                        android:layout_alignParentLeft="true"
+                        android:layout_marginLeft="6dp"
+                        android:text="You can upload photos till 00:00"
+                        android:textColor="@color/red_400"
+                        android:textSize="10sp" />
                     <TextView
                         android:id="@+id/recentImageSwitchTxt"
                         android:layout_width="wrap_content"
