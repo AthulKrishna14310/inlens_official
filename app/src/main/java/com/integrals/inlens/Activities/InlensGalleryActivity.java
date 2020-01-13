@@ -209,7 +209,7 @@ public class InlensGalleryActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 new AlertDialog.Builder(InlensGalleryActivity.this).setTitle("Inlens Gallery")
-                        .setMessage("This gallery shows all the images that can be upload to your current community. Swipe down to load new images.")
+                        .setMessage("This gallery shows all the images that can be upload to your current community. Swipe down to load new images. \n 1.Take photos with any camera app. \n 2. Tap on Image-Notification. \n 3. Select Images and upload. ")
                         .setPositiveButton("Ok, I understand", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -295,7 +295,19 @@ public class InlensGalleryActivity extends AppCompatActivity {
 
                 if (UploadQueue.size() == 0) {
                     Toast.makeText(getApplicationContext(), "No images selected.", Toast.LENGTH_SHORT).show();
-                    findViewById(R.id.textInlensGallery).setVisibility(View.VISIBLE);
+                    new AlertDialog.Builder(InlensGalleryActivity.this).setTitle("Inlens Gallery")
+                            .setMessage("This gallery shows all the images that can be upload to your current community. Swipe down to load new images. \n 1.Take photos with any camera app. \n 2. Tap on Image-Notification. \n 3. Select Images and upload. ")
+                            .setPositiveButton("Ok, I understand", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                    dialogInterface.dismiss();
+
+                                }
+                            })
+                            .setCancelable(true)
+                            .create()
+                            .show();
                 } else {
 
                     UploadCount = 0;
@@ -373,7 +385,6 @@ public class InlensGalleryActivity extends AppCompatActivity {
 
 
         GetAllImagesFromDatabase();
-        Toast.makeText(this, "Fetching all images. Please wait.", Toast.LENGTH_SHORT).show();
         GallerySwipeRefreshLayout.setRefreshing(true);
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -389,13 +400,23 @@ public class InlensGalleryActivity extends AppCompatActivity {
                 }
                 catch (NumberFormatException e)
                 {
-                    Toast.makeText(InlensGalleryActivity.this, "UserInfo sync required.", Toast.LENGTH_SHORT).show();
-
+                    e.printStackTrace();
                 }
 
                 if (AllCommunityImages.size() == 0) {
-                    Toast.makeText(InlensGalleryActivity.this, "No recent photos, Use any camera app to take photos.", Toast.LENGTH_LONG).show();
-                    findViewById(R.id.textInlensGallery).setVisibility(View.VISIBLE);
+                    new AlertDialog.Builder(InlensGalleryActivity.this).setTitle("Inlens Gallery")
+                            .setMessage("This gallery shows all the images that can be upload to your current community. Swipe down to load new images.\n1.Take photos with any camera app.\n2.Tap on Image-Notification.\n3.Select Images and upload. ")
+                            .setPositiveButton("Ok, I understand", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                    dialogInterface.dismiss();
+
+                                }
+                            })
+                            .setCancelable(true)
+                            .create()
+                            .show();
                 }
 
             }

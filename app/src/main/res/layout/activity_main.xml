@@ -292,11 +292,10 @@
                         android:id="@+id/recentImageNotificationSwitch"
                         android:layout_width="50dp"
                         android:layout_height="35dp"
-                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
                         android:layout_marginTop="5dp"
-                        android:layout_marginRight="40dp"
+                        android:layout_marginEnd="40dp"
                         android:layout_marginBottom="5dp"
-                        android:checked="true"
                         android:textSize="20sp"
                         android:track="@drawable/search_background_oval" />
                 </RelativeLayout>

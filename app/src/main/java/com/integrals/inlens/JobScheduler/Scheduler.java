@@ -19,6 +19,8 @@ public class Scheduler extends JobService {
 
         AlarmManagerHelper alarmManagerHelper=new AlarmManagerHelper(getApplicationContext());
         alarmManagerHelper.initiateAlarmManager(5);
+
+
         scannerTask = new ScannerTask(this)
         {
             @Override

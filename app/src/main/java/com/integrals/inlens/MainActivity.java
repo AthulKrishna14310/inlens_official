@@ -36,6 +36,8 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.format.DateFormat;
+import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -114,6 +116,7 @@ import com.vistrav.ask.Ask;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -182,6 +185,8 @@ public class MainActivity extends AppCompatActivity {
     private JobScheduler jobScheduler;
     private JobInfo jobInfo;
 
+    Switch imageNotificationSwitch;
+    TextView imageNotificationTextView;
 
     public MainActivity() {
     }
@@ -191,17 +196,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP)
-        {
-            ComponentName componentName = new ComponentName(this, Scheduler.class);
-            JobInfo.Builder builder = new JobInfo.Builder(JOB_ID,componentName);
-            builder.setPeriodic(5000);
-            builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
-            builder.setPersisted(true);
-            jobInfo=builder.build();
-            jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-            jobScheduler.schedule(jobInfo);
-        }
+
 
         MyCommunityDetails = new ArrayList<>();
         ParticipantIDs = new ArrayList<>();
@@ -214,6 +209,8 @@ public class MainActivity extends AppCompatActivity {
         MainHorizontalScrollView.setVerticalScrollBarEnabled(false);
 
 
+        imageNotificationSwitch=findViewById(R.id.recentImageNotificationSwitch);
+        imageNotificationTextView=findViewById(R.id.recentImageSwitchTxt);
 
         MainNewAlbumButton = findViewById(R.id.main_horizontal_new_album_button);
         MainScanQrButton = findViewById(R.id.main_horizontal_scan_button);
@@ -266,6 +263,53 @@ public class MainActivity extends AppCompatActivity {
         checkInternetConnection();
         InitPostDialog();
 
+        SharedPreferences NotificationTimer = getSharedPreferences("NotificationTimer.pref",Context.MODE_PRIVATE);
+        boolean val = NotificationTimer.getBoolean("enable",true);
+        if(val)
+        {
+            imageNotificationSwitch.setChecked(true);
+            imageNotificationTextView.setText("Image Notification ON");
+
+        }
+        else
+        {
+            imageNotificationSwitch.setChecked(false);
+            imageNotificationTextView.setText("Image Notification OFF");
+
+        }
+
+        if(imageNotificationSwitch.isChecked())
+        {
+            scheduleJob();
+
+        }
+        else
+        {
+            stopJob();
+        }
+
+        imageNotificationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+                if(compoundButton.isChecked()){
+                    imageNotificationTextView.setText("Image Notification ON");
+                    SharedPreferences.Editor editor = NotificationTimer.edit();
+                    editor.putBoolean("enable", true);
+                    editor.commit();
+                    scheduleJob();
+
+
+                }else{
+                    imageNotificationTextView.setText("Image Notification OFF");
+                    SharedPreferences.Editor editor = NotificationTimer.edit();
+                    editor.putBoolean("enable", false);
+                    editor.commit();
+                    stopJob();
+
+                }
+            }
+        });
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             Ref.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
@@ -917,6 +961,22 @@ public class MainActivity extends AppCompatActivity {
         MyPostList = new ArrayList<>();
         NoAlbumTextView.setVisibility(View.GONE);
 
+        TextView recentImageTimerTxt = findViewById(R.id.recentImageTimerTxt);
+        for(int i=0;i<MyCommunityDetails.size();i++)
+        {
+            if(MyCommunityDetails.get(i).getCommunityID().equalsIgnoreCase(communityID))
+            {
+                long time = Long.parseLong(MyCommunityDetails.get(i).getEndTime());
+                CharSequence Time = DateUtils.getRelativeDateTimeString(this, time, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
+                String timesubstring = Time.toString().substring(Time.length() - 8);
+                Date date = new Date(time);
+                String dateformat = DateFormat.format("dd-MM-yyyy", date).toString();
+                recentImageTimerTxt.setText("You can upload photos till "+dateformat + " ," + timesubstring);
+
+            }
+        }
+
+
         Ref.child("Communities").child(communityID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -1285,18 +1345,7 @@ public class MainActivity extends AppCompatActivity {
                  }
              });
 
-             Switch s=findViewById(R.id.recentImageNotificationSwitch);
-             TextView t=findViewById(R.id.recentImageSwitchTxt);
-             s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                 @Override
-                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                     if(compoundButton.isChecked()){
-                         t.setText("Image Notification ON");
-                     }else{
-                         t.setText("Image Notification OFF");
-                     }
-                 }
-             });
+
 
             }else{
                 findViewById(R.id.optionsRelativeLayout).setVisibility(View.GONE);
@@ -1646,6 +1695,33 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .into(PostDialogImageView);
 
+    }
+
+    public void scheduleJob()
+    {
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP)
+        {
+            ComponentName componentName = new ComponentName(this, Scheduler.class);
+            JobInfo.Builder builder = new JobInfo.Builder(JOB_ID,componentName);
+            builder.setPeriodic(1000*60);
+            builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+            builder.setPersisted(true);
+            jobInfo=builder.build();
+            jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+            jobScheduler.schedule(jobInfo);
+        }
+    }
+
+    public void stopJob()
+    {
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP)
+        {
+            jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+            jobScheduler.cancel(JOB_ID);
+        }
+
+        AlarmManagerHelper helper = new AlarmManagerHelper(this);
+        helper.deinitateAlarmManager();
     }
 
     public String getCurrentUserID() {
