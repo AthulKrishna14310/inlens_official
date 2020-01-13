@@ -1703,13 +1703,16 @@ public class MainActivity extends AppCompatActivity {
         {
             ComponentName componentName = new ComponentName(this, Scheduler.class);
             JobInfo.Builder builder = new JobInfo.Builder(JOB_ID,componentName);
-            builder.setPeriodic(1000*60);
+            builder.setPeriodic(5000);
             builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
             builder.setPersisted(true);
             jobInfo=builder.build();
             jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
             jobScheduler.schedule(jobInfo);
         }
+
+        AlarmManagerHelper helper = new AlarmManagerHelper(this);
+        helper.initiateAlarmManager(5);
     }
 
     public void stopJob()
