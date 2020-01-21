@@ -165,7 +165,8 @@
             android:paddingLeft="@dimen/spacing_mxlarge"
             android:paddingTop="8dp"
             android:paddingRight="@dimen/spacing_mxlarge"
-            android:paddingBottom="8dp">
+            android:paddingBottom="8dp"
+            android:visibility="gone">
 
             <ImageView
                 android:layout_width="24dp"
@@ -196,7 +197,8 @@
             android:paddingLeft="@dimen/spacing_mxlarge"
             android:paddingTop="8dp"
             android:paddingRight="@dimen/spacing_mxlarge"
-            android:paddingBottom="8dp">
+            android:paddingBottom="8dp"
+            android:visibility="gone">
 
             <ImageView
                 android:layout_width="24dp"
@@ -227,7 +229,8 @@
             android:paddingLeft="@dimen/spacing_mxlarge"
             android:paddingTop="8dp"
             android:paddingRight="@dimen/spacing_mxlarge"
-            android:paddingBottom="8dp">
+            android:paddingBottom="8dp"
+            android:visibility="gone">
 
             <ImageView
                 android:layout_width="24dp"

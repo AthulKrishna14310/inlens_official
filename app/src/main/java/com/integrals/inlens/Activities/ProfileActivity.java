@@ -116,23 +116,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         AllCommunities = new ArrayList<>();
         AllImages = new ArrayList<>();
-        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
-                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                .setTitle("Profile Activity")
-                .setIcon(R.drawable.ic_warning_black_24dp)
-                .setMessage("This activity's  User-Interface  is not implemented and to be fixed in comming update")
-                .setCancelable(false)
-                .addButton("    OK    ", -1,  Color.parseColor("#3E3D63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
-                        CFAlertDialog.CFAlertActionAlignment.END,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-
-        builder.show();
-        PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+         PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.M) {
             BatteryOptimizationTextView.setVisibility(View.GONE);
         }
@@ -286,9 +270,9 @@ public class ProfileActivity extends AppCompatActivity {
                         CCount++;
                     }
 
-                    ProfileCommunityCountTextview.setText("Communities : "+CCount);
+                    ProfileCommunityCountTextview.setText("Cloud-Albums : "+CCount);
                 } else {
-                    ProfileCommunityCountTextview.setText("Communities : -NA-");
+                    ProfileCommunityCountTextview.setText("Cloud-Albums : -NA-");
                 }
 
                 if (dataSnapshot.hasChild("Name")) {
@@ -489,7 +473,7 @@ public class ProfileActivity extends AppCompatActivity {
             Uri imageUri = data.getData();
             CropImage.activity(imageUri)
                     .setAspectRatio(1, 1)
-                    .setMinCropWindowSize(500, 500)
+                    .setMinCropWindowSize(260, 200)
                     .start(this);
             finish();
 

@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -23,10 +24,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.provider.Settings;
 import android.support.annotation.MenuRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -36,11 +40,11 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.text.format.DateFormat;
-import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -108,18 +112,24 @@ import com.integrals.inlens.JobScheduler.Scheduler;
 import com.integrals.inlens.Models.CommunityModel;
 import com.integrals.inlens.Models.PostModel;
 import com.integrals.inlens.Notification.AlarmManagerHelper;
+import com.integrals.inlens.Weather.Model.Main;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 import com.vistrav.ask.Ask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import id.zelory.compressor.Compressor;
 
 import com.integrals.inlens.Activities.CreateCloudAlbum;
 import com.integrals.inlens.Activities.QRCodeReader;
@@ -150,20 +160,18 @@ public class MainActivity extends AppCompatActivity {
     private String PostKeyForEdit,CurrentKeyShowninVerticialRecyclerview=null;
     private static final int GALLERY_PICK = 1;
     private static final int COVER_GALLERY_PICK = 78;
-    private static boolean COVER_CHANGE = false;
+    private static boolean COVER_CHANGE = false , PROFILE_CHANGE=false;
     private static boolean SEARCH_IN_PROGRESS = false;
+    private NavigationView navigationView;
 
-
-    private RelativeLayout RootForMainActivity;
+    private DrawerLayout RootForMainActivity;
 
     private int INTID = 3939;
 
     private RecyclerView MainHorizontalRecyclerview, MainVerticalRecyclerView;
     private ImageButton MainNewAlbumButton, MainScanQrButton;
     private HorizontalScrollView MainHorizontalScrollView;
-
     private TextView NoAlbumTextView;
-
     private Boolean SHOW_TOUR = false;
 
 
@@ -185,38 +193,164 @@ public class MainActivity extends AppCompatActivity {
     private JobScheduler jobScheduler;
     private JobInfo jobInfo;
 
-    Switch imageNotificationSwitch;
-    TextView imageNotificationTextView;
 
     public MainActivity() {
     }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP)
+        {
+            ComponentName componentName = new ComponentName(this, Scheduler.class);
+            JobInfo.Builder builder = new JobInfo.Builder(JOB_ID,componentName);
+            builder.setPeriodic(5000);
+            builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+            builder.setPersisted(true);
+            jobInfo=builder.build();
+            jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+            jobScheduler.schedule(jobInfo);
+        }
 
         MyCommunityDetails = new ArrayList<>();
         ParticipantIDs = new ArrayList<>();
-
-
         GotoGallery = getIntent().getBooleanExtra("gallery", false);
-
         MainHorizontalScrollView = findViewById(R.id.main_horizontalscrollview);
         MainHorizontalScrollView.setHorizontalScrollBarEnabled(false);
         MainHorizontalScrollView.setVerticalScrollBarEnabled(false);
-
-
-        imageNotificationSwitch=findViewById(R.id.recentImageNotificationSwitch);
-        imageNotificationTextView=findViewById(R.id.recentImageSwitchTxt);
-
         MainNewAlbumButton = findViewById(R.id.main_horizontal_new_album_button);
         MainScanQrButton = findViewById(R.id.main_horizontal_scan_button);
 
-        MainHorizontalScrollView.smoothScrollTo(0, 0);
 
+        navigationView = (NavigationView) findViewById(R.id.nv);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                 if(item.getItemId()==R.id.profile_preference_bg_service){
+                    {
+
+                        if(Build.BRAND.equalsIgnoreCase("xiaomi") ){
+
+                            Intent intent = new Intent();
+                            intent.setComponent(new ComponentName("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity"));
+                            startActivity(intent);
+
+
+                        }else if(Build.BRAND.equalsIgnoreCase("Letv")){
+
+                            Intent intent = new Intent();
+                            intent.setComponent(new ComponentName("com.letv.android.letvsafe", "com.letv.android.letvsafe.AutobootManageActivity"));
+                            startActivity(intent);
+
+                        }
+                        else if(Build.BRAND.equalsIgnoreCase("Honor")){
+
+                            Intent intent = new Intent();
+                            intent.setComponent(new ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.optimize.process.ProtectActivity"));
+                            startActivity(intent);
+
+                        }
+                        else if(Build.BRAND.equalsIgnoreCase("vivo"))
+                        {
+                            try {
+                                Intent intent = new Intent();
+                                intent.setComponent(new ComponentName("com.iqoo.secure",
+                                        "com.iqoo.secure.ui.phoneoptimize.AddWhiteListActivity"));
+                                startActivity(intent);
+                            } catch (Exception e) {
+                                try {
+                                    Intent intent = new Intent();
+                                    intent.setComponent(new ComponentName("com.vivo.permissionmanager",
+                                            "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"));
+                                    startActivity(intent);
+                                } catch (Exception ex) {
+                                    try {
+                                        Intent intent = new Intent();
+                                        intent.setClassName("com.iqoo.secure",
+                                                "com.iqoo.secure.ui.phoneoptimize.BgStartUpManager");
+                                        startActivity(intent);
+                                    } catch (Exception exx) {
+                                        ex.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+                        else  if (Build.MANUFACTURER.equalsIgnoreCase("oppo")) {
+                            try {
+                                Intent intent = new Intent();
+                                intent.setClassName("com.coloros.safecenter",
+                                        "com.coloros.safecenter.permission.startup.StartupAppListActivity");
+                                startActivity(intent);
+                            } catch (Exception e) {
+                                try {
+                                    Intent intent = new Intent();
+                                    intent.setClassName("com.oppo.safe",
+                                            "com.oppo.safe.permission.startup.StartupAppListActivity");
+                                    startActivity(intent);
+
+                                } catch (Exception ex) {
+                                    try {
+                                        Intent intent = new Intent();
+                                        intent.setClassName("com.coloros.safecenter",
+                                                "com.coloros.safecenter.startupapp.StartupAppListActivity");
+                                        startActivity(intent);
+                                    } catch (Exception exx) {
+
+                                    }
+                                }
+                            }
+                        }else{
+                            // Set Content for Samsung
+                            Toast.makeText(getApplicationContext(),"Please enable or disable background tasks for your phone  manually",Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+
+
+
+                    return true;
+                }
+
+                else if(item.getItemId()==R.id.profile_preference_battery_optimization){
+
+                    Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                    intent.setData(Uri.parse("package:" + getPackageName()));
+                    startActivity(intent);
+                    Toast.makeText(getApplicationContext(),"Battery Optimisation has been disabled for this app, you can open Battery optimisation settings to enable it",Toast.LENGTH_LONG).show();
+
+                    return true;
+                }
+
+                else if(item.getItemId()==R.id.profile_preference){
+                     if (new PreOperationCheck().checkInternetConnectivity(getApplicationContext())) {
+                          setCoverChange(false);
+                          setProfileChange(true);
+                          GetStartedWithNewProfileImage();
+                     } else {
+                         Toast.makeText(getApplicationContext(), "Unable to connect to internet. Try again.", Toast.LENGTH_SHORT).show();
+
+                     }
+
+                     return true;
+
+                 }
+                else if(item.getItemId()==R.id.profile_activity){
+                     startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+                     overridePendingTransition(R.anim.activity_fade_in, R.anim.activity_fade_out);
+
+                    return true;
+                 }
+                return true;
+            }
+        });
+
+
+        MainHorizontalScrollView.smoothScrollTo(0, 0);
         NoAlbumTextView = findViewById(R.id.nocloudalbumtextview);
 
         NoInternetView = findViewById(R.id.main_no_internet_relativelayout);
@@ -224,7 +358,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         MainToolbar = findViewById(R.id.mainactivity_toolbar);
-
         MainProfileImageview = findViewById(R.id.mainactivity_actionbar_profileimageview);
         MainSearchButton = findViewById(R.id.mainactivity_actionbar_searchbutton);
         MainActionbar = findViewById(R.id.mainactivity_actionbar_relativelayout);
@@ -254,6 +387,8 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         };
+
+
         MainVerticalRecyclerView.setLayoutManager(staggeredGridLayoutManager);
 
         MainLoadingProgressBar = findViewById(R.id.mainloadingpbar);
@@ -263,53 +398,6 @@ public class MainActivity extends AppCompatActivity {
         checkInternetConnection();
         InitPostDialog();
 
-        SharedPreferences NotificationTimer = getSharedPreferences("NotificationTimer.pref",Context.MODE_PRIVATE);
-        boolean val = NotificationTimer.getBoolean("enable",true);
-        if(val)
-        {
-            imageNotificationSwitch.setChecked(true);
-            imageNotificationTextView.setText("Image Notification ON");
-
-        }
-        else
-        {
-            imageNotificationSwitch.setChecked(false);
-            imageNotificationTextView.setText("Image Notification OFF");
-
-        }
-
-        if(imageNotificationSwitch.isChecked())
-        {
-            scheduleJob();
-
-        }
-        else
-        {
-            stopJob();
-        }
-
-        imageNotificationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-
-                if(compoundButton.isChecked()){
-                    imageNotificationTextView.setText("Image Notification ON");
-                    SharedPreferences.Editor editor = NotificationTimer.edit();
-                    editor.putBoolean("enable", true);
-                    editor.commit();
-                    scheduleJob();
-
-
-                }else{
-                    imageNotificationTextView.setText("Image Notification OFF");
-                    SharedPreferences.Editor editor = NotificationTimer.edit();
-                    editor.putBoolean("enable", false);
-                    editor.commit();
-                    stopJob();
-
-                }
-            }
-        });
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             Ref.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
@@ -331,10 +419,44 @@ public class MainActivity extends AppCompatActivity {
                         }
                         ShowAllAlbums();
                     }
+                    String name = dataSnapshot.child("Name").getValue().toString();
+                    String email = dataSnapshot.child("Email").getValue().toString();
+
+
+                    TextView tEmail=navigationView.getHeaderView(0).findViewById(R.id.headerNameX);
+                    TextView tName=navigationView.getHeaderView(0).findViewById(R.id.headerEmailX);
+
+                    tName.setText(name);
+                    tEmail.setText(email);
+
 
                     if (dataSnapshot.hasChild("Profile_picture")) {
+
                         String image = dataSnapshot.child("Profile_picture").getValue().toString();
-                        Glide.with(getApplicationContext()).load(image).into(MainProfileImageview);
+
+                        Glide.with(getApplicationContext()).load(image).addListener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                RequestOptions requestOptions=new RequestOptions()
+                                        .centerCrop()
+                                        ;
+                                Glide.with(getApplicationContext())
+                                        .load(image)
+                                        .apply(requestOptions)
+                                        .into((ImageView) navigationView.getHeaderView(0).findViewById(R.id.headerImageView))
+
+                                ;
+
+                                return false;
+                            }
+                        })
+                                .into(MainProfileImageview);
+
                     }
                 }
 
@@ -352,9 +474,9 @@ public class MainActivity extends AppCompatActivity {
         MainProfileImageview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                startActivity(new Intent(MainActivity.this, ProfileActivity.class));
-                overridePendingTransition(R.anim.activity_fade_in, R.anim.activity_fade_out);
+//
+//
+                 RootForMainActivity.openDrawer(Gravity.START);
             }
         });
 
@@ -475,6 +597,15 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+
+
+    public void GetStartedWithNewProfileImage() {
+        CropImage.activity()
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .start(MainActivity.this);
+    }
+
 
     private void SetDefaultView() {
 
@@ -961,22 +1092,6 @@ public class MainActivity extends AppCompatActivity {
         MyPostList = new ArrayList<>();
         NoAlbumTextView.setVisibility(View.GONE);
 
-        TextView recentImageTimerTxt = findViewById(R.id.recentImageTimerTxt);
-        for(int i=0;i<MyCommunityDetails.size();i++)
-        {
-            if(MyCommunityDetails.get(i).getCommunityID().equalsIgnoreCase(communityID))
-            {
-                long time = Long.parseLong(MyCommunityDetails.get(i).getEndTime());
-                CharSequence Time = DateUtils.getRelativeDateTimeString(this, time, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
-                String timesubstring = Time.toString().substring(Time.length() - 8);
-                Date date = new Date(time);
-                String dateformat = DateFormat.format("dd-MM-yyyy", date).toString();
-                recentImageTimerTxt.setText("You can upload photos till "+dateformat + " ," + timesubstring);
-
-            }
-        }
-
-
         Ref.child("Communities").child(communityID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -1156,7 +1271,8 @@ public class MainActivity extends AppCompatActivity {
 
             Uri imageUri = data.getData();
             CropImage.activity(imageUri)
-                    .setCropShape(CropImageView.CropShape.RECTANGLE)
+                    .setAspectRatio(1, 1)
+                    .setMinCropWindowSize(500, 500)
                     .start(this);
             finish();
         } else if (requestCode == GALLERY_PICK && resultCode == RESULT_OK) {
@@ -1170,7 +1286,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && COVER_CHANGE) {
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && COVER_CHANGE && !PROFILE_CHANGE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
                 Uri ImageUri = result.getUri();
@@ -1182,6 +1298,84 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && !COVER_CHANGE && PROFILE_CHANGE) {
+
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+
+
+                Uri resultUri = result.getUri();
+                try {
+                    InputStream stream = getContentResolver().openInputStream(resultUri);
+                    Bitmap bitmap = BitmapFactory.decodeStream(stream);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+
+                File thumb_filePath = new File(resultUri.getPath());
+                final String current_u_i_d = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                Bitmap thumb_bitmap = null;
+                try {
+                    thumb_bitmap = new Compressor(this)
+                            .setMaxWidth(200)
+                            .setMaxHeight(200)
+                            .setQuality(100)
+                            .compressToBitmap(thumb_filePath);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                thumb_bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                final byte[] thumb_byte = baos.toByteArray();
+
+
+                final StorageReference filepath = FirebaseStorage.getInstance().getReference().child("profile_images").child(current_u_i_d + ".jpg");
+                filepath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+
+                        if (task.isSuccessful()) {
+
+                            final String downloadUrl = task.getResult().getDownloadUrl().toString();
+
+
+                            FirebaseDatabase.getInstance().getReference().child("Users").child(current_u_i_d).child("Profile_picture").setValue(downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        {
+                                            Toast.makeText(MainActivity.this, "SUCCESSFULLY UPLOADED", Toast.LENGTH_LONG).show();
+
+
+                                        }
+                                    } else {
+                                        Toast.makeText(MainActivity.this, "FAILED TO SAVE TO DATABASE.MAKE SURE YOUR INTERNET IS CONNECTED AND TRY AGAIN.", Toast.LENGTH_LONG).show();
+
+                                    }
+
+                                }
+                            });
+                        } else {
+                            Toast.makeText(MainActivity.this, "FAILED TO UPLOAD", Toast.LENGTH_LONG).show();
+
+                        }
+                    }
+
+
+                }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                        Toast.makeText(getApplicationContext(),"Uploading your profile-picture please wait ",Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Toast.makeText(MainActivity.this, "FAILED TO UPLOAD", Toast.LENGTH_LONG).show();
+            }
+        }
 
     }
 
@@ -1279,6 +1473,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+
+
     public class MainHorizontalAdapter extends RecyclerView.Adapter<MainHorizontalAdapter.MainCommunityViewHolder> {
 
         List<CommunityModel> CommunityDetails;
@@ -1298,7 +1495,23 @@ public class MainActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull final MainCommunityViewHolder holder, final int position) {
 
             if (!CommunityDetails.get(position).equals("unknown")) {
-                Glide.with(getApplicationContext()).load(CommunityDetails.get(position).getCoverImage()).into(holder.AlbumCoverButton);
+
+                Glide.with(getApplicationContext())
+                        .load(CommunityDetails.get(position)
+                                .getCoverImage()).addListener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        }
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        return false;
+                    }
+                })
+                        .into(holder.AlbumCoverButton);
             } else {
                 Glide.with(getApplicationContext()).load(R.drawable.ic_camera_shutter).into(holder.AlbumCoverButton);
 
@@ -1345,7 +1558,18 @@ public class MainActivity extends AppCompatActivity {
                  }
              });
 
-
+             Switch s=findViewById(R.id.recentImageNotificationSwitch);
+             TextView t=findViewById(R.id.recentImageSwitchTxt);
+             s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                 @Override
+                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                     if(compoundButton.isChecked()){
+                         t.setText("Image Notification ON");
+                     }else{
+                         t.setText("Image Notification OFF");
+                     }
+                 }
+             });
 
             }else{
                 findViewById(R.id.optionsRelativeLayout).setVisibility(View.GONE);
@@ -1523,6 +1747,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
     private void InitPostDialog() {
 
         PostDialog = new Dialog(MainActivity.this);
@@ -1697,36 +1922,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void scheduleJob()
-    {
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP)
-        {
-            ComponentName componentName = new ComponentName(this, Scheduler.class);
-            JobInfo.Builder builder = new JobInfo.Builder(JOB_ID,componentName);
-            builder.setPeriodic(5000);
-            builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
-            builder.setPersisted(true);
-            jobInfo=builder.build();
-            jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-            jobScheduler.schedule(jobInfo);
-        }
-
-        AlarmManagerHelper helper = new AlarmManagerHelper(this);
-        helper.initiateAlarmManager(5);
-    }
-
-    public void stopJob()
-    {
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP)
-        {
-            jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-            jobScheduler.cancel(JOB_ID);
-        }
-
-        AlarmManagerHelper helper = new AlarmManagerHelper(this);
-        helper.deinitateAlarmManager();
-    }
-
     public String getCurrentUserID() {
         return CurrentUserID;
     }
@@ -1887,13 +2082,7 @@ public class MainActivity extends AppCompatActivity {
         SEARCH_IN_PROGRESS = searchInProgress;
     }
 
-    public RelativeLayout getRootForMainActivity() {
-        return RootForMainActivity;
-    }
 
-    public void setRootForMainActivity(RelativeLayout rootForMainActivity) {
-        RootForMainActivity = rootForMainActivity;
-    }
 
     public int getINTID() {
         return INTID;
@@ -2054,6 +2243,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void setParticipantIDs(List<String> participantIDs) {
         ParticipantIDs = participantIDs;
+    }
+    public static boolean isProfileChange() {
+        return PROFILE_CHANGE;
+    }
+
+    public static void setProfileChange(boolean profileChange) {
+        PROFILE_CHANGE = profileChange;
     }
 }
 

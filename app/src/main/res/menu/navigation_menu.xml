@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/profile_preference"
+        android:icon="@drawable/ic_preferences_black_24dp"
+        android:title="Change Profile-Picture"
+        />
+
+    <item android:id="@+id/profile_activity"
+        android:icon="@drawable/ic_photo_library_black_24dp"
+        android:title="My Uploads"/>
+
+    <item android:id="@+id/profile_preference_bg_service"
+        android:icon="@drawable/ic_perm_device_information_black_24dp"
+        android:title="Background Service"/>
+
+    <item android:id="@+id/profile_preference_battery_optimization"
+        android:icon="@drawable/ic_battery_alert_black_24dp"
+        android:title="Battery Optimisation"/>
+
+
+</menu>

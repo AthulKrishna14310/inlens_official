@@ -86,6 +86,8 @@ public class AuthActivity extends AppCompatActivity {
         AuthCodeButton = findViewById(R.id.auth_countrycode_picker);
         AuthNextButton = findViewById(R.id.auth_next_button);
         AuthContainer = findViewById(R.id.auth_container);
+
+
         AuthIMM = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         FadeIn = AnimationUtils.loadAnimation(getApplicationContext(),android.R.anim.fade_in);
         FadeOut = AnimationUtils.loadAnimation(getApplicationContext(),android.R.anim.fade_out);

@@ -196,6 +196,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
 
                 dismiss();
                 activity.setCoverChange(true);
+                activity.setProfileChange(false);
                 activity.setPostKeyForEdit( activity.getMyCommunityDetails().get(activity.getPosition()).getCommunityID());
 
                 CropImage.activity()

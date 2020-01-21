@@ -10,7 +10,6 @@
     android:layout_marginRight="@dimen/spacing_small"
     android:layout_marginBottom="@dimen/spacing_medium"
     android:alpha="0.85"
-    android:background="@drawable/button_bg"
     android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground"
     android:padding="0.2dp"
@@ -48,7 +47,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#004050B6" />
+                android:background="#224050B6" />
 
             <Button
                 android:id="@+id/indication_button"
