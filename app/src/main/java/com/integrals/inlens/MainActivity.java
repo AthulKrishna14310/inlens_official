@@ -596,6 +596,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+
     }
 
 
@@ -1049,25 +1050,6 @@ public class MainActivity extends AppCompatActivity {
                 MainHorizontalRecyclerview.setAdapter(adapter);
 
 
-                /*
-                if (GotoGallery) {
-
-                    for (int i = 0; i < MyCommunityDetails.size(); i++) {
-                        if (CurrentActiveCommunityID.equals(MyCommunityDetails.get(i).getCommunityID()) || CurrentDeadCommunityID.equals(MyCommunityDetails.get(i).getCommunityID())) {
-                            GotoGallery = false;
-                            startActivity(new Intent(MainActivity.this, CommunityActivity.class)
-                                    .putExtra("CommunityID", MyCommunityDetails.get(i).getCommunityID())
-                                    .putExtra("CommunityName", MyCommunityDetails.get(i).getTitle())
-                                    .putExtra("CommunityStartTime", MyCommunityDetails.get(i).getStartTime())
-                                    .putExtra("CommunityEndTime", MyCommunityDetails.get(i).getEndTime())
-                                    .putExtra("select_fragment", 1));
-
-                        }
-                    }
-
-                }
-                 */
-
             }
 
             @Override
@@ -1501,8 +1483,7 @@ public class MainActivity extends AppCompatActivity {
                                 .getCoverImage()).addListener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        }
+                        holder.covePhotoChangeCard.setVisibility(View.VISIBLE);
                         return false;
                     }
 
@@ -1513,9 +1494,7 @@ public class MainActivity extends AppCompatActivity {
                 })
                         .into(holder.AlbumCoverButton);
             } else {
-                Glide.with(getApplicationContext()).load(R.drawable.ic_camera_shutter).into(holder.AlbumCoverButton);
-
-            }
+             }
 
             if(holder.getLayoutPosition()==Position){
                 holder.Indicator.setVisibility(View.VISIBLE);
@@ -1523,7 +1502,20 @@ public class MainActivity extends AppCompatActivity {
                 SetVerticalRecyclerView(CommunityDetails.get(Position).getCommunityID());
             }
 
+            holder.covePhotoChange.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setCoverChange(true);
+                    setProfileChange(false);
+                    setPostKeyForEdit( getMyCommunityDetails().get(getPosition()).getCommunityID());
 
+                    CropImage.activity()
+                            .setGuidelines(CropImageView.Guidelines.ON)
+                            .setAspectRatio((int) 360, 180)
+                            .setFixAspectRatio(true)
+                            .start(MainActivity.this);
+                }
+            });
 
             holder.AlbumCoverButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1640,12 +1632,17 @@ public class MainActivity extends AppCompatActivity {
             TextView AlbumNameTextView;
             TextView AlbumDescriptionTextView;
             Button   Indicator;
+            Button   covePhotoChange;
+            CardView covePhotoChangeCard;
 
             public MainCommunityViewHolder(View itemView) {
                 super(itemView);
                 AlbumOptions=itemView.findViewById(R.id.albumcard_options);
                 AlbumCoverButton = itemView.findViewById(R.id.albumcard_image_view);
                 AlbumNameTextView = itemView.findViewById(R.id.album_card_textview);
+                covePhotoChange=itemView.findViewById(R.id.coverphotochangebutton);
+                covePhotoChangeCard=itemView.findViewById(R.id.cardcoverphotochange);
+
                 AlbumDescriptionTextView=itemView.findViewById(R.id.albumcard_description);
                 Indicator=itemView.findViewById(R.id.indication_button);
             }
