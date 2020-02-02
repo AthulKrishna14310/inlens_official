@@ -4,8 +4,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.widget.Toast;
 
 import com.integrals.inlens.Models.GalleryImageModel;
+import com.integrals.inlens.Models.UnNotifiedImageModel;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -22,6 +24,33 @@ public class RecentImageScan {
     public RecentImageScan(Context context, long lastnotifiedtime) {
         this.context = context;
         this.lastnotifiedtime = lastnotifiedtime;
+    }
+
+    public UnNotifiedImageModel checkForNotifiedImageExist()
+    {
+        UnNotifiedImageModel unNotifiedImageModel=new UnNotifiedImageModel(null,null);
+        Uri uri;
+        Cursor cursor;
+        int column_index_data;
+        String absolutePathOfImage = null;
+        uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+
+        String[] projection = {MediaStore.MediaColumns.DATA,
+                MediaStore.Images.Media.BUCKET_DISPLAY_NAME};
+
+        cursor = context.getContentResolver().query(uri, projection, null, null, null);
+
+        column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+        cursor.moveToLast();
+        absolutePathOfImage = cursor.getString(column_index_data);
+        File img = new File(absolutePathOfImage);
+        if (img.lastModified() > lastnotifiedtime) {
+
+            unNotifiedImageModel.setUri(absolutePathOfImage);
+            unNotifiedImageModel.setCreatedTime(String.valueOf(img.lastModified()));
+        }
+
+        return unNotifiedImageModel;
     }
 
     public List<GalleryImageModel> getAllShownImagesPath() {
@@ -53,7 +82,7 @@ public class RecentImageScan {
             if (img.lastModified() > lastnotifiedtime && !absolutePathOfImage.toLowerCase().contains("screenshot") && !absolutePathOfImage.toLowerCase().contains("whatsapp")) {
 
                 String lastsegmentedpath = Uri.fromFile(new File(absolutePathOfImage)).getLastPathSegment();
-
+                Toast.makeText(context, "last path : "+lastsegmentedpath, Toast.LENGTH_SHORT).show();
                 if (!listOfAllImages.contains(lastsegmentedpath)) {
 
                     listOfAllImages.add(absolutePathOfImage);

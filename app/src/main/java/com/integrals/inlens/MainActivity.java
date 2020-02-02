@@ -423,8 +423,8 @@ public class MainActivity extends AppCompatActivity {
                     String email = dataSnapshot.child("Email").getValue().toString();
 
 
-                    TextView tEmail=navigationView.getHeaderView(0).findViewById(R.id.headerNameX);
-                    TextView tName=navigationView.getHeaderView(0).findViewById(R.id.headerEmailX);
+                    TextView tEmail=navigationView.getHeaderView(0).findViewById(R.id.headerEmailX);
+                    TextView tName=navigationView.getHeaderView(0).findViewById(R.id.headerNameX);
 
                     tName.setText(name);
                     tEmail.setText(email);
