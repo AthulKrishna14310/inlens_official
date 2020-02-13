@@ -30,7 +30,7 @@
             android:text="Emma Richmond"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
             android:textColor="@color/grey_90"
-            android:textSize="17sp"
+            android:textSize="30sp"
             android:id="@+id/AlbumTitleBottom"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"/>

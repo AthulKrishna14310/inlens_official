@@ -18,7 +18,7 @@ public class Scheduler extends JobService {
     public boolean onStartJob(JobParameters jobParameters) {
 
         AlarmManagerHelper alarmManagerHelper=new AlarmManagerHelper(getApplicationContext());
-        alarmManagerHelper.initiateAlarmManager(5);
+        alarmManagerHelper.initiateAlarmManager(3);
 
 
         scannerTask = new ScannerTask(this)

@@ -26,8 +26,8 @@
 
 
         app:cardCornerRadius="20dp"
-        app:cardElevation="1.0dip"
-        app:cardMaxElevation="1.0dip">
+        app:cardElevation="0.1dip"
+        app:cardMaxElevation="0.1dip">
 
         <Button
             android:id="@+id/coverphotochangebutton"

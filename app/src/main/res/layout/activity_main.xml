@@ -100,7 +100,6 @@
                                 android:layout_marginStart="10dp"
                                 android:layout_marginEnd="10dp"
                                 android:layout_weight="1"
-                                android:background="@android:color/transparent"
                                 android:gravity="center"
                                 android:hint="Search Here"
                                 android:inputType="text" />
@@ -247,8 +246,11 @@
                         android:layout_marginBottom="5dp"
                         android:background="@drawable/button_bg"
                         android:gravity="center"
+                        android:elevation="5dp"
                         android:padding="7dp"
+                        android:clickable="true"
                         android:text="Add Participants"
+                        android:textAppearance="@style/TabLayoutTextAppearance"
                         android:textColor="@color/colorPrimaryDark"
                         android:textSize="14sp" />
 
@@ -258,6 +260,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
                         android:layout_marginStart="5dp"
+                        android:clickable="true"
                         android:layout_marginTop="5dp"
                         android:layout_marginEnd="5dp"
                         android:layout_marginBottom="5dp"
@@ -265,7 +268,9 @@
                         android:background="@drawable/button_bg"
                         android:gravity="center"
                         android:padding="7dp"
+                        android:elevation="5dp"
                         android:text="Add Photos"
+                        android:textAppearance="@style/TabLayoutTextAppearance"
                         android:textColor="@color/colorPrimaryDark"
                         android:textSize="14sp" />
 
@@ -278,7 +283,9 @@
                         android:layout_marginLeft="6dp"
                         android:text="You can upload photos till 00:00"
                         android:textColor="@color/red_400"
-                        android:textSize="10sp" />
+
+                        android:textSize="10sp"
+                        android:visibility="gone"/>
 
                     <TextView
                         android:id="@+id/recentImageSwitchTxt"
@@ -293,11 +300,12 @@
 
                     <Switch
                         android:id="@+id/recentImageNotificationSwitch"
+                        android:elevation="10dp"
                         android:layout_width="50dp"
                         android:layout_height="35dp"
                         android:layout_alignParentEnd="true"
                         android:layout_marginTop="5dp"
-                        android:layout_marginEnd="40dp"
+                        android:layout_marginEnd="20dp"
                         android:layout_marginBottom="5dp"
                         android:textSize="20sp"
                         android:track="@drawable/search_background_oval" />

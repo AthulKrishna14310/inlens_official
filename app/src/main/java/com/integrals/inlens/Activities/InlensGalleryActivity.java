@@ -404,8 +404,11 @@ public class InlensGalleryActivity extends AppCompatActivity {
                 }
 
                 if (AllCommunityImages.size() == 0) {
-                    new AlertDialog.Builder(InlensGalleryActivity.this).setTitle("Inlens Gallery")
-                            .setMessage("This gallery shows all the images that can be upload to your current community. Swipe down to load new images.\n1.Take photos with any camera app.\n2.Tap on Image-Notification.\n3.Select Images and upload. ")
+                    final View customLayout = getLayoutInflater().inflate(R.layout.diaglogue_layout_inlens_gallery, null);
+
+
+                    new AlertDialog.Builder(InlensGalleryActivity.this).setTitle("")
+                            .setMessage(" ")
                             .setPositiveButton("Ok, I understand", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -414,6 +417,7 @@ public class InlensGalleryActivity extends AppCompatActivity {
 
                                 }
                             })
+                            .setView(customLayout)
                             .setCancelable(true)
                             .create()
                             .show();
