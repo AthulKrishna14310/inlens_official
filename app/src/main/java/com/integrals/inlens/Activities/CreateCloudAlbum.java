@@ -143,7 +143,8 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         dateSetListener,
                         year,month,day
                 );
-
+                 dialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+                 dialog.getDatePicker().setMaxDate(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 4);
                 dialog.show();
             }
         });

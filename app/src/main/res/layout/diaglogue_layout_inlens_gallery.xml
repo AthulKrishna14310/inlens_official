@@ -18,12 +18,23 @@
         android:id="@+id/bttx"
         android:background="@drawable/ic_block_black_24dp"></ImageButton>
     <TextView
+        android:id="@+id/txt1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:layout_toRightOf="@+id/bttx"
         android:layout_marginLeft="10dp"
         android:text="Step 1: Close this app"
+        ></TextView>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10sp"
+        android:layout_toRightOf="@+id/bttx"
+        android:layout_marginLeft="10dp"
+        android:layout_below="@id/txt1"
+        android:textColor="@color/red_300"
+        android:text="Close this InLens app"
         ></TextView>
 </RelativeLayout>
 
@@ -48,7 +59,19 @@
             android:layout_toRightOf="@+id/bttx1"
             android:layout_marginLeft="10dp"
             android:text="Step 2: Take photos "
+            android:id="@+id/txt2"
             ></TextView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:layout_toRightOf="@+id/bttx1"
+            android:layout_marginLeft="10dp"
+            android:layout_below="@id/txt2"
+            android:textColor="@color/red_300"
+            android:text="Use any Camera applications to take photos"
+            ></TextView>
+
     </RelativeLayout>
 
     <RelativeLayout
@@ -71,9 +94,21 @@
         android:textSize="20sp"
         android:layout_toRightOf="@+id/bttx3"
         android:layout_marginLeft="10dp"
+        android:id="@+id/txt3"
         android:text="Step 3: Tap on Notification"
         ></TextView>
-</RelativeLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:layout_toRightOf="@+id/bttx3"
+            android:layout_marginLeft="10dp"
+            android:layout_below="@id/txt3"
+            android:textColor="@color/red_300"
+            android:text="Captured photo will be notified automatically. Please tap on the notification"
+            ></TextView>
+
+    </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -91,10 +126,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20sp"
+            android:id="@+id/txt4"
             android:layout_toRightOf="@+id/bttx2"
             android:layout_marginLeft="10dp"
             android:text="Step 4: Select photos and upload"
             ></TextView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:layout_toRightOf="@+id/bttx2"
+            android:layout_marginLeft="10dp"
+            android:layout_below="@id/txt4"
+            android:textColor="@color/red_300"
+            android:text="Select the images , and tap button to  upload"
+            ></TextView>
+
     </RelativeLayout>
 
 

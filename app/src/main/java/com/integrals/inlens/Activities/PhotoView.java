@@ -121,6 +121,7 @@ public class PhotoView extends AppCompatActivity {
                 .into(imageView);
 
         photoViewAttacher = new PhotoViewAttacher(imageView);
+
     }
 
 

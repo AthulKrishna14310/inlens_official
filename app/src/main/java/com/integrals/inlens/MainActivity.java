@@ -618,14 +618,8 @@ public class MainActivity extends AppCompatActivity {
             imm.hideSoftInputFromWindow(MainSearchEdittext.getWindowToken(), 0);
         }
 
-        MainSearchView.clearAnimation();
-        MainSearchView.setAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.fade_out));
-        MainSearchView.getAnimation().start();
         MainSearchView.setVisibility(View.GONE);
 
-        MainActionbar.clearAnimation();
-        MainActionbar.setAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.fade_in));
-        MainActionbar.getAnimation().start();
         MainActionbar.setVisibility(View.VISIBLE);
 
 

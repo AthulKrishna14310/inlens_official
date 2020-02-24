@@ -407,7 +407,7 @@ public class InlensGalleryActivity extends AppCompatActivity {
                     final View customLayout = getLayoutInflater().inflate(R.layout.diaglogue_layout_inlens_gallery, null);
 
 
-                    new AlertDialog.Builder(InlensGalleryActivity.this).setTitle("")
+                    new AlertDialog.Builder(InlensGalleryActivity.this).setTitle("How to upload")
                             .setMessage(" ")
                             .setPositiveButton("Ok, I understand", new DialogInterface.OnClickListener() {
                                 @Override

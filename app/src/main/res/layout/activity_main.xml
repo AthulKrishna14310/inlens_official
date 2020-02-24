@@ -346,7 +346,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:indeterminate="true"
-            android:indeterminateTint="@color/white"
+            android:indeterminateTint="@color/colorAccent"
             android:progressTint="@color/colorAccent"
             android:visibility="invisible" />
 
