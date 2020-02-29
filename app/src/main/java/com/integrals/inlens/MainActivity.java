@@ -781,7 +781,28 @@ public class MainActivity extends AppCompatActivity {
 
 
                             if (!CurrentActiveCommunityID.equals("Not Available")) {
-                                Toast.makeText(getApplicationContext(), "You cannot participate in a new community before leaving the current one.", Toast.LENGTH_LONG).show();
+
+                                CFAlertDialog.Builder builder = new CFAlertDialog.Builder(getApplicationContext())
+
+                                        .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                                        .setTitle("Invite Link")
+                                        .setIcon(R.drawable.inlens_logo_m)
+                                        .setMessage("Just click on the Cloud-Album invite link that your friend had " +
+                                                "shared" +
+                                                " with you.")
+                                        .addButton("OK, I UNDERSTAND", -1, Color.parseColor("#3E3D63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                                                CFAlertDialog.CFAlertActionAlignment.END, new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        dialog.dismiss();
+                                                    }
+                                                });
+
+// Show the alert
+                                builder.show();
+
+
+
                             } else {
 
                                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -892,34 +913,51 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void inviteLink() {
-        // Create Alert using Builder
-        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
-
-                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                .setTitle("Invite Link")
-                .setIcon(R.drawable.inlens_logo_m)
-                .setMessage("Just click on the Cloud-Album invite link that your friend had " +
-                        "shared" +
-                        " with you.")
-                .addButton("OK, I UNDERSTAND", -1, Color.parseColor("#3E3D63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
-                        CFAlertDialog.CFAlertActionAlignment.END, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-
-// Show the alert
-        builder.show();
-    }
+//    private void inviteLink() {
+//        // Create Alert using Builder
+//        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
+//
+//                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+//                .setTitle("Invite Link")
+//                .setIcon(R.drawable.inlens_logo_m)
+//                .setMessage("Just click on the Cloud-Album invite link that your friend had " +
+//                        "shared" +
+//                        " with you.")
+//                .addButton("OK, I UNDERSTAND", -1, Color.parseColor("#3E3D63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+//                        CFAlertDialog.CFAlertActionAlignment.END, new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                dialog.dismiss();
+//                            }
+//                        });
+//
+//// Show the alert
+//        builder.show();
+//    }
 
     private void createAlbum() {
 
         if (CurrentActiveCommunityID.equals("Not Available")) {
             startActivity(new Intent(MainActivity.this, CreateCloudAlbum.class));
         } else {
-            Toast.makeText(getApplicationContext(), "You cannot participate in a new community before leaving the current one.", Toast.LENGTH_LONG).show();
+
+            CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
+                    .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                    .setTitle("Please Quit.")
+                    .setIcon(R.drawable.ic_warning_black_24dp)
+                    .setMessage("You have to quit this album before creating another one.")
+                    .setCancelable(true)
+                    .addButton("   Quit album  ", -1, Color.parseColor("#3e3d63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                            CFAlertDialog.CFAlertActionAlignment.END,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    quitCloudAlbum(0);
+                                }
+                            });
+            builder.show();
+
         }
 
 
@@ -930,8 +968,23 @@ public class MainActivity extends AppCompatActivity {
         if (CurrentActiveCommunityID.equals("Not Available")) {
             startActivity(new Intent(MainActivity.this, QRCodeReader.class));
         } else {
-            Toast.makeText(getApplicationContext(), "You cannot participate in a new community before leaving the current one.", Toast.LENGTH_LONG).show();
-        }
+            CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
+                    .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                    .setTitle("Please Quit.")
+                    .setIcon(R.drawable.ic_warning_black_24dp)
+                    .setMessage("You have to quit this album before creating another one.")
+                    .setCancelable(true)
+                    .addButton("   Quit album  ", -1, Color.parseColor("#3e3d63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                            CFAlertDialog.CFAlertActionAlignment.END,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    quitCloudAlbum(0);
+                                }
+                            });
+            builder.show();
+              }
 
     }
 
@@ -1143,6 +1196,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<Void> task) {
 
                         if (task.isSuccessful()) {
+
                             FirebaseDatabase.getInstance().getReference().child("Users").child(CurrentUserID).child("dead_community").setValue(DummyCurrentActiveCommunityID);
 
                             AlarmManagerHelper alarmManagerHelper =
@@ -1168,7 +1222,7 @@ public class MainActivity extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setCancelable(true);
                 builder.setTitle("Quit community");
-                builder.setMessage("Are you sure you want to quit the current community .");
+                builder.setMessage("Are you sure you want to quit the current community. You won't able to upload photos to this album again.");
                 builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

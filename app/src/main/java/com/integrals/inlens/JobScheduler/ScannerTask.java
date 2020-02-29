@@ -35,7 +35,7 @@ public class ScannerTask extends AsyncTask {
             editor.putString("time",unNotifiedImage.getCreatedTime());
             editor.commit();
         }
-        alarmManagerHelper.initiateAlarmManager(5);
+        alarmManagerHelper.initiateAlarmManager(3);
 
         return null;
     }
