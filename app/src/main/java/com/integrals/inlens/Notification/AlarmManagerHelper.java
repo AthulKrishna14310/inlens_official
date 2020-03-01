@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
 
 import static android.content.Context.ALARM_SERVICE;
 
@@ -31,6 +32,8 @@ public class AlarmManagerHelper {
                 + (i * 1000), pendingIntent);
         Log.d("InLens","Alarm Manager  initiated");
 
+
+
     }
 
     public void deinitateAlarmManager(){
@@ -39,7 +42,7 @@ public class AlarmManagerHelper {
                 (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancelAll();
         Log.d("InLens","Alarm Manager  de-initiated");
-
+        Toast.makeText(context, "Stopped inlens service", Toast.LENGTH_SHORT).show();
     }
 
 }

@@ -18,6 +18,14 @@
         android:icon="@drawable/ic_battery_alert_black_24dp"
         android:title="Battery Optimisation"/>
 
+    <item android:id="@+id/profile_notification_stop"
+        android:icon="@drawable/ic_notifications_black_24dp"
+        android:title="Stop Notification Service"/>
+
+    <item android:id="@+id/profile_notification_start"
+        android:icon="@drawable/ic_refresh"
+        android:title="Restart Notification Service"/>
+
 
 
 </menu>

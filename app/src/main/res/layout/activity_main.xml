@@ -233,46 +233,38 @@
                     android:id="@+id/optionsRelativeLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorAccentlight"
-                    android:visibility="visible">
+                    android:visibility="visible"
+                    >
 
-                    <TextView
-                        android:id="@+id/addParticipantsTxt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginBottom="5dp"
-                        android:background="@drawable/button_bg"
-                        android:gravity="center"
-                        android:elevation="5dp"
-                        android:padding="7dp"
-                        android:clickable="true"
-                        android:text="Add Participants"
-                        android:textAppearance="@style/TabLayoutTextAppearance"
-                        android:textColor="@color/colorPrimaryDark"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/addPhotosTxt"
+                    <LinearLayout
+                        android:id="@+id/main_add_photo"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginStart="5dp"
-                        android:clickable="true"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginBottom="5dp"
-                        android:layout_toRightOf="@id/addParticipantsTxt"
-                        android:background="@drawable/button_bg"
-                        android:gravity="center"
-                        android:padding="7dp"
-                        android:elevation="5dp"
-                        android:text="Add Photos"
-                        android:textAppearance="@style/TabLayoutTextAppearance"
-                        android:textColor="@color/colorPrimaryDark"
-                        android:textSize="14sp" />
+                        android:orientation="horizontal"
+                        android:padding="4dp"
+                        android:background="@drawable/curved_corners"
+                        android:backgroundTint="@color/blue_600">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:src="@drawable/ic_addphoto" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:text="Add photo"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            />
+
+                    </LinearLayout>
+
 
                 </RelativeLayout>
 

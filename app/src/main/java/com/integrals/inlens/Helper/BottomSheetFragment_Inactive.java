@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -69,14 +71,17 @@ public class BottomSheetFragment_Inactive extends BottomSheetDialogFragment {
 
         TextView AlbumTitle = view.findViewById(R.id.AlbumTitleBottom);
         TextView AlbumDescription = view.findViewById(R.id.AlbumDescriptionBottom);
-        TextView AlbumBottomDate = view.findViewById(R.id.AlbumDateBottom);
+        TextView AlbumBottomStartDate = view.findViewById(R.id.albumstartdate);
+        TextView AlbumBottomEndDate = view.findViewById(R.id.albumenddate);
 
         AlbumTitle.setText(activity.getMyCommunityDetails().get(activity.getPosition()).getTitle());
-        AlbumDescription.setText(activity.getMyCommunityDetails().get(activity.getPosition()).getDescription());
-
-        AlbumBottomDate.setText("Album started on " + getDate(activity.getMyCommunityDetails().get(activity.getPosition()).getStartTime()) + " till " + getDate(activity.getMyCommunityDetails().get(activity.getPosition()).getEndTime()));
-
-
+        if (TextUtils.isEmpty(activity.getMyCommunityDetails().get(activity.getPosition()).getDescription())) {
+            AlbumDescription.setVisibility(View.INVISIBLE);
+        } else {
+            AlbumDescription.setText(activity.getMyCommunityDetails().get(activity.getPosition()).getDescription());
+        }
+        AlbumBottomStartDate.setText(getDate(activity.getMyCommunityDetails().get(activity.getPosition()).getStartTime()));
+        AlbumBottomEndDate.setText(getDate(activity.getMyCommunityDetails().get(activity.getPosition()).getEndTime()));
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -107,7 +112,15 @@ public class BottomSheetFragment_Inactive extends BottomSheetDialogFragment {
                         name=dataSnapshot.child("Name").getValue().toString();
                         if(!MemberNamesList.contains(name) || !MemberNamesList.contains(id))
                         {
-                            MemberNamesList.add(name);
+                            if (FirebaseAuth.getInstance().getCurrentUser().getUid().equals(id))
+                            {
+                                MemberNamesList.add("You");
+
+                            }
+                            else
+                            {
+                                MemberNamesList.add(name);
+                            }
 
                         }
                     }

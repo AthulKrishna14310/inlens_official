@@ -25,10 +25,8 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.Settings;
-import android.support.annotation.MenuRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -40,11 +38,8 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -54,17 +49,13 @@ import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -106,13 +97,11 @@ import com.integrals.inlens.Activities.PhotoView;
 import com.integrals.inlens.Activities.ProfileActivity;
 import com.integrals.inlens.Helper.BottomSheetFragment;
 import com.integrals.inlens.Helper.BottomSheetFragment_Inactive;
-import com.integrals.inlens.Helper.ParticipantsAdapter;
 import com.integrals.inlens.Helper.PreOperationCheck;
 import com.integrals.inlens.JobScheduler.Scheduler;
 import com.integrals.inlens.Models.CommunityModel;
 import com.integrals.inlens.Models.PostModel;
 import com.integrals.inlens.Notification.AlarmManagerHelper;
-import com.integrals.inlens.Weather.Model.Main;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import com.squareup.picasso.Picasso;
@@ -128,6 +117,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import id.zelory.compressor.Compressor;
@@ -135,8 +125,6 @@ import id.zelory.compressor.Compressor;
 import com.integrals.inlens.Activities.CreateCloudAlbum;
 import com.integrals.inlens.Activities.QRCodeReader;
 import com.integrals.inlens.Activities.SharedImageActivity;
-
-import org.michaelbel.bottomsheet.BottomSheet;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -314,6 +302,20 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 }
 
+                 else if(item.getItemId()==R.id.profile_notification_stop){
+
+                     AlarmManagerHelper helper = new AlarmManagerHelper(MainActivity.this);
+                     helper.deinitateAlarmManager();
+
+                 }
+
+                 else if(item.getItemId()==R.id.profile_notification_start){
+
+                     AlarmManagerHelper helper = new AlarmManagerHelper(MainActivity.this);
+                     helper.initiateAlarmManager(5);
+                     Toast.makeText(MainActivity.this, "Started inlens service", Toast.LENGTH_SHORT).show();
+                 }
+
                 else if(item.getItemId()==R.id.profile_preference_battery_optimization){
 
                     Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
@@ -415,15 +417,7 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                     } else {
-                        try {
-                            managerHelper.deinitateAlarmManager();
-                            managerHelper.initiateAlarmManager(5);
-                        }
-                        catch (Exception e)
-                        {
-                            managerHelper.initiateAlarmManager(5);
 
-                        }
                         ShowAllAlbums();
                     }
                     String name = dataSnapshot.child("Name").getValue().toString();
@@ -587,13 +581,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Snackbar.with(MainActivity.this,null)
-                        .type(Type.CUSTOM)
-                        .message("Loading QR-Code Scanner ..")
-                        .duration(Duration.LONG)
-                        .fillParent(true)
-                        .textAlign(Align.LEFT)
-                        .show();
                 scanQR();
             }
         });
@@ -971,6 +958,13 @@ public class MainActivity extends AppCompatActivity {
     private void scanQR() {
 
         if (CurrentActiveCommunityID.equals("Not Available")) {
+            Snackbar.with(MainActivity.this,null)
+                    .type(Type.CUSTOM)
+                    .message("Loading QR-Code Scanner ..")
+                    .duration(Duration.LONG)
+                    .fillParent(true)
+                    .textAlign(Align.LEFT)
+                    .show();
             startActivity(new Intent(MainActivity.this, QRCodeReader.class));
         } else {
             CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
@@ -1582,14 +1576,7 @@ public class MainActivity extends AppCompatActivity {
             });
             if(CurrentActiveCommunityID.contentEquals(CommunityDetails.get(Position).getCommunityID())){
              findViewById(R.id.optionsRelativeLayout).setVisibility(View.VISIBLE);
-             findViewById(R.id.addParticipantsTxt).setOnClickListener(new View.OnClickListener() {
-                 @Override
-                 public void onClick(View view) {
-                     QRCodeInit(getMyCommunityDetails().get(getPosition()).getCommunityID());
-                 }
-             });
-
-             findViewById(R.id.addPhotosTxt).setOnClickListener(new View.OnClickListener() {
+             findViewById(R.id.optionsRelativeLayout).setOnClickListener(new View.OnClickListener() {
                  @Override
                  public void onClick(View view) {
                      Intent intent = new Intent(getApplicationContext(), InlensGalleryActivity.class);
@@ -1831,15 +1818,16 @@ public class MainActivity extends AppCompatActivity {
 
             RequestOptions requestOptions = new RequestOptions().placeholder(R.drawable.ic_photo_camera);
 
+
+            /*
             picasso.load(PostList.get(position).getUri())
-                    .resizeDimen(R.dimen.main_image_dimen,R.dimen.main_image_dimen)
+                    .resizeDimen(R.dimen.main_image_dimen200,R.dimen.main_image_dimen200)
                     .centerCrop()
                     .into(holder.PostImageView)
-                    ;
-            /*
+            ;
+             */
             Glide.with(context)
-                    .load()
-                    .override(100,100)
+                    .load(PostList.get(position).getUri())
                     .apply(requestOptions)
                     .listener(new RequestListener<Drawable>() {
                         @Override
@@ -1855,8 +1843,38 @@ public class MainActivity extends AppCompatActivity {
                         }
                     })
                     .into(holder.PostImageView);
-             */
 
+            UserRef.child(PostList.get(position).getPostBy()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    if (dataSnapshot.hasChild("Name")) {
+                        String name = dataSnapshot.child("Name").getValue().toString();
+                        holder.PostUploaderNameTextView.setText(name);
+
+                    }
+                    else
+                    {
+                        holder.PostUploaderNameTextView.setText("Unknown");
+                    }
+                    if (dataSnapshot.hasChild("Profile_picture")) {
+                        String UploaderImageUrl = dataSnapshot.child("Profile_picture").getValue().toString();
+                        Glide.with(context).load(UploaderImageUrl).into(holder.PostUploaderImageView);
+
+                    }
+                    else
+                    {
+                        Glide.with(context).load(R.drawable.ic_account_circle).into(holder.PostUploaderImageView);
+
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
 
             holder.itemView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
@@ -1900,12 +1918,17 @@ public class MainActivity extends AppCompatActivity {
         public class PostGridViewHolder extends RecyclerView.ViewHolder {
 
             ImageView PostImageView;
+            ProgressBar PostProgressbar;
+            TextView PostUploaderNameTextView;
+            CircleImageView PostUploaderImageView;
 
             public PostGridViewHolder(View itemView) {
                 super(itemView);
 
                 PostImageView = itemView.findViewById(R.id.post_layout_imageview);
-
+                PostProgressbar = itemView.findViewById(R.id.post_layout_progressbar);
+                PostUploaderImageView = itemView.findViewById(R.id.post_layout_userimageview);
+                PostUploaderNameTextView = itemView.findViewById(R.id.post_layout_usernametextview);
 
             }
         }

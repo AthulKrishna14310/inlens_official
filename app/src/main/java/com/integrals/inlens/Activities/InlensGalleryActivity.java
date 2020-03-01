@@ -201,8 +201,11 @@ public class InlensGalleryActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                new AlertDialog.Builder(InlensGalleryActivity.this).setTitle("Inlens Gallery")
-                        .setMessage("This gallery shows all the images that can be upload to your current community. Swipe down to load new images. \n 1.Take photos with any camera app. \n 2. Tap on Image-Notification. \n 3. Select Images and upload. ")
+                final View customLayout = getLayoutInflater().inflate(R.layout.diaglogue_layout_inlens_gallery, null);
+
+
+                new AlertDialog.Builder(InlensGalleryActivity.this).setTitle("How to upload")
+                        .setMessage(" ")
                         .setPositiveButton("Ok, I understand", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -211,6 +214,7 @@ public class InlensGalleryActivity extends AppCompatActivity {
 
                             }
                         })
+                        .setView(customLayout)
                         .setCancelable(true)
                         .create()
                         .show();
@@ -396,25 +400,6 @@ public class InlensGalleryActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                if (AllCommunityImages.size() == 0) {
-                    final View customLayout = getLayoutInflater().inflate(R.layout.diaglogue_layout_inlens_gallery, null);
-
-
-                    new AlertDialog.Builder(InlensGalleryActivity.this).setTitle("How to upload")
-                            .setMessage(" ")
-                            .setPositiveButton("Ok, I understand", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-
-                                    dialogInterface.dismiss();
-
-                                }
-                            })
-                            .setView(customLayout)
-                            .setCancelable(true)
-                            .create()
-                            .show();
-                }
 
             }
         }, 2000);
