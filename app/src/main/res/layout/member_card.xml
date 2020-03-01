@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/participants_card"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_centerVertical="true"
     android:layout_marginStart="5dp"
@@ -12,7 +12,7 @@
     app:cardCornerRadius="10dp">
 
     <RelativeLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:elevation="24dp"
@@ -42,7 +42,7 @@
             android:textColor="#000000"
             android:textSize="10sp"
             android:visibility="visible"
-            android:maxLength="20"/>
+            android:maxLength="9"/>
     </RelativeLayout>
 
 

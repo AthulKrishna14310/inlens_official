@@ -8,7 +8,6 @@
     android:paddingBottom="8dp"
     android:paddingTop="8dp"
     android:background="@color/transparent"
-
     >
 
     <!-- NOTE: This list should be displayed in a list
@@ -16,9 +15,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="5dp"
+        android:layout_marginEnd="5dp"
         android:layout_marginTop="5dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginStart="5dp"
         android:orientation="vertical"
         >
 
@@ -27,196 +26,82 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="Emma Richmond"
-            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-            android:textColor="@color/grey_90"
+            android:text="Album Header"
             android:textSize="30sp"
             android:id="@+id/AlbumTitleBottom"
             android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"/>
+            android:layout_marginEnd="20dp"
+            android:textStyle="bold"/>
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_small"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/albumstartdate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="end"
+                    android:gravity="center"
+                    android:textSize="10sp"
+                    android:textColor="@color/white"
+                    android:inputType="text"
+                    android:padding="2dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/starttime_background"/>
+                <TextView
+                    android:id="@+id/albumenddate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="end"
+                    android:gravity="center"
+                    android:textSize="10sp"
+                    android:textColor="@color/white"
+                    android:inputType="text"
+                    android:padding="2dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/endtime_background"/>
+
+            </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"
                 android:id="@+id/AlbumDescriptionBottom"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
                 android:gravity="start"
-                android:text="Hwy, Carthage"
+                android:text="Album subtitle"
                 android:layout_gravity="center"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:textColor="@color/light_blue_400"
                 android:textSize="14sp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
                 android:textStyle="bold"
+                android:layout_marginTop="4dp"
                 />
 
 
         </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_small"
-            android:orientation="horizontal"
 
-            >
-
-            <TextView
-                android:id="@+id/AlbumDateBottom"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:text="20"
-                android:gravity="start"
-                android:layout_gravity="center"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:textColor="@color/grey_700"
-                android:textSize="14sp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"/>
-        </LinearLayout>
-
-        <RelativeLayout
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:layout_margin="10dp"
-            android:background="@android:color/white">
-
-            <ImageButton
-                android:id="@+id/main_bottomsheet_particpants_bottomsheet_closebtn"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_alignParentEnd="true"
-                android:background="@drawable/ic_close_album"
-                android:padding="5dp"
-                android:visibility="invisible" />
-
-            <TextView
-                android:id="@+id/main_bottomsheet_particpants_bottomsheet_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:maxLength="17"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="10dp"
-                android:text="Participants"
-                android:fontFamily="sans-serif"
-                android:textColor="@color/black"
-                android:textSize="15sp" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/main_bottomsheet_particpants_bottomsheet_recyclerview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/main_bottomsheet_particpants_bottomsheet_title"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
-                android:background="@android:color/white">
-
-            </android.support.v7.widget.RecyclerView>
-
-
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@color/indicator_blue"></RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:foreground="?attr/selectableItemBackground"
-            android:orientation="horizontal"
-            android:paddingLeft="@dimen/spacing_mxlarge"
-            android:paddingTop="8dp"
-            android:paddingRight="@dimen/spacing_mxlarge"
-            android:paddingBottom="8dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_gravity="center_vertical"
-                android:text="Album options"
-                android:textColor="@color/colorAccent"
-                android:textSize="16sp" />
-
-
-        </RelativeLayout>
-
-        <LinearLayout
-            android:id="@+id/item_album_details"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:clickable="true"
-            android:foreground="?attr/selectableItemBackground"
-            android:orientation="horizontal"
-            android:paddingLeft="@dimen/spacing_mxlarge"
-            android:paddingTop="8dp"
-            android:paddingRight="@dimen/spacing_mxlarge"
-            android:paddingBottom="8dp"
-            android:visibility="gone">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginRight="32dp"
-                android:src="@drawable/ic_menu_icon" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:layout_gravity="center_vertical"
-                android:text="Album details"
-                android:textColor="#737373"
-                android:textSize="16sp" />
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:id="@+id/item_add_photos"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:clickable="true"
-            android:foreground="?attr/selectableItemBackground"
-            android:orientation="horizontal"
-            android:paddingLeft="@dimen/spacing_mxlarge"
-            android:paddingTop="8dp"
-            android:paddingRight="@dimen/spacing_mxlarge"
-            android:paddingBottom="8dp"
-            android:visibility="gone">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginRight="32dp"
-                android:src="@drawable/ic_photo_library_black_24dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:layout_gravity="center_vertical"
-                android:text="Add Photos"
-                android:textColor="#737373"
-                android:textSize="16sp" />
-
-        </LinearLayout>
-
+            android:text="Options"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"/>
 
         <LinearLayout
             android:id="@+id/item_add_participants"
@@ -227,61 +112,26 @@
             android:foreground="?attr/selectableItemBackground"
             android:orientation="horizontal"
             android:paddingLeft="@dimen/spacing_mxlarge"
-            android:paddingTop="8dp"
-            android:paddingRight="@dimen/spacing_mxlarge"
-            android:paddingBottom="8dp"
-            android:visibility="gone">
+            android:layout_marginTop="10dp"
+            android:padding="3dp">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginRight="32dp"
-                android:src="@drawable/ic_person_add_black_24dp" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:src="@drawable/ic_participation" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="Add participants"
+                android:text="Add people"
                 android:textColor="#737373"
                 android:textSize="16sp"
-
+                android:layout_marginStart="10dp"
                 />
 
         </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/item_view_participants"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:clickable="true"
-            android:foreground="?attr/selectableItemBackground"
-            android:orientation="horizontal"
-            android:paddingLeft="@dimen/spacing_mxlarge"
-            android:paddingTop="8dp"
-            android:paddingRight="@dimen/spacing_mxlarge"
-            android:paddingBottom="8dp"
-            android:visibility="gone">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginRight="32dp"
-                android:src="@drawable/ic_people" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="View participants"
-                android:textColor="#737373"
-                android:textSize="16sp"
-
-                />
-
-        </LinearLayout>
-
 
         <LinearLayout
             android:id="@+id/item_change_cover"
@@ -291,33 +141,25 @@
             android:clickable="true"
             android:foreground="?attr/selectableItemBackground"
             android:orientation="horizontal"
-            android:paddingLeft="@dimen/spacing_mxlarge"
-            android:paddingTop="8dp"
-            android:paddingRight="@dimen/spacing_mxlarge"
-            android:paddingBottom="8dp">
+            android:padding="3dp">
 
             <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="24dp"
-                android:layout_marginRight="32dp"
-                android:src="@drawable/ic_cover_alt_black_24dp" />
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:src="@drawable/ic_coverphoto" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="Change cover-photo"
+                android:text="Change cover"
                 android:textColor="#737373"
                 android:textSize="16sp"
-
+                android:layout_marginStart="10dp"
                 />
 
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/divider_height"
-            android:background="@color/red_900"></LinearLayout>
 
         <LinearLayout
             android:id="@+id/item_quit_cloud_album"
@@ -327,28 +169,55 @@
             android:clickable="true"
             android:foreground="?attr/selectableItemBackground"
             android:orientation="horizontal"
-            android:paddingLeft="@dimen/spacing_mxlarge"
-            android:paddingTop="8dp"
-            android:paddingRight="@dimen/spacing_mxlarge"
-            android:paddingBottom="8dp">
+            android:padding="3dp">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginRight="32dp"
-                android:src="@drawable/ic_not_interested_red_24dp" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:src="@drawable/ic_quit" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="Quit Cloud-Album"
+                android:text="Quit cloud-album"
                 android:textColor="#737373"
                 android:textSize="16sp"
-
-                />
+                android:layout_marginStart="10dp"/>
 
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_margin="10dp"
+            android:background="@android:color/white"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Participants"
+                android:textStyle="bold"
+                android:textSize="14sp"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/main_bottomsheet_particpants_bottomsheet_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_margin="5dp"
+                android:background="@android:color/white">
+
+            </android.support.v7.widget.RecyclerView>
+
+        </LinearLayout>
+
+
+
+
 
     </LinearLayout>
 

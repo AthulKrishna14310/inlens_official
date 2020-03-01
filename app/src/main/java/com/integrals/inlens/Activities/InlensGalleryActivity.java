@@ -25,13 +25,11 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -55,19 +53,14 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
-import com.integrals.inlens.Helper.Checker;
 import com.integrals.inlens.Helper.NotificationHelper;
 import com.integrals.inlens.Helper.PreOperationCheck;
 import com.integrals.inlens.Models.GalleryImageModel;
 import com.integrals.inlens.R;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -145,7 +138,7 @@ public class InlensGalleryActivity extends AppCompatActivity {
 
         if(CommunityID ==null && CommunityStartTime==null)
         {
-            if(new Checker(InlensGalleryActivity.this).isConnectedToNet())
+            if(new PreOperationCheck().checkInternetConnectivity(this))
             {
                 UserRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override

@@ -26,16 +26,15 @@ public class ScannerTask extends AsyncTask {
     @Override
     protected Object doInBackground(Object[] objects) {
 
-
+        SharedPreferences LastShownNotificationInfo = context.getSharedPreferences("LastNotification.pref", Context.MODE_PRIVATE);
         if (unNotifiedImage.getCreatedTime() != null) {
 
             notificationHelper.displayRecentImageNotification();
-            SharedPreferences LastShownNotificationInfo = context.getSharedPreferences("LastNotification.pref", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor =LastShownNotificationInfo.edit();
             editor.putString("time",unNotifiedImage.getCreatedTime());
             editor.commit();
         }
-        alarmManagerHelper.initiateAlarmManager(3);
+        alarmManagerHelper.initiateAlarmManager(5);
 
         return null;
     }
@@ -45,10 +44,16 @@ public class ScannerTask extends AsyncTask {
         super.onPreExecute();
 
         SharedPreferences LastShownNotificationInfo = context.getSharedPreferences("LastNotification.pref", Context.MODE_PRIVATE);
+        if(!LastShownNotificationInfo.contains("time"))
+        {
+            SharedPreferences.Editor editor =LastShownNotificationInfo.edit();
+            editor.putString("time",String.valueOf(System.currentTimeMillis()));
+            editor.commit();
+        }
+
         long time = Long.parseLong(LastShownNotificationInfo.getString("time", String.valueOf(System.currentTimeMillis())));
         RecentImageScan recentImageScan = new RecentImageScan(context, time);
         unNotifiedImage = recentImageScan.checkForNotifiedImageExist();
-
         if(unNotifiedImage.getUri() != null)
         {
             notificationHelper = new NotificationHelper(context,unNotifiedImage.getUri());

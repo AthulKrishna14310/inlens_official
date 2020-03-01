@@ -47,7 +47,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.integrals.inlens.Helper.Checker;
+import com.integrals.inlens.Helper.PreOperationCheck;
 import com.integrals.inlens.Notification.AlarmManagerHelper;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -57,8 +57,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.integrals.inlens.R;
@@ -92,7 +90,6 @@ public class CreateCloudAlbum extends AppCompatActivity {
     private String EventType = "";
     private String CheckTimeTaken="";
     private ImageButton CreateCloudAlbumBackButton;
-    private Checker checker;
     private Boolean EventTypeSet = false ,AlbumDateSet = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +116,6 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
         PostStorageReference = FirebaseStorage.getInstance().getReference();
         PostDatabaseReference = InUserReference.child("Communities");
-        checker=new Checker(getApplicationContext());
 
         Calendar calender = Calendar.getInstance();
         DateofCompletion = findViewById(R.id.TimeEditText);
@@ -208,7 +204,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
             public void onClick(View v) {
                 if(EventTypeSet && AlbumDateSet)
                 {
-                    if (!checker.isConnectedToNet()){
+                    if (!new PreOperationCheck().checkInternetConnectivity(getApplicationContext())){
                         showDialogue("No Internet. Please check your internet " +
                                 "connection and try again",false);
 

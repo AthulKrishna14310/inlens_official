@@ -250,4 +250,5 @@
     <dimen name="viewpager_margin_overlap_payment">-30.0dip</dimen>
     <dimen name="indicator_height">3.0dip</dimen>
     <dimen name="divider_height">1.0dip</dimen>
+    <dimen name="main_image_dimen">200dp</dimen>
 </resources>

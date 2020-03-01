@@ -39,7 +39,17 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<ParticipantsAdapte
     @Override
     public void onBindViewHolder(@NonNull ParticipantsAdapter.ParticipantsViewHolder holder, int position) {
 
-        holder.PName.setText(NamesList.get(position));
+        if(NamesList.get(position).length() > 6)
+        {
+            String name =NamesList.get(position).substring(0,5)+"...";
+            holder.PName.setText(name);
+
+        }
+        else
+        {
+            holder.PName.setText(NamesList.get(position));
+
+        }
 
         RequestOptions rq = new RequestOptions().placeholder(R.drawable.image_avatar_background);
         Glide.with(context).load(ImagesList.get(position)).apply(rq).into(holder.PImage);

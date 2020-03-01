@@ -115,6 +115,7 @@ import com.integrals.inlens.Notification.AlarmManagerHelper;
 import com.integrals.inlens.Weather.Model.Main;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 import com.vistrav.ask.Ask;
@@ -184,7 +185,6 @@ public class MainActivity extends AppCompatActivity {
     private RelativeLayout NoInternetView;
     private TextView NoInternetTextView;
 
-    private boolean GotoGallery = false;
 
     private int Position=0;
 
@@ -217,7 +217,6 @@ public class MainActivity extends AppCompatActivity {
 
         MyCommunityDetails = new ArrayList<>();
         ParticipantIDs = new ArrayList<>();
-        GotoGallery = getIntent().getBooleanExtra("gallery", false);
         MainHorizontalScrollView = findViewById(R.id.main_horizontalscrollview);
         MainHorizontalScrollView.setHorizontalScrollBarEnabled(false);
         MainHorizontalScrollView.setVerticalScrollBarEnabled(false);
@@ -375,8 +374,7 @@ public class MainActivity extends AppCompatActivity {
         MainHorizontalRecyclerview.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
 
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+
 
         MainVerticalRecyclerView = findViewById(R.id.main_recyclerview);
         MainVerticalRecyclerView.setHasFixedSize(true);
@@ -1805,11 +1803,14 @@ public class MainActivity extends AppCompatActivity {
         Context context;
         List<PostModel> PostList;
         DatabaseReference UserRef;
+        Picasso picasso;
 
         public MainVerticalAdapter(Context context, List<PostModel> postList, DatabaseReference userRef) {
             this.context = context;
             PostList = postList;
             UserRef = userRef;
+            picasso = Picasso.get();
+            picasso.setIndicatorsEnabled(false);
         }
 
 
@@ -1829,8 +1830,16 @@ public class MainActivity extends AppCompatActivity {
             holder.itemView.getAnimation().start();
 
             RequestOptions requestOptions = new RequestOptions().placeholder(R.drawable.ic_photo_camera);
+
+            picasso.load(PostList.get(position).getUri())
+                    .resizeDimen(R.dimen.main_image_dimen,R.dimen.main_image_dimen)
+                    .centerCrop()
+                    .into(holder.PostImageView)
+                    ;
+            /*
             Glide.with(context)
-                    .load(PostList.get(position).getUri())
+                    .load()
+                    .override(100,100)
                     .apply(requestOptions)
                     .listener(new RequestListener<Drawable>() {
                         @Override
@@ -1846,38 +1855,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                     })
                     .into(holder.PostImageView);
+             */
 
-            UserRef.child(PostList.get(position).getPostBy()).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    if (dataSnapshot.hasChild("Name")) {
-                        String name = dataSnapshot.child("Name").getValue().toString();
-                        holder.PostUploaderNameTextView.setText(name);
-
-                    }
-                    else
-                    {
-                        holder.PostUploaderNameTextView.setText("Unknown");
-                    }
-                    if (dataSnapshot.hasChild("Profile_picture")) {
-                        String UploaderImageUrl = dataSnapshot.child("Profile_picture").getValue().toString();
-                        Glide.with(context).load(UploaderImageUrl).into(holder.PostUploaderImageView);
-
-                    }
-                    else
-                    {
-                        Glide.with(context).load(R.drawable.ic_account_circle).into(holder.PostUploaderImageView);
-
-                    }
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
 
             holder.itemView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
@@ -1921,17 +1900,12 @@ public class MainActivity extends AppCompatActivity {
         public class PostGridViewHolder extends RecyclerView.ViewHolder {
 
             ImageView PostImageView;
-            ProgressBar PostProgressbar;
-            TextView PostUploaderNameTextView;
-            CircleImageView PostUploaderImageView;
 
             public PostGridViewHolder(View itemView) {
                 super(itemView);
 
                 PostImageView = itemView.findViewById(R.id.post_layout_imageview);
-                PostProgressbar = itemView.findViewById(R.id.post_layout_progressbar);
-                PostUploaderImageView = itemView.findViewById(R.id.post_layout_userimageview);
-                PostUploaderNameTextView = itemView.findViewById(R.id.post_layout_usernametextview);
+
 
             }
         }
@@ -1961,331 +1935,29 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public String getCurrentUserID() {
-        return CurrentUserID;
-    }
-
-    public void setCurrentUserID(String currentUserID) {
-        CurrentUserID = currentUserID;
-    }
 
     public String getCurrentActiveCommunityID() {
         return CurrentActiveCommunityID;
     }
 
-    public void setCurrentActiveCommunityID(String currentActiveCommunityID) {
-        CurrentActiveCommunityID = currentActiveCommunityID;
-    }
-
-    public String getDummyCurrentActiveCommunityID() {
-        return DummyCurrentActiveCommunityID;
-    }
-
-    public void setDummyCurrentActiveCommunityID(String dummyCurrentActiveCommunityID) {
-        DummyCurrentActiveCommunityID = dummyCurrentActiveCommunityID;
-    }
-
-    public String getCurrentDeadCommunityID() {
-        return CurrentDeadCommunityID;
-    }
-
-    public void setCurrentDeadCommunityID(String currentDeadCommunityID) {
-        CurrentDeadCommunityID = currentDeadCommunityID;
-    }
-
-    public String getResultName() {
-        return ResultName;
-    }
-
-    public void setResultName(String resultName) {
-        ResultName = resultName;
-    }
-
-    public String getResultImage() {
-        return ResultImage;
-    }
-
-    public void setResultImage(String resultImage) {
-        ResultImage = resultImage;
-    }
 
     public List<CommunityModel> getMyCommunityDetails() {
         return MyCommunityDetails;
     }
 
-    public void setMyCommunityDetails(List<CommunityModel> myCommunityDetails) {
-        MyCommunityDetails = myCommunityDetails;
-    }
-
-    public List<PostModel> getMyPostList() {
-        return MyPostList;
-    }
-
-    public void setMyPostList(List<PostModel> myPostList) {
-        MyPostList = myPostList;
-    }
-
-    public DatabaseReference getRef() {
-        return Ref;
-    }
-
-    public void setRef(DatabaseReference ref) {
-        Ref = ref;
-    }
-
-    public FirebaseAuth getInAuthentication() {
-        return InAuthentication;
-    }
-
-    public void setInAuthentication(FirebaseAuth inAuthentication) {
-        InAuthentication = inAuthentication;
-    }
-
-    public ProgressBar getMainLoadingProgressBar() {
-        return MainLoadingProgressBar;
-    }
-
-    public void setMainLoadingProgressBar(ProgressBar mainLoadingProgressBar) {
-        MainLoadingProgressBar = mainLoadingProgressBar;
-    }
-
-    public Dialog getQRCodeDialog() {
-        return QRCodeDialog;
-    }
-
-    public void setQRCodeDialog(Dialog QRCodeDialog) {
-        this.QRCodeDialog = QRCodeDialog;
-    }
-
-    public Dialog getPostDialog() {
-        return PostDialog;
-    }
-
-    public void setPostDialog(Dialog postDialog) {
-        PostDialog = postDialog;
-    }
-
-    public ImageView getPostDialogImageView() {
-        return PostDialogImageView;
-    }
-
-    public void setPostDialogImageView(ImageView postDialogImageView) {
-        PostDialogImageView = postDialogImageView;
-    }
-
-    public ProgressBar getPostDialogProgressbar() {
-        return PostDialogProgressbar;
-    }
-
-    public void setPostDialogProgressbar(ProgressBar postDialogProgressbar) {
-        PostDialogProgressbar = postDialogProgressbar;
-    }
-
-    public String getPostKeyForEdit() {
-        return PostKeyForEdit;
-    }
 
     public void setPostKeyForEdit(String postKeyForEdit) {
         PostKeyForEdit = postKeyForEdit;
-    }
-
-    public String getCurrentKeyShowninVerticialRecyclerview() {
-        return CurrentKeyShowninVerticialRecyclerview;
-    }
-
-    public void setCurrentKeyShowninVerticialRecyclerview(String currentKeyShowninVerticialRecyclerview) {
-        CurrentKeyShowninVerticialRecyclerview = currentKeyShowninVerticialRecyclerview;
-    }
-
-    public static int getGalleryPick() {
-        return GALLERY_PICK;
-    }
-
-    public static int getCoverGalleryPick() {
-        return COVER_GALLERY_PICK;
-    }
-
-    public static boolean isCoverChange() {
-        return COVER_CHANGE;
     }
 
     public static void setCoverChange(boolean coverChange) {
         COVER_CHANGE = coverChange;
     }
 
-    public static boolean isSearchInProgress() {
-        return SEARCH_IN_PROGRESS;
-    }
-
-    public static void setSearchInProgress(boolean searchInProgress) {
-        SEARCH_IN_PROGRESS = searchInProgress;
-    }
-
-
-
-    public int getINTID() {
-        return INTID;
-    }
-
-    public void setINTID(int INTID) {
-        this.INTID = INTID;
-    }
-
-    public RecyclerView getMainHorizontalRecyclerview() {
-        return MainHorizontalRecyclerview;
-    }
-
-    public void setMainHorizontalRecyclerview(RecyclerView mainHorizontalRecyclerview) {
-        MainHorizontalRecyclerview = mainHorizontalRecyclerview;
-    }
-
-    public RecyclerView getMainVerticalRecyclerView() {
-        return MainVerticalRecyclerView;
-    }
-
-    public void setMainVerticalRecyclerView(RecyclerView mainVerticalRecyclerView) {
-        MainVerticalRecyclerView = mainVerticalRecyclerView;
-    }
-
-    public ImageButton getMainNewAlbumButton() {
-        return MainNewAlbumButton;
-    }
-
-    public void setMainNewAlbumButton(ImageButton mainNewAlbumButton) {
-        MainNewAlbumButton = mainNewAlbumButton;
-    }
-
-    public ImageButton getMainScanQrButton() {
-        return MainScanQrButton;
-    }
-
-    public void setMainScanQrButton(ImageButton mainScanQrButton) {
-        MainScanQrButton = mainScanQrButton;
-    }
-
-    public HorizontalScrollView getMainHorizontalScrollView() {
-        return MainHorizontalScrollView;
-    }
-
-    public void setMainHorizontalScrollView(HorizontalScrollView mainHorizontalScrollView) {
-        MainHorizontalScrollView = mainHorizontalScrollView;
-    }
-
-
-    public TextView getNoAlbumTextView() {
-        return NoAlbumTextView;
-    }
-
-    public void setNoAlbumTextView(TextView noAlbumTextView) {
-        NoAlbumTextView = noAlbumTextView;
-    }
-
-    public Boolean getSHOW_TOUR() {
-        return SHOW_TOUR;
-    }
-
-    public void setSHOW_TOUR(Boolean SHOW_TOUR) {
-        this.SHOW_TOUR = SHOW_TOUR;
-    }
-
-    public CircleImageView getMainProfileImageview() {
-        return MainProfileImageview;
-    }
-
-    public void setMainProfileImageview(CircleImageView mainProfileImageview) {
-        MainProfileImageview = mainProfileImageview;
-    }
-
-    public ImageButton getMainSearchButton() {
-        return MainSearchButton;
-    }
-
-    public void setMainSearchButton(ImageButton mainSearchButton) {
-        MainSearchButton = mainSearchButton;
-    }
-
-    public ImageButton getMainBackButton() {
-        return MainBackButton;
-    }
-
-    public void setMainBackButton(ImageButton mainBackButton) {
-        MainBackButton = mainBackButton;
-    }
-
-    public EditText getMainSearchEdittext() {
-        return MainSearchEdittext;
-    }
-
-    public void setMainSearchEdittext(EditText mainSearchEdittext) {
-        MainSearchEdittext = mainSearchEdittext;
-    }
-
-    public RelativeLayout getMainActionbar() {
-        return MainActionbar;
-    }
-
-    public void setMainActionbar(RelativeLayout mainActionbar) {
-        MainActionbar = mainActionbar;
-    }
-
-    public RelativeLayout getMainSearchView() {
-        return MainSearchView;
-    }
-
-    public void setMainSearchView(RelativeLayout mainSearchView) {
-        MainSearchView = mainSearchView;
-    }
-
-    public CardView getMainToolbar() {
-        return MainToolbar;
-    }
-
-    public void setMainToolbar(CardView mainToolbar) {
-        MainToolbar = mainToolbar;
-    }
-
-    public BroadcastReceiver getBr() {
-        return br;
-    }
-
-    public void setBr(BroadcastReceiver br) {
-        this.br = br;
-    }
-
-    public RelativeLayout getNoInternetView() {
-        return NoInternetView;
-    }
-
-    public void setNoInternetView(RelativeLayout noInternetView) {
-        NoInternetView = noInternetView;
-    }
-
-    public boolean isGotoGallery() {
-        return GotoGallery;
-    }
-
-    public void setGotoGallery(boolean gotoGallery) {
-        GotoGallery = gotoGallery;
-    }
-
     public int getPosition() {
         return Position;
     }
 
-    public void setPosition(int position) {
-        Position = position;
-    }
-
-    public List<String> getParticipantIDs() {
-        return ParticipantIDs;
-    }
-
-    public void setParticipantIDs(List<String> participantIDs) {
-        ParticipantIDs = participantIDs;
-    }
-    public static boolean isProfileChange() {
-        return PROFILE_CHANGE;
-    }
 
     public static void setProfileChange(boolean profileChange) {
         PROFILE_CHANGE = profileChange;
