@@ -1605,19 +1605,6 @@ public class MainActivity extends AppCompatActivity {
                  }
              });
 
-             Switch s=findViewById(R.id.recentImageNotificationSwitch);
-             TextView t=findViewById(R.id.recentImageSwitchTxt);
-             s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                 @Override
-                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                     if(compoundButton.isChecked()){
-                         t.setText("Image Notification ON");
-                     }else{
-                         t.setText("Image Notification OFF");
-                     }
-                 }
-             });
-
             }else{
                 findViewById(R.id.optionsRelativeLayout).setVisibility(View.GONE);
 
