@@ -28,8 +28,7 @@ public class AlarmManagerHelper {
     public void initiateAlarmManager(int i){
 
         alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
-                + (i * 60 * 1000), pendingIntent);
-        // the alarm manager is initiated only afer i minutes
+                + (i * 1000), pendingIntent);
         Log.d("InLens","Alarm Manager  initiated");
 
     }
