@@ -141,8 +141,7 @@ import org.michaelbel.bottomsheet.BottomSheet;
 public class MainActivity extends AppCompatActivity {
 
 
-    private String CurrentUserID = "Not Available",
-            CurrentActiveCommunityID = "Not Available", DummyCurrentActiveCommunityID = "Not Available", CurrentDeadCommunityID = "Not Available";
+    private String CurrentUserID = "Not Available", CurrentActiveCommunityID = "Not Available", DummyCurrentActiveCommunityID = "Not Available", CurrentDeadCommunityID = "Not Available";
     private String ResultName = "Unknown",ResultImage= "Unknown";
     private List<String> ParticipantIDs;
 
@@ -403,11 +402,21 @@ public class MainActivity extends AppCompatActivity {
             Ref.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+                    AlarmManagerHelper managerHelper = new AlarmManagerHelper(MainActivity.this);
 
                     if (!dataSnapshot.hasChild("Communities")) {
                         MainLoadingProgressBar.setVisibility(View.GONE);
+                        try
+                        {
+                            managerHelper.deinitateAlarmManager();
+
+                        }
+                        catch (Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+
                     } else {
-                        AlarmManagerHelper managerHelper = new AlarmManagerHelper(MainActivity.this);
                         try {
                             managerHelper.deinitateAlarmManager();
                             managerHelper.initiateAlarmManager(5);
@@ -479,10 +488,6 @@ public class MainActivity extends AppCompatActivity {
                  RootForMainActivity.openDrawer(Gravity.START);
             }
         });
-
-
-
-
 
 
         MainSearchButton.setOnClickListener(new View.OnClickListener() {
@@ -658,6 +663,8 @@ public class MainActivity extends AppCompatActivity {
 
                     } else {
                         CurrentActiveCommunityID = "Not Available";
+                        AlarmManagerHelper alarmManagerHelper = new AlarmManagerHelper(getApplicationContext());
+                        alarmManagerHelper.deinitateAlarmManager();
                     }
 
                     if (dataSnapshot.child("Users").child(CurrentUserID).hasChild("dead_community")) {

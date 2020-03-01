@@ -42,6 +42,9 @@ public class RecentImageScan {
 
         column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
         cursor.moveToLast();
+
+        // currently detect all images we need to modify it to detect only images in camera
+
         absolutePathOfImage = cursor.getString(column_index_data);
         File img = new File(absolutePathOfImage);
         if (img.lastModified() > lastnotifiedtime) {
