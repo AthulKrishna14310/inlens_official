@@ -426,8 +426,8 @@ public class MainActivity extends AppCompatActivity {
                     TextView tEmail=navigationView.getHeaderView(0).findViewById(R.id.headerEmailX);
                     TextView tName=navigationView.getHeaderView(0).findViewById(R.id.headerNameX);
 
-                    tEmail.setText(name);
-                    tName.setText(email);
+                    tEmail.setText(email);
+                    tName.setText(name);
 
 
                     if (dataSnapshot.hasChild("Profile_picture")) {
