@@ -307,30 +307,31 @@
             android:progressTint="@color/colorAccent"
             android:visibility="invisible" />
 
-
-    </RelativeLayout>
-
-
-    <RelativeLayout
-        android:id="@+id/main_no_internet_relativelayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center"
-        android:background="@color/quantum_googred700"
-        android:layout_alignParentBottom="true"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/main_no_internet_textview"
+        <RelativeLayout
+            android:id="@+id/main_no_internet_relativelayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:padding="2dp"
-            android:text=" Internet connection lost."
-            android:textColor="@color/white"
-            android:textSize="14sp" />
+            android:layout_gravity="bottom|center"
+            android:background="@color/quantum_googred700"
+            android:visibility="gone"
+            android:layout_alignParentBottom="true">
+
+            <TextView
+                android:id="@+id/main_no_internet_textview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="2dp"
+                android:text=" Internet connection lost."
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+        </RelativeLayout>
 
     </RelativeLayout>
+
+
+
 
     <android.support.design.widget.NavigationView
         android:id="@+id/nv"

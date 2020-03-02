@@ -102,6 +102,7 @@ import com.integrals.inlens.JobScheduler.Scheduler;
 import com.integrals.inlens.Models.CommunityModel;
 import com.integrals.inlens.Models.PostModel;
 import com.integrals.inlens.Notification.AlarmManagerHelper;
+import com.integrals.inlens.Weather.Model.Main;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import com.squareup.picasso.Picasso;
@@ -1579,13 +1580,27 @@ public class MainActivity extends AppCompatActivity {
              findViewById(R.id.optionsRelativeLayout).setOnClickListener(new View.OnClickListener() {
                  @Override
                  public void onClick(View view) {
-                     Intent intent = new Intent(getApplicationContext(), InlensGalleryActivity.class);
-                     intent.putExtra("CommunityID", getMyCommunityDetails().get(getPosition()).getCommunityID());
-                     intent.putExtra("CommunityName", getMyCommunityDetails().get(getPosition()).getTitle());
-                     intent.putExtra("CommunityStartTime", getMyCommunityDetails().get(getPosition()).getStartTime());
-                     intent.putExtra("CommunityEndTime", getMyCommunityDetails().get(getPosition()).getEndTime());
-                     startActivity(intent);
-                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                    if(new PreOperationCheck().checkInternetConnectivity(MainActivity.this))
+                    {
+                        Intent intent = new Intent(getApplicationContext(), InlensGalleryActivity.class);
+                        intent.putExtra("CommunityID", getMyCommunityDetails().get(getPosition()).getCommunityID());
+                        intent.putExtra("CommunityName", getMyCommunityDetails().get(getPosition()).getTitle());
+                        intent.putExtra("CommunityStartTime", getMyCommunityDetails().get(getPosition()).getStartTime());
+                        intent.putExtra("CommunityEndTime", getMyCommunityDetails().get(getPosition()).getEndTime());
+                        startActivity(intent);
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                    }
+                    else
+                    {
+                        Snackbar.with(MainActivity.this,null)
+                                .type(Type.CUSTOM)
+                                .message("Please connect with internet and try again.")
+                                .duration(Duration.LONG)
+                                .fillParent(true)
+                                .textAlign(Align.LEFT)
+                                .show();
+                    }
+
 
                  }
              });
