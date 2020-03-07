@@ -3,16 +3,16 @@
 
     <item android:id="@+id/profile_preference"
         android:icon="@drawable/ic_preferences_black_24dp"
-        android:title="Change Profile-Picture"
+        android:title="@string/change_profile_picture"
         />
 
     <item android:id="@+id/profile_activity"
         android:icon="@drawable/ic_photo_library_black_24dp"
-        android:title="My Uploads"/>
+        android:title="@string/my_uploads"/>
 
     <item android:id="@+id/profile_preference_bg_service"
         android:icon="@drawable/ic_perm_device_information_black_24dp"
-        android:title="Background Service"/>
+        android:title="@string/background_service"/>
 
     <item android:id="@+id/profile_preference_battery_optimization"
         android:icon="@drawable/ic_battery_alert_black_24dp"
@@ -20,11 +20,11 @@
 
     <item android:id="@+id/profile_notification_stop"
         android:icon="@drawable/ic_notifications_black_24dp"
-        android:title="Stop Notification Service"/>
+        android:title="@string/stop_notification"/>
 
     <item android:id="@+id/profile_notification_start"
         android:icon="@drawable/ic_refresh"
-        android:title="Restart Notification Service"/>
+        android:title="@string/restart_notification"/>
 
 
 

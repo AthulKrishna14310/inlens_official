@@ -248,7 +248,7 @@
     <dimen name="tooltip_y_offset_touch">16.0dip</dimen>
     <dimen name="viewpager_margin_overlap">-60.0dip</dimen>
     <dimen name="viewpager_margin_overlap_payment">-30.0dip</dimen>
-    <dimen name="indicator_height">3.0dip</dimen>
+    <dimen name="indicator_height">5.0dip</dimen>
     <dimen name="divider_height">1.0dip</dimen>
     <dimen name="main_image_dimen200">200dp</dimen>
     <dimen name="main_image_dimen100">100dp</dimen>

@@ -47,6 +47,7 @@
                 android:text="Create Cloud-Album"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                 android:textColor="@color/colorAccent"
+                android:textSize="24sp"
                 android:textStyle="bold" />
 
             <View
@@ -130,34 +131,74 @@
                     <View
                         android:layout_width="0.0dip"
                         android:layout_height="@dimen/spacing_middle" />
-
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="-4.0dip"
+    android:layout_marginTop="@dimen/spacing_middle"
+    android:layout_marginRight="-4.0dip"
+    android:layout_gravity="center_horizontal"
+    >
                     <android.support.v7.widget.AppCompatCheckBox
                         android:id="@+id/TimeEditText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="-4.0dip"
-                        android:layout_marginTop="@dimen/spacing_middle"
-                        android:layout_marginRight="-4.0dip"
-                        android:text="Check to select album-expiry date"
+                         android:text=" Album-Expiry date"
                         android:textColor="@color/colorAccent"
+                        android:layout_centerHorizontal="true"
+                        android:textSize="16sp"
+                        android:layout_centerVertical="true"
                         android:textStyle="bold"
                         android:theme="@style/Checkbox.Blue" />
 
+                    <ImageButton
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:id="@+id/date_range_button"
+                        android:layout_margin="5dp"
+                        android:src="@drawable/ic_date_range_black_24dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+
+                        />
+                        </RelativeLayout>
+                    <View
+                        android:layout_width="0.0dip"
+                        android:layout_height="@dimen/spacing_middle" />
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="-4.0dip"
+                        android:layout_marginTop="@dimen/spacing_middle"
+                        android:layout_marginRight="-4.0dip"
+                        android:layout_gravity="center_horizontal"
+                        >
+                        <android.support.v7.widget.AppCompatCheckBox
+                            android:id="@+id/EventTypeText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" Album-Event type"
+                            android:textColor="@color/colorAccent"
+                            android:layout_centerHorizontal="true"
+                            android:textSize="16sp"
+                            android:layout_centerVertical="true"
+                            android:textStyle="bold"
+                            android:theme="@style/Checkbox.Blue" />
+
+                        <ImageButton
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:id="@+id/event_type_add"
+                            android:layout_margin="5dp"
+                            android:src="@drawable/ic_favorite_border_black_24dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+
+                            />
+                    </RelativeLayout>
                     <View
                         android:layout_width="0.0dip"
                         android:layout_height="@dimen/spacing_middle" />
 
-                    <android.support.v7.widget.AppCompatCheckBox
-                        android:id="@+id/EventTypeText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="-4.0dip"
-                        android:layout_marginTop="@dimen/spacing_middle"
-                        android:layout_marginRight="-4.0dip"
-                        android:text="Check to select album-event type"
-                        android:textColor="@color/colorAccent"
-                        android:textStyle="bold"
-                        android:theme="@style/Checkbox.Blue" />
+
                     <ProgressBar
                         android:id="@+id/UploadProgress"
                         android:layout_width="40dp"
@@ -189,6 +230,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:textSize="20sp"
             android:text="DONE"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
             android:textColor="@android:color/white" />

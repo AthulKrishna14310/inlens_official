@@ -25,11 +25,13 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -53,14 +55,19 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+import com.integrals.inlens.Helper.Checker;
 import com.integrals.inlens.Helper.NotificationHelper;
 import com.integrals.inlens.Helper.PreOperationCheck;
 import com.integrals.inlens.Models.GalleryImageModel;
 import com.integrals.inlens.R;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -138,7 +145,7 @@ public class InlensGalleryActivity extends AppCompatActivity {
 
         if(CommunityID ==null && CommunityStartTime==null)
         {
-            if(new PreOperationCheck().checkInternetConnectivity(this))
+            if(new Checker(InlensGalleryActivity.this).isConnectedToNet())
             {
                 UserRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -200,11 +207,9 @@ public class InlensGalleryActivity extends AppCompatActivity {
         GalleryInfoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 final View customLayout = getLayoutInflater().inflate(R.layout.diaglogue_layout_inlens_gallery, null);
 
-
-                new AlertDialog.Builder(InlensGalleryActivity.this).setTitle("How to upload")
+                new AlertDialog.Builder(InlensGalleryActivity.this)
                         .setMessage(" ")
                         .setPositiveButton("Ok, I understand", new DialogInterface.OnClickListener() {
                             @Override
@@ -218,7 +223,6 @@ public class InlensGalleryActivity extends AppCompatActivity {
                         .setCancelable(true)
                         .create()
                         .show();
-
             }
         });
 
@@ -292,19 +296,7 @@ public class InlensGalleryActivity extends AppCompatActivity {
 
                 if (UploadQueue.size() == 0) {
                     Toast.makeText(getApplicationContext(), "No images selected.", Toast.LENGTH_SHORT).show();
-                    new AlertDialog.Builder(InlensGalleryActivity.this).setTitle("Inlens Gallery")
-                            .setMessage("This gallery shows all the images that can be upload to your current community. Swipe down to load new images. \n 1.Take photos with any camera app. \n 2. Tap on Image-Notification. \n 3. Select Images and upload. ")
-                            .setPositiveButton("Ok, I understand", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
 
-                                    dialogInterface.dismiss();
-
-                                }
-                            })
-                            .setCancelable(true)
-                            .create()
-                            .show();
                 } else {
 
                     UploadCount = 0;
@@ -400,6 +392,25 @@ public class InlensGalleryActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
+                if (AllCommunityImages.size() == 0) {
+                    final View customLayout = getLayoutInflater().inflate(R.layout.diaglogue_layout_inlens_gallery, null);
+
+
+                    new AlertDialog.Builder(InlensGalleryActivity.this)
+                            .setMessage(" ")
+                            .setPositiveButton("Ok, I understand", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                    dialogInterface.dismiss();
+
+                                }
+                            })
+                            .setView(customLayout)
+                            .setCancelable(true)
+                            .create()
+                            .show();
+                }
 
             }
         }, 2000);
@@ -886,11 +897,11 @@ public class InlensGalleryActivity extends AppCompatActivity {
 
     private int orientation(Bitmap result) {
 
-     if(result.getHeight()>result.getWidth()){
-         return PORTRAIT;
-     }else{
-         return LANDSCAPE;
-     }
+        if(result.getHeight()>result.getWidth()){
+            return PORTRAIT;
+        }else{
+            return LANDSCAPE;
+        }
 
     }
 }

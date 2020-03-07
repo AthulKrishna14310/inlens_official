@@ -51,7 +51,7 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<ParticipantsAdapte
 
         }
 
-        RequestOptions rq = new RequestOptions().placeholder(R.drawable.image_avatar_background);
+        RequestOptions rq = new RequestOptions().placeholder(R.drawable.ic_account_circle);
         Glide.with(context).load(ImagesList.get(position)).apply(rq).into(holder.PImage);
 
     }

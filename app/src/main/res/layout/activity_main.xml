@@ -8,11 +8,24 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white">
 
+
+
+        <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/ic_add_a_photo_black_24dp"
+
+        android:backgroundTint="@color/blue_900"
+        android:layout_margin="16dp"
+        android:id="@+id/fabadd" />
 
         <ScrollView
             android:id="@+id/main_scrollview"
@@ -28,9 +41,9 @@
                     android:id="@+id/mainactivity_toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
+                    android:layout_marginStart="16dp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginEnd="15dp"
+                    android:layout_marginEnd="16dp"
                     app:cardElevation="0dp">
 
                     <RelativeLayout
@@ -47,7 +60,7 @@
                             android:text="@string/app_name"
                             android:textColor="@color/colorAccent"
                             android:textSize="20sp"
-                            android:textStyle="bold" />
+                             />
 
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:id="@+id/mainactivity_actionbar_profileimageview"
@@ -141,9 +154,12 @@
 
                                 <ImageButton
                                     android:id="@+id/main_horizontal_new_album_button"
-                                    android:layout_width="50dp"
-                                    android:layout_height="50dp"
-                                    android:layout_margin="3dp"
+                                    android:layout_width="48dp"
+                                    android:layout_height="48dp"
+                                    android:layout_marginLeft="16dp"
+                                    android:layout_marginTop="3dp"
+                                    android:layout_marginRight="3dp"
+                                    android:layout_marginBottom="3dp"
                                     android:background="@drawable/circle_accent"
                                     android:elevation="1dp"
                                     android:scaleType="center"
@@ -151,11 +167,11 @@
                                     android:tint="@color/white" />
 
                                 <TextView
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center_horizontal"
                                     android:gravity="center"
-                                    android:text="New"
+                                    android:text="    New"
                                     android:textSize="12sp"
                                     android:textStyle="bold" />
 
@@ -171,7 +187,10 @@
                                 <RelativeLayout
                                     android:layout_width="50dp"
                                     android:layout_height="50dp"
-                                    android:layout_margin="3dp"
+                                    android:layout_marginLeft="16dp"
+                                    android:layout_marginRight="3dp"
+                                    android:layout_marginTop="3dp"
+                                    android:layout_marginBottom="3dp"
                                     android:background="@drawable/circle_accent">
 
                                     <ImageButton
@@ -191,7 +210,7 @@
                                     android:layout_gravity="center_horizontal"
                                     android:background="@color/white"
                                     android:gravity="center"
-                                    android:text="Scan"
+                                    android:text="    Scan"
                                     android:textSize="12sp"
                                     android:textStyle="bold" />
 
@@ -229,73 +248,65 @@
 
                 </HorizontalScrollView>
 
-                <RelativeLayout
-                    android:id="@+id/optionsRelativeLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="visible"
-                    >
-
-                    <LinearLayout
-                        android:id="@+id/main_add_photo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:orientation="horizontal"
-                        android:padding="4dp"
-                        android:background="@drawable/curved_corners"
-                        android:backgroundTint="@color/blue_600">
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:src="@drawable/ic_addphoto" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:text="Add photo"
-                            android:textColor="@color/white"
-                            android:textSize="16sp"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginEnd="10dp"
-                            />
-
-                    </LinearLayout>
-
-
-                </RelativeLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorPrimaryDark"
+                        android:layout_below="@id/photographers"/>
+
+                    <com.integrals.inlens.Helper.ExpandableCardView
+                        android:id="@+id/photographers"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:animationDuration="50"
+                        app:expandOnClick="true"
+
+
+                        app:inner_view="@layout/photographers_layout"
+                        app:startExpanded="false"
+
+                        app:title="@string/photographer"
+
+                        >
+                    </com.integrals.inlens.Helper.ExpandableCardView>
+
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:id="@+id/photographer_recycler"
+                        android:layout_height="1dp"
+                        android:background="@color/colorPrimaryDark"
+                        android:layout_below="@id/photographers"/>
 
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/main_recyclerview"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp">
+                        android:layout_below="@id/photoText"
+                        >
 
                     </android.support.v7.widget.RecyclerView>
-
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Photos"
+                        android:id="@+id/photoText"
+                        android:textSize="16sp"
+                        android:layout_below="@id/photographers"
+                        android:layout_margin="10dp"
+                        android:textColor="@color/black">
+                    </TextView>
                 </RelativeLayout>
 
             </LinearLayout>
 
         </ScrollView>
 
-        <TextView
-            android:id="@+id/nocloudalbumtextview"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:gravity="center"
-            android:text="No albums found"
-            android:textColor="#000000"
-            android:textSize="15sp"
-            android:visibility="gone" />
+
 
         <ProgressBar
             android:id="@+id/mainloadingpbar"

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/main_bottomsheet_particpants_bottomsheet_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_toRightOf="@id/add_photographers"
+        android:background="@android:color/white">
+    </android.support.v7.widget.RecyclerView>
+
+
+    <ImageButton
+        android:layout_centerVertical="true"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="16dp"
+        android:clickable="true"
+        android:id="@+id/add_photographers"
+        android:src="@drawable/ic_person_add"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:layout_alignParentLeft="true">
+
+    </ImageButton>
+</RelativeLayout>

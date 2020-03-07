@@ -4,7 +4,7 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.integrals.inlens"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 27
         versionCode 5
         versionName "5.0"
@@ -39,6 +39,7 @@ dependencies {
     implementation 'com.balysv:material-ripple:1.0.2'
     implementation 'com.android.support:appcompat-v7:27.1.1'
 
+    implementation 'com.alespero:expandable-cardview:0.8'
     implementation 'com.github.judemanutd:autostarter:1.0.2'
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.ramotion.cardslider:card-slider:0.3.0'

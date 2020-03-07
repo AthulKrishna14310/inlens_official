@@ -22,16 +22,16 @@
         >
 
         <TextView
+            android:id="@+id/AlbumTitleBottom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:gravity="center"
-            android:text="Album Header"
-            android:textSize="30sp"
-            android:id="@+id/AlbumTitleBottom"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:textStyle="bold"/>
+            android:gravity="center"
+            android:text="Album Header"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
 
         <LinearLayout
@@ -52,28 +52,30 @@
                     android:id="@+id/albumstartdate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="end"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/starttime_background"
+                    android:backgroundTint="@color/red_400"
                     android:gravity="center"
-                    android:textSize="10sp"
-                    android:textColor="@color/white"
                     android:inputType="text"
                     android:padding="2dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/starttime_background"/>
+                    android:text="end"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
                 <TextView
                     android:id="@+id/albumenddate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="end"
                     android:gravity="center"
-                    android:textSize="10sp"
+                    android:textSize="14sp"
                     android:textColor="@color/white"
                     android:inputType="text"
                     android:padding="2dp"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginEnd="2dp"
                     android:layout_marginStart="10dp"
+                    android:backgroundTint="@color/red_400"
                     android:layout_weight="1"
                     android:background="@drawable/endtime_background"/>
 
@@ -86,7 +88,7 @@
                 android:gravity="center"
                 android:text="Album subtitle"
                 android:layout_gravity="center"
-                android:textSize="14sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_marginTop="10dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
@@ -114,6 +116,7 @@
             android:orientation="horizontal"
             android:paddingLeft="@dimen/spacing_mxlarge"
             android:layout_marginTop="10dp"
+            android:visibility="gone"
             android:padding="3dp">
 
             <ImageView
@@ -154,7 +157,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="Change cover"
+                android:text="Change Cloud-Album cover"
                 android:textColor="#737373"
                 android:textSize="16sp"
                 android:layout_marginStart="10dp"
@@ -182,7 +185,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="Quit cloud-album"
+                android:text="@string/quit_cloud_album"
                 android:textColor="#737373"
                 android:textSize="16sp"
                 android:layout_marginStart="10dp"/>
@@ -195,6 +198,7 @@
             android:layout_gravity="top"
             android:layout_margin="10dp"
             android:background="@android:color/white"
+            android:visibility="gone"
             android:orientation="vertical">
 
             <TextView

@@ -25,7 +25,7 @@
             android:layout_marginEnd="20dp"
             android:gravity="center"
             android:text="Album Header"
-            android:textSize="30sp"
+            android:textSize="24sp"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -45,33 +45,32 @@
                     android:id="@+id/albumstartdate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginEnd="2dp"
                     android:layout_weight="1"
                     android:background="@drawable/starttime_background"
-                    android:backgroundTint="@color/yellow_700"
                     android:gravity="center"
                     android:inputType="text"
                     android:padding="2dp"
                     android:text="end"
                     android:textColor="@color/white"
-                    android:textSize="10sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/albumenddate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginEnd="3dp"
                     android:layout_weight="1"
                     android:background="@drawable/endtime_background"
-                    android:backgroundTint="@color/yellow_700"
+
                     android:gravity="center"
                     android:inputType="text"
                     android:padding="2dp"
                     android:text="end"
                     android:textColor="@color/white"
-                    android:textSize="10sp" />
+                    android:textSize="14sp" />
 
             </LinearLayout>
 
@@ -83,7 +82,7 @@
                 android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:text="Album subtitle"
-                android:textSize="14sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 />
@@ -123,7 +122,7 @@
                 android:layout_marginStart="10dp"
                 android:text="Change cover"
                 android:textColor="#737373"
-                android:textSize="16sp" />
+                android:textSize="18sp" />
 
         </LinearLayout>
 
@@ -141,6 +140,7 @@
                 android:layout_height="wrap_content"
                 android:text="Participants"
                 android:textStyle="bold"
+                android:visibility="gone"
                 android:textSize="14sp"/>
 
             <android.support.v7.widget.RecyclerView
@@ -149,6 +149,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_margin="5dp"
+                android:visibility="gone"
                 android:background="@android:color/white">
 
             </android.support.v7.widget.RecyclerView>

@@ -3,5 +3,12 @@
     <string name="caption_hint">Type your caption</string>
     <string name="Open">Open</string>
     <string name="Close">Close</string>
+    <string name="stop_notification">Stop Notification</string>
+    <string name="restart_notification">Restart Notification</string>
+    <string name="background_service">Background Service</string>
+    <string name="my_uploads">My Uploads</string>
+    <string name="change_profile_picture">Change Profile-Picture</string>
+    <string name="photographer">Photographers</string>
+    <string name="quit_cloud_album">Quit Cloud-Album</string>
 
 </resources>

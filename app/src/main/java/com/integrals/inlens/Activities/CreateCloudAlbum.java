@@ -154,10 +154,40 @@ public class CreateCloudAlbum extends AppCompatActivity {
                 {
                     AlbumTime = day + "-" +"0"+ month + "-" + year;
                     if(!checkNumberOfDays(CheckTimeTaken,AlbumTime)){
-                        DateofCompletion.setText("Album Active until " + AlbumTime + " midnight");
                         AlbumDateSet = true;
                         DateofCompletion.setChecked(true);
-                        }else {
+
+                        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(CreateCloudAlbum.this)
+                                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                                .setTitle("Album expiry on "+AlbumTime)
+                                .setIcon(R.drawable.ic_warning_black_24dp)
+                                .setMessage("You can only upload images and add participants to this album till "+AlbumTime)
+                                .setCancelable(false)
+                                .addButton("    OK    ", -1, Color.parseColor("#3e3d63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                                        CFAlertDialog.CFAlertActionAlignment.END,
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+
+                                            }
+                                        });
+                        builder.show();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    }else {
                         AlbumTime = "";
                         Toast.makeText(getApplicationContext(),"Album creation valid only for 5 days",Toast.LENGTH_SHORT).show();
 
@@ -167,9 +197,29 @@ public class CreateCloudAlbum extends AppCompatActivity {
                 else
                 {    AlbumTime = day + "-" + month + "-" + year;
                      if(!checkNumberOfDays(CheckTimeTaken,AlbumTime)){
-                         DateofCompletion.setText("Album Active until " + AlbumTime + " midnight");
                             AlbumDateSet = true;
                             DateofCompletion.setChecked(true);
+
+                            CFAlertDialog.Builder builder = new CFAlertDialog.Builder(CreateCloudAlbum.this)
+                                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                                 .setTitle("Album expiry on "+AlbumTime)
+                                 .setIcon(R.drawable.ic_warning_black_24dp)
+                                 .setMessage("You can only upload images and add participants to this album till "+AlbumTime)
+                                 .setCancelable(false)
+                                 .addButton("    OK , I understand   ", -1, Color.parseColor("#3e3d63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                                         CFAlertDialog.CFAlertActionAlignment.END,
+                                         new DialogInterface.OnClickListener() {
+                                             @Override
+                                             public void onClick(DialogInterface dialog, int which) {
+                                                 dialog.dismiss();
+
+                                             }
+                                         });
+                         builder.show();
+
+
+
+
                      }else {
                          AlbumTime = "";
                          Toast.makeText(getApplicationContext(),"Album creation valid only for 5 days",Toast.LENGTH_LONG).show();
@@ -237,7 +287,32 @@ public class CreateCloudAlbum extends AppCompatActivity {
               onBackPressed();
             }
         });
+        findViewById(R.id.date_range_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DateofCompletion.setChecked(false);
+                Calendar calendar = Calendar.getInstance();
+                int year = calendar.get(Calendar.YEAR);
+                int month = calendar.get(Calendar.MONTH);
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
 
+                DatePickerDialog dialog = new DatePickerDialog(
+                        CreateCloudAlbum.this,
+                        dateSetListener,
+                        year,month,day
+                );
+                dialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+                dialog.getDatePicker().setMaxDate(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 4);
+                dialog.show();
+            }
+        });
+        findViewById(R.id.event_type_add).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EventPicker.setChecked(false);
+                EventDialog.show();
+            }
+        });
     }
 
     private void EventDialogInit() {
@@ -284,7 +359,6 @@ public class CreateCloudAlbum extends AppCompatActivity {
                 if(!TextUtils.isEmpty(EventType))
                 {
                     EventDialog.dismiss();
-                    EventPicker.setText(String.format("Event Selected : %s", EventType));
                 }
                 else
                 {
@@ -308,6 +382,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                     EventTypeDone.setVisibility(View.VISIBLE);
                     EventTypeSet = true;
                     EventPicker.setChecked(true);
+                    EventDialog.dismiss();
                 }
                 else
                 {
@@ -331,7 +406,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                     EventTypeDone.setVisibility(View.VISIBLE);
                     EventTypeSet = true;
                     EventPicker.setChecked(true);
-
+                    EventDialog.dismiss();
                 }
                 else
                 {
@@ -355,7 +430,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                     EventTypeDone.setVisibility(View.VISIBLE);
                     EventTypeSet = true;
                     EventPicker.setChecked(true);
-
+                    EventDialog.dismiss();
                 }
                 else
                 {
@@ -379,7 +454,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                     EventTypeDone.setVisibility(View.VISIBLE);
                     EventTypeSet = true;
                     EventPicker.setChecked(true);
-
+                    EventDialog.dismiss();
                 }
                 else
                 {
@@ -403,7 +478,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                     EventTypeDone.setVisibility(View.VISIBLE);
                     EventTypeSet = true;
                     EventPicker.setChecked(true);
-
+                    EventDialog.dismiss();
                 }
                 else
                 {
@@ -427,7 +502,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                     EventTypeDone.setVisibility(View.VISIBLE);
                     EventTypeSet = true;
                     EventPicker.setChecked(true);
-
+                    EventDialog.dismiss();
                 }
                 else
                 {
@@ -764,7 +839,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
         if(positive) {
             CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
                     .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                    .setTitle("Community creation")
+                    .setTitle("Cloud-Album creation")
                     .setIcon(R.drawable.ic_check_circle_black_24dp)
                     .setMessage(dialogue)
                     .setCancelable(false)
