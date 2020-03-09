@@ -22,7 +22,7 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/inlens_logo_m"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/NoActionBarTheme">
         <activity
             android:name=".Activities.PhotoView"
             android:configChanges="orientation|screenSize"

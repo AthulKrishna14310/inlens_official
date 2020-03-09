@@ -127,6 +127,7 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
                                     Toast.makeText(getApplicationContext(), "Rejoined this community.", Toast.LENGTH_SHORT).show();
                                     Ref.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("live_community").setValue(displayValue);
                                     Ref.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("dead_community").removeValue();
+
                                 }
                                 else {
 
