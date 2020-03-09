@@ -699,6 +699,8 @@ public class MainActivity extends AppCompatActivity {
 
                     } else {
                         CurrentActiveCommunityID = "Not Available";
+                        navigationView.getMenu().findItem(R.id.profile_notification_start).setVisible(false);
+                        navigationView.getMenu().findItem(R.id.profile_notification_stop).setVisible(false);
                         AlarmManagerHelper alarmManagerHelper = new AlarmManagerHelper(getApplicationContext());
                         alarmManagerHelper.deinitateAlarmManager();
                     }
