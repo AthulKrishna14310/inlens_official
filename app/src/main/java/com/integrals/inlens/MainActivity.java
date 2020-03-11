@@ -204,8 +204,8 @@ public class MainActivity extends AppCompatActivity {
     DatabaseReference getParticipantDatabaseReference;
     ExpandableCardView expandableCardView;
 
-    private Toolbar MainActiobar;
     private View toolbarCustomView;
+
 
     public MainActivity() {
     }
@@ -229,8 +229,7 @@ public class MainActivity extends AppCompatActivity {
             jobScheduler.schedule(jobInfo);
         }
 
-        MainActiobar = findViewById(R.id.main_toolbar);
-        setSupportActionBar(MainActiobar);
+
         toolbarCustomView = LayoutInflater.from(this).inflate(R.layout.custom_toolbar_layout,null);
         AppBarLayout appBarLayout = findViewById(R.id.main_appbarlayout);
         appBarLayout.addView(toolbarCustomView);
@@ -238,10 +237,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
 
-                if (Math.abs(verticalOffset) == appBarLayout.getTotalScrollRange()) {
+                if (Math.abs(verticalOffset) == appBarLayout.getTotalScrollRange() && !toolbarCustomView.isShown()) {
+                    toolbarCustomView.clearAnimation();
+                    toolbarCustomView.setAnimation(AnimationUtils.loadAnimation(MainActivity.this,R.anim.slide_from_top));
+                    toolbarCustomView.clearAnimation();
                     toolbarCustomView.setVisibility(View.VISIBLE);
                 }
-                else if (verticalOffset == 0) {
+                else if (verticalOffset == 0 && toolbarCustomView.isShown()) {
+                    toolbarCustomView.clearAnimation();
+                    toolbarCustomView.setAnimation(AnimationUtils.loadAnimation(MainActivity.this,R.anim.slide_back_up));
+                    toolbarCustomView.clearAnimation();
                     toolbarCustomView.setVisibility(View.GONE);
                 }
 

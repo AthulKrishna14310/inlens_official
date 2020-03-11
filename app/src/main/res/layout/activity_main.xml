@@ -25,14 +25,13 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/main_appbarlayout"
                 android:background="@color/colorAccent"
-                android:minHeight="?attr/actionBarSize"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 >
 
                 <android.support.design.widget.CollapsingToolbarLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
+                    app:layout_scrollFlags="scroll|exitUntilCollapsed"
                     app:contentScrim="@color/colorAccent"
                     android:background="@color/white">
 
@@ -272,7 +271,7 @@
                             android:id="@+id/photoText"
                             android:textSize="16sp"
                             android:layout_below="@id/photographers"
-                            android:layout_margin="10dp"
+                            android:layout_marginStart="10dp"
                             android:textColor="@color/black">
                         </TextView>
 
