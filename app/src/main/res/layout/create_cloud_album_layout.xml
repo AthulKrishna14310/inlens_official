@@ -16,16 +16,15 @@
 
         <ImageButton
             android:id="@+id/create_cloud_album_backbutton"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="5dp"
-            android:background="@color/grey_5"
-            android:foreground="@drawable/ic_back_24dp"
-            android:rotation="180"
+            android:background="?attr/selectableItemBackground"
+            android:src="@drawable/ic_arrow_back"
             android:visibility="visible" />
 
         <LinearLayout

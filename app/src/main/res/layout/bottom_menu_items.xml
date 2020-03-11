@@ -62,22 +62,23 @@
                     android:padding="2dp"
                     android:text="end"
                     android:textColor="@color/white"
-                    android:textSize="14sp" />
+                    android:textSize="12sp" />
+
                 <TextView
                     android:id="@+id/albumenddate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="end"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="2dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/endtime_background"
+                    android:backgroundTint="@color/red_400"
                     android:gravity="center"
-                    android:textSize="14sp"
-                    android:textColor="@color/white"
                     android:inputType="text"
                     android:padding="2dp"
-                    android:layout_marginEnd="2dp"
-                    android:layout_marginStart="10dp"
-                    android:backgroundTint="@color/red_400"
-                    android:layout_weight="1"
-                    android:background="@drawable/endtime_background"/>
+                    android:text="end"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
 
             </LinearLayout>
 

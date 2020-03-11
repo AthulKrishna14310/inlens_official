@@ -54,7 +54,7 @@
                     android:padding="2dp"
                     android:text="end"
                     android:textColor="@color/white"
-                    android:textSize="14sp" />
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/albumenddate"
@@ -70,7 +70,7 @@
                     android:padding="2dp"
                     android:text="end"
                     android:textColor="@color/white"
-                    android:textSize="14sp" />
+                    android:textSize="12sp" />
 
             </LinearLayout>
 

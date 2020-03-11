@@ -217,7 +217,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP)
         {
             ComponentName componentName = new ComponentName(this, Scheduler.class);
@@ -949,13 +948,14 @@ public class MainActivity extends AppCompatActivity {
                                     if (dataSnapshot.hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                                         Toast.makeText(getApplicationContext(), "Rejoined this community.", Toast.LENGTH_SHORT).show();
                                         Ref.child("Users").child(CurrentUserID).child("live_community").setValue(substring);
+                                        recreate();
 
                                     } else {
 
                                         Ref.child("Users").child(CurrentUserID).child("Communities").child(substring).setValue(ServerValue.TIMESTAMP);
                                         Ref.child("Users").child(CurrentUserID).child("live_community").setValue(substring);
                                         Ref.child("Communities").child(substring).child("participants").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(ServerValue.TIMESTAMP);
-
+                                        recreate();
                                     }
 
 
