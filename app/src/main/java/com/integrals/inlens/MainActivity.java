@@ -27,6 +27,7 @@ import android.os.Parcelable;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -36,6 +37,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -46,18 +48,22 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -82,6 +88,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
@@ -103,11 +110,13 @@ import com.integrals.inlens.Helper.BottomSheetFragment_Inactive;
 import com.integrals.inlens.Helper.ExpandableCardView;
 import com.integrals.inlens.Helper.ParticipantsAdapter;
 import com.integrals.inlens.Helper.PreOperationCheck;
+import com.integrals.inlens.Helper.ToolbarAdapter;
 import com.integrals.inlens.JobScheduler.Scheduler;
 import com.integrals.inlens.Models.CommunityModel;
 import com.integrals.inlens.Models.PostModel;
 import com.integrals.inlens.Notification.AlarmManagerHelper;
 
+import com.integrals.inlens.Weather.Model.Main;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import com.squareup.picasso.Picasso;
@@ -141,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
     private List<String> ParticipantIDs;
 
     private List<CommunityModel> MyCommunityDetails;
-    private List<PostModel> MyPostList;
+    private List<PostModel> MyPostList,_PostList;
     private DatabaseReference Ref;
     private FirebaseAuth InAuthentication;
     private ProgressBar MainLoadingProgressBar;
@@ -194,6 +203,10 @@ public class MainActivity extends AppCompatActivity {
     String imgurl = "";
     DatabaseReference getParticipantDatabaseReference;
     ExpandableCardView expandableCardView;
+
+    private Toolbar MainActiobar;
+    private View toolbarCustomView;
+
     public MainActivity() {
     }
 
@@ -217,6 +230,24 @@ public class MainActivity extends AppCompatActivity {
             jobScheduler.schedule(jobInfo);
         }
 
+        MainActiobar = findViewById(R.id.main_toolbar);
+        setSupportActionBar(MainActiobar);
+        toolbarCustomView = LayoutInflater.from(this).inflate(R.layout.custom_toolbar_layout,null);
+        AppBarLayout appBarLayout = findViewById(R.id.main_appbarlayout);
+        appBarLayout.addView(toolbarCustomView);
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+
+                if (Math.abs(verticalOffset) == appBarLayout.getTotalScrollRange()) {
+                    toolbarCustomView.setVisibility(View.VISIBLE);
+                }
+                else if (verticalOffset == 0) {
+                    toolbarCustomView.setVisibility(View.GONE);
+                }
+
+            }
+        });
         MyCommunityDetails = new ArrayList<>();
         ParticipantIDs = new ArrayList<>();
         MainHorizontalScrollView = findViewById(R.id.main_horizontalscrollview);
@@ -225,6 +256,8 @@ public class MainActivity extends AppCompatActivity {
         MainNewAlbumButton = findViewById(R.id.main_horizontal_new_album_button);
         MainScanQrButton = findViewById(R.id.main_horizontal_scan_button);
         expandableCardView=findViewById(R.id.photographers);
+
+
 
         ParticipantsRecyclerView = findViewById(R.id.main_bottomsheet_particpants_bottomsheet_recyclerview);
         ParticipantsRecyclerView.setHasFixedSize(true);
@@ -402,12 +435,7 @@ public class MainActivity extends AppCompatActivity {
 
         MainVerticalRecyclerView = findViewById(R.id.main_recyclerview);
         MainVerticalRecyclerView.setHasFixedSize(true);
-        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL) {
-            @Override
-            public boolean canScrollVertically() {
-                return false;
-            }
-        };
+        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL);
 
 
         MainVerticalRecyclerView.setLayoutManager(staggeredGridLayoutManager);
@@ -688,6 +716,8 @@ public class MainActivity extends AppCompatActivity {
 
 
                     if (dataSnapshot.child("Users").child(CurrentUserID).hasChild("live_community")) {
+                        navigationView.getMenu().findItem(R.id.profile_notification_start).setVisible(true);
+                        navigationView.getMenu().findItem(R.id.profile_notification_stop).setVisible(true);
                         CurrentActiveCommunityID = dataSnapshot.child("Users").child(CurrentUserID).child("live_community").getValue().toString();
                         DummyCurrentActiveCommunityID = CurrentActiveCommunityID;
                         if (dataSnapshot.child("Communities").child(CurrentActiveCommunityID).hasChild("endtime")) {
@@ -1118,7 +1148,10 @@ public class MainActivity extends AppCompatActivity {
                     MainLoadingProgressBar.setVisibility(View.GONE);
                     MainHorizontalRecyclerview.setVisibility(View.VISIBLE);
 
+                    //show AppName in toolbar when collapsed
+
                 } else {
+
                     MainLoadingProgressBar.setVisibility(View.GONE);
                     MainHorizontalRecyclerview.setVisibility(View.VISIBLE);
                     SharedPreferences LastShownNotificationInfo = getSharedPreferences("LastNotification.pref",Context.MODE_PRIVATE);
@@ -1133,8 +1166,14 @@ public class MainActivity extends AppCompatActivity {
 
 
                 Collections.reverse(MyCommunityDetails);
+                RecyclerView toolbarRecyclerview =toolbarCustomView.findViewById(R.id.custom_toolbar_recyclerview);
+                toolbarRecyclerview.setHasFixedSize(true);
+                toolbarRecyclerview.setLayoutManager(new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL,false));
+                toolbarRecyclerview.setAdapter(new ToolbarAdapter(MyCommunityDetails,MainActivity.this));
+
                 MainHorizontalAdapter adapter = new MainHorizontalAdapter(MyCommunityDetails);
                 MainHorizontalRecyclerview.setAdapter(adapter);
+
 
 
             }
@@ -1197,25 +1236,23 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void SetVerticalRecyclerView(String communityID) {
+    public void SetVerticalRecyclerView(String communityID) {
 
 
         CurrentKeyShowninVerticialRecyclerview = communityID;
 
         MyPostList = new ArrayList<>();
         setParticipants();
-        Ref.child("Communities").child(communityID).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+        try
+        {
+            Ref.child("Communities").child(communityID).child("posts").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
 
-                MyPostList.clear();
-                MainVerticalRecyclerView.removeAllViews();
-
-                if (dataSnapshot.hasChild("posts")) {
                     MainVerticalRecyclerView.setVisibility(View.VISIBLE);
-
-
-                    for (DataSnapshot snapshot : dataSnapshot.child("posts").getChildren()) {
+                    MyPostList.clear();
+                    MainVerticalRecyclerView.removeAllViews();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         String key = snapshot.getKey();
                         String by = "unknown", time = "unknown", uri = "unknown";
 
@@ -1236,28 +1273,30 @@ public class MainActivity extends AppCompatActivity {
 
                     if (MyPostList.size() != 0) {
                         Collections.reverse(MyPostList);
-                        MainVerticalAdapter adapter = new MainVerticalAdapter(getApplicationContext(), MyPostList, FirebaseDatabase.getInstance().getReference().child("Users"));
+                        MainVerticalAdapter adapter = new MainVerticalAdapter(getApplicationContext(),MyPostList, FirebaseDatabase.getInstance().getReference().child("Users"),communityID);
                         MainVerticalRecyclerView.setAdapter(adapter);
                     } else {
-                          MainVerticalRecyclerView.setVisibility(View.GONE);
+                        MainVerticalRecyclerView.setVisibility(View.GONE);
                     }
 
+                }
 
-                } else {
-                    MainVerticalRecyclerView.setVisibility(View.GONE);
-                 }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
+                }
+            });
 
-            }
+        }
+        catch (Exception e)
+        {
+            MainVerticalRecyclerView.setVisibility(View.GONE);
+        }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
 
 
     }
+
 
     private void setParticipants(){
         ParticipantIdList = ParticipantIDs;
@@ -1988,13 +2027,15 @@ public class MainActivity extends AppCompatActivity {
         List<PostModel> PostList;
         DatabaseReference UserRef;
         Picasso picasso;
+        String comID;
 
-        public MainVerticalAdapter(Context context, List<PostModel> postList, DatabaseReference userRef) {
+        public MainVerticalAdapter(Context context, List<PostModel> postList, DatabaseReference userRef,String ID) {
             this.context = context;
             PostList = postList;
             UserRef = userRef;
             picasso = Picasso.get();
             picasso.setIndicatorsEnabled(false);
+            comID = ID;
         }
 
 
@@ -2009,11 +2050,13 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull final PostGridViewHolder holder, final int position) {
 
-            holder.itemView.clearAnimation();
-            holder.itemView.setAnimation(AnimationUtils.loadAnimation(context,android.R.anim.fade_in));
-            holder.itemView.getAnimation().start();
+            if (PostList.get(position)!=null)
+            {
+                holder.itemView.clearAnimation();
+                holder.itemView.setAnimation(AnimationUtils.loadAnimation(context,android.R.anim.fade_in));
+                holder.itemView.getAnimation().start();
 
-            RequestOptions requestOptions = new RequestOptions().placeholder(R.drawable.ic_photo_camera);
+                RequestOptions requestOptions = new RequestOptions().placeholder(R.drawable.ic_photo_camera);
 
 
             /*
@@ -2023,87 +2066,90 @@ public class MainActivity extends AppCompatActivity {
                     .into(holder.PostImageView)
             ;
              */
-            Glide.with(context)
-                    .load(PostList.get(position).getUri())
-                    .apply(requestOptions)
-                    .listener(new RequestListener<Drawable>() {
-                        @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                            holder.PostProgressbar.setVisibility(View.GONE);
-                            return false;
+                Glide.with(context)
+                        .load(PostList.get(position).getUri())
+                        .apply(requestOptions)
+                        .listener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                holder.PostProgressbar.setVisibility(View.GONE);
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                holder.PostProgressbar.setVisibility(View.GONE);
+                                return false;
+                            }
+                        })
+                        .into(holder.PostImageView);
+
+                UserRef.child(PostList.get(position).getPostBy()).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        if (dataSnapshot.hasChild("Name")) {
+                            String name = dataSnapshot.child("Name").getValue().toString();
+                            holder.PostUploaderNameTextView.setText(name);
+
+                        }
+                        else
+                        {
+                            holder.PostUploaderNameTextView.setText("Unknown");
+                        }
+                        if (dataSnapshot.hasChild("Profile_picture")) {
+                            String UploaderImageUrl = dataSnapshot.child("Profile_picture").getValue().toString();
+                            Glide.with(context).load(UploaderImageUrl).into(holder.PostUploaderImageView);
+
+                        }
+                        else
+                        {
+                            Glide.with(context).load(R.drawable.ic_account_circle).into(holder.PostUploaderImageView);
+
                         }
 
-                        @Override
-                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                            holder.PostProgressbar.setVisibility(View.GONE);
-                            return false;
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+                holder.itemView.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                        if(motionEvent.getAction() == MotionEvent.ACTION_UP  && PostDialog.isShowing())
+                        {
+                            PostDialog.dismiss();
                         }
-                    })
-                    .into(holder.PostImageView);
-
-            UserRef.child(PostList.get(position).getPostBy()).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    if (dataSnapshot.hasChild("Name")) {
-                        String name = dataSnapshot.child("Name").getValue().toString();
-                        holder.PostUploaderNameTextView.setText(name);
-
+                        return false;
                     }
-                    else
-                    {
-                        holder.PostUploaderNameTextView.setText("Unknown");
+                });
+
+                holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        ShowPostDialog(PostList.get(position));
+                        PostDialog.show();
+                        return false;
                     }
-                    if (dataSnapshot.hasChild("Profile_picture")) {
-                        String UploaderImageUrl = dataSnapshot.child("Profile_picture").getValue().toString();
-                        Glide.with(context).load(UploaderImageUrl).into(holder.PostUploaderImageView);
+                });
 
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent i = new Intent(MainActivity.this , PhotoView.class);
+                        i.putParcelableArrayListExtra("data", (ArrayList<? extends Parcelable>) PostList);
+                        i.putExtra("position",position);
+                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(i);
                     }
-                    else
-                    {
-                        Glide.with(context).load(R.drawable.ic_account_circle).into(holder.PostUploaderImageView);
+                });
+            }
 
-                    }
 
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
-            holder.itemView.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View view, MotionEvent motionEvent) {
-
-                    if(motionEvent.getAction() == MotionEvent.ACTION_UP  && PostDialog.isShowing())
-                    {
-                        PostDialog.dismiss();
-                    }
-                    return false;
-                }
-            });
-
-            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    ShowPostDialog(PostList.get(position));
-                    PostDialog.show();
-                    return false;
-                }
-            });
-
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent i = new Intent(MainActivity.this , PhotoView.class);
-                    i.putParcelableArrayListExtra("data", (ArrayList<? extends Parcelable>) PostList);
-                    i.putExtra("position",position);
-                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    context.startActivity(i);
-                }
-            });
         }
 
 
