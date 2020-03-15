@@ -8,7 +8,6 @@ import android.app.Dialog;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,29 +21,21 @@ import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Build;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +53,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -97,28 +87,34 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.integrals.inlens.Activities.AuthActivity;
+import com.integrals.inlens.Activities.CreateCloudAlbum;
 import com.integrals.inlens.Activities.InlensGalleryActivity;
 import com.integrals.inlens.Activities.PhotoView;
-import com.integrals.inlens.Activities.ProfileActivity;
+import com.integrals.inlens.Activities.QRCodeReader;
+import com.integrals.inlens.Activities.SharedImageActivity;
+import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.BottomSheetFragment;
 import com.integrals.inlens.Helper.BottomSheetFragment_Inactive;
 import com.integrals.inlens.Helper.ExpandableCardView;
+import com.integrals.inlens.Helper.FirebaseConstants;
+import com.integrals.inlens.Helper.HttpHandler;
 import com.integrals.inlens.Helper.ParticipantsAdapter;
 import com.integrals.inlens.Helper.PreOperationCheck;
+import com.integrals.inlens.Helper.ReadFirebaseData;
 import com.integrals.inlens.Helper.ToolbarAdapter;
 import com.integrals.inlens.Interface.FirebaseRead;
 import com.integrals.inlens.Interface.LoadMoreData;
-import com.integrals.inlens.JobScheduler.Scheduler;
 import com.integrals.inlens.Models.CommunityModel;
 import com.integrals.inlens.Models.PostModel;
 import com.integrals.inlens.Notification.AlarmManagerHelper;
-
 import com.journeyapps.barcodescanner.BarcodeEncoder;
-
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 import com.vistrav.ask.Ask;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -127,21 +123,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
+import java.util.TimeZone;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import id.zelory.compressor.Compressor;
-
-import com.integrals.inlens.Activities.CreateCloudAlbum;
-import com.integrals.inlens.Activities.QRCodeReader;
-import com.integrals.inlens.Activities.SharedImageActivity;
 
 
 public class MainActivity extends AppCompatActivity {
 
 
-    private String CurrentUserID = "Not Available", CurrentActiveCommunityID = "Not Available", DummyCurrentActiveCommunityID = "Not Available", CurrentDeadCommunityID = "Not Available";
+    private String CurrentUserID = AppConstants.NOTAVALABLE, currentActiveCommunityID = AppConstants.NOTAVALABLE;
     private List<String> ParticipantIDs;
 
     private List<CommunityModel> MyCommunityDetails;
@@ -199,6 +192,10 @@ public class MainActivity extends AppCompatActivity {
 
     private View toolbarCustomView;
 
+    DatabaseReference userRef,communityRef;
+    FirebaseAuth firebaseAuth;
+    String currentUserId;
+
 
     public MainActivity() {
     }
@@ -208,6 +205,63 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        firebaseAuth = FirebaseAuth.getInstance();
+        currentUserId = firebaseAuth.getCurrentUser().getUid();
+        userRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USERS).child(currentUserId);
+        communityRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.COMMUNITIES);
+
+        // receiving all the community id under the user
+        ArrayList<String> userCommunityIdList = getIntent().getExtras().getStringArrayList(AppConstants.USERIDLIST);
+        Collections.reverse(userCommunityIdList);
+
+        // get live community id
+
+        ReadFirebaseData readFirebaseData = new ReadFirebaseData();
+        readFirebaseData.readData(userRef, new FirebaseRead() {
+            @Override
+            public void onSuccess(DataSnapshot snapshot) {
+                if(snapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID))
+                {
+                    currentActiveCommunityID =  snapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString();
+                    readFirebaseData.readData(communityRef.child(currentActiveCommunityID), new FirebaseRead() {
+                        @Override
+                        public void onSuccess(DataSnapshot snapshot) {
+
+                            //we need to get server time
+                            long endtime = Long.parseLong(snapshot.child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString());
+                            new getServerTime(endtime).execute();
+
+                        }
+
+                        @Override
+                        public void onStart() {
+
+                        }
+
+                        @Override
+                        public void onFailure(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+
+
+            }
+
+            @Override
+            public void onStart() {
+
+            }
+
+            @Override
+            public void onFailure(DatabaseError databaseError) {
+
+            }
+        });
+
+        /*
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ComponentName componentName = new ComponentName(this, Scheduler.class);
@@ -636,6 +690,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+         */
 
 
         /*
@@ -718,6 +773,47 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private class getServerTime extends AsyncTask<Void,Void,Void>
+    {
+        long endtTime;
+        long serverTime;
+
+        public getServerTime(long endtTime) {
+            this.endtTime = endtTime;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            HttpHandler httpHandler =  new HttpHandler();
+            String jsonStr = httpHandler.makeServiceCall("http://worldtimeapi.org/api/ip");
+
+            if(jsonStr!=null)
+            {
+                try {
+                    JSONObject jsonObject = new JSONObject(jsonStr);
+                    String serverTime = jsonObject.getString("unixtime");
+                    this.serverTime =  Long.parseLong(serverTime)*1000;
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            if (this.serverTime > endtTime) {
+                quitCloudAlbum(1);
+            }
+            else
+            {
+                showDialogueQuitUnsuccess();
+
+            }
+        }
+    }
 
     public void readData(DatabaseReference ref, final FirebaseRead listener) {
         listener.onStart();
@@ -729,7 +825,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                listener.onFailure();
+                listener.onFailure(databaseError);
             }
         });
 
@@ -758,69 +854,11 @@ public class MainActivity extends AppCompatActivity {
         MainActionbar.setVisibility(View.VISIBLE);
 
 
-        if (CurrentActiveCommunityID.equals("Not Available")) {
-            SetVerticalRecyclerView(CurrentDeadCommunityID);
-        } else {
-            SetVerticalRecyclerView(CurrentActiveCommunityID);
-        }
+
 
     }
 
 
-    private void CheckUserAuthentication() {
-
-        if (InAuthentication.getCurrentUser() == null) {
-            startActivity(new Intent(MainActivity.this, AuthActivity.class));
-            finish();
-        } else {
-
-            CurrentUserID = InAuthentication.getCurrentUser().getUid();
-
-            Ref.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-
-
-                    if (dataSnapshot.child("Users").child(CurrentUserID).hasChild("live_community")) {
-                        navigationView.getMenu().findItem(R.id.profile_notification_start).setVisible(true);
-                        navigationView.getMenu().findItem(R.id.profile_notification_stop).setVisible(true);
-                        CurrentActiveCommunityID = dataSnapshot.child("Users").child(CurrentUserID).child("live_community").getValue().toString();
-                        DummyCurrentActiveCommunityID = CurrentActiveCommunityID;
-                        if (dataSnapshot.child("Communities").child(CurrentActiveCommunityID).hasChild("endtime")) {
-                            long endtime = Long.parseLong(dataSnapshot.child("Communities").child(CurrentActiveCommunityID).child("endtime").getValue().toString());
-                            if (System.currentTimeMillis() > endtime) {
-                                quitCloudAlbum(1);
-                            }
-                        }
-
-                    } else {
-                        CurrentActiveCommunityID = "Not Available";
-                        navigationView.getMenu().findItem(R.id.profile_notification_start).setVisible(false);
-                        navigationView.getMenu().findItem(R.id.profile_notification_stop).setVisible(false);
-                        AlarmManagerHelper alarmManagerHelper = new AlarmManagerHelper(getApplicationContext());
-                        alarmManagerHelper.deinitateAlarmManager();
-                    }
-
-                    if (dataSnapshot.child("Users").child(CurrentUserID).hasChild("dead_community")) {
-                        CurrentDeadCommunityID = dataSnapshot.child("Users").child(CurrentUserID).child("dead_community").getValue().toString();
-
-                    } else {
-                        CurrentDeadCommunityID = "Not Available";
-                    }
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
-            PermissionsInit();
-            ShowAllAlbums();
-
-        }
-    }
 
     public void QRCodeInit(final String CommunityID) {
 
@@ -921,7 +959,7 @@ public class MainActivity extends AppCompatActivity {
                             final String UrlOrDComId = (DeepLink.toString().substring(DeepLink.toString().length() - 27)).substring(0, 26);
 
 
-                            if (!CurrentActiveCommunityID.equals("Not Available")) {
+                            if (!currentActiveCommunityID.equals("Not Available")) {
 
                                 CFAlertDialog.Builder builder = new CFAlertDialog.Builder(getApplicationContext())
 
@@ -1003,7 +1041,7 @@ public class MainActivity extends AppCompatActivity {
 
                     if (endtime > System.currentTimeMillis()) {
 
-                        if (CurrentActiveCommunityID.equals(substring)) {
+                        if (currentActiveCommunityID.equals(substring)) {
                             Toast.makeText(getApplicationContext(), "Already a participant in this community.", Toast.LENGTH_SHORT).show();
                         } else {
 
@@ -1057,7 +1095,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void createAlbum() {
 
-        if (CurrentActiveCommunityID.equals("Not Available")) {
+        if (currentActiveCommunityID.equals("Not Available")) {
             startActivity(new Intent(MainActivity.this, CreateCloudAlbum.class));
         } else {
 
@@ -1085,7 +1123,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void scanQR() {
 
-        if (CurrentActiveCommunityID.equals("Not Available")) {
+        if (currentActiveCommunityID.equals("Not Available")) {
             Snackbar.with(MainActivity.this, null)
                     .type(Type.CUSTOM)
                     .message("Loading QR-Code Scanner ..")
@@ -1295,50 +1333,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if (CurrentActiveCommunityID.equals("Not Available")) {
-            ParticipantIDs.clear();
-            Ref.child("Communities").child(CurrentDeadCommunityID).child("participants").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        if (!ParticipantIDs.contains(snapshot.getKey())) {
-                            ParticipantIDs.add(snapshot.getKey());
-                        }
-                    }
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
-
-            SetVerticalRecyclerView(CurrentDeadCommunityID);
-        } else {
-            ParticipantIDs.clear();
-            Ref.child("Communities").child(CurrentActiveCommunityID).child("participants").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        if (!ParticipantIDs.contains(snapshot.getKey())) {
-                            ParticipantIDs.add(snapshot.getKey());
-                        }
-                    }
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
-            SetVerticalRecyclerView(CurrentActiveCommunityID);
-        }
 
 
     }
@@ -1464,35 +1458,33 @@ public class MainActivity extends AppCompatActivity {
         if (ForceQuit == 1) {
             if (checker.checkInternetConnectivity(getApplicationContext())) {
 
-                CurrentDeadCommunityID = CurrentActiveCommunityID;
                 FirebaseDatabase.getInstance().getReference().child("Users").child(CurrentUserID).child("live_community").removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
 
                         if (task.isSuccessful()) {
 
-                            FirebaseDatabase.getInstance().getReference().child("Users").child(CurrentUserID).child("dead_community").setValue(DummyCurrentActiveCommunityID);
 
                             AlarmManagerHelper alarmManagerHelper =
                                     new AlarmManagerHelper(getApplicationContext());
                             alarmManagerHelper.deinitateAlarmManager();
                             showDialogueQuit();
-                            SetDefaultView();
+                            //SetDefaultView();
 
 
                         } else {
-                            SetDefaultView();
+                            //SetDefaultView();
                             showDialogueQuitUnsuccess();
                         }
                     }
                 });
             } else {
-                SetDefaultView();
+                //SetDefaultView();
                 showDialogueQuitUnsuccess();
             }
 
         } else {
-            if (checker.checkInternetConnectivity(getApplicationContext()) && !CurrentActiveCommunityID.equals("Not Available")) {
+            if (checker.checkInternetConnectivity(getApplicationContext()) && !currentActiveCommunityID.equals(AppConstants.NOTAVALABLE)) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setCancelable(true);
                 builder.setTitle("Quit Cloud-Album");
@@ -1508,23 +1500,21 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                        CurrentDeadCommunityID = CurrentActiveCommunityID;
                         FirebaseDatabase.getInstance().getReference().child("Users").child(CurrentUserID).child("live_community").removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
 
                                 if (task.isSuccessful()) {
-                                    FirebaseDatabase.getInstance().getReference().child("Users").child(CurrentUserID).child("dead_community").setValue(DummyCurrentActiveCommunityID);
 
                                     AlarmManagerHelper alarmManagerHelper =
                                             new AlarmManagerHelper(getApplicationContext());
                                     alarmManagerHelper.deinitateAlarmManager();
                                     showDialogueQuit();
-                                    SetDefaultView();
+                                    //SetDefaultView();
 
 
                                 } else {
-                                    SetDefaultView();
+                                    //SetDefaultView();
                                     showDialogueQuitUnsuccess();
                                 }
 
@@ -1536,7 +1526,7 @@ public class MainActivity extends AppCompatActivity {
                 builder.create().show();
 
             } else {
-                SetDefaultView();
+                //SetDefaultView();
                 showDialogueQuitUnsuccess();
             }
         }
@@ -1762,12 +1752,14 @@ public class MainActivity extends AppCompatActivity {
 
         if (SEARCH_IN_PROGRESS) {
             SetDefaultView();
-        } else if (MainHorizontalScrollView.getScrollX() != 0) {
-            MainHorizontalScrollView.smoothScrollTo(0, 0);
-        } else {
+        }  else {
             super.onBackPressed();
         }
-
+/*
+else if (MainHorizontalScrollView.getScrollX() != 0) {
+            MainHorizontalScrollView.smoothScrollTo(0, 0);
+        }
+ */
     }
 
 
@@ -1911,7 +1903,7 @@ public class MainActivity extends AppCompatActivity {
                                         ParticipantIDs.add(snapshot.getKey());
                                     }
                                 }
-                                if (CurrentActiveCommunityID.contentEquals(CommunityDetails.get(position).getCommunityID())) {
+                                if (currentActiveCommunityID.contentEquals(CommunityDetails.get(position).getCommunityID())) {
                                     BottomSheetFragment bottomSheetFragment = new BottomSheetFragment(MainActivity.this, ParticipantIDs);
                                     bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
                                 } else {
@@ -1961,7 +1953,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
                 try {
-                    if (CurrentActiveCommunityID.contentEquals(CommunityDetails.get(Position).getCommunityID())) {
+                    if (currentActiveCommunityID.contentEquals(CommunityDetails.get(Position).getCommunityID())) {
                         findViewById(R.id.fabadd).setVisibility(View.VISIBLE);
                         findViewById(R.id.fabadd).setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -2014,7 +2006,7 @@ public class MainActivity extends AppCompatActivity {
                                         ParticipantIDs.add(snapshot.getKey());
                                     }
                                 }
-                                if (CurrentActiveCommunityID.contentEquals(CommunityDetails.get(position).getCommunityID())) {
+                                if (currentActiveCommunityID.contentEquals(CommunityDetails.get(position).getCommunityID())) {
                                     BottomSheetFragment bottomSheetFragment = new BottomSheetFragment(MainActivity.this, ParticipantIDs);
                                     bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
                                 } else {
@@ -2336,7 +2328,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public String getCurrentActiveCommunityID() {
-        return CurrentActiveCommunityID;
+        return currentActiveCommunityID;
     }
 
 
