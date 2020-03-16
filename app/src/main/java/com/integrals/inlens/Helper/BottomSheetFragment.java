@@ -225,7 +225,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
             @Override
             public void onClick(View v) {
                 dismiss();
-                activity.quitCloudAlbum(0);
+                activity.quitCloudAlbum(false);
 
 
             }

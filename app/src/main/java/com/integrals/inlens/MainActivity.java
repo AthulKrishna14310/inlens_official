@@ -86,7 +86,6 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
-import com.integrals.inlens.Activities.AuthActivity;
 import com.integrals.inlens.Activities.CreateCloudAlbum;
 import com.integrals.inlens.Activities.InlensGalleryActivity;
 import com.integrals.inlens.Activities.PhotoView;
@@ -123,9 +122,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import id.zelory.compressor.Compressor;
@@ -215,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<String> userCommunityIdList = getIntent().getExtras().getStringArrayList(AppConstants.USERIDLIST);
         Collections.reverse(userCommunityIdList);
 
-        // get live community id
+        // get live community id and check if album  is active or the app should quit the user from the album
 
         ReadFirebaseData readFirebaseData = new ReadFirebaseData();
         readFirebaseData.readData(userRef, new FirebaseRead() {
@@ -228,9 +225,16 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(DataSnapshot snapshot) {
 
-                            //we need to get server time
-                            long endtime = Long.parseLong(snapshot.child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString());
-                            new getServerTime(endtime).execute();
+                            // optimization 1 resulted in this error, everytime the album is quit even if the album is inactive
+                            // so first check the album status;
+                            String status = snapshot.child(FirebaseConstants.COMMUNITYSTATUS).getValue().toString();
+                            if(status.equals("T"))
+                            {
+                                long endtime = Long.parseLong(snapshot.child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString());
+                                //we need to get server time
+                                new getServerTime(endtime).execute();
+                            }
+
 
                         }
 
@@ -805,7 +809,7 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(aVoid);
 
             if (this.serverTime > endtTime) {
-                quitCloudAlbum(1);
+                quitCloudAlbum(true);
             }
             else
             {
@@ -1111,7 +1115,7 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();
-                                    quitCloudAlbum(0);
+                                    quitCloudAlbum(false);
                                 }
                             });
             builder.show();
@@ -1145,7 +1149,7 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();
-                                    quitCloudAlbum(0);
+                                    quitCloudAlbum(false);
                                 }
                             });
             builder.show();
@@ -1450,85 +1454,83 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void quitCloudAlbum(int ForceQuit) {
+    public void quitCloudAlbum(boolean forceQuit) {
 
 
         PreOperationCheck checker = new PreOperationCheck();
 
-        if (ForceQuit == 1) {
-            if (checker.checkInternetConnectivity(getApplicationContext())) {
+        if (forceQuit) {
+            communityRef.child(currentActiveCommunityID).child(FirebaseConstants.COMMUNITYSTATUS).setValue("F").addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        userRef.child(FirebaseConstants.LIVECOMMUNITYID).removeValue();
+                        AlarmManagerHelper alarmManagerHelper =
+                                new AlarmManagerHelper(getApplicationContext());
+                        alarmManagerHelper.deinitateAlarmManager();
+                        showDialogueQuit();
+                        //SetDefaultView();
 
-                FirebaseDatabase.getInstance().getReference().child("Users").child(CurrentUserID).child("live_community").removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-
-                        if (task.isSuccessful()) {
-
-
-                            AlarmManagerHelper alarmManagerHelper =
-                                    new AlarmManagerHelper(getApplicationContext());
-                            alarmManagerHelper.deinitateAlarmManager();
-                            showDialogueQuit();
-                            //SetDefaultView();
-
-
-                        } else {
-                            //SetDefaultView();
-                            showDialogueQuitUnsuccess();
-                        }
+                    } else {
+                        //SetDefaultView();
+                        showDialogueQuitUnsuccess();
                     }
-                });
-            } else {
-                //SetDefaultView();
-                showDialogueQuitUnsuccess();
-            }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+
+                    showDialogueQuitUnsuccess();
+
+                }
+            });
 
         } else {
-            if (checker.checkInternetConnectivity(getApplicationContext()) && !currentActiveCommunityID.equals(AppConstants.NOTAVALABLE)) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setCancelable(true);
-                builder.setTitle("Quit Cloud-Album");
-                builder.setMessage("Are you sure you want to quit the current Cloud-Album. You won't able to upload photos to this album again.");
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setCancelable(true);
+            builder.setTitle("Quit Cloud-Album");
+            builder.setMessage("Are you sure you want to quit the current Cloud-Album. You won't able to upload photos to this album again.");
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
 
-                    }
-                });
-                builder.setPositiveButton(" Yes ", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+            builder.setPositiveButton(" Yes ", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
 
-                        FirebaseDatabase.getInstance().getReference().child("Users").child(CurrentUserID).child("live_community").removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
+                    userRef.child(FirebaseConstants.LIVECOMMUNITYID).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
 
-                                if (task.isSuccessful()) {
+                            if (task.isSuccessful()) {
 
-                                    AlarmManagerHelper alarmManagerHelper =
-                                            new AlarmManagerHelper(getApplicationContext());
-                                    alarmManagerHelper.deinitateAlarmManager();
-                                    showDialogueQuit();
-                                    //SetDefaultView();
+                                AlarmManagerHelper alarmManagerHelper =
+                                        new AlarmManagerHelper(getApplicationContext());
+                                alarmManagerHelper.deinitateAlarmManager();
+                                showDialogueQuit();
+                                //SetDefaultView();
 
 
-                                } else {
-                                    //SetDefaultView();
-                                    showDialogueQuitUnsuccess();
-                                }
-
+                            } else {
+                                //SetDefaultView();
+                                showDialogueQuitUnsuccess();
                             }
-                        });
-                    }
 
-                });
-                builder.create().show();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
 
-            } else {
-                //SetDefaultView();
-                showDialogueQuitUnsuccess();
-            }
+                            showDialogueQuitUnsuccess();
+                        }
+                    });
+                }
+
+            });
+            builder.create().show();
         }
 
 

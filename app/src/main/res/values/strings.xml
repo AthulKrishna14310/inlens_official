@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">InLens</string>
+    <string name="app_name">Inlens</string>
     <string name="caption_hint">Type your caption</string>
     <string name="Open">Open</string>
     <string name="Close">Close</string>
