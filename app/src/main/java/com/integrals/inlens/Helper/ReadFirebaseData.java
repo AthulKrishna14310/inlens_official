@@ -11,9 +11,9 @@ public class ReadFirebaseData {
     public ReadFirebaseData() {
     }
 
-    public void readData(Query ref, final FirebaseRead listener) {
+    public ValueEventListener readData(Query ref, final FirebaseRead listener) {
         listener.onStart();
-        ref.addValueEventListener(new ValueEventListener() {
+        ValueEventListener eventListener = ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 listener.onSuccess(dataSnapshot);
@@ -25,5 +25,6 @@ public class ReadFirebaseData {
             }
         });
 
+        return eventListener;
     }
 }

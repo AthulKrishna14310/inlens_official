@@ -13,6 +13,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.Helper.ReadFirebaseData;
@@ -30,6 +31,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     List<String> userCommunityIdList;
     String currentUserId;
     static final int DELAY_IN_MILLIS=1000;
+    ValueEventListener listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +58,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 
             currentUserId  =  firebaseAuth.getCurrentUser().getUid();
             ReadFirebaseData readFirebaseData = new ReadFirebaseData();
-            readFirebaseData.readData(userRef.child(currentUserId), new FirebaseRead() {
+            listener= readFirebaseData.readData(userRef.child(currentUserId), new FirebaseRead() {
                 @Override
                 public void onSuccess(DataSnapshot datasnapshot) {
 
@@ -89,5 +91,15 @@ public class SplashScreenActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(listener !=null)
+        {
+            userRef.child(currentUserId).removeEventListener(listener);
+        }
+
     }
 }

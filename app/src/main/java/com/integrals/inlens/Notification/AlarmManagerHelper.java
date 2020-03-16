@@ -30,7 +30,7 @@ public class AlarmManagerHelper {
 
         alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
                 + (i * 1000), pendingIntent);
-        Log.d("InLens","Alarm Manager  initiated");
+        Log.d("InLens","Alarm Manager initiated");
 
 
 
