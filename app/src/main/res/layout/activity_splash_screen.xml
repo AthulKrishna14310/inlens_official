@@ -28,7 +28,7 @@
     <ProgressBar
         android:layout_width="@dimen/dim30dp"
         android:layout_height="@dimen/dim30dp"
-        android:indeterminateTint="@color/colorAccent"
+        android:indeterminateTint="@color/colorPrimaryLight"
         android:indeterminate="true"
         android:layout_centerHorizontal="true"
         android:layout_above="@id/appabout"

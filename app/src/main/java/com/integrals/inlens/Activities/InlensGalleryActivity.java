@@ -241,7 +241,7 @@ public class InlensGalleryActivity extends AppCompatActivity {
         AllImagesInCurrentCommunity.clear();
 
 
-        GallerySwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimaryDark), getResources().getColor(R.color.colorAccent), getResources().getColor(R.color.colordimAccent));
+        GallerySwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimaryDark), getResources().getColor(R.color.colorAccent), getResources().getColor(R.color.colorPrimaryLight));
 
         GallerySwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

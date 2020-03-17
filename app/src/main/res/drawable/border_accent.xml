@@ -5,7 +5,7 @@
 
     <solid android:color="@android:color/transparent"
         />
-    <stroke android:color="@color/colorAccent"
+    <stroke android:color="@color/colorPrimaryLight"
         android:width="2dp"/>
 
     <corners

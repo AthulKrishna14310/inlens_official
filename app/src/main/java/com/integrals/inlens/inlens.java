@@ -1,6 +1,6 @@
 package com.integrals.inlens;
 
-import android.app.Application;
+
 import android.support.multidex.MultiDexApplication;
 
 import com.google.firebase.database.FirebaseDatabase;

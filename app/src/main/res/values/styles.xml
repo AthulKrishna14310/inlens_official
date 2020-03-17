@@ -3,16 +3,16 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorAccent</item>
+        <item name="colorPrimary">@color/colorPrimaryLight</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorPrimary</item>
     </style>
 
     <style name="AppThemeGallery" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorAccent</item>
+        <item name="colorPrimary">@color/colorPrimaryLight</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/colorPrimaryLight</item>
     </style>
     <style name="RippleStyleBlack">
         <item name="mrl_rippleColor">#8096989a</item>
@@ -30,8 +30,8 @@
         <item name="colorPrimary">@color/blue_600</item>
     </style>
     <style name="RippleStyleWhite">
-        <item name="mrl_rippleAlpha">0.2</item>
-        <item name="mrl_rippleColor">#80ffffff</item>
+        <item name="mrl_rippleAlpha">1.5</item>
+        <item name="mrl_rippleColor">@color/colorSecondary</item>
         <item name="mrl_rippleHover">true</item>
         <item name="mrl_rippleOverlay">true</item>
     </style>
@@ -40,14 +40,14 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/colorPrimaryLight</item>
     </style>
 
     <style name="NoActionBarTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/colorPrimaryLight</item>
     </style>
 
     <style name="DialogAnimation">

@@ -205,13 +205,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.create_cloud_album_layout);
 
         firebaseAuth = FirebaseAuth.getInstance();
         currentUserId = firebaseAuth.getCurrentUser().getUid();
         userRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USERS).child(currentUserId);
         communityRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.COMMUNITIES);
-
+        startActivity(new Intent(MainActivity.this,CreateCloudAlbum.class));
         // receiving all the community id under the user
         ArrayList<String> userCommunityIdList = getIntent().getExtras().getStringArrayList(AppConstants.USERIDLIST);
         Collections.reverse(userCommunityIdList);
@@ -772,7 +772,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-    
+
          */
 
     }
@@ -2379,5 +2379,3 @@ else if (MainHorizontalScrollView.getScrollX() != 0) {
 
 
 }
-
-

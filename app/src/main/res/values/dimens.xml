@@ -199,6 +199,7 @@
     <dimen name="notification_large_icon_width">64.0dip</dimen>
     <dimen name="notification_main_column_padding_top">10.0dip</dimen>
     <item type="dimen" name="notification_media_narrow_margin">@dimen/notification_content_margin_start</item>
+
     <dimen name="notification_right_icon_size">16.0dip</dimen>
     <dimen name="notification_right_side_padding_top">2.0dip</dimen>
     <dimen name="notification_small_icon_background_padding">3.0dip</dimen>
@@ -223,7 +224,7 @@
     <dimen name="places_autocomplete_toolbar_inset_start">72.0dip</dimen>
     <dimen name="places_autocomplete_vertical_dropdown">8.0dip</dimen>
     <dimen name="spacing_large">15.0dip</dimen>
-    <dimen name="spacing_medium">2.0dip</dimen>
+    <dimen name="spacing_medium">3.0dip</dimen>
     <dimen name="spacing_middle">6.0dip</dimen>
     <dimen name="spacing_mlarge">25.0dip</dimen>
     <dimen name="spacing_mxlarge">25.0dip</dimen>
@@ -253,4 +254,24 @@
     <dimen name="main_image_dimen200">200dp</dimen>
     <dimen name="main_image_dimen100">100dp</dimen>
     <dimen name="dim30dp">30dp</dimen>
+
+
+
+    <dimen name="underline_margin_left_create_cloud_album_activity">4dip</dimen>
+    <dimen name="back_button_margin_left_create_cloud_album_activity">16dp</dimen>
+    <dimen name="back_button_margin_top_create_cloud_album">16dp</dimen>
+    <dimen name="back_button_margin_bottom_create_cloud_album">16dp</dimen>
+    <dimen name="image_button_create_album_layout_activity">32dp</dimen>
+    <dimen name="progress_bar_size_create_album_activity">48dp</dimen>
+    <dimen name="progress_bar_margin_create_cloud_album_activity">6dp</dimen>
+    <dimen name="done_button_margin_create_cloud_album_activity">4dp</dimen>
+    <dimen name="back_button_size_create_cloud_album_activity">36dp</dimen>
+    <dimen name="card_margin_create_cloud_album_activity">4dp</dimen>
+    <dimen name="image_button_margin_create_cloud_album">5dp</dimen>
+    <dimen name="view_width_create_cloud_album_activity">0dp</dimen>
+    <dimen name="underline_height_create_cloud_album_activity">4dp</dimen>
+    <item type ="dimen" name="card_corner_radius_create_cloud_album_activity" >0dp</item>
+    <item type="dimen" name="card_elevation_create_cloud_album_activity">2dp</item>
+    <item name="relative_layout_create_cloud_album_activity" type="dimen" >0dp</item>
+    <item name="zero_dimen_create_cloud_album_activity" type="dimen" >0dp</item>
 </resources>

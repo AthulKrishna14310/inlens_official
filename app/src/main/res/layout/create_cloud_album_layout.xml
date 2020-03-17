@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:orientation="vertical" android:background="@color/grey_5" android:layout_width="fill_parent" android:layout_height="fill_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+<LinearLayout
+    android:orientation="vertical"
+    android:background="@color/grey_5"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:backgroundTint="@color/white"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ImageView
         android:id="@+id/CoverPhoto"
@@ -11,20 +17,19 @@
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="0.0dip"
+        android:layout_height="@dimen/zero_dimen_create_cloud_album_activity"
+        android:background="@color/white"
         android:layout_weight="1.0">
 
         <ImageButton
             android:id="@+id/create_cloud_album_backbutton"
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="5dp"
+            android:layout_width="@dimen/back_button_size_create_cloud_album_activity"
+            android:layout_height="@dimen/back_button_size_create_cloud_album_activity"
+            android:layout_marginLeft="@dimen/back_button_margin_left_create_cloud_album_activity"
             android:background="?attr/selectableItemBackground"
             android:src="@drawable/ic_arrow_back"
+            android:layout_marginTop="@dimen/back_button_margin_top_create_cloud_album"
+            android:layout_marginBottom="@dimen/back_button_margin_bottom_create_cloud_album"
             android:visibility="visible" />
 
         <LinearLayout
@@ -34,38 +39,37 @@
             android:orientation="vertical"
             android:padding="@dimen/spacing_smlarge">
 
-            <View
-                android:layout_width="0.0dip"
-                android:layout_height="@dimen/spacing_xlarge" />
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/spacing_medium"
+                android:layout_marginLeft="@dimen/underline_margin_left_create_cloud_album_activity"
                 android:layout_marginBottom="@dimen/spacing_middle"
                 android:text="Create Cloud-Album"
+
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/colorPrimary"
                 android:textSize="24sp"
-                android:textStyle="bold" />
+                />
 
             <View
-                android:layout_width="200dp"
-                android:layout_height="4.0dip"
-                android:layout_marginLeft="@dimen/spacing_medium"
-                android:background="@color/colorAccent" />
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/underline_height_create_cloud_album_activity"
 
-            <View
-                android:layout_width="0.0dip"
-                android:layout_height="@dimen/spacing_mxlarge" />
+                android:layout_marginLeft="@dimen/underline_margin_left_create_cloud_album_activity"
+                android:layout_marginRight="@dimen/underline_margin_left_create_cloud_album_activity"
+                android:background="@color/colorPrimaryDark"
+                />
+
+
 
             <android.support.v7.widget.CardView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/spacing_small"
+                android:layout_marginLeft="@dimen/card_margin_create_cloud_album_activity"
+                android:layout_marginRight="@dimen/card_margin_create_cloud_album_activity"
                 android:visibility="visible"
-                app:cardCornerRadius="2.0dip"
-                app:cardElevation="1.0dip">
+                app:cardCornerRadius="@dimen/card_corner_radius_create_cloud_album_activity"
+                app:cardElevation="@dimen/card_elevation_create_cloud_album_activity">
 
                 <LinearLayout
                     android:layout_width="fill_parent"
@@ -73,9 +77,6 @@
                     android:orientation="vertical"
                     android:padding="@dimen/spacing_mlarge">
 
-                    <View
-                        android:layout_width="0.0dip"
-                        android:layout_height="@dimen/spacing_xlarge" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -88,21 +89,19 @@
                         android:id="@+id/AlbumTitleEditText"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="-4.0dip"
-                        android:layout_marginRight="-4.0dip"
                         android:inputType="text"
                         android:maxLength="50"
                         android:maxLines="1"
                         android:singleLine="true"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-                        android:textColor="@color/colorAccent"
+                        android:textColor="@color/colorPrimary"
                         android:textStyle="bold"
                         android:imeOptions="actionNext"
                         android:theme="@style/EditText.Grey"
                         />
 
                     <View
-                        android:layout_width="0.0dip"
+                        android:layout_width="@dimen/zero_dimen_create_cloud_album_activity"
                         android:layout_height="@dimen/spacing_mlarge" />
 
                     <TextView
@@ -116,26 +115,20 @@
                         android:id="@+id/AlbumDescriptionEditText"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="-4.0dip"
-                        android:layout_marginRight="-4.0dip"
                         android:maxLength="50"
                         android:maxLines="1"
                         android:inputType="text"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-                        android:textColor="@color/colorAccent"
+                        android:textColor="@color/colorPrimary"
                         android:textStyle="bold"
                         android:imeOptions="actionDone"
                         android:theme="@style/EditText.Grey" />
 
-                    <View
-                        android:layout_width="0.0dip"
-                        android:layout_height="@dimen/spacing_middle" />
+
 <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="-4.0dip"
-    android:layout_marginTop="@dimen/spacing_middle"
-    android:layout_marginRight="-4.0dip"
+    android:layout_marginTop="@dimen/spacing_large"
     android:layout_gravity="center_horizontal"
     >
                     <android.support.v7.widget.AppCompatCheckBox
@@ -143,32 +136,27 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                          android:text=" Album-Expiry date"
-                        android:textColor="@color/colorAccent"
+                        android:textColor="@color/colorSecondaryDark"
                         android:layout_centerHorizontal="true"
-                        android:textSize="16sp"
+                        android:textSize="14sp"
                         android:layout_centerVertical="true"
-                        android:textStyle="bold"
+
                         android:theme="@style/Checkbox.Blue" />
 
                     <ImageButton
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
+                        android:layout_width="@dimen/image_button_create_album_layout_activity"
+                        android:layout_height="@dimen/image_button_create_album_layout_activity"
                         android:id="@+id/date_range_button"
-                        android:layout_margin="5dp"
-                        android:src="@drawable/ic_date_range_black_24dp"
+                        android:layout_margin="@dimen/image_button_margin_create_cloud_album"
+                        android:src="@drawable/ic_date_range_24dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
 
                         />
                         </RelativeLayout>
-                    <View
-                        android:layout_width="0.0dip"
-                        android:layout_height="@dimen/spacing_middle" />
-                    <RelativeLayout
+                   <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginLeft="-4.0dip"
-                        android:layout_marginTop="@dimen/spacing_middle"
-                        android:layout_marginRight="-4.0dip"
+                        android:layout_marginTop="@dimen/spacing_large"
                         android:layout_gravity="center_horizontal"
                         >
                         <android.support.v7.widget.AppCompatCheckBox
@@ -176,34 +164,31 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text=" Album-Event type"
-                            android:textColor="@color/colorAccent"
+                            android:textColor="@color/colorSecondaryDark"
                             android:layout_centerHorizontal="true"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:layout_centerVertical="true"
-                            android:textStyle="bold"
+
                             android:theme="@style/Checkbox.Blue" />
 
                         <ImageButton
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
+                            android:layout_width="@dimen/image_button_create_album_layout_activity"
+                            android:layout_height="@dimen/image_button_create_album_layout_activity"
                             android:id="@+id/event_type_add"
-                            android:layout_margin="5dp"
-                            android:src="@drawable/ic_favorite_border_black_24dp"
+                            android:layout_margin="@dimen/image_button_margin_create_cloud_album"
+                            android:src="@drawable/ic_event_type_24dp"
                             android:background="?attr/selectableItemBackgroundBorderless"
 
                             />
                     </RelativeLayout>
-                    <View
-                        android:layout_width="0.0dip"
-                        android:layout_height="@dimen/spacing_middle" />
 
 
                     <ProgressBar
                         android:id="@+id/UploadProgress"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="@dimen/progress_bar_size_create_album_activity"
+                        android:layout_height="@dimen/progress_bar_size_create_album_activity"
                         android:layout_gravity="center"
-                        android:layout_margin="6dp"
+                        android:layout_margin="@dimen/progress_bar_margin_create_cloud_album_activity"
                         android:visibility="invisible" />
 
 
@@ -212,26 +197,28 @@
             </android.support.v7.widget.CardView>
 
             <View
-                android:layout_width="0.0dip"
+                android:layout_width="@dimen/view_width_create_cloud_album_activity"
                 android:layout_height="@dimen/spacing_large" />
         </LinearLayout>
     </RelativeLayout>
 
     <com.balysv.materialripple.MaterialRippleLayout
         style="@style/RippleStyleWhite"
+        android:layout_margin="@dimen/done_button_margin_create_cloud_album_activity"
         android:layout_width="fill_parent"
         android:layout_height="?actionBarSize"
         android:layout_alignParentBottom="true"
-        android:background="@color/colorPrimaryDark">
+
+        android:background="@drawable/create_cloud_album_done_btn_bg">
 
         <TextView
             android:id="@+id/DoneButtonTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:text="DONE"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
-            android:textColor="@android:color/white" />
+            android:textColor="@color/colorSecondary" />
     </com.balysv.materialripple.MaterialRippleLayout>
 </LinearLayout>

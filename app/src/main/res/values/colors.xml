@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#ffffff</color>
-    <color name="colorPrimaryDark">#3E3D63</color>
-    <color name="colorAccent">#6567a0</color>
-    <color name="colorAccentlight">#f7f8ff</color>
+    <color name="colorPrimary">#6567a0</color>
+    <color name="colorPrimaryLight">#9495d1</color>
+    <color name="colorPrimaryDark">#373d71</color>
+    <color name="colorSecondary">#1976d2</color>
+    <color name="colorSecondaryLight">#63a4ff</color>
+    <color name="colorSecondaryDark">#004ba0</color>
+    <color name="colorAccent">#9495d1</color>
 
-    <color name="colordimAccent">#8586B3</color>
+
+
+
     <color name="dimPrimary">#484773</color>
     <color name="white">#ffffff</color>
     <color name="dimwhite">#eeeeee</color>
@@ -84,11 +89,10 @@
     <color name="chip_default_icon_background_color">#ff517fa4</color>
     <color name="chip_default_text_color">#de000000</color>
     <color name="chips_opened_bg">#ff009688</color>
-    <color name="colorAccentDark">#fff50057</color>
-    <color name="colorAccentLight">#ffff80ab</color>
+
     <color name="colorChipViewBackground">#ffe0e0e0</color>
     <color name="colorCloseChip">#ABABAB</color>
-    <color name="colorPrimaryLight">#ff1e88e5</color>
+
     <color name="common_google_signin_btn_text_dark_default">@android:color/white</color>
     <color name="common_google_signin_btn_text_dark_disabled">#1f000000</color>
     <color name="common_google_signin_btn_text_dark_focused">@android:color/black</color>

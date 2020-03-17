@@ -156,7 +156,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                     if(!checkNumberOfDays(CheckTimeTaken,AlbumTime)){
                         AlbumDateSet = true;
                         DateofCompletion.setChecked(true);
-
+                        DateofCompletion.setText(AlbumTime);
                         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(CreateCloudAlbum.this)
                                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                                 .setTitle("Album expiry on "+AlbumTime)
@@ -382,6 +382,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                     EventTypeDone.setVisibility(View.VISIBLE);
                     EventTypeSet = true;
                     EventPicker.setChecked(true);
+                    EventPicker.setText(EventType);
                     EventDialog.dismiss();
                 }
                 else
@@ -406,6 +407,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                     EventTypeDone.setVisibility(View.VISIBLE);
                     EventTypeSet = true;
                     EventPicker.setChecked(true);
+                    EventPicker.setText(EventType);
                     EventDialog.dismiss();
                 }
                 else
@@ -430,6 +432,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                     EventTypeDone.setVisibility(View.VISIBLE);
                     EventTypeSet = true;
                     EventPicker.setChecked(true);
+                    EventPicker.setText(EventType);
                     EventDialog.dismiss();
                 }
                 else
@@ -454,6 +457,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                     EventTypeDone.setVisibility(View.VISIBLE);
                     EventTypeSet = true;
                     EventPicker.setChecked(true);
+                    EventPicker.setText(EventType);
                     EventDialog.dismiss();
                 }
                 else
@@ -478,6 +482,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                     EventTypeDone.setVisibility(View.VISIBLE);
                     EventTypeSet = true;
                     EventPicker.setChecked(true);
+                    EventPicker.setText(EventType);
                     EventDialog.dismiss();
                 }
                 else
@@ -502,6 +507,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                     EventTypeDone.setVisibility(View.VISIBLE);
                     EventTypeSet = true;
                     EventPicker.setChecked(true);
+                    EventPicker.setText(EventType);
                     EventDialog.dismiss();
                 }
                 else

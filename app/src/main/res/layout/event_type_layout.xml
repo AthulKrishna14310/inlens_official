@@ -12,10 +12,10 @@
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_gravity="end"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:background="@drawable/circle"
-        android:backgroundTint="@color/colorAccent"
+        android:backgroundTint="@color/colorSecondary"
         android:src="@drawable/ic_closedialog" />
 
     <TextView
@@ -38,25 +38,25 @@
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_gravity="center_vertical"
-            android:layout_margin="5dp"
-            android:checked="false"
-            android:text="#Ceremony"
+            android:layout_margin="8dp"
             android:layout_weight="1"
+            android:background="@drawable/radiobutton_background"
+            android:checked="false"
             android:padding="8dp"
             android:shadowColor="@color/colorPrimaryDark"
-            android:background="@drawable/radiobutton_background"/>
+            android:text="#Ceremony" />
 
         <Button
             android:id="@+id/event_type_hangouts_btn"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_gravity="center_vertical"
-            android:layout_margin="5dp"
-            android:checked="false"
-            android:text="#Hangouts"
+            android:layout_margin="8dp"
             android:layout_weight="1"
+            android:background="@drawable/radiobutton_background"
+            android:checked="false"
             android:padding="8dp"
-            android:background="@drawable/radiobutton_background"/>
+            android:text="#Hangouts" />
 
 
     </LinearLayout>
@@ -71,24 +71,24 @@
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_gravity="center_vertical"
-            android:layout_margin="5dp"
-            android:checked="false"
-            android:text="#Party"
-            android:padding="8dp"
+            android:layout_margin="8dp"
             android:layout_weight="1"
-            android:background="@drawable/radiobutton_background" />
+            android:background="@drawable/radiobutton_background"
+            android:checked="false"
+            android:padding="8dp"
+            android:text="#Party" />
 
         <Button
             android:id="@+id/event_type_travel_btn"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_gravity="center_vertical"
-            android:layout_margin="5dp"
-            android:checked="false"
-            android:text="#Travel"
+            android:layout_margin="8dp"
             android:layout_weight="1"
+            android:background="@drawable/radiobutton_background"
+            android:checked="false"
             android:padding="8dp"
-            android:background="@drawable/radiobutton_background" />
+            android:text="#Travel" />
 
     </LinearLayout>
 
@@ -103,24 +103,24 @@
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_gravity="center_vertical"
-            android:layout_margin="5dp"
-            android:checked="false"
-            android:text="#Wedding"
+            android:layout_margin="8dp"
             android:layout_weight="1"
+            android:background="@drawable/radiobutton_background"
+            android:checked="false"
             android:padding="8dp"
-            android:background="@drawable/radiobutton_background"/>
+            android:text="#Wedding" />
 
         <Button
             android:id="@+id/event_type_others_btn"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_gravity="center_vertical"
-            android:layout_margin="5dp"
-            android:checked="false"
-            android:text="Others"
-            android:padding="8dp"
+            android:layout_margin="8dp"
             android:layout_weight="1"
-            android:background="@drawable/radiobutton_background"/>
+            android:background="@drawable/radiobutton_background"
+            android:checked="false"
+            android:padding="8dp"
+            android:text="Others" />
 
     </LinearLayout>
 
@@ -131,6 +131,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:text="Selected Type :"
+        android:textColor="@color/colorSecondaryDark"
         android:textSize="18sp"
         android:textStyle="bold"
         android:layout_gravity="center_horizontal"
