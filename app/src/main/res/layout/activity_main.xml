@@ -163,7 +163,7 @@
                                             android:layout_marginTop="3dp"
                                             android:layout_marginRight="3dp"
                                             android:layout_marginBottom="3dp"
-                                            android:background="@drawable/circle_accent"
+                                            android:background="@drawable/circle_primary"
                                             android:elevation="1dp"
                                             android:scaleType="center"
                                             android:src="@drawable/ic_library_add_black_24dp"
@@ -194,7 +194,7 @@
                                             android:layout_marginRight="3dp"
                                             android:layout_marginTop="3dp"
                                             android:layout_marginBottom="3dp"
-                                            android:background="@drawable/circle_accent">
+                                            android:background="@drawable/circle_primary">
 
                                             <ImageButton
                                                 android:id="@+id/main_horizontal_scan_button"

@@ -12,9 +12,10 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        android:text="Inlens"
+        android:text="@string/app_name"
         android:layout_below="@id/appicon"
-        android:textSize="25sp" />
+        android:textSize="24sp"
+        android:textColor="@color/colorPrimary"/>
 
 
     <ImageView
@@ -38,11 +39,12 @@
         android:id="@+id/appabout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="20dp"
-        android:text="By Inlens Team."
-        android:textSize="14sp"
-        android:layout_alignParentBottom="true"/>
+        android:text="By InLens Team."
+        android:textColor="@color/colorPrimary"
+        android:textSize="12sp" />
 
 </RelativeLayout>

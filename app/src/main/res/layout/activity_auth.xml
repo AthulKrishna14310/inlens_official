@@ -5,16 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Activities.AuthActivity">
+
     <TextView
         android:id="@+id/appname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/appicon"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        android:text="InLens"
-        android:layout_below="@id/appicon"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="25sp" />
+        android:text="@string/app_name"
+        android:textColor="@color/colorPrimary"
+        android:textSize="24sp" />
 
 
     <ImageView
@@ -77,11 +78,12 @@
                 android:id="@+id/auth_next_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_arrow_forward"
-                android:background="@drawable/circle_accent"
-                android:padding="5dp"
                 android:layout_gravity="center_vertical"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:background="@drawable/circle_primary"
+
+                android:padding="5dp"
+                android:src="@drawable/ic_arrow_forward" />
 
         </LinearLayout>
 

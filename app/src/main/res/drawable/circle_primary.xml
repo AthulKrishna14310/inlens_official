@@ -4,5 +4,7 @@
         android:width="2dp"
         ></stroke>
     <solid
-        android:color="@color/colorPrimaryLight"/>
+        android:color="@color/colorPrimary"
+        />
+
 </shape>

@@ -22,7 +22,7 @@
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
         android:text="Select an email and a unique username for your account."
-        android:textColor="#3c3c3c"
+        android:textColor="@color/colorPrimaryLight"
         android:gravity="center"/>
 
     <EditText
@@ -34,7 +34,7 @@
         android:layout_below="@id/user_name_activity_textview"
         android:background="@drawable/curved_corners"
         android:hint="User Name"
-        android:backgroundTint="@color/colorPrimaryLight"
+        android:backgroundTint="@color/colorPrimary"
         android:textColorHint="@color/white"
         android:gravity="center"
         android:inputType="text"
@@ -51,7 +51,7 @@
         android:background="@drawable/curved_corners"
         android:hint="User Email"
         android:cursorVisible="true"
-        android:backgroundTint="@color/colorPrimaryLight"
+        android:backgroundTint="@color/colorPrimary"
         android:textColorHint="@color/white"
         android:gravity="center"
         android:inputType="textEmailAddress"
@@ -63,7 +63,7 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_done_all"
         android:tint="@color/white"
-        android:background="@drawable/circle_accent"
+        android:background="@drawable/circle_primary"
         android:padding="10dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/user_email_activity_edittext"
