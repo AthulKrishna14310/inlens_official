@@ -40,7 +40,6 @@
         <activity
             android:name=".Activities.ProfileActivity"
             android:theme="@style/NoActionBarTheme" />
-        <activity android:name=".Activities.WorkingIntroActivity" />
 
         <receiver android:name=".Notification.MyBroadcastReceiver" />
 
@@ -77,10 +76,6 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-        <activity
-            android:name=".Activities.SharedImageActivity"
-            android:parentActivityName=".MainActivity"
-            android:theme="@style/NoActionBarTheme" />
         <activity
             android:name=".Activities.AuthActivity"
             android:theme="@style/NoActionBarTheme"

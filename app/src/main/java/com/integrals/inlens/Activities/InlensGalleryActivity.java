@@ -38,6 +38,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.crowdfire.cfalertdialog.CFAlertDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -53,7 +54,6 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
-import com.integrals.inlens.Helper.Checker;
 import com.integrals.inlens.Helper.NotificationHelper;
 import com.integrals.inlens.Helper.PreOperationCheck;
 import com.integrals.inlens.Models.GalleryImageModel;
@@ -85,8 +85,6 @@ public class InlensGalleryActivity extends AppCompatActivity {
     private List<String> AllImagesInCurrentCommunity;
     private ImageButton GallerBackButton, GalleryInfoButton;
     private TextView GalleyHeaderTextView;
-    private Toast InternetCustomToast;
-    private TextView ToastTitleTextView, ToastMessageTextview;
     private StorageTask UploadStorageTask;
     private DatabaseReference UserRef,Ref;
     private StorageReference StorageRef;
@@ -139,7 +137,7 @@ public class InlensGalleryActivity extends AppCompatActivity {
 
         if(CommunityID ==null && CommunityStartTime==null)
         {
-            if(new Checker(InlensGalleryActivity.this).isConnectedToNet())
+            if(new PreOperationCheck().checkInternetConnectivity(InlensGalleryActivity.this))
             {
                 UserRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -187,21 +185,14 @@ public class InlensGalleryActivity extends AppCompatActivity {
 
         }
 
-        InternetCustomToast = new Toast(getApplicationContext());
-        View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.custom_toast_layout, null);
-        ToastTitleTextView = view.findViewById(R.id.custom_toast_title);
-        ToastMessageTextview = view.findViewById(R.id.custom_toast_message);
-        ToastTitleTextView.setText("No Internet Connection.");
-        ToastMessageTextview.setText("Please connect to internet to perform new uploads.");
-        InternetCustomToast.setView(view);
-        InternetCustomToast.setGravity(Gravity.BOTTOM, 0, 40);
+
 
 
         GalleryInfoButton.setVisibility(View.VISIBLE);
         GalleryInfoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final View customLayout = getLayoutInflater().inflate(R.layout.diaglogue_layout_inlens_gallery, null);
+                final View customLayout = getLayoutInflater().inflate(R.layout.dialog_layout_inlens_gallery, null);
 
                 new AlertDialog.Builder(InlensGalleryActivity.this)
                         .setMessage(" ")
@@ -331,13 +322,31 @@ public class InlensGalleryActivity extends AppCompatActivity {
         }
     }
 
+    public void showDialogMessage(String title, String message) {
+        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
+                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                .setTitle(title)
+                .setIcon(R.drawable.ic_check_circle_black_24dp)
+                .setMessage(message)
+                .setCancelable(false)
+                .addButton("OK", -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+
+                            }
+                        });
+        builder.show();
+    }
+
     private void GetAllImagesFromDatabase() {
 
         AllImagesInCurrentCommunity.clear();
 
         if (!new PreOperationCheck().checkInternetConnectivity(getApplicationContext())) {
-            InternetCustomToast.setDuration(Toast.LENGTH_LONG);
-            InternetCustomToast.show();
+            showDialogMessage("No Internet Connection","Please turn on mobile data  or connect to a wifi and try again.");
         }
 
 
@@ -387,7 +396,7 @@ public class InlensGalleryActivity extends AppCompatActivity {
                 }
 
                 if (AllCommunityImages.size() == 0) {
-                    final View customLayout = getLayoutInflater().inflate(R.layout.diaglogue_layout_inlens_gallery, null);
+                    final View customLayout = getLayoutInflater().inflate(R.layout.dialog_layout_inlens_gallery, null);
 
 
                     new AlertDialog.Builder(InlensGalleryActivity.this)

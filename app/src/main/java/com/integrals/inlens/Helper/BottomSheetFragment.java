@@ -231,19 +231,6 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
             }
         });
 
-//
-//        LinearLayout linearLayout4 =  view.findViewById(R.id.item_view_participants);
-//        linearLayout4.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                ParticipantsBottomSheet participantsBottomSheet = new ParticipantsBottomSheet(context,BottomSheetParticipantsDialog,ParticipantsRecyclerView,activity.getMyCommunityDetails().get(activity.getPosition()).getCommunityID(), FirebaseDatabase.getInstance().getReference());
-//                participantsBottomSheet.DisplayParticipants();
-//                BottomSheetParticipantsDialog.show();
-//            }
-//        });
-
-
         return view;
     }
 

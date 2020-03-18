@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/create_cloud_album_photo" android:title="Create Cloud-Album"
-        android:icon="@drawable/ic_photo_album_menu_24dp"/>
-    <item android:id="@+id/scan_cloud_album_photo" android:title="Scan Cloud-Album QR"
-        android:icon="@drawable/ic_scan_album_24dp"/>
-
-</menu>

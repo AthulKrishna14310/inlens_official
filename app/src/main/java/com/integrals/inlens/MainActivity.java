@@ -387,7 +387,6 @@ public class MainActivity extends AppCompatActivity {
         MainSearchEdittext = findViewById(R.id.mainactivity_searchview_edittext);
 
 
-        SHOW_TOUR = getIntent().getBooleanExtra("ShowTour", false);
 
 
 
@@ -956,7 +955,7 @@ public class MainActivity extends AppCompatActivity {
         QRCodeDialog.setCancelable(true);
         QRCodeDialog.setCanceledOnTouchOutside(true);
         QRCodeDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        QRCodeDialog.setContentView(R.layout.activity_qrcode_generator);
+        QRCodeDialog.setContentView(R.layout.qrcode_generator_layout);
         QRCodeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         QRCodeDialog.getWindow().getAttributes().windowAnimations = R.style.BottomUpSlideDialogAnimation;
@@ -1957,7 +1956,7 @@ else if (MainHorizontalScrollView.getScrollX() != 0) {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             if (viewType == VIEW_TYPE_ALBUM) {
-                View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.album_card_, parent, false);
+                View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.album_card, parent, false);
                 return new MainCommunityViewHolder(view);
             } else if (viewType == VIEW_TYPE_LOADING) {
                 View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.item_loading_horizontal, parent, false);
@@ -2238,18 +2237,6 @@ else if (MainHorizontalScrollView.getScrollX() != 0) {
     }
 
 
-    private void InitPostDialog() {
-
-        PostDialog = new Dialog(MainActivity.this);
-        PostDialog.setCancelable(true);
-        PostDialog.setContentView(R.layout.main_post_touch_dialog_layout);
-        PostDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-        PostDialogImageView = PostDialog.findViewById(R.id.main_postdialog_imageview);
-        PostDialogProgressbar = PostDialog.findViewById(R.id.main_postdialog_progressbar);
-
-
-    }
 
 
     public class MainVerticalAdapter extends RecyclerView.Adapter<MainVerticalAdapter.PostGridViewHolder> {
@@ -2353,14 +2340,6 @@ else if (MainHorizontalScrollView.getScrollX() != 0) {
                     }
                 });
 
-                holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View view) {
-                        ShowPostDialog(PostList.get(position));
-                        PostDialog.show();
-                        return false;
-                    }
-                });
 
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
