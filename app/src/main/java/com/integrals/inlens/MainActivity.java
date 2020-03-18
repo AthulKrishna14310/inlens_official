@@ -904,10 +904,10 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
-            if (this.serverTime > System.currentTimeMillis())
+            if (this.serverTime < endtTime)
             {
                 userRef.child(FirebaseConstants.COMMUNITIES).child(communityId).setValue(ServerValue.TIMESTAMP);
-                participantRef.child(communityId).child(CurrentUserID).setValue(ServerValue.TIMESTAMP);
+                participantRef.child(communityId).child(currentUserId).setValue(ServerValue.TIMESTAMP);
 
                 List<String> newCommunities = new ArrayList<>();
                 newCommunities.add(communityId);
