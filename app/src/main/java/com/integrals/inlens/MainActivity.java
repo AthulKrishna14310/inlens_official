@@ -30,6 +30,7 @@ import android.os.Parcelable;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -205,26 +206,26 @@ public class MainActivity extends AppCompatActivity {
     String currentUserId;
     ValueEventListener userRefListenerForActiveAlbum, communityRefListenerForActiveAlbum;
     ReadFirebaseData readFirebaseData;
-
+    AppBarLayout appBarLayout;
 
     // TODO placing of onClickListener for mainAddPhotosFab
     /*
 
-                    mainAddPhotosFab.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent intent = new Intent(getApplicationContext(), InlensGalleryActivity.class);
-                            intent.putExtra("CommunityID",currentActiveCommunityID);
-                            intent.putExtra("CommunityName", getMyCommunityDetails().get(getPosition()).getTitle());
-                            intent.putExtra("CommunityStartTime", getMyCommunityDetails().get(getPosition()).getStartTime());
-                            intent.putExtra("CommunityEndTime", getMyCommunityDetails().get(getPosition()).getEndTime());
-                            startActivity(intent);
-                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                        }
-                    });
+    mainAddPhotosFab.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(getApplicationContext(), InlensGalleryActivity.class);
+            intent.putExtra("CommunityID",currentActiveCommunityID);
+            intent.putExtra("CommunityName", getMyCommunityDetails().get(getPosition()).getTitle());
+            intent.putExtra("CommunityStartTime", getMyCommunityDetails().get(getPosition()).getStartTime());
+            intent.putExtra("CommunityEndTime", getMyCommunityDetails().get(getPosition()).getEndTime());
+            startActivity(intent);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        }
+    });
 
 
-                     */
+     */
 
     public MainActivity() {
     }
@@ -237,6 +238,8 @@ public class MainActivity extends AppCompatActivity {
 
         // main actionbar
         mainProfileImageview = findViewById(R.id.mainactivity_actionbar_profileimageview);
+        appBarLayout = findViewById(R.id.main_appbarlayout);
+        toolbarCustomView = LayoutInflater.from(this).inflate(R.layout.custom_toolbar_layout, null);
 
         // Fab
         mainAddPhotosFab = findViewById(R.id.fabadd);
@@ -306,10 +309,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /*
-
-        toolbarCustomView = LayoutInflater.from(this).inflate(R.layout.custom_toolbar_layout, null);
-        AppBarLayout appBarLayout = findViewById(R.id.main_appbarlayout);
+        // TODO fix the transition from expanded to collapsed and vice-versa
         appBarLayout.addView(toolbarCustomView);
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
@@ -329,6 +329,15 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
+
+
+
+
+        /*
+
+
         MyCommunityDetails = new ArrayList<>();
         ParticipantIDs = new ArrayList<>();
         MainHorizontalScrollView = findViewById(R.id.main_horizontalscrollview);
@@ -388,40 +397,8 @@ public class MainActivity extends AppCompatActivity {
         InitPostDialog();
 
 
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            Ref.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    AlarmManagerHelper managerHelper = new AlarmManagerHelper(MainActivity.this);
-
-                    if (!dataSnapshot.hasChild("Communities")) {
-                        MainLoadingProgressBar.setVisibility(View.GONE);
-                        try {
-                            managerHelper.deinitateAlarmManager();
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                    } else {
-
-                        ShowAllAlbums();
-                    }
 
 
-
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        }
-
-
-        DecryptDeepLink();
 
 
 
@@ -721,6 +698,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        // FIXME has to update decryption and  encryption.
+        DecryptDeepLink();
+
+
         // get live community id and check if album  is active or the app should quit the user from the album
         // if the album status is true the we  can start the service from the getServerTime async task only if the end time has not been reached;
         userRefListenerForActiveAlbum = readFirebaseData.readData(userRef, new FirebaseRead() {
@@ -750,6 +731,14 @@ public class MainActivity extends AppCompatActivity {
 
                 if (snapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID)) {
 
+                    currentActiveCommunityID = snapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString();
+
+
+                    // QRCodeInit should be initialized if only is user is a participant in an album;
+                    QRCodeInit(currentActiveCommunityID);
+                    // FIXME dialog placing has to be update
+                    QRCodeDialog.show();
+
                     // make the add photo fab visible
                     mainAddPhotosFab.setVisibility(View.VISIBLE);
 
@@ -758,7 +747,6 @@ public class MainActivity extends AppCompatActivity {
                     navigationView.getMenu().findItem(R.id.profile_notification_start).setVisible(true);
                     navigationView.getMenu().findItem(R.id.profile_notification_stop).setVisible(true);
 
-                    currentActiveCommunityID = snapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString();
                     communityRefListenerForActiveAlbum = readFirebaseData.readData(communityRef.child(currentActiveCommunityID), new FirebaseRead() {
                         @Override
                         public void onSuccess(DataSnapshot snapshot) {
@@ -1018,19 +1006,15 @@ public class MainActivity extends AppCompatActivity {
 
                         if (DeepLink.toString().contains("comid=")) {
 
-                            final String UrlOrDComId = (DeepLink.toString().substring(DeepLink.toString().length() - 27)).substring(0, 26);
-
-
-                            if (!currentActiveCommunityID.equals("Not Available")) {
+                            final String communityLinkId = (DeepLink.toString().substring(DeepLink.toString().length() - 27)).substring(0, 26);
+                            Toast.makeText(MainActivity.this, "link"+communityLinkId, Toast.LENGTH_SHORT).show();
+                            if (currentActiveCommunityID.equals(AppConstants.NOTAVALABLE)) {
 
                                 CFAlertDialog.Builder builder = new CFAlertDialog.Builder(getApplicationContext())
-
                                         .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                                        .setTitle("Invite Link")
+                                        .setTitle("New Community")
                                         .setIcon(R.drawable.inlens_logo_m)
-                                        .setMessage("Just click on the Cloud-Album invite link that your friend had " +
-                                                "shared" +
-                                                " with you.")
+                                        .setMessage("You are about to join a new Community.")
                                         .addButton("OK, I UNDERSTAND", -1, Color.parseColor("#3E3D63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
                                                 CFAlertDialog.CFAlertActionAlignment.END, new DialogInterface.OnClickListener() {
                                                     @Override
@@ -1039,7 +1023,6 @@ public class MainActivity extends AppCompatActivity {
                                                     }
                                                 });
 
-// Show the alert
                                 builder.show();
 
 
@@ -1047,11 +1030,11 @@ public class MainActivity extends AppCompatActivity {
 
                                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                                 builder.setTitle("New Community")
-                                        .setMessage("Are you sure you want to join this new community? This means leaving the previous community by default.")
+                                        .setMessage("Are you sure you want to join this new community? This means leaving the previous community.")
                                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialogInterface, int i) {
-                                                AddCommunityToUserRef(UrlOrDComId.substring(6, 26));
+                                                AddCommunityToUserRef(communityLinkId.substring(6, 26));
 
                                             }
                                         })
@@ -1066,15 +1049,6 @@ public class MainActivity extends AppCompatActivity {
                                         .show();
 
                             }
-
-                        } else if (DeepLink.toString().contains("imagelink") && DeepLink.toString().contains("linkimage")) {
-
-                            String first = DeepLink.toString().replace("https://integrals.inlens.in/", "");
-                            String second = first.replace("imagelink", "https://firebasestorage.googleapis.com/v0/b/inlens-f0ce2.appspot.com/o/situations%2F");
-                            String third = second.replace("linkimage", "media&token=");
-                            String ImageUrl = third.substring(0, third.length() - 1);
-
-                            startActivity(new Intent(MainActivity.this, SharedImageActivity.class).putExtra("url", ImageUrl));
 
                         }
                     }
@@ -1857,11 +1831,24 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
+
         if (SEARCH_IN_PROGRESS) {
             SetDefaultView();
         } else if (RootForMainActivity.isDrawerOpen(GravityCompat.START)) {
             RootForMainActivity.closeDrawer(GravityCompat.START);
-        } else {
+        }
+        else if(toolbarCustomView.isShown())
+        {
+            toolbarCustomView.clearAnimation();
+            toolbarCustomView.setAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_back_up));
+            toolbarCustomView.clearAnimation();
+            toolbarCustomView.setVisibility(View.GONE);
+            appBarLayout.setExpanded(true);
+
+            //TODO scroll the recyclerview to the top
+        }
+        else
+        {
             super.onBackPressed();
         }
 /*
