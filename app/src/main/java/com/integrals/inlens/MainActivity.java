@@ -196,10 +196,10 @@ public class MainActivity extends AppCompatActivity {
 
     FloatingActionButton mainAddPhotosFab;
 
-    DatabaseReference userRef, communityRef,participantRef;
+    DatabaseReference userRef, communityRef, participantRef;
     FirebaseAuth firebaseAuth;
     String currentUserId;
-    ValueEventListener userRefListenerForActiveAlbum, communityRefListenerForActiveAlbum,coummunityUserAddListener;
+    ValueEventListener userRefListenerForActiveAlbum, communityRefListenerForActiveAlbum, coummunityUserAddListener;
     ReadFirebaseData readFirebaseData;
     AppBarLayout appBarLayout;
     ArrayList<String> userCommunityIdList;
@@ -248,6 +248,12 @@ public class MainActivity extends AppCompatActivity {
         RootForMainActivity = findViewById(R.id.root_for_main_activity);
         navigationView = (NavigationView) findViewById(R.id.nv);
 
+        //no internet views and function
+        NoInternetView = findViewById(R.id.main_no_internet_relativelayout);
+        NoInternetTextView = findViewById(R.id.main_no_internet_textview);
+        checkInternetConnection();
+
+        // firebase refs and auths
         firebaseAuth = FirebaseAuth.getInstance();
         currentUserId = firebaseAuth.getCurrentUser().getUid();
         userRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USERS).child(currentUserId);
@@ -376,8 +382,6 @@ public class MainActivity extends AppCompatActivity {
 
         MainHorizontalScrollView.smoothScrollTo(0, 0);
 
-        NoInternetView = findViewById(R.id.main_no_internet_relativelayout);
-        NoInternetTextView = findViewById(R.id.main_no_internet_textview);
 
 
         MainSearchButton = findViewById(R.id.mainactivity_actionbar_searchbutton);
@@ -877,7 +881,7 @@ public class MainActivity extends AppCompatActivity {
         long serverTime;
         String communityId;
 
-        public checkAlbumExpired(long endtTime,String comId) {
+        public checkAlbumExpired(long endtTime, String comId) {
             this.endtTime = endtTime;
             communityId = comId;
         }
@@ -903,8 +907,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
-            if (this.serverTime < endtTime)
-            {
+            if (this.serverTime < endtTime) {
                 userRef.child(FirebaseConstants.COMMUNITIES).child(communityId).setValue(ServerValue.TIMESTAMP);
                 participantRef.child(communityId).child(currentUserId).setValue(ServerValue.TIMESTAMP);
 
@@ -915,10 +918,8 @@ public class MainActivity extends AppCompatActivity {
                 userCommunityIdList.addAll(newCommunities);
 
                 // todo refresh the recyclerview
-            }
-            else
-            {
-                showDialogMessage("Album Inactive","The album has expired or admin has made the album inactive.");
+            } else {
+                showDialogMessage("Album Inactive", "The album has expired or admin has made the album inactive.");
 
             }
         }
@@ -1021,6 +1022,7 @@ public class MainActivity extends AppCompatActivity {
         //QRCodeDialog.show();
 
     }
+
     private void decryptDeepLink() {
 
         FirebaseDynamicLinks.getInstance().getDynamicLink(getIntent()).addOnSuccessListener(new OnSuccessListener<PendingDynamicLinkData>() {
@@ -1029,7 +1031,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (pendingDynamicLinkData != null) {
                     Uri deeplink = pendingDynamicLinkData.getLink();
-                    String communityId = deeplink.toString().replace("https://inlens.com=","");
+                    String communityId = deeplink.toString().replace("https://inlens.com=", "");
                     if (currentActiveCommunityID.equals(AppConstants.NOTAVALABLE)) {
 
                         // fixme add cancel option too
@@ -1060,13 +1062,10 @@ public class MainActivity extends AppCompatActivity {
 
                     } else {
 
-                        if(currentActiveCommunityID.equals(communityId))
-                        {
+                        if (currentActiveCommunityID.equals(communityId)) {
 
-                            showInfoMessage("Your Community","You are currently part of this community.");
-                        }
-                        else
-                        {
+                            showInfoMessage("Your Community", "You are currently part of this community.");
+                        } else {
                             CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
                                     .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                                     .setTitle("New Community")
@@ -1082,7 +1081,7 @@ public class MainActivity extends AppCompatActivity {
                                                     dialog.dismiss();
                                                 }
                                             })
-                                    .addButton("NO", -1,getResources().getColor( R.color.deep_orange_A400), CFAlertDialog.CFAlertActionStyle.NEGATIVE,
+                                    .addButton("NO", -1, getResources().getColor(R.color.deep_orange_A400), CFAlertDialog.CFAlertActionStyle.NEGATIVE,
                                             CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
@@ -1112,26 +1111,21 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                if(dataSnapshot.hasChild(FirebaseConstants.COMMUNITYSTATUS))
-                {
+                if (dataSnapshot.hasChild(FirebaseConstants.COMMUNITYSTATUS)) {
                     long endtime = Long.parseLong(dataSnapshot.child("endtime").getValue().toString());
-                    new checkAlbumExpired(endtime,substring).execute();
+                    new checkAlbumExpired(endtime, substring).execute();
 
-                }
-                else
-                {
-                    showDialogMessage("Album Inactive","The album has expired or admin has made the album inactive.");
+                } else {
+                    showDialogMessage("Album Inactive", "The album has expired or admin has made the album inactive.");
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                showDialogMessage("Error Caught",databaseError.toString());
+                showDialogMessage("Error Caught", databaseError.toString());
 
             }
         });
-
-
 
 
     }
@@ -1146,9 +1140,9 @@ public class MainActivity extends AppCompatActivity {
 
             CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
                     .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                    .setTitle("Please Quit.")
+                    .setTitle("Album Active")
                     .setIcon(R.drawable.ic_warning_black_24dp)
-                    .setMessage("You have to quit this album before creating another one.")
+                    .setMessage("You have to leave the currently active album before creating a new album.")
                     .setCancelable(true)
                     .addButton("   Quit album  ", -1, Color.parseColor("#3e3d63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
                             CFAlertDialog.CFAlertActionAlignment.END,
@@ -1180,9 +1174,9 @@ public class MainActivity extends AppCompatActivity {
         } else {
             CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
                     .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                    .setTitle("Please Quit.")
+                    .setTitle("Album Active")
                     .setIcon(R.drawable.ic_warning_black_24dp)
-                    .setMessage("You have to quit this album before creating another one.")
+                    .setMessage("You have to leave the currently active album before joining a new album.")
                     .setCancelable(true)
                     .addButton("   Quit album  ", -1, Color.parseColor("#3e3d63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
                             CFAlertDialog.CFAlertActionAlignment.END,
@@ -2137,7 +2131,6 @@ else if (MainHorizontalScrollView.getScrollX() != 0) {
         if (br == null) {
 
             br = new BroadcastReceiver() {
-
                 @Override
                 public void onReceive(Context context, Intent intent) {
 
@@ -2235,8 +2228,6 @@ else if (MainHorizontalScrollView.getScrollX() != 0) {
                         });
         builder.show();
     }
-
-
 
 
     public class MainVerticalAdapter extends RecyclerView.Adapter<MainVerticalAdapter.PostGridViewHolder> {
@@ -2383,29 +2374,6 @@ else if (MainHorizontalScrollView.getScrollX() != 0) {
 
     }
 
-    private void ShowPostDialog(PostModel postModel) {
-
-
-        Glide.with(getApplicationContext())
-                .load(postModel.getUri())
-                .listener(new RequestListener<Drawable>() {
-                    @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        PostDialogProgressbar.setVisibility(View.GONE);
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        PostDialogProgressbar.setVisibility(View.GONE);
-                        return false;
-                    }
-                })
-                .into(PostDialogImageView);
-
-    }
-
-
     public String getCurrentActiveCommunityID() {
         return currentActiveCommunityID;
     }
@@ -2435,5 +2403,3 @@ else if (MainHorizontalScrollView.getScrollX() != 0) {
 
 
 }
-
-
