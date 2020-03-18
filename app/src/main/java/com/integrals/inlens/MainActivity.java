@@ -196,12 +196,13 @@ public class MainActivity extends AppCompatActivity {
 
     FloatingActionButton mainAddPhotosFab;
 
-    DatabaseReference userRef, communityRef;
+    DatabaseReference userRef, communityRef,participantRef;
     FirebaseAuth firebaseAuth;
     String currentUserId;
-    ValueEventListener userRefListenerForActiveAlbum, communityRefListenerForActiveAlbum;
+    ValueEventListener userRefListenerForActiveAlbum, communityRefListenerForActiveAlbum,coummunityUserAddListener;
     ReadFirebaseData readFirebaseData;
     AppBarLayout appBarLayout;
+    ArrayList<String> userCommunityIdList;
 
     // TODO placing of onClickListener for mainAddPhotosFab
     /*
@@ -251,12 +252,13 @@ public class MainActivity extends AppCompatActivity {
         currentUserId = firebaseAuth.getCurrentUser().getUid();
         userRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USERS).child(currentUserId);
         communityRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.COMMUNITIES);
+        participantRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.PARTICIPANTS);
 
         // custom function for waiting until firebase read is complete
         readFirebaseData = new ReadFirebaseData();
 
         // receiving all the community id under the user
-        ArrayList<String> userCommunityIdList = getIntent().getExtras().getStringArrayList(AppConstants.USERIDLIST);
+        userCommunityIdList = getIntent().getExtras().getStringArrayList(AppConstants.USERIDLIST);
         Collections.reverse(userCommunityIdList);
 
 
@@ -814,6 +816,11 @@ public class MainActivity extends AppCompatActivity {
         if (userRefListenerForActiveAlbum != null) {
             userRef.removeEventListener(userRefListenerForActiveAlbum);
         }
+        if (coummunityUserAddListener != null) {
+            userRef.removeEventListener(coummunityUserAddListener);
+        }
+
+
     }
 
     private class getServerTime extends AsyncTask<Void, Void, Void> {
@@ -866,22 +873,57 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void readData(DatabaseReference ref, final FirebaseRead listener) {
-        listener.onStart();
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                listener.onSuccess(dataSnapshot);
-            }
+    private class checkAlbumExpired extends AsyncTask<Void, Void, Void> {
+        long endtTime;
+        long serverTime;
+        String communityId;
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                listener.onFailure(databaseError);
-            }
-        });
+        public checkAlbumExpired(long endtTime,String comId) {
+            this.endtTime = endtTime;
+            communityId = comId;
+        }
 
+        @Override
+        protected Void doInBackground(Void... voids) {
+            HttpHandler httpHandler = new HttpHandler();
+            String jsonStr = httpHandler.makeServiceCall("http://worldtimeapi.org/api/ip");
+
+            if (jsonStr != null) {
+                try {
+                    JSONObject jsonObject = new JSONObject(jsonStr);
+                    String serverTime = jsonObject.getString("unixtime");
+                    this.serverTime = Long.parseLong(serverTime) * 1000;
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            if (this.serverTime > System.currentTimeMillis())
+            {
+                userRef.child(FirebaseConstants.COMMUNITIES).child(communityId).setValue(ServerValue.TIMESTAMP);
+                participantRef.child(communityId).child(CurrentUserID).setValue(ServerValue.TIMESTAMP);
+
+                List<String> newCommunities = new ArrayList<>();
+                newCommunities.add(communityId);
+                newCommunities.addAll(userCommunityIdList);
+                userCommunityIdList.clear();
+                userCommunityIdList.addAll(newCommunities);
+
+                // todo refresh the recyclerview
+            }
+            else
+            {
+                showDialogMessage("Album Inactive","The album has expired or admin has made the album inactive.");
+
+            }
+        }
     }
-
 
     public void GetStartedWithNewProfileImage() {
         CropImage.activity()
@@ -1067,63 +1109,31 @@ public class MainActivity extends AppCompatActivity {
 
     private void AddCommunityToUserRef(final String substring) {
 
-        Ref.child("Communities").child(substring).addListenerForSingleValueEvent(new ValueEventListener() {
+        communityRef.child(substring).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                if (dataSnapshot.hasChild("endtime")) {
-                    Long endtime = Long.parseLong(dataSnapshot.child("endtime").getValue().toString());
+                if(dataSnapshot.hasChild(FirebaseConstants.COMMUNITYSTATUS))
+                {
+                    long endtime = Long.parseLong(dataSnapshot.child("endtime").getValue().toString());
+                    new checkAlbumExpired(endtime,substring).execute();
 
-                    if (endtime > System.currentTimeMillis()) {
-
-                        if (currentActiveCommunityID.equals(substring)) {
-                            Toast.makeText(getApplicationContext(), "Already a participant in this community.", Toast.LENGTH_SHORT).show();
-                        } else {
-
-                            Ref.child("Communities").child(substring).child("participants").addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                    if (dataSnapshot.hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-                                        Toast.makeText(getApplicationContext(), "Rejoined this community.", Toast.LENGTH_SHORT).show();
-                                        Ref.child("Users").child(CurrentUserID).child("live_community").setValue(substring);
-                                        recreate();
-
-                                    } else {
-
-                                        Ref.child("Users").child(CurrentUserID).child("Communities").child(substring).setValue(ServerValue.TIMESTAMP);
-                                        Ref.child("Users").child(CurrentUserID).child("live_community").setValue(substring);
-                                        Ref.child("Communities").child(substring).child("participants").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(ServerValue.TIMESTAMP);
-                                        recreate();
-                                    }
-
-
-                                }
-
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-
-
-                        }
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Community not valid anymore.", Toast.LENGTH_SHORT).show();
-
-                    }
-                } else {
-                    Toast.makeText(getApplicationContext(), "Community not valid anymore.", Toast.LENGTH_SHORT).show();
                 }
-
+                else
+                {
+                    showDialogMessage("Album Inactive","The album has expired or admin has made the album inactive.");
+                }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+                showDialogMessage("Error Caught",databaseError.toString());
 
             }
         });
+
+
+
 
     }
 
@@ -1488,7 +1498,7 @@ public class MainActivity extends AppCompatActivity {
     public void quitCloudAlbum(boolean forceQuit) {
 
         if (forceQuit) {
-            communityRef.child(currentActiveCommunityID).child(FirebaseConstants.COMMUNITYSTATUS).setValue("F").addOnCompleteListener(new OnCompleteListener<Void>() {
+            communityRef.child(currentActiveCommunityID).child(FirebaseConstants.COMMUNITYSTATUS).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
@@ -1544,7 +1554,7 @@ public class MainActivity extends AppCompatActivity {
 
                                         String admin = dataSnapshot.child(FirebaseConstants.COMMUNITYADMIN).getValue().toString();
                                         if (admin.equals(currentUserId)) {
-                                            communityRef.child(currentActiveCommunityID).child(FirebaseConstants.COMMUNITYSTATUS).setValue("F").addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            communityRef.child(currentActiveCommunityID).child(FirebaseConstants.COMMUNITYSTATUS).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     if (task.isSuccessful()) {
