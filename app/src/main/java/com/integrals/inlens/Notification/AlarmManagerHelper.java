@@ -42,7 +42,6 @@ public class AlarmManagerHelper {
                 (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancelAll();
         Log.d("InLens","Alarm Manager  de-initiated");
-        Toast.makeText(context, "Stopped inlens service", Toast.LENGTH_SHORT).show();
     }
 
 }

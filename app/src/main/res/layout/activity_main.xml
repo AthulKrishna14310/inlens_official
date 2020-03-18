@@ -321,7 +321,8 @@
             android:src="@drawable/ic_add_a_photo_black_24dp"
             android:backgroundTint="@color/blue_900"
             android:layout_margin="16dp"
-            android:id="@+id/fabadd" />
+            android:id="@+id/fabadd"
+            android:visibility="gone"/>
 
         <RelativeLayout
             android:id="@+id/main_no_internet_relativelayout"
