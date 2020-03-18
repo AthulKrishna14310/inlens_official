@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -47,7 +48,12 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.integrals.inlens.Helper.AppConstants;
+import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.Helper.PreOperationCheck;
+import com.integrals.inlens.Helper.ReadFirebaseData;
+import com.integrals.inlens.Interface.FirebaseRead;
+import com.integrals.inlens.MainActivity;
 import com.integrals.inlens.Notification.AlarmManagerHelper;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -55,8 +61,10 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.integrals.inlens.R;
@@ -91,11 +99,27 @@ public class CreateCloudAlbum extends AppCompatActivity {
     private String CheckTimeTaken="";
     private ImageButton CreateCloudAlbumBackButton;
     private Boolean EventTypeSet = false ,AlbumDateSet = false;
+
+
+    FirebaseAuth firebaseAuth;
+    DatabaseReference userRef;
+    List<String> userCommunityIdList;
+    String currentUserId;
+    static final int DELAY_IN_MILLIS=1000;
+    ValueEventListener listener;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_cloud_album_layout);
 
+        // fixme update changes made in onbackpressed
+        userCommunityIdList = new ArrayList<>();
+        firebaseAuth = FirebaseAuth.getInstance();
+        userRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USERS);
+
+        ///////////////////////////////////////////////////////////////////////////////////////////
         EventDialogInit();
 
         InAuthentication = FirebaseAuth.getInstance();
@@ -800,7 +824,35 @@ public class CreateCloudAlbum extends AppCompatActivity {
         }
         else
         {
-            super.onBackPressed();
+            currentUserId  =  firebaseAuth.getCurrentUser().getUid();
+            ReadFirebaseData readFirebaseData = new ReadFirebaseData();
+            listener= readFirebaseData.readData(userRef.child(currentUserId), new FirebaseRead() {
+                @Override
+                public void onSuccess(DataSnapshot datasnapshot) {
+
+                    if (datasnapshot.hasChild(FirebaseConstants.COMMUNITIES)) {
+                        for (DataSnapshot snapshot : datasnapshot.child(FirebaseConstants.COMMUNITIES).getChildren()) {
+                            userCommunityIdList.add(snapshot.getKey());
+                        }
+                    }
+                    Intent mainIntent =  new Intent(CreateCloudAlbum.this, MainActivity.class);
+                    mainIntent.putStringArrayListExtra(AppConstants.USERIDLIST, (ArrayList<String>) userCommunityIdList);
+                    startActivity(mainIntent);
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                    finish();
+
+                }
+
+                @Override
+                public void onStart() {
+
+                }
+
+                @Override
+                public void onFailure(DatabaseError databaseError) {
+
+                }
+            });
         }
     }
 

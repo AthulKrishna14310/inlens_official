@@ -3,7 +3,6 @@ package com.integrals.inlens;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
@@ -94,11 +93,9 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.integrals.inlens.Activities.CreateCloudAlbum;
-import com.integrals.inlens.Activities.InlensGalleryActivity;
 import com.integrals.inlens.Activities.PhotoView;
 import com.integrals.inlens.Activities.ProfileActivity;
 import com.integrals.inlens.Activities.QRCodeReader;
-import com.integrals.inlens.Activities.SharedImageActivity;
 import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.BottomSheetFragment;
 import com.integrals.inlens.Helper.BottomSheetFragment_Inactive;
@@ -106,7 +103,6 @@ import com.integrals.inlens.Helper.ExpandableCardView;
 import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.Helper.HttpHandler;
 import com.integrals.inlens.Helper.ParticipantsAdapter;
-import com.integrals.inlens.Helper.PreOperationCheck;
 import com.integrals.inlens.Helper.ReadFirebaseData;
 import com.integrals.inlens.Helper.ToolbarAdapter;
 import com.integrals.inlens.Interface.FirebaseRead;
@@ -165,7 +161,6 @@ public class MainActivity extends AppCompatActivity {
     private int INTID = 3939;
 
     private RecyclerView MainHorizontalRecyclerview, MainVerticalRecyclerView;
-    private ImageButton MainNewAlbumButton, MainScanQrButton;
     private HorizontalScrollView MainHorizontalScrollView;
     private Boolean SHOW_TOUR = false;
 
@@ -210,7 +205,6 @@ public class MainActivity extends AppCompatActivity {
 
     // TODO placing of onClickListener for mainAddPhotosFab
     /*
-
     mainAddPhotosFab.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -223,9 +217,9 @@ public class MainActivity extends AppCompatActivity {
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         }
     });
-
-
      */
+
+    private ImageButton mainNewAlbumButton, mainScanQrButton;
 
     public MainActivity() {
     }
@@ -240,6 +234,11 @@ public class MainActivity extends AppCompatActivity {
         mainProfileImageview = findViewById(R.id.mainactivity_actionbar_profileimageview);
         appBarLayout = findViewById(R.id.main_appbarlayout);
         toolbarCustomView = LayoutInflater.from(this).inflate(R.layout.custom_toolbar_layout, null);
+
+
+        // scan and new albumbutton of main
+        mainNewAlbumButton = findViewById(R.id.main_horizontal_new_album_button);
+        mainScanQrButton = findViewById(R.id.main_horizontal_scan_button);
 
         // Fab
         mainAddPhotosFab = findViewById(R.id.fabadd);
@@ -331,7 +330,21 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        mainNewAlbumButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
+                createAlbum();
+            }
+        });
+
+        mainScanQrButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                scanQR();
+            }
+        });
 
 
 
@@ -343,8 +356,7 @@ public class MainActivity extends AppCompatActivity {
         MainHorizontalScrollView = findViewById(R.id.main_horizontalscrollview);
         MainHorizontalScrollView.setHorizontalScrollBarEnabled(false);
         MainHorizontalScrollView.setVerticalScrollBarEnabled(false);
-        MainNewAlbumButton = findViewById(R.id.main_horizontal_new_album_button);
-        MainScanQrButton = findViewById(R.id.main_horizontal_scan_button);
+
         expandableCardView = findViewById(R.id.photographers);
 
 
@@ -486,21 +498,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        MainNewAlbumButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                createAlbum();
-            }
-        });
-
-        MainScanQrButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                scanQR();
-            }
-        });
 
 
         getParticipantDatabaseReference = FirebaseDatabase.getInstance().getReference();
@@ -699,8 +697,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         // FIXME has to update decryption and  encryption.
-        DecryptDeepLink();
-
+        decryptDeepLink();
 
         // get live community id and check if album  is active or the app should quit the user from the album
         // if the album status is true the we  can start the service from the getServerTime async task only if the end time has not been reached;
@@ -737,7 +734,8 @@ public class MainActivity extends AppCompatActivity {
                     // QRCodeInit should be initialized if only is user is a participant in an album;
                     QRCodeInit(currentActiveCommunityID);
                     // FIXME dialog placing has to be update
-                    QRCodeDialog.show();
+                    // FIXME user should not be added if album status if false
+                    //QRCodeDialog.show();
 
                     // make the add photo fab visible
                     mainAddPhotosFab.setVisibility(View.VISIBLE);
@@ -945,7 +943,7 @@ public class MainActivity extends AppCompatActivity {
         final MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
 
 
-        if (!CommunityID.equals("Not Available")) {
+        if (!CommunityID.equals(AppConstants.NOTAVALABLE)) {
             try {
                 BitMatrix bitMatrix = multiFormatWriter.encode(CommunityID, BarcodeFormat.QR_CODE, 200, 200);
                 BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
@@ -971,99 +969,100 @@ public class MainActivity extends AppCompatActivity {
         InviteLinkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Intent SharingIntent = new Intent(Intent.ACTION_SEND);
-                SharingIntent.setType("text/plain");
 
-                SharingIntent.putExtra(Intent.EXTRA_TEXT, "InLens Cloud-Album Invite Link \n\n" + GenarateDeepLinkForInvite(CommunityID));
-                startActivity(SharingIntent);
+                shareInviteLink(CommunityID);
+
 
             }
         });
 
-        QRCodeDialog.show();
+        //FIXME dialog hidden by elson
+        //QRCodeDialog.show();
 
     }
-
-    private void FirebaseVariablesInit() {
-
-        InAuthentication = FirebaseAuth.getInstance();
-        Ref = FirebaseDatabase.getInstance().getReference();
-
-    }
-
-
-    private void DecryptDeepLink() {
+    private void decryptDeepLink() {
 
         FirebaseDynamicLinks.getInstance().getDynamicLink(getIntent()).addOnSuccessListener(new OnSuccessListener<PendingDynamicLinkData>() {
             @Override
             public void onSuccess(PendingDynamicLinkData pendingDynamicLinkData) {
 
-                Uri DeepLink;
                 if (pendingDynamicLinkData != null) {
-                    DeepLink = pendingDynamicLinkData.getLink();
-                    if (DeepLink != null) {
+                    Uri deeplink = pendingDynamicLinkData.getLink();
+                    String communityId = deeplink.toString().replace("https://inlens.com=","");
+                    if (currentActiveCommunityID.equals(AppConstants.NOTAVALABLE)) {
 
-
-                        if (DeepLink.toString().contains("comid=")) {
-
-                            final String communityLinkId = (DeepLink.toString().substring(DeepLink.toString().length() - 27)).substring(0, 26);
-                            Toast.makeText(MainActivity.this, "link"+communityLinkId, Toast.LENGTH_SHORT).show();
-                            if (currentActiveCommunityID.equals(AppConstants.NOTAVALABLE)) {
-
-                                CFAlertDialog.Builder builder = new CFAlertDialog.Builder(getApplicationContext())
-                                        .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                                        .setTitle("New Community")
-                                        .setIcon(R.drawable.inlens_logo_m)
-                                        .setMessage("You are about to join a new Community.")
-                                        .addButton("OK, I UNDERSTAND", -1, Color.parseColor("#3E3D63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
-                                                CFAlertDialog.CFAlertActionAlignment.END, new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        dialog.dismiss();
-                                                    }
-                                                });
-
-                                builder.show();
-
-
-                            } else {
-
-                                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                                builder.setTitle("New Community")
-                                        .setMessage("Are you sure you want to join this new community? This means leaving the previous community.")
-                                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        // fixme add cancel option too
+                        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
+                                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                                .setTitle("New Community")
+                                .setIcon(R.drawable.inlens_logo)
+                                .setCancelable(false)
+                                .setMessage("You are about to join a new community.")
+                                .addButton("Join", -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.NEGATIVE,
+                                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                                             @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                AddCommunityToUserRef(communityLinkId.substring(6, 26));
-
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                AddCommunityToUserRef(communityId);
+                                                dialog.dismiss();
                                             }
                                         })
-                                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                .addButton("Cancel", -1, getResources().getColor(R.color.deep_orange_A400), CFAlertDialog.CFAlertActionStyle.NEGATIVE,
+                                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                                             @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                                                dialogInterface.dismiss();
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
                                             }
-                                        })
-                                        .create()
-                                        .show();
+                                        });
 
-                            }
+                        builder.show();
 
+
+                    } else {
+
+                        if(currentActiveCommunityID.equals(communityId))
+                        {
+
+                            showInfoMessage("Your Community","You are currently part of this community.");
                         }
+                        else
+                        {
+                            CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
+                                    .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                                    .setTitle("New Community")
+                                    .setIcon(R.drawable.inlens_logo)
+                                    .setMessage("Are you sure you want to join this new community? This means quitting the previous one.")
+                                    .setTextGravity(Gravity.START)
+                                    .setCancelable(false)
+                                    .addButton("YES", -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    AddCommunityToUserRef(communityId);
+                                                    dialog.dismiss();
+                                                }
+                                            })
+                                    .addButton("NO", -1,getResources().getColor( R.color.deep_orange_A400), CFAlertDialog.CFAlertActionStyle.NEGATIVE,
+                                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.dismiss();
+                                                }
+                                            });
+                            builder.show();
+                        }
+
                     }
                 }
 
             }
-        })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
 
-                        Toast.makeText(getApplicationContext(), "Invite Link Failed", Toast.LENGTH_SHORT).show();
+                showInfoMessage("Data Fetch Failed", e.getMessage());
 
-                    }
-                });
+            }
+        });
     }
 
     private void AddCommunityToUserRef(final String substring) {
@@ -1131,7 +1130,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void createAlbum() {
 
-        if (currentActiveCommunityID.equals("Not Available")) {
+
+        if (currentActiveCommunityID.equals(AppConstants.NOTAVALABLE)) {
             startActivity(new Intent(MainActivity.this, CreateCloudAlbum.class));
         } else {
 
@@ -1493,6 +1493,8 @@ public class MainActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
                         userRef.child(FirebaseConstants.LIVECOMMUNITYID).removeValue();
+                        currentActiveCommunityID = AppConstants.NOTAVALABLE;
+                        mainAddPhotosFab.setVisibility(View.GONE);
                         AlarmManagerHelper alarmManagerHelper =
                                 new AlarmManagerHelper(getApplicationContext());
                         alarmManagerHelper.deinitateAlarmManager();
@@ -1514,7 +1516,7 @@ public class MainActivity extends AppCompatActivity {
             });
 
         } else {
-            showAlbumQuitPrompt("Quit Cloud-Album", "Are you sure you want to quit the current Cloud-Album. You won't able to upload photos to this album again.", "No", "Yes");
+            showAlbumQuitPrompt("Leaving Community", "Are you sure you want to quit the current Cloud-Album. You won't able to upload photos to this album again.", "No", "Yes");
 
         }
 
@@ -1523,14 +1525,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void showAlbumQuitPrompt(String title, String message, String postiveButtonMessage, String negativeButtonMessage) {
 
+        //fixme this dialog ui is not good
+
         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle(title)
                 .setIcon(R.drawable.ic_cancel_black_24dp)
                 .setMessage(message)
                 .setCancelable(false)
-                .addButton(negativeButtonMessage, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE,
-                        CFAlertDialog.CFAlertActionAlignment.END, new DialogInterface.OnClickListener() {
+                .addButton(negativeButtonMessage, -1, getResources().getColor(R.color.deep_orange_A400), CFAlertDialog.CFAlertActionStyle.NEGATIVE,
+                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
@@ -1545,6 +1549,8 @@ public class MainActivity extends AppCompatActivity {
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     if (task.isSuccessful()) {
                                                         userRef.child(FirebaseConstants.LIVECOMMUNITYID).removeValue();
+                                                        currentActiveCommunityID = AppConstants.NOTAVALABLE;
+                                                        mainAddPhotosFab.setVisibility(View.GONE);
                                                         AlarmManagerHelper alarmManagerHelper =
                                                                 new AlarmManagerHelper(getApplicationContext());
                                                         alarmManagerHelper.deinitateAlarmManager();
@@ -1600,11 +1606,12 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 });
 
+                                dialog.dismiss();
 
                             }
                         })
-                .addButton(postiveButtonMessage, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE,
-                        CFAlertDialog.CFAlertActionAlignment.END, new DialogInterface.OnClickListener() {
+                .addButton(postiveButtonMessage, -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
@@ -1836,9 +1843,7 @@ public class MainActivity extends AppCompatActivity {
             SetDefaultView();
         } else if (RootForMainActivity.isDrawerOpen(GravityCompat.START)) {
             RootForMainActivity.closeDrawer(GravityCompat.START);
-        }
-        else if(toolbarCustomView.isShown())
-        {
+        } else if (toolbarCustomView.isShown()) {
             toolbarCustomView.clearAnimation();
             toolbarCustomView.setAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_back_up));
             toolbarCustomView.clearAnimation();
@@ -1846,9 +1851,7 @@ public class MainActivity extends AppCompatActivity {
             appBarLayout.setExpanded(true);
 
             //TODO scroll the recyclerview to the top
-        }
-        else
-        {
+        } else {
             super.onBackPressed();
         }
 /*
@@ -2109,8 +2112,14 @@ else if (MainHorizontalScrollView.getScrollX() != 0) {
     }
 
 
-    private static String GenarateDeepLinkForInvite(String CommunityID) {
-        return "https://inlens.page.link/?link=https://integrals.inlens.in/comid=" + CommunityID + "/&apn=com.integrals.inlens";
+    private void shareInviteLink(String CommunityID) {
+
+        String url = "https://inlens.page.link/?link=https://inlens.com=" + CommunityID + "&apn=com.integrals.inlens";
+        final Intent SharingIntent = new Intent(Intent.ACTION_SEND);
+        SharingIntent.setType("text/plain");
+        SharingIntent.putExtra(Intent.EXTRA_TEXT, "Inlens Community Invite Link \n" + url);
+        MainActivity.this.startActivity(SharingIntent);
+
     }
 
 
@@ -2187,8 +2196,27 @@ else if (MainHorizontalScrollView.getScrollX() != 0) {
                 .setIcon(R.drawable.ic_check_circle_black_24dp)
                 .setMessage(message)
                 .setCancelable(false)
-                .addButton("    OK    ", -1, Color.parseColor("#3e3d63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
-                        CFAlertDialog.CFAlertActionAlignment.END,
+                .addButton("OK", -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+
+                            }
+                        });
+        builder.show();
+    }
+
+    public void showInfoMessage(String title, String message) {
+        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
+                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                .setTitle(title)
+                .setIcon(R.drawable.ic_info_black_24dp)
+                .setMessage(message)
+                .setCancelable(false)
+                .addButton("OK", -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

@@ -144,25 +144,22 @@
 
                                 <LinearLayout
                                     android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
+                                    android:layout_height="wrap_content"
                                     android:layout_marginStart="4dp"
-                                    android:orientation="vertical">
+                                    android:orientation="vertical"
+                                    android:layout_gravity="center_vertical">
 
                                     <LinearLayout
                                         android:layout_width="wrap_content"
-                                        android:layout_height="match_parent"
+                                        android:layout_height="wrap_content"
                                         android:layout_gravity="center_horizontal"
-                                        android:layout_weight="1"
-                                        android:orientation="vertical">
+                                        android:orientation="vertical"
+                                        android:layout_margin="10dp">
 
                                         <ImageButton
                                             android:id="@+id/main_horizontal_new_album_button"
                                             android:layout_width="48dp"
                                             android:layout_height="48dp"
-                                            android:layout_marginLeft="16dp"
-                                            android:layout_marginTop="3dp"
-                                            android:layout_marginRight="3dp"
-                                            android:layout_marginBottom="3dp"
                                             android:background="@drawable/circle_accent"
                                             android:elevation="1dp"
                                             android:scaleType="center"
@@ -174,26 +171,22 @@
                                             android:layout_height="wrap_content"
                                             android:layout_gravity="center_horizontal"
                                             android:gravity="center"
-                                            android:text="    New"
+                                            android:text="New"
                                             android:textSize="12sp"
-                                            android:textStyle="bold" />
+                                            android:textColor="@color/black"/>
 
                                     </LinearLayout>
 
                                     <LinearLayout
                                         android:layout_width="wrap_content"
-                                        android:layout_height="match_parent"
+                                        android:layout_height="wrap_content"
                                         android:layout_gravity="center_horizontal"
-                                        android:layout_weight="1"
-                                        android:orientation="vertical">
+                                        android:orientation="vertical"
+                                        android:layout_margin="10dp">
 
                                         <RelativeLayout
                                             android:layout_width="50dp"
                                             android:layout_height="50dp"
-                                            android:layout_marginLeft="16dp"
-                                            android:layout_marginRight="3dp"
-                                            android:layout_marginTop="3dp"
-                                            android:layout_marginBottom="3dp"
                                             android:background="@drawable/circle_accent">
 
                                             <ImageButton
@@ -211,24 +204,13 @@
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
                                             android:layout_gravity="center_horizontal"
-                                            android:background="@color/white"
                                             android:gravity="center"
-                                            android:text="    Scan"
+                                            android:text="Scan"
                                             android:textSize="12sp"
-                                            android:textStyle="bold" />
+                                            android:textColor="@color/black"/>
 
                                     </LinearLayout>
 
-
-                                </LinearLayout>
-
-                                <LinearLayout
-                                    android:layout_width="1dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_gravity="center_vertical"
-                                    android:layout_marginStart="5dp"
-                                    android:layout_marginEnd="5dp"
-                                    android:background="@color/colorAccent">
 
                                 </LinearLayout>
 

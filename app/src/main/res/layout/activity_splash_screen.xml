@@ -23,7 +23,7 @@
         android:layout_height="80dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="80dp"
-        android:src="@drawable/inlens_logo_m" />
+        android:src="@drawable/inlens_logo" />
 
     <ProgressBar
         android:layout_width="@dimen/dim30dp"

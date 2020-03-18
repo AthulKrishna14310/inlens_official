@@ -25,13 +25,11 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -61,13 +59,9 @@ import com.integrals.inlens.Helper.PreOperationCheck;
 import com.integrals.inlens.Models.GalleryImageModel;
 import com.integrals.inlens.R;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -741,7 +735,7 @@ public class InlensGalleryActivity extends AppCompatActivity {
                         final NotificationCompat.Builder builder = new NotificationCompat.Builder(InlensGalleryActivity.this, Channel_ID);
                         builder.setContentTitle("Inlens")
                                 .setProgress(100, 0, true)
-                                .setSmallIcon(R.drawable.inlens_logo_m)
+                                .setSmallIcon(R.drawable.inlens_logo)
                                 .setPriority(NotificationCompat.PRIORITY_HIGH);
                         UploadStorageTask = StorageRef.child(Uri.fromFile(new File(uploadQueue.get(position))).getLastPathSegment() + System.currentTimeMillis()).putBytes(compressedImage).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                             @Override
