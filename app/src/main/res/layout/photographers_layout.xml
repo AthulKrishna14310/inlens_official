@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/white">
 
 
     <android.support.v7.widget.RecyclerView
@@ -25,9 +27,10 @@
         android:layout_marginRight="5dp"
         android:layout_marginLeft="16dp"
         android:clickable="true"
+        android:background="@color/white"
         android:id="@+id/add_photographers"
         android:src="@drawable/ic_person_add"
-        android:background="?attr/selectableItemBackgroundBorderless"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
         android:layout_alignParentLeft="true">
 
     </ImageButton>

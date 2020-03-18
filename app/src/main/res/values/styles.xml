@@ -50,29 +50,9 @@
         <item name="colorAccent">@color/colorPrimaryLight</item>
     </style>
 
-    <style name="DialogAnimation">
-        <item name="android:windowEnterAnimation">@anim/fade_in</item>
-        <item name="android:windowExitAnimation">@anim/fade_out</item>
-    </style>
-
     <style name="BottomUpSlideDialogAnimation">
         <item name="android:windowEnterAnimation">@anim/slide_up</item>
         <item name="android:windowExitAnimation">@anim/slide_bottom</item>
-    </style>
-
-    <style name="UpBottomSlideDialogAnimation">
-        <item name="android:windowEnterAnimation">@anim/slide_from_top</item>
-        <item name="android:windowExitAnimation">@anim/slide_back_up</item>
-    </style>
-
-    <style name="ViewPagerDialogAnimation">
-        <item name="android:windowEnterAnimation">@anim/fade_in</item>
-        <item name="android:windowExitAnimation">@anim/fade_out</item>
-    </style>
-
-    <style name="TabLayoutTextAppearance" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
-        <item name="android:textSize">15sp</item>
-        <item name="android:textAllCaps">true</item>
     </style>
 
 </resources>

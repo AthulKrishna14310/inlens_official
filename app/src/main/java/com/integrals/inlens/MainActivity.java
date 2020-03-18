@@ -1877,13 +1877,13 @@ else if (MainHorizontalScrollView.getScrollX() != 0) {
 
         public MainCommunityViewHolder(View itemView) {
             super(itemView);
-            AlbumOptions = itemView.findViewById(R.id.albumcard_options);
+
             AlbumCoverButton = itemView.findViewById(R.id.albumcard_image_view);
             AlbumNameTextView = itemView.findViewById(R.id.album_card_textview);
-            covePhotoChange = itemView.findViewById(R.id.coverphotochangebutton);
-            covePhotoChangeCard = itemView.findViewById(R.id.cardcoverphotochange);
+            covePhotoChange = itemView.findViewById(R.id.album_option_btn);
+            covePhotoChangeCard = itemView.findViewById(R.id.cardalbumoptions);
 
-            AlbumDescriptionTextView = itemView.findViewById(R.id.albumcard_description);
+
             Indicator = itemView.findViewById(R.id.indication_button);
         }
 

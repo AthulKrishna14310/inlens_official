@@ -17,14 +17,14 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:background="@drawable/circle"
-            android:backgroundTint="@android:color/black"
+            android:backgroundTint="@color/colorSecondary"
             android:padding="5dp"
             android:src="@drawable/ic_closedialog" />
 
 
         <ImageView
             android:id="@+id/QR_Display"
-            android:layout_width="2030dp"
+            android:layout_width="230dp"
             android:layout_height="230dp"
             android:layout_below="@id/textViewAlbumQR"
             android:layout_centerHorizontal="true"
@@ -46,7 +46,8 @@
             android:maxWidth="250dp"
             android:text="Scan QR code or send an invite link to add photographers to the album"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textColor="@color/colorSecondaryDark"
+             />
 
         <Button
             android:id="@+id/InviteLinkButton"
@@ -59,7 +60,7 @@
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="15dp"
             android:background="@drawable/rounded_corners"
-            android:backgroundTint="@color/colorPrimaryDark"
+            android:backgroundTint="@color/colorSecondary"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
             android:text="Send Invite Link"

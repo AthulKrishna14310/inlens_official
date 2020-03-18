@@ -74,19 +74,9 @@
     <dimen name="abc_text_size_subtitle_material_toolbar">16.0dip</dimen>
     <dimen name="abc_text_size_title_material">20.0sp</dimen>
     <dimen name="abc_text_size_title_material_toolbar">20.0dip</dimen>
-    <dimen name="actionBarSize">56.0dip</dimen>
-    <dimen name="activity_horizontal_margin">16.0dip</dimen>
-    <dimen name="activity_vertical_margin">16.0dip</dimen>
-    <dimen name="appbar_padding_top">8.0dip</dimen>
-    <dimen name="bubble_thumb_height">70.0dip</dimen>
-    <dimen name="bubble_thumb_width">70.0dip</dimen>
     <dimen name="cardview_compat_inset_shadow">1.0dip</dimen>
     <dimen name="cardview_default_elevation">2.0dip</dimen>
     <dimen name="cardview_default_radius">2.0dip</dimen>
-    <dimen name="chip_default_left_margin">0.0dip</dimen>
-    <dimen name="chip_default_padding_between_image">8.0dip</dimen>
-    <dimen name="chip_default_padding_edge">12.0dip</dimen>
-    <dimen name="chip_default_right_margin">0.0dip</dimen>
     <dimen name="compat_button_inset_horizontal_material">4.0dip</dimen>
     <dimen name="compat_button_inset_vertical_material">6.0dip</dimen>
     <dimen name="compat_button_padding_horizontal_material">8.0dip</dimen>
@@ -132,7 +122,6 @@
     <dimen name="design_tab_text_size_2line">12.0sp</dimen>
     <item type="dimen" name="disabled_alpha_material_dark">0.3</item>
     <item type="dimen" name="disabled_alpha_material_light">0.26</item>
-    <dimen name="fab_margin">16.0dip</dimen>
     <dimen name="fastscroll_default_thickness">8.0dip</dimen>
     <dimen name="fastscroll_margin">0.0dip</dimen>
     <dimen name="fastscroll_minimum_range">50.0dip</dimen>
@@ -146,51 +135,6 @@
     <dimen name="item_touch_helper_max_drag_scroll_per_frame">20.0dip</dimen>
     <dimen name="item_touch_helper_swipe_escape_max_velocity">800.0dip</dimen>
     <dimen name="item_touch_helper_swipe_escape_velocity">120.0dip</dimen>
-    <dimen name="letter_tile_size">32.0dip</dimen>
-    <dimen name="mdtp_ampm_label_size">16.0dip</dimen>
-    <dimen name="mdtp_ampm_left_padding">6.0dip</dimen>
-    <dimen name="mdtp_date_picker_component_width">270.0dip</dimen>
-    <dimen name="mdtp_date_picker_header_height">-2.0dip</dimen>
-    <dimen name="mdtp_date_picker_header_text_size">12.0dip</dimen>
-    <item type="dimen" name="mdtp_date_picker_header_width">@dimen/mdtp_date_picker_component_width</item>
-    <dimen name="mdtp_date_picker_title_height">30.0dip</dimen>
-    <dimen name="mdtp_date_picker_title_padding">9.0dip</dimen>
-    <dimen name="mdtp_date_picker_view_animator_height">252.0dip</dimen>
-    <dimen name="mdtp_datepicker_selection_text_size">30.0sp</dimen>
-    <dimen name="mdtp_datepicker_year_selection_text_size">16.0sp</dimen>
-    <dimen name="mdtp_day_number_select_circle_radius">16.0dip</dimen>
-    <dimen name="mdtp_day_number_size">12.0sp</dimen>
-    <dimen name="mdtp_done_button_height">42.0dip</dimen>
-    <dimen name="mdtp_done_label_size">14.0sp</dimen>
-    <dimen name="mdtp_extra_time_label_margin">-30.0dip</dimen>
-    <dimen name="mdtp_footer_height">48.0dip</dimen>
-    <dimen name="mdtp_header_height">96.0dip</dimen>
-    <dimen name="mdtp_material_button_height">48.0dip</dimen>
-    <dimen name="mdtp_material_button_minwidth">64.0dip</dimen>
-    <dimen name="mdtp_material_button_textpadding_horizontal">8.0dip</dimen>
-    <dimen name="mdtp_material_button_textsize">14.0sp</dimen>
-    <dimen name="mdtp_minimum_margin_sides">48.0dip</dimen>
-    <dimen name="mdtp_minimum_margin_top_bottom">24.0dip</dimen>
-    <dimen name="mdtp_month_day_label_text_size">12.0sp</dimen>
-    <dimen name="mdtp_month_label_size">14.0sp</dimen>
-    <dimen name="mdtp_month_list_item_header_height">56.0dip</dimen>
-    <dimen name="mdtp_month_select_circle_radius">45.0dip</dimen>
-    <dimen name="mdtp_picker_dimen">270.0dip</dimen>
-    <dimen name="mdtp_selected_calendar_layout_height">155.0dip</dimen>
-    <dimen name="mdtp_selected_date_day_size">70.0dip</dimen>
-    <dimen name="mdtp_selected_date_height">140.0dip</dimen>
-    <dimen name="mdtp_selected_date_month_size">25.0dip</dimen>
-    <dimen name="mdtp_selected_date_year_size">25.0dip</dimen>
-    <dimen name="mdtp_separator_padding">4.0dip</dimen>
-    <dimen name="mdtp_time_label_shift">-12.0dip</dimen>
-    <dimen name="mdtp_time_label_size">54.0dip</dimen>
-    <dimen name="mdtp_time_label_subscript_size">30.0dip</dimen>
-    <dimen name="mdtp_time_picker_header_text_size">12.0dip</dimen>
-    <dimen name="mdtp_time_picker_height">300.0dip</dimen>
-    <dimen name="mdtp_year_label_height">64.0dip</dimen>
-    <dimen name="mdtp_year_label_text_size">22.0dip</dimen>
-    <dimen name="nav_header_height">200.0dip</dimen>
-    <dimen name="nav_header_vertical_spacing">16.0dip</dimen>
     <dimen name="notification_action_icon_size">32.0dip</dimen>
     <dimen name="notification_action_text_size">13.0sp</dimen>
     <dimen name="notification_big_circle_margin">12.0dip</dimen>
@@ -207,22 +151,6 @@
     <dimen name="notification_subtext_size">13.0sp</dimen>
     <dimen name="notification_top_pad">10.0dip</dimen>
     <dimen name="notification_top_pad_large_text">5.0dip</dimen>
-    <dimen name="places_autocomplete_button_padding">16.0dip</dimen>
-    <dimen name="places_autocomplete_overlay_padding">8.0dip</dimen>
-    <dimen name="places_autocomplete_powered_by_google_height">40.0dip</dimen>
-    <dimen name="places_autocomplete_powered_by_google_separator_start">72.0dip</dimen>
-    <dimen name="places_autocomplete_powered_by_google_start">16.0dip</dimen>
-    <dimen name="places_autocomplete_prediction_height">72.0dip</dimen>
-    <dimen name="places_autocomplete_prediction_horizontal_margin">16.0dip</dimen>
-    <dimen name="places_autocomplete_prediction_primary_text">16.0sp</dimen>
-    <dimen name="places_autocomplete_prediction_secondary_text">14.0sp</dimen>
-    <dimen name="places_autocomplete_progress_horizontal_margin">16.0dip</dimen>
-    <dimen name="places_autocomplete_progress_size">24.0dip</dimen>
-    <dimen name="places_autocomplete_search_input_padding">16.0dip</dimen>
-    <dimen name="places_autocomplete_search_input_text">20.0dip</dimen>
-    <dimen name="places_autocomplete_toolbar_inset_end">0.0dip</dimen>
-    <dimen name="places_autocomplete_toolbar_inset_start">72.0dip</dimen>
-    <dimen name="places_autocomplete_vertical_dropdown">8.0dip</dimen>
     <dimen name="spacing_large">15.0dip</dimen>
     <dimen name="spacing_medium">3.0dip</dimen>
     <dimen name="spacing_middle">6.0dip</dimen>
@@ -230,15 +158,7 @@
     <dimen name="spacing_mxlarge">25.0dip</dimen>
     <dimen name="spacing_small">3.0dip</dimen>
     <dimen name="spacing_smlarge">18.0dip</dimen>
-    <dimen name="spacing_xlarge">35.0dip</dimen>
     <dimen name="spacing_xmedium">7.0dip</dimen>
-    <dimen name="spacing_xmlarge">40.0dip</dimen>
-    <dimen name="spacing_xsmall">2.0dip</dimen>
-    <dimen name="spacing_xxlarge">50.0dip</dimen>
-    <dimen name="spacing_xxxlarge">55.0dip</dimen>
-    <dimen name="thumb_height">30.0dip</dimen>
-    <dimen name="thumb_width">30.0dip</dimen>
-    <dimen name="tile_letter_font_size">17.0sp</dimen>
     <dimen name="tooltip_corner_radius">2.0dip</dimen>
     <dimen name="tooltip_horizontal_padding">16.0dip</dimen>
     <dimen name="tooltip_margin">8.0dip</dimen>
@@ -247,12 +167,7 @@
     <dimen name="tooltip_vertical_padding">6.5dip</dimen>
     <dimen name="tooltip_y_offset_non_touch">0.0dip</dimen>
     <dimen name="tooltip_y_offset_touch">16.0dip</dimen>
-    <dimen name="viewpager_margin_overlap">-60.0dip</dimen>
-    <dimen name="viewpager_margin_overlap_payment">-30.0dip</dimen>
     <dimen name="indicator_height">5.0dip</dimen>
-    <dimen name="divider_height">1.0dip</dimen>
-    <dimen name="main_image_dimen200">200dp</dimen>
-    <dimen name="main_image_dimen100">100dp</dimen>
     <dimen name="dim30dp">30dp</dimen>
 
 
@@ -272,6 +187,5 @@
     <dimen name="underline_height_create_cloud_album_activity">4dp</dimen>
     <item type ="dimen" name="card_corner_radius_create_cloud_album_activity" >0dp</item>
     <item type="dimen" name="card_elevation_create_cloud_album_activity">2dp</item>
-    <item name="relative_layout_create_cloud_album_activity" type="dimen" >0dp</item>
     <item name="zero_dimen_create_cloud_album_activity" type="dimen" >0dp</item>
 </resources>

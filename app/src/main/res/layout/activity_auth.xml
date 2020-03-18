@@ -7,7 +7,6 @@
     tools:context=".Activities.AuthActivity">
 
     <TextView
-        android:id="@+id/appname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/appicon"
@@ -55,7 +54,7 @@
                 android:layout_gravity="center_vertical"
                 android:textColor="@color/white"
                 android:textSize="14sp"
-                android:background="@drawable/circle_accent_small_radius"
+                android:background="@drawable/circle_primary_small_radius"
                 android:visibility="gone">
             </TextView>
 

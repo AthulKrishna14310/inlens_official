@@ -7,7 +7,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
+        android:textSize="20sp"
         android:id="@+id/textTitle"
         android:text="Upload instructions..."
         android:layout_centerHorizontal="true"
@@ -132,7 +132,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:id="@+id/bttx2"
-            android:background="@drawable/ic_add_to_photos_black_24dp"></ImageButton>
+            android:background="@drawable/ic_add_to_photos_24dp"></ImageButton>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
     android:background="@drawable/curved_corners"
-    android:backgroundTint="@color/colorPrimaryDark"
+    android:backgroundTint="@color/colorPrimary"
     android:padding="5dp">
 
 
@@ -30,7 +30,6 @@
         android:layout_marginStart="10dp"/>
 
    <LinearLayout
-       android:id="@+id/inlens_gallery_dialog_linearlayout"
        android:layout_width="match_parent"
        android:layout_height="wrap_content"
        android:orientation="horizontal"

@@ -23,7 +23,6 @@
             android:layout_centerHorizontal="true">
 
             <RelativeLayout
-                android:id="@+id/profile_activity_user_info_container_imageview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
