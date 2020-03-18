@@ -2,6 +2,7 @@ package com.integrals.inlens.Activities;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
@@ -32,6 +33,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crowdfire.cfalertdialog.CFAlertDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
@@ -65,7 +67,6 @@ public class AuthActivity extends AppCompatActivity {
     private Dialog AllCountryDialog,VerificationDialog;
     private String ChoosenCode ,VerificationID;
     private ProgressBar CustomToastProgressbar,VerifyProgressbar;
-    private Toast toast;
     private Button VerifyGoManualButton;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks Callbacks;
     private CountDownTimer countDownTimer;
@@ -79,7 +80,6 @@ public class AuthActivity extends AppCompatActivity {
 
         InitCountryNames();
         InitAllCountryDialog();
-        InitCustomToast();
         VerifyDialogInit();
 
         AuthEditText = findViewById(R.id.auth_edittext);
@@ -135,13 +135,13 @@ public class AuthActivity extends AppCompatActivity {
                     }
                     else
                     {
-                        ShowCustomToast("Country Code Missing","Select country code and continue further.",false,1000);
+                        showDialogMessage("Country Code Missing","Select country code and continue further.");
 
                     }
                 }
                 else
                 {
-                    ShowCustomToast("Phone Number Missing","Enter phone number and continue further.",false,1000);
+                    showDialogMessage("Phone Number Missing","Enter phone number and continue further.");
                 }
 
             }
@@ -167,7 +167,7 @@ public class AuthActivity extends AppCompatActivity {
             @Override
             public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
 
-                ShowCustomToast("Login Successful","Successfully completed verification.",false,1000);
+                showDialogMessage("Login Successful","Successfully completed verification.");
                 SignInWithCredential(phoneAuthCredential);
 
             }
@@ -179,7 +179,7 @@ public class AuthActivity extends AppCompatActivity {
                 VerifyTextViewNote.setText("*NOTE \nVerification failed. Please try after sometime.");
                 VerifyTextViewNote.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(),android.R.anim.fade_in));
                 VerifyTextViewNote.setVisibility(View.VISIBLE);
-                ShowCustomToast("Authentication Failed"," Unable to connect to database.",false,1000);
+                showDialogMessage("Authentication Failed"," Unable to connect to database.");
             }
 
             @Override
@@ -190,6 +190,25 @@ public class AuthActivity extends AppCompatActivity {
         };
 
 
+    }
+
+    public void showDialogMessage(String title, String message) {
+        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
+                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                .setTitle(title)
+                .setIcon(R.drawable.ic_check_circle_black_24dp)
+                .setMessage(message)
+                .setCancelable(false)
+                .addButton("OK", -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+
+                            }
+                        });
+        builder.show();
     }
 
     private void GetDefaultCountry() {
@@ -283,7 +302,7 @@ public class AuthActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    ShowCustomToast("Registration Failed"," Registration failed due to  some unknown reasons.Please try after sometime.",false,1000);
+                    showDialogMessage("Registration Failed"," Registration failed due to  some unknown reasons.Please try after sometime.");
                 }
             }
         });
@@ -373,31 +392,8 @@ public class AuthActivity extends AppCompatActivity {
         });
     }
 
-    private void ShowCustomToast(String Title, String Message, boolean isProgressbarShown, int duration) {
 
-        CustomToastTitle.setText(Title);
-        CustomToastMessage.setText(Message);
-        toast.setDuration(duration);
-        if(isProgressbarShown)
-            CustomToastProgressbar.setVisibility(View.VISIBLE);
-        else
-            CustomToastProgressbar.setVisibility(View.GONE);
 
-        toast.show();
-
-    }
-
-    private void InitCustomToast() {
-        toast = new Toast(getApplicationContext());
-        View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.custom_toast_layout,null);
-        toast.setView(view);
-        toast.setGravity(Gravity.BOTTOM,0,100);
-
-        CustomToastTitle = view.findViewById(R.id.custom_toast_title);
-        CustomToastMessage= view.findViewById(R.id.custom_toast_message);
-        CustomToastProgressbar = view.findViewById(R.id.custom_toast_progressbar);
-
-    }
 
     private void InitAllCountryDialog() {
 

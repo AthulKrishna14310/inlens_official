@@ -1,6 +1,6 @@
 package com.integrals.inlens.Activities;
 
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -8,17 +8,13 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.crowdfire.cfalertdialog.CFAlertDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,18 +23,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.Helper.PreOperationCheck;
 import com.integrals.inlens.MainActivity;
 import com.integrals.inlens.R;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 public class UserNameInfoActivity extends AppCompatActivity {
 
-    private DatabaseReference Ref;
+    private DatabaseReference userRef;
     private FirebaseAuth Auth;
 
     private EditText UserNameEdittext,UserEmailEdittext;
@@ -48,7 +40,6 @@ public class UserNameInfoActivity extends AppCompatActivity {
 
     private String Name,Email;
 
-    private Toast toast;
     private TextView  CustomToastTitle, CustomToastMessage;
     private ProgressBar CustomToastProgressbar;
 
@@ -61,9 +52,8 @@ public class UserNameInfoActivity extends AppCompatActivity {
         FirebaseInit();
         CheckUserAuthentication();
         VariablesInit();
-        InitCustomToast();
 
-        Ref.child("Users").child(Auth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+        userRef.child("Users").child(Auth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -102,7 +92,7 @@ public class UserNameInfoActivity extends AppCompatActivity {
                     check.hideSoftKeyboard(UserNameInfoActivity.this,UserNameEdittext);
 
 
-                    Ref.child("Users").child(Auth.getCurrentUser().getUid()).child("Name").setValue(Name).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    userRef.child("Name").setValue(Name).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
 
@@ -110,7 +100,7 @@ public class UserNameInfoActivity extends AppCompatActivity {
                             {
 
 
-                                Ref.child("Users").child(Auth.getCurrentUser().getUid()).child("Email").setValue(Email);
+                                userRef.child("Email").setValue(Email);
                                 startActivity(new Intent(UserNameInfoActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK).putExtra("ShowTour",true));
                                 overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                                 finish();
@@ -137,19 +127,19 @@ public class UserNameInfoActivity extends AppCompatActivity {
                 {
                     if(TextUtils.isEmpty(Name) && TextUtils.isEmpty(Email))
                     {
-                        ShowCustomToast("Fields Missing","Please type in your username and email.",false,100);
+                        showDialogMessage("Fields Missing","Please type in your username and email.");
                     }
                     else if(TextUtils.isEmpty(Name))
                     {
-                        ShowCustomToast("Name Missing","Please type in your username",false,100);
+                        showDialogMessage("Name Missing","Please type in your username");
                     }
                     else if(TextUtils.isEmpty(Email))
                     {
-                        ShowCustomToast("Email Missing","Please type in your email",false,100);
+                        showDialogMessage("Email Missing","Please type in your email");
                     }
                     else
                     {
-                        ShowCustomToast("Fields Missing","Please type in your username and email.",false,100);
+                        showDialogMessage("Fields Missing","Please type in your username and email.");
 
                     }
                 }
@@ -161,30 +151,23 @@ public class UserNameInfoActivity extends AppCompatActivity {
 
     }
 
-    private void ShowCustomToast(String Title, String Message, boolean isProgressbarShown, int duration) {
+    public void showDialogMessage(String title, String message) {
+        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
+                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                .setTitle(title)
+                .setIcon(R.drawable.ic_check_circle_black_24dp)
+                .setMessage(message)
+                .setCancelable(false)
+                .addButton("OK", -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
 
-        CustomToastTitle.setText(Title);
-        CustomToastMessage.setText(Message);
-        toast.setDuration(duration);
-        if(isProgressbarShown)
-            CustomToastProgressbar.setVisibility(View.VISIBLE);
-        else
-            CustomToastProgressbar.setVisibility(View.GONE);
-
-        toast.show();
-
-    }
-
-    private void InitCustomToast() {
-        toast = new Toast(getApplicationContext());
-        View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.custom_toast_layout,null);
-        toast.setView(view);
-        toast.setGravity(Gravity.BOTTOM,0,100);
-
-        CustomToastTitle = view.findViewById(R.id.custom_toast_title);
-        CustomToastMessage= view.findViewById(R.id.custom_toast_message);
-        CustomToastProgressbar = view.findViewById(R.id.custom_toast_progressbar);
-
+                            }
+                        });
+        builder.show();
     }
 
     private void VariablesInit() {
@@ -202,8 +185,9 @@ public class UserNameInfoActivity extends AppCompatActivity {
 
     private void FirebaseInit() {
 
-        Ref = FirebaseDatabase.getInstance().getReference();
         Auth = FirebaseAuth.getInstance();
+        userRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USERS).child(Auth.getCurrentUser().getUid());
+
 
     }
 

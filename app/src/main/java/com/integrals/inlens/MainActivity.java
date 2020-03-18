@@ -3,7 +3,6 @@ package com.integrals.inlens;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
@@ -27,9 +26,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -38,6 +41,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -89,10 +93,9 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.integrals.inlens.Activities.CreateCloudAlbum;
-import com.integrals.inlens.Activities.InlensGalleryActivity;
 import com.integrals.inlens.Activities.PhotoView;
+import com.integrals.inlens.Activities.ProfileActivity;
 import com.integrals.inlens.Activities.QRCodeReader;
-import com.integrals.inlens.Activities.SharedImageActivity;
 import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.BottomSheetFragment;
 import com.integrals.inlens.Helper.BottomSheetFragment_Inactive;
@@ -100,7 +103,6 @@ import com.integrals.inlens.Helper.ExpandableCardView;
 import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.Helper.HttpHandler;
 import com.integrals.inlens.Helper.ParticipantsAdapter;
-import com.integrals.inlens.Helper.PreOperationCheck;
 import com.integrals.inlens.Helper.ReadFirebaseData;
 import com.integrals.inlens.Helper.ToolbarAdapter;
 import com.integrals.inlens.Interface.FirebaseRead;
@@ -159,12 +161,11 @@ public class MainActivity extends AppCompatActivity {
     private int INTID = 3939;
 
     private RecyclerView MainHorizontalRecyclerview, MainVerticalRecyclerView;
-    private ImageButton MainNewAlbumButton, MainScanQrButton;
     private HorizontalScrollView MainHorizontalScrollView;
     private Boolean SHOW_TOUR = false;
 
 
-    private CircleImageView MainProfileImageview;
+    private CircleImageView mainProfileImageview;
     private ImageButton MainSearchButton, MainBackButton;
     private EditText MainSearchEdittext;
     private RelativeLayout MainActionbar, MainSearchView;
@@ -192,11 +193,34 @@ public class MainActivity extends AppCompatActivity {
 
     private View toolbarCustomView;
 
-    DatabaseReference userRef, communityRef;
+
+    FloatingActionButton mainAddPhotosFab;
+
+    DatabaseReference userRef, communityRef, participantRef;
     FirebaseAuth firebaseAuth;
     String currentUserId;
-    ValueEventListener userRefListenerForActiveAlbum,communityRefListenerForActiveAlbum;
+    ValueEventListener userRefListenerForActiveAlbum, communityRefListenerForActiveAlbum, coummunityUserAddListener;
+    ReadFirebaseData readFirebaseData;
+    AppBarLayout appBarLayout;
+    ArrayList<String> userCommunityIdList;
 
+    // TODO placing of onClickListener for mainAddPhotosFab
+    /*
+    mainAddPhotosFab.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(getApplicationContext(), InlensGalleryActivity.class);
+            intent.putExtra("CommunityID",currentActiveCommunityID);
+            intent.putExtra("CommunityName", getMyCommunityDetails().get(getPosition()).getTitle());
+            intent.putExtra("CommunityStartTime", getMyCommunityDetails().get(getPosition()).getStartTime());
+            intent.putExtra("CommunityEndTime", getMyCommunityDetails().get(getPosition()).getEndTime());
+            startActivity(intent);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        }
+    });
+     */
+
+    private ImageButton mainNewAlbumButton, mainScanQrButton;
 
     public MainActivity() {
     }
@@ -205,82 +229,94 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.create_cloud_album_layout);
+        setContentView(R.layout.activity_main);
 
+        // main actionbar
+        mainProfileImageview = findViewById(R.id.mainactivity_actionbar_profileimageview);
+        appBarLayout = findViewById(R.id.main_appbarlayout);
+        toolbarCustomView = LayoutInflater.from(this).inflate(R.layout.custom_toolbar_layout, null);
+
+
+        // scan and new albumbutton of main
+        mainNewAlbumButton = findViewById(R.id.main_horizontal_new_album_button);
+        mainScanQrButton = findViewById(R.id.main_horizontal_scan_button);
+
+        // Fab
+        mainAddPhotosFab = findViewById(R.id.fabadd);
+
+        // navigation view and drawerLayout  (Root)
+        RootForMainActivity = findViewById(R.id.root_for_main_activity);
+        navigationView = (NavigationView) findViewById(R.id.nv);
+
+        //no internet views and function
+        NoInternetView = findViewById(R.id.main_no_internet_relativelayout);
+        NoInternetTextView = findViewById(R.id.main_no_internet_textview);
+        checkInternetConnection();
+
+        // firebase refs and auths
         firebaseAuth = FirebaseAuth.getInstance();
         currentUserId = firebaseAuth.getCurrentUser().getUid();
         userRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USERS).child(currentUserId);
         communityRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.COMMUNITIES);
-        startActivity(new Intent(MainActivity.this,CreateCloudAlbum.class));
+        participantRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.PARTICIPANTS);
+
+        // custom function for waiting until firebase read is complete
+        readFirebaseData = new ReadFirebaseData();
+
         // receiving all the community id under the user
-        ArrayList<String> userCommunityIdList = getIntent().getExtras().getStringArrayList(AppConstants.USERIDLIST);
+        userCommunityIdList = getIntent().getExtras().getStringArrayList(AppConstants.USERIDLIST);
         Collections.reverse(userCommunityIdList);
 
-        // get live community id and check if album  is active or the app should quit the user from the album
-        // if the album status is true the we  can start the service from the getServerTime async task only if the end time has not been reached;
-        ReadFirebaseData readFirebaseData = new ReadFirebaseData();
-        userRefListenerForActiveAlbum=readFirebaseData.readData(userRef, new FirebaseRead() {
+
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public void onSuccess(DataSnapshot snapshot) {
-                if (snapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID)) {
-                    currentActiveCommunityID = snapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString();
-                    communityRefListenerForActiveAlbum=readFirebaseData.readData(communityRef.child(currentActiveCommunityID), new FirebaseRead() {
-                        @Override
-                        public void onSuccess(DataSnapshot snapshot) {
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-                            // optimization 1 resulted in this error, everytime the album is quit even if the album is inactive
-                            // so first check the album status;
-                            String status = snapshot.child(FirebaseConstants.COMMUNITYSTATUS).getValue().toString();
-                            if (status.equals("T")) {
-                                long endtime = Long.parseLong(snapshot.child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString());
-                                //we need to get server time at zero offset
-                                new getServerTime(endtime).execute();
-                            } else {
-                                // stop the necessary services
-                                Toast.makeText(MainActivity.this, "stopping necessary services", Toast.LENGTH_SHORT).show();
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-                                    jobScheduler.cancel(JOB_ID);
-                                }
-                                AlarmManagerHelper helper = new AlarmManagerHelper(getApplicationContext());
-                                helper.deinitateAlarmManager();
+                if (item.getItemId() == R.id.profile_preference_bg_service) {
+                    enableBackgroundServices();
+                    return true;
+                } else if (item.getItemId() == R.id.profile_notification_stop) {
 
+                    AlarmManagerHelper helper = new AlarmManagerHelper(MainActivity.this);
+                    helper.deinitateAlarmManager();
 
-                            }
+                } else if (item.getItemId() == R.id.profile_notification_start) {
 
+                    AlarmManagerHelper helper = new AlarmManagerHelper(MainActivity.this);
+                    helper.initiateAlarmManager(5);
 
-                        }
+                } else if (item.getItemId() == R.id.profile_preference_battery_optimization) {
 
-                        @Override
-                        public void onStart() {
+                    Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                    intent.setData(Uri.parse("package:" + getPackageName()));
+                    startActivity(intent);
+                    return true;
+                } else if (item.getItemId() == R.id.profile_preference) {
 
-                        }
+                    // no need to check internet connection as if is given by default
+                    setCoverChange(false);
+                    setProfileChange(true);
+                    GetStartedWithNewProfileImage();
 
-                        @Override
-                        public void onFailure(DatabaseError databaseError) {
+                    return true;
 
-                        }
-                    });
+                } else if (item.getItemId() == R.id.profile_activity) {
+                    startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+                    overridePendingTransition(R.anim.activity_fade_in, R.anim.activity_fade_out);
+                    return true;
                 }
-
-
-            }
-
-            @Override
-            public void onStart() {
-
-            }
-
-            @Override
-            public void onFailure(DatabaseError databaseError) {
-
+                return true;
             }
         });
 
-        /*
+        mainProfileImageview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                RootForMainActivity.openDrawer(Gravity.START);
+            }
+        });
 
-        toolbarCustomView = LayoutInflater.from(this).inflate(R.layout.custom_toolbar_layout, null);
-        AppBarLayout appBarLayout = findViewById(R.id.main_appbarlayout);
+        // TODO fix the transition from expanded to collapsed and vice-versa
         appBarLayout.addView(toolbarCustomView);
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
@@ -300,13 +336,35 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
+        mainNewAlbumButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                createAlbum();
+            }
+        });
+
+        mainScanQrButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                scanQR();
+            }
+        });
+
+
+
+        /*
+
+
         MyCommunityDetails = new ArrayList<>();
         ParticipantIDs = new ArrayList<>();
         MainHorizontalScrollView = findViewById(R.id.main_horizontalscrollview);
         MainHorizontalScrollView.setHorizontalScrollBarEnabled(false);
         MainHorizontalScrollView.setVerticalScrollBarEnabled(false);
-        MainNewAlbumButton = findViewById(R.id.main_horizontal_new_album_button);
-        MainScanQrButton = findViewById(R.id.main_horizontal_scan_button);
+
         expandableCardView = findViewById(R.id.photographers);
 
 
@@ -319,137 +377,13 @@ public class MainActivity extends AppCompatActivity {
         ParticipantsRecyclerView.setLayoutManager(Gridmanager);
 
 
-        navigationView = (NavigationView) findViewById(R.id.nv);
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-                if (item.getItemId() == R.id.profile_preference_bg_service) {
-                    {
-
-                        if (Build.BRAND.equalsIgnoreCase("xiaomi")) {
-
-                            Intent intent = new Intent();
-                            intent.setComponent(new ComponentName("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity"));
-                            startActivity(intent);
-
-
-                        } else if (Build.BRAND.equalsIgnoreCase("Letv")) {
-
-                            Intent intent = new Intent();
-                            intent.setComponent(new ComponentName("com.letv.android.letvsafe", "com.letv.android.letvsafe.AutobootManageActivity"));
-                            startActivity(intent);
-
-                        } else if (Build.BRAND.equalsIgnoreCase("Honor")) {
-
-                            Intent intent = new Intent();
-                            intent.setComponent(new ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.optimize.process.ProtectActivity"));
-                            startActivity(intent);
-
-                        } else if (Build.BRAND.equalsIgnoreCase("vivo")) {
-                            try {
-                                Intent intent = new Intent();
-                                intent.setComponent(new ComponentName("com.iqoo.secure",
-                                        "com.iqoo.secure.ui.phoneoptimize.AddWhiteListActivity"));
-                                startActivity(intent);
-                            } catch (Exception e) {
-                                try {
-                                    Intent intent = new Intent();
-                                    intent.setComponent(new ComponentName("com.vivo.permissionmanager",
-                                            "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"));
-                                    startActivity(intent);
-                                } catch (Exception ex) {
-                                    try {
-                                        Intent intent = new Intent();
-                                        intent.setClassName("com.iqoo.secure",
-                                                "com.iqoo.secure.ui.phoneoptimize.BgStartUpManager");
-                                        startActivity(intent);
-                                    } catch (Exception exx) {
-                                        ex.printStackTrace();
-                                    }
-                                }
-                            }
-                        } else if (Build.MANUFACTURER.equalsIgnoreCase("oppo")) {
-                            try {
-                                Intent intent = new Intent();
-                                intent.setClassName("com.coloros.safecenter",
-                                        "com.coloros.safecenter.permission.startup.StartupAppListActivity");
-                                startActivity(intent);
-                            } catch (Exception e) {
-                                try {
-                                    Intent intent = new Intent();
-                                    intent.setClassName("com.oppo.safe",
-                                            "com.oppo.safe.permission.startup.StartupAppListActivity");
-                                    startActivity(intent);
-
-                                } catch (Exception ex) {
-                                    try {
-                                        Intent intent = new Intent();
-                                        intent.setClassName("com.coloros.safecenter",
-                                                "com.coloros.safecenter.startupapp.StartupAppListActivity");
-                                        startActivity(intent);
-                                    } catch (Exception exx) {
-
-                                    }
-                                }
-                            }
-                        } else {
-                            // Set Content for Samsung
-                            Toast.makeText(getApplicationContext(), "Please enable or disable background tasks for your phone  manually", Toast.LENGTH_SHORT).show();
-                        }
-
-                    }
-
-
-                    return true;
-                } else if (item.getItemId() == R.id.profile_notification_stop) {
-
-                    AlarmManagerHelper helper = new AlarmManagerHelper(MainActivity.this);
-                    helper.deinitateAlarmManager();
-
-                } else if (item.getItemId() == R.id.profile_notification_start) {
-
-                    AlarmManagerHelper helper = new AlarmManagerHelper(MainActivity.this);
-                    helper.initiateAlarmManager(5);
-                    Toast.makeText(MainActivity.this, "Started inlens service", Toast.LENGTH_SHORT).show();
-                } else if (item.getItemId() == R.id.profile_preference_battery_optimization) {
-
-                    Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-                    intent.setData(Uri.parse("package:" + getPackageName()));
-                    startActivity(intent);
-                    Toast.makeText(getApplicationContext(), "Battery Optimisation has been disabled for this app, you can open Battery optimisation settings to enable it", Toast.LENGTH_LONG).show();
-
-                    return true;
-                } else if (item.getItemId() == R.id.profile_preference) {
-                    if (new PreOperationCheck().checkInternetConnectivity(getApplicationContext())) {
-                        setCoverChange(false);
-                        setProfileChange(true);
-                        GetStartedWithNewProfileImage();
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Unable to connect to internet. Try again.", Toast.LENGTH_SHORT).show();
-
-                    }
-
-                    return true;
-
-                } else if (item.getItemId() == R.id.profile_activity) {
-                    startActivity(new Intent(MainActivity.this, ProfileActivity.class));
-                    overridePendingTransition(R.anim.activity_fade_in, R.anim.activity_fade_out);
-
-                    return true;
-                }
-                return true;
-            }
-        });
 
 
         MainHorizontalScrollView.smoothScrollTo(0, 0);
 
-        NoInternetView = findViewById(R.id.main_no_internet_relativelayout);
-        NoInternetTextView = findViewById(R.id.main_no_internet_textview);
 
 
-        MainProfileImageview = findViewById(R.id.mainactivity_actionbar_profileimageview);
         MainSearchButton = findViewById(R.id.mainactivity_actionbar_searchbutton);
         MainActionbar = findViewById(R.id.mainactivity_actionbar_relativelayout);
         MainSearchView = findViewById(R.id.mainactivity_searchview_relativelayout);
@@ -457,10 +391,8 @@ public class MainActivity extends AppCompatActivity {
         MainSearchEdittext = findViewById(R.id.mainactivity_searchview_edittext);
 
 
-        SHOW_TOUR = getIntent().getBooleanExtra("ShowTour", false);
 
 
-        RootForMainActivity = findViewById(R.id.root_for_main_activity);
 
         MainHorizontalRecyclerview = (RecyclerView) findViewById(R.id.main_horizontal_recyclerview);
         MainHorizontalRecyclerview.setHasFixedSize(true);
@@ -482,84 +414,11 @@ public class MainActivity extends AppCompatActivity {
         InitPostDialog();
 
 
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            Ref.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    AlarmManagerHelper managerHelper = new AlarmManagerHelper(MainActivity.this);
-
-                    if (!dataSnapshot.hasChild("Communities")) {
-                        MainLoadingProgressBar.setVisibility(View.GONE);
-                        try {
-                            managerHelper.deinitateAlarmManager();
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                    } else {
-
-                        ShowAllAlbums();
-                    }
-                    String name = dataSnapshot.child("Name").getValue().toString();
-                    String email = dataSnapshot.child("Email").getValue().toString();
 
 
-                    TextView tEmail = navigationView.getHeaderView(0).findViewById(R.id.headerEmailX);
-                    TextView tName = navigationView.getHeaderView(0).findViewById(R.id.headerNameX);
-
-                    tEmail.setText(email);
-                    tName.setText(name);
 
 
-                    if (dataSnapshot.hasChild("Profile_picture")) {
 
-                        String image = dataSnapshot.child("Profile_picture").getValue().toString();
-
-                        Glide.with(getApplicationContext()).load(image).addListener(new RequestListener<Drawable>() {
-                            @Override
-                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                return false;
-                            }
-
-                            @Override
-                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                                RequestOptions requestOptions = new RequestOptions()
-                                        .centerCrop();
-                                Glide.with(getApplicationContext())
-                                        .load(image)
-                                        .apply(requestOptions)
-                                        .into((ImageView) navigationView.getHeaderView(0).findViewById(R.id.headerImageView))
-
-                                ;
-
-                                return false;
-                            }
-                        })
-                                .into(MainProfileImageview);
-
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        }
-
-
-        DecryptDeepLink();
-
-
-        MainProfileImageview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//
-//
-                RootForMainActivity.openDrawer(Gravity.START);
-            }
-        });
 
 
         MainSearchButton.setOnClickListener(new View.OnClickListener() {
@@ -644,21 +503,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        MainNewAlbumButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                createAlbum();
-            }
-        });
-
-        MainScanQrButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                scanQR();
-            }
-        });
 
 
         getParticipantDatabaseReference = FirebaseDatabase.getInstance().getReference();
@@ -772,8 +617,212 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
+    
          */
+
+    }
+
+    private void enableBackgroundServices() {
+
+
+        if (Build.BRAND.equalsIgnoreCase("xiaomi")) {
+
+            Intent intent = new Intent();
+            intent.setComponent(new ComponentName("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity"));
+            startActivity(intent);
+
+
+        } else if (Build.BRAND.equalsIgnoreCase("Letv")) {
+
+            Intent intent = new Intent();
+            intent.setComponent(new ComponentName("com.letv.android.letvsafe", "com.letv.android.letvsafe.AutobootManageActivity"));
+            startActivity(intent);
+
+        } else if (Build.BRAND.equalsIgnoreCase("Honor")) {
+
+            Intent intent = new Intent();
+            intent.setComponent(new ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.optimize.process.ProtectActivity"));
+            startActivity(intent);
+
+        } else if (Build.BRAND.equalsIgnoreCase("vivo")) {
+            try {
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName("com.iqoo.secure",
+                        "com.iqoo.secure.ui.phoneoptimize.AddWhiteListActivity"));
+                startActivity(intent);
+            } catch (Exception e) {
+                try {
+                    Intent intent = new Intent();
+                    intent.setComponent(new ComponentName("com.vivo.permissionmanager",
+                            "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"));
+                    startActivity(intent);
+                } catch (Exception ex) {
+                    try {
+                        Intent intent = new Intent();
+                        intent.setClassName("com.iqoo.secure",
+                                "com.iqoo.secure.ui.phoneoptimize.BgStartUpManager");
+                        startActivity(intent);
+                    } catch (Exception exx) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        } else if (Build.MANUFACTURER.equalsIgnoreCase("oppo")) {
+            try {
+                Intent intent = new Intent();
+                intent.setClassName("com.coloros.safecenter",
+                        "com.coloros.safecenter.permission.startup.StartupAppListActivity");
+                startActivity(intent);
+            } catch (Exception e) {
+                try {
+                    Intent intent = new Intent();
+                    intent.setClassName("com.oppo.safe",
+                            "com.oppo.safe.permission.startup.StartupAppListActivity");
+                    startActivity(intent);
+
+                } catch (Exception ex) {
+                    try {
+                        Intent intent = new Intent();
+                        intent.setClassName("com.coloros.safecenter",
+                                "com.coloros.safecenter.startupapp.StartupAppListActivity");
+                        startActivity(intent);
+                    } catch (Exception exx) {
+
+                    }
+                }
+            }
+        } else {
+            // Set Content for Samsung
+            Toast.makeText(getApplicationContext(), "Please enable or disable background tasks for your phone  manually", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // FIXME has to update decryption and  encryption.
+        decryptDeepLink();
+
+        // get live community id and check if album  is active or the app should quit the user from the album
+        // if the album status is true the we  can start the service from the getServerTime async task only if the end time has not been reached;
+        userRefListenerForActiveAlbum = readFirebaseData.readData(userRef, new FirebaseRead() {
+            @Override
+            public void onSuccess(DataSnapshot snapshot) {
+
+                // navigation drawer items should be updated.
+
+                String name = snapshot.child("Name").getValue().toString();
+                String email = snapshot.child("Email").getValue().toString();
+
+                TextView navEmailTextView = navigationView.getHeaderView(0).findViewById(R.id.headerEmailX);
+                TextView navNameTextView = navigationView.getHeaderView(0).findViewById(R.id.headerNameX);
+                CircleImageView navProfileImageView = navigationView.getHeaderView(0).findViewById(R.id.headerImageView);
+
+                navEmailTextView.setText(email);
+                navNameTextView.setText(name);
+
+
+                if (snapshot.hasChild("Profile_picture")) {
+
+                    String imageUrl = snapshot.child("Profile_picture").getValue().toString();
+                    Glide.with(getApplicationContext()).load(imageUrl).into(mainProfileImageview);
+                    Glide.with(getApplicationContext()).load(imageUrl).into(navProfileImageView);
+
+                }
+
+                if (snapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID)) {
+
+                    currentActiveCommunityID = snapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString();
+
+
+                    // QRCodeInit should be initialized if only is user is a participant in an album;
+                    QRCodeInit(currentActiveCommunityID);
+                    // FIXME dialog placing has to be update
+                    // FIXME user should not be added if album status if false
+                    //QRCodeDialog.show();
+
+                    // make the add photo fab visible
+                    mainAddPhotosFab.setVisibility(View.VISIBLE);
+
+
+                    // make the start and stop services in navigation drawer visible
+                    navigationView.getMenu().findItem(R.id.profile_notification_start).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.profile_notification_stop).setVisible(true);
+
+                    communityRefListenerForActiveAlbum = readFirebaseData.readData(communityRef.child(currentActiveCommunityID), new FirebaseRead() {
+                        @Override
+                        public void onSuccess(DataSnapshot snapshot) {
+
+                            // optimization 1 resulted in this error, everytime the album is quit even if the album is inactive
+                            // so first check the album status;
+                            String status = snapshot.child(FirebaseConstants.COMMUNITYSTATUS).getValue().toString();
+                            if (status.equals("T")) {
+                                long endtime = Long.parseLong(snapshot.child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString());
+                                //we need to get server time at zero offset
+                                new getServerTime(endtime).execute();
+                            } else {
+                                // stop the necessary services
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                    jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+                                    jobScheduler.cancel(JOB_ID);
+                                }
+                                AlarmManagerHelper helper = new AlarmManagerHelper(getApplicationContext());
+                                helper.deinitateAlarmManager();
+
+
+                            }
+
+
+                        }
+
+                        @Override
+                        public void onStart() {
+
+                        }
+
+                        @Override
+                        public void onFailure(DatabaseError databaseError) {
+
+
+                        }
+                    });
+                } else {
+                    navigationView.getMenu().findItem(R.id.profile_notification_start).setVisible(false);
+                    navigationView.getMenu().findItem(R.id.profile_notification_stop).setVisible(false);
+
+
+                }
+
+
+            }
+
+            @Override
+            public void onStart() {
+
+            }
+
+            @Override
+            public void onFailure(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (communityRefListenerForActiveAlbum != null) {
+            communityRef.child(currentActiveCommunityID).removeEventListener(communityRefListenerForActiveAlbum);
+        }
+        if (userRefListenerForActiveAlbum != null) {
+            userRef.removeEventListener(userRefListenerForActiveAlbum);
+        }
+        if (coummunityUserAddListener != null) {
+            userRef.removeEventListener(coummunityUserAddListener);
+        }
+
 
     }
 
@@ -810,7 +859,6 @@ public class MainActivity extends AppCompatActivity {
                 quitCloudAlbum(true);
             } else {
                 // start the necessary services
-                Toast.makeText(MainActivity.this, "starting necessary services", Toast.LENGTH_SHORT).show();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     ComponentName componentName = new ComponentName(MainActivity.this, Scheduler.class);
                     JobInfo.Builder builder = new JobInfo.Builder(JOB_ID, componentName);
@@ -828,22 +876,54 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void readData(DatabaseReference ref, final FirebaseRead listener) {
-        listener.onStart();
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                listener.onSuccess(dataSnapshot);
-            }
+    private class checkAlbumExpired extends AsyncTask<Void, Void, Void> {
+        long endtTime;
+        long serverTime;
+        String communityId;
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                listener.onFailure(databaseError);
-            }
-        });
+        public checkAlbumExpired(long endtTime, String comId) {
+            this.endtTime = endtTime;
+            communityId = comId;
+        }
 
+        @Override
+        protected Void doInBackground(Void... voids) {
+            HttpHandler httpHandler = new HttpHandler();
+            String jsonStr = httpHandler.makeServiceCall("http://worldtimeapi.org/api/ip");
+
+            if (jsonStr != null) {
+                try {
+                    JSONObject jsonObject = new JSONObject(jsonStr);
+                    String serverTime = jsonObject.getString("unixtime");
+                    this.serverTime = Long.parseLong(serverTime) * 1000;
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            if (this.serverTime < endtTime) {
+                userRef.child(FirebaseConstants.COMMUNITIES).child(communityId).setValue(ServerValue.TIMESTAMP);
+                participantRef.child(communityId).child(currentUserId).setValue(ServerValue.TIMESTAMP);
+
+                List<String> newCommunities = new ArrayList<>();
+                newCommunities.add(communityId);
+                newCommunities.addAll(userCommunityIdList);
+                userCommunityIdList.clear();
+                userCommunityIdList.addAll(newCommunities);
+
+                // todo refresh the recyclerview
+            } else {
+                showDialogMessage("Album Inactive", "The album has expired or admin has made the album inactive.");
+
+            }
+        }
     }
-
 
     public void GetStartedWithNewProfileImage() {
         CropImage.activity()
@@ -876,7 +956,7 @@ public class MainActivity extends AppCompatActivity {
         QRCodeDialog.setCancelable(true);
         QRCodeDialog.setCanceledOnTouchOutside(true);
         QRCodeDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        QRCodeDialog.setContentView(R.layout.activity_qrcode_generator);
+        QRCodeDialog.setContentView(R.layout.qrcode_generator_layout);
         QRCodeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         QRCodeDialog.getWindow().getAttributes().windowAnimations = R.style.BottomUpSlideDialogAnimation;
@@ -905,7 +985,7 @@ public class MainActivity extends AppCompatActivity {
         final MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
 
 
-        if (!CommunityID.equals("Not Available")) {
+        if (!CommunityID.equals(AppConstants.NOTAVALABLE)) {
             try {
                 BitMatrix bitMatrix = multiFormatWriter.encode(CommunityID, BarcodeFormat.QR_CODE, 200, 200);
                 BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
@@ -931,189 +1011,138 @@ public class MainActivity extends AppCompatActivity {
         InviteLinkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Intent SharingIntent = new Intent(Intent.ACTION_SEND);
-                SharingIntent.setType("text/plain");
 
-                SharingIntent.putExtra(Intent.EXTRA_TEXT, "InLens Cloud-Album Invite Link \n\n" + GenarateDeepLinkForInvite(CommunityID));
-                startActivity(SharingIntent);
+                shareInviteLink(CommunityID);
+
 
             }
         });
 
-        QRCodeDialog.show();
+        //FIXME dialog hidden by elson
+        //QRCodeDialog.show();
 
     }
 
-    private void FirebaseVariablesInit() {
-
-        InAuthentication = FirebaseAuth.getInstance();
-        Ref = FirebaseDatabase.getInstance().getReference();
-
-    }
-
-
-    private void DecryptDeepLink() {
+    private void decryptDeepLink() {
 
         FirebaseDynamicLinks.getInstance().getDynamicLink(getIntent()).addOnSuccessListener(new OnSuccessListener<PendingDynamicLinkData>() {
             @Override
             public void onSuccess(PendingDynamicLinkData pendingDynamicLinkData) {
 
-                Uri DeepLink;
                 if (pendingDynamicLinkData != null) {
-                    DeepLink = pendingDynamicLinkData.getLink();
-                    if (DeepLink != null) {
+                    Uri deeplink = pendingDynamicLinkData.getLink();
+                    String communityId = deeplink.toString().replace("https://inlens.com=", "");
+                    if (currentActiveCommunityID.equals(AppConstants.NOTAVALABLE)) {
 
-
-                        if (DeepLink.toString().contains("comid=")) {
-
-                            final String UrlOrDComId = (DeepLink.toString().substring(DeepLink.toString().length() - 27)).substring(0, 26);
-
-
-                            if (!currentActiveCommunityID.equals("Not Available")) {
-
-                                CFAlertDialog.Builder builder = new CFAlertDialog.Builder(getApplicationContext())
-
-                                        .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                                        .setTitle("Invite Link")
-                                        .setIcon(R.drawable.inlens_logo_m)
-                                        .setMessage("Just click on the Cloud-Album invite link that your friend had " +
-                                                "shared" +
-                                                " with you.")
-                                        .addButton("OK, I UNDERSTAND", -1, Color.parseColor("#3E3D63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
-                                                CFAlertDialog.CFAlertActionAlignment.END, new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        dialog.dismiss();
-                                                    }
-                                                });
-
-// Show the alert
-                                builder.show();
-
-
-                            } else {
-
-                                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                                builder.setTitle("New Community")
-                                        .setMessage("Are you sure you want to join this new community? This means leaving the previous community by default.")
-                                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        // fixme add cancel option too
+                        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
+                                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                                .setTitle("New Community")
+                                .setIcon(R.drawable.inlens_logo)
+                                .setCancelable(false)
+                                .setMessage("You are about to join a new community.")
+                                .addButton("Join", -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.NEGATIVE,
+                                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                                             @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                AddCommunityToUserRef(UrlOrDComId.substring(6, 26));
-
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                AddCommunityToUserRef(communityId);
+                                                dialog.dismiss();
                                             }
                                         })
-                                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                .addButton("Cancel", -1, getResources().getColor(R.color.deep_orange_A400), CFAlertDialog.CFAlertActionStyle.NEGATIVE,
+                                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                                             @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                                                dialogInterface.dismiss();
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
                                             }
-                                        })
-                                        .create()
-                                        .show();
+                                        });
 
-                            }
+                        builder.show();
 
-                        } else if (DeepLink.toString().contains("imagelink") && DeepLink.toString().contains("linkimage")) {
 
-                            String first = DeepLink.toString().replace("https://integrals.inlens.in/", "");
-                            String second = first.replace("imagelink", "https://firebasestorage.googleapis.com/v0/b/inlens-f0ce2.appspot.com/o/situations%2F");
-                            String third = second.replace("linkimage", "media&token=");
-                            String ImageUrl = third.substring(0, third.length() - 1);
+                    } else {
 
-                            startActivity(new Intent(MainActivity.this, SharedImageActivity.class).putExtra("url", ImageUrl));
+                        if (currentActiveCommunityID.equals(communityId)) {
 
+                            showInfoMessage("Your Community", "You are currently part of this community.");
+                        } else {
+                            CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
+                                    .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                                    .setTitle("New Community")
+                                    .setIcon(R.drawable.inlens_logo)
+                                    .setMessage("Are you sure you want to join this new community? This means quitting the previous one.")
+                                    .setTextGravity(Gravity.START)
+                                    .setCancelable(false)
+                                    .addButton("YES", -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    AddCommunityToUserRef(communityId);
+                                                    dialog.dismiss();
+                                                }
+                                            })
+                                    .addButton("NO", -1, getResources().getColor(R.color.deep_orange_A400), CFAlertDialog.CFAlertActionStyle.NEGATIVE,
+                                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.dismiss();
+                                                }
+                                            });
+                            builder.show();
                         }
+
                     }
                 }
 
             }
-        })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
 
-                        Toast.makeText(getApplicationContext(), "Invite Link Failed", Toast.LENGTH_SHORT).show();
+                showInfoMessage("Data Fetch Failed", e.getMessage());
 
-                    }
-                });
+            }
+        });
     }
 
     private void AddCommunityToUserRef(final String substring) {
 
-        Ref.child("Communities").child(substring).addListenerForSingleValueEvent(new ValueEventListener() {
+        communityRef.child(substring).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                if (dataSnapshot.hasChild("endtime")) {
-                    Long endtime = Long.parseLong(dataSnapshot.child("endtime").getValue().toString());
+                if (dataSnapshot.hasChild(FirebaseConstants.COMMUNITYSTATUS)) {
+                    long endtime = Long.parseLong(dataSnapshot.child("endtime").getValue().toString());
+                    new checkAlbumExpired(endtime, substring).execute();
 
-                    if (endtime > System.currentTimeMillis()) {
-
-                        if (currentActiveCommunityID.equals(substring)) {
-                            Toast.makeText(getApplicationContext(), "Already a participant in this community.", Toast.LENGTH_SHORT).show();
-                        } else {
-
-                            Ref.child("Communities").child(substring).child("participants").addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                    if (dataSnapshot.hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-                                        Toast.makeText(getApplicationContext(), "Rejoined this community.", Toast.LENGTH_SHORT).show();
-                                        Ref.child("Users").child(CurrentUserID).child("live_community").setValue(substring);
-                                        recreate();
-
-                                    } else {
-
-                                        Ref.child("Users").child(CurrentUserID).child("Communities").child(substring).setValue(ServerValue.TIMESTAMP);
-                                        Ref.child("Users").child(CurrentUserID).child("live_community").setValue(substring);
-                                        Ref.child("Communities").child(substring).child("participants").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(ServerValue.TIMESTAMP);
-                                        recreate();
-                                    }
-
-
-                                }
-
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-
-
-                        }
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Community not valid anymore.", Toast.LENGTH_SHORT).show();
-
-                    }
                 } else {
-                    Toast.makeText(getApplicationContext(), "Community not valid anymore.", Toast.LENGTH_SHORT).show();
+                    showDialogMessage("Album Inactive", "The album has expired or admin has made the album inactive.");
                 }
-
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+                showDialogMessage("Error Caught", databaseError.toString());
 
             }
         });
+
 
     }
 
 
     private void createAlbum() {
 
-        if (currentActiveCommunityID.equals("Not Available")) {
+
+        if (currentActiveCommunityID.equals(AppConstants.NOTAVALABLE)) {
             startActivity(new Intent(MainActivity.this, CreateCloudAlbum.class));
         } else {
 
             CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
                     .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                    .setTitle("Please Quit.")
+                    .setTitle("Album Active")
                     .setIcon(R.drawable.ic_warning_black_24dp)
-                    .setMessage("You have to quit this album before creating another one.")
+                    .setMessage("You have to leave the currently active album before creating a new album.")
                     .setCancelable(true)
                     .addButton("   Quit album  ", -1, Color.parseColor("#3e3d63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
                             CFAlertDialog.CFAlertActionAlignment.END,
@@ -1145,9 +1174,9 @@ public class MainActivity extends AppCompatActivity {
         } else {
             CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
                     .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                    .setTitle("Please Quit.")
+                    .setTitle("Album Active")
                     .setIcon(R.drawable.ic_warning_black_24dp)
-                    .setMessage("You have to quit this album before creating another one.")
+                    .setMessage("You have to leave the currently active album before joining a new album.")
                     .setCancelable(true)
                     .addButton("   Quit album  ", -1, Color.parseColor("#3e3d63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
                             CFAlertDialog.CFAlertActionAlignment.END,
@@ -1462,33 +1491,35 @@ public class MainActivity extends AppCompatActivity {
     public void quitCloudAlbum(boolean forceQuit) {
 
         if (forceQuit) {
-            communityRef.child(currentActiveCommunityID).child(FirebaseConstants.COMMUNITYSTATUS).setValue("F").addOnCompleteListener(new OnCompleteListener<Void>() {
+            communityRef.child(currentActiveCommunityID).child(FirebaseConstants.COMMUNITYSTATUS).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
                         userRef.child(FirebaseConstants.LIVECOMMUNITYID).removeValue();
+                        currentActiveCommunityID = AppConstants.NOTAVALABLE;
+                        mainAddPhotosFab.setVisibility(View.GONE);
                         AlarmManagerHelper alarmManagerHelper =
                                 new AlarmManagerHelper(getApplicationContext());
                         alarmManagerHelper.deinitateAlarmManager();
-                        showDialogueQuit();
+                        showDialogMessage("Cloud-Album Quit", "Successfully left from the Cloud-Album");
                         //SetDefaultView();
 
                     } else {
                         //SetDefaultView();
-                        showDialogueQuitUnsuccess();
+                        showDialogQuitUnsuccess();
                     }
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
 
-                    showDialogueQuitUnsuccess();
+                    showDialogQuitUnsuccess();
 
                 }
             });
 
         } else {
-            showAlbumQuitPrompt("Quit Cloud-Album", "Are you sure you want to quit the current Cloud-Album. You won't able to upload photos to this album again.", "No", "Yes");
+            showAlbumQuitPrompt("Leaving Community", "Are you sure you want to quit the current Cloud-Album. You won't able to upload photos to this album again.", "No", "Yes");
 
         }
 
@@ -1497,47 +1528,93 @@ public class MainActivity extends AppCompatActivity {
 
     private void showAlbumQuitPrompt(String title, String message, String postiveButtonMessage, String negativeButtonMessage) {
 
+        //fixme this dialog ui is not good
+
         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle(title)
                 .setIcon(R.drawable.ic_cancel_black_24dp)
                 .setMessage(message)
                 .setCancelable(false)
-                .addButton(negativeButtonMessage, -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE,
-                        CFAlertDialog.CFAlertActionAlignment.END, new DialogInterface.OnClickListener() {
+                .addButton(negativeButtonMessage, -1, getResources().getColor(R.color.deep_orange_A400), CFAlertDialog.CFAlertActionStyle.NEGATIVE,
+                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
-                                userRef.child(FirebaseConstants.LIVECOMMUNITYID).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                communityRef.child(currentActiveCommunityID).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                        if (task.isSuccessful()) {
+                                        String admin = dataSnapshot.child(FirebaseConstants.COMMUNITYADMIN).getValue().toString();
+                                        if (admin.equals(currentUserId)) {
+                                            communityRef.child(currentActiveCommunityID).child(FirebaseConstants.COMMUNITYSTATUS).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        userRef.child(FirebaseConstants.LIVECOMMUNITYID).removeValue();
+                                                        currentActiveCommunityID = AppConstants.NOTAVALABLE;
+                                                        mainAddPhotosFab.setVisibility(View.GONE);
+                                                        AlarmManagerHelper alarmManagerHelper =
+                                                                new AlarmManagerHelper(getApplicationContext());
+                                                        alarmManagerHelper.deinitateAlarmManager();
+                                                        showDialogMessage("Cloud-Album Quit", "Successfully left from the Cloud-Album");
+                                                        //SetDefaultView();
 
-                                            AlarmManagerHelper alarmManagerHelper =
-                                                    new AlarmManagerHelper(getApplicationContext());
-                                            alarmManagerHelper.deinitateAlarmManager();
-                                            showDialogueQuit();
-                                            //SetDefaultView();
+                                                    } else {
+                                                        //SetDefaultView();
+                                                        showDialogQuitUnsuccess();
+                                                    }
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
 
+                                                    showDialogQuitUnsuccess();
 
+                                                }
+                                            });
                                         } else {
-                                            //SetDefaultView();
-                                            showDialogueQuitUnsuccess();
+                                            userRef.child(FirebaseConstants.LIVECOMMUNITYID).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+
+                                                    if (task.isSuccessful()) {
+
+                                                        AlarmManagerHelper alarmManagerHelper =
+                                                                new AlarmManagerHelper(getApplicationContext());
+                                                        alarmManagerHelper.deinitateAlarmManager();
+                                                        showDialogMessage("Cloud-Album Quit", "Successfully left from the Cloud-Album");
+                                                        //SetDefaultView();
+
+
+                                                    } else {
+                                                        //SetDefaultView();
+                                                        showDialogQuitUnsuccess();
+                                                    }
+
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+
+                                                    showDialogQuitUnsuccess();
+                                                }
+                                            });
                                         }
-
                                     }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
 
-                                        showDialogueQuitUnsuccess();
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
                                     }
                                 });
+
+                                dialog.dismiss();
+
                             }
                         })
-                .addButton(postiveButtonMessage, -1, -1, CFAlertDialog.CFAlertActionStyle.POSITIVE,
-                        CFAlertDialog.CFAlertActionAlignment.END, new DialogInterface.OnClickListener() {
+                .addButton(postiveButtonMessage, -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
@@ -1549,7 +1626,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void showDialogueQuitUnsuccess() {
+    private void showDialogQuitUnsuccess() {
 
         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
@@ -1764,8 +1841,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
+
         if (SEARCH_IN_PROGRESS) {
             SetDefaultView();
+        } else if (RootForMainActivity.isDrawerOpen(GravityCompat.START)) {
+            RootForMainActivity.closeDrawer(GravityCompat.START);
+        } else if (toolbarCustomView.isShown()) {
+            toolbarCustomView.clearAnimation();
+            toolbarCustomView.setAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_back_up));
+            toolbarCustomView.clearAnimation();
+            toolbarCustomView.setVisibility(View.GONE);
+            appBarLayout.setExpanded(true);
+
+            //TODO scroll the recyclerview to the top
         } else {
             super.onBackPressed();
         }
@@ -1862,7 +1950,7 @@ else if (MainHorizontalScrollView.getScrollX() != 0) {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             if (viewType == VIEW_TYPE_ALBUM) {
-                View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.album_card_, parent, false);
+                View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.album_card, parent, false);
                 return new MainCommunityViewHolder(view);
             } else if (viewType == VIEW_TYPE_LOADING) {
                 View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.item_loading_horizontal, parent, false);
@@ -1966,42 +2054,6 @@ else if (MainHorizontalScrollView.getScrollX() != 0) {
                         }
                     }
                 });
-                try {
-                    if (currentActiveCommunityID.contentEquals(CommunityDetails.get(Position).getCommunityID())) {
-                        findViewById(R.id.fabadd).setVisibility(View.VISIBLE);
-                        findViewById(R.id.fabadd).setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                if (new PreOperationCheck().checkInternetConnectivity(MainActivity.this)) {
-                                    Intent intent = new Intent(getApplicationContext(), InlensGalleryActivity.class);
-                                    intent.putExtra("CommunityID", getMyCommunityDetails().get(getPosition()).getCommunityID());
-                                    intent.putExtra("CommunityName", getMyCommunityDetails().get(getPosition()).getTitle());
-                                    intent.putExtra("CommunityStartTime", getMyCommunityDetails().get(getPosition()).getStartTime());
-                                    intent.putExtra("CommunityEndTime", getMyCommunityDetails().get(getPosition()).getEndTime());
-                                    startActivity(intent);
-                                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                                } else {
-                                    Snackbar.with(MainActivity.this, null)
-                                            .type(Type.CUSTOM)
-                                            .message("Please connect with internet and try again.")
-                                            .duration(Duration.LONG)
-                                            .fillParent(true)
-                                            .textAlign(Align.LEFT)
-                                            .show();
-                                }
-
-
-                            }
-                        });
-
-                    } else {
-                        findViewById(R.id.fabadd).setVisibility(View.GONE);
-
-                    }
-                } catch (IndexOutOfBoundsException e) {
-                    e.printStackTrace();
-                }
-
 
                 viewHolder.AlbumNameTextView.setText(CommunityDetails.get(position).getTitle());
                 viewHolder.AlbumDescriptionTextView.setText(CommunityDetails.get(position).getDescription());
@@ -2063,8 +2115,14 @@ else if (MainHorizontalScrollView.getScrollX() != 0) {
     }
 
 
-    private static String GenarateDeepLinkForInvite(String CommunityID) {
-        return "https://inlens.page.link/?link=https://integrals.inlens.in/comid=" + CommunityID + "/&apn=com.integrals.inlens";
+    private void shareInviteLink(String CommunityID) {
+
+        String url = "https://inlens.page.link/?link=https://inlens.com=" + CommunityID + "&apn=com.integrals.inlens";
+        final Intent SharingIntent = new Intent(Intent.ACTION_SEND);
+        SharingIntent.setType("text/plain");
+        SharingIntent.putExtra(Intent.EXTRA_TEXT, "Inlens Community Invite Link \n" + url);
+        MainActivity.this.startActivity(SharingIntent);
+
     }
 
 
@@ -2073,7 +2131,6 @@ else if (MainHorizontalScrollView.getScrollX() != 0) {
         if (br == null) {
 
             br = new BroadcastReceiver() {
-
                 @Override
                 public void onReceive(Context context, Intent intent) {
 
@@ -2130,26 +2187,19 @@ else if (MainHorizontalScrollView.getScrollX() != 0) {
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
-        if(communityRefListenerForActiveAlbum !=null)
-        {
-            communityRef.child(currentActiveCommunityID).removeEventListener(communityRefListenerForActiveAlbum);
-        }
-        if(userRefListenerForActiveAlbum !=null)
-        {
-            userRef.removeEventListener(userRefListenerForActiveAlbum);
-        }
+
 
     }
 
-    public void showDialogueQuit() {
+    public void showDialogMessage(String title, String message) {
         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                .setTitle("Cloud-Album Quit")
+                .setTitle(title)
                 .setIcon(R.drawable.ic_check_circle_black_24dp)
-                .setMessage("Successfully left from the Cloud-Album")
+                .setMessage(message)
                 .setCancelable(false)
-                .addButton("    OK    ", -1, Color.parseColor("#3e3d63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
-                        CFAlertDialog.CFAlertActionAlignment.END,
+                .addButton("OK", -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -2160,18 +2210,23 @@ else if (MainHorizontalScrollView.getScrollX() != 0) {
         builder.show();
     }
 
+    public void showInfoMessage(String title, String message) {
+        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
+                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                .setTitle(title)
+                .setIcon(R.drawable.ic_info_black_24dp)
+                .setMessage(message)
+                .setCancelable(false)
+                .addButton("OK", -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
 
-    private void InitPostDialog() {
-
-        PostDialog = new Dialog(MainActivity.this);
-        PostDialog.setCancelable(true);
-        PostDialog.setContentView(R.layout.main_post_touch_dialog_layout);
-        PostDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-        PostDialogImageView = PostDialog.findViewById(R.id.main_postdialog_imageview);
-        PostDialogProgressbar = PostDialog.findViewById(R.id.main_postdialog_progressbar);
-
-
+                            }
+                        });
+        builder.show();
     }
 
 
@@ -2276,14 +2331,6 @@ else if (MainHorizontalScrollView.getScrollX() != 0) {
                     }
                 });
 
-                holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View view) {
-                        ShowPostDialog(PostList.get(position));
-                        PostDialog.show();
-                        return false;
-                    }
-                });
 
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -2326,29 +2373,6 @@ else if (MainHorizontalScrollView.getScrollX() != 0) {
 
 
     }
-
-    private void ShowPostDialog(PostModel postModel) {
-
-
-        Glide.with(getApplicationContext())
-                .load(postModel.getUri())
-                .listener(new RequestListener<Drawable>() {
-                    @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        PostDialogProgressbar.setVisibility(View.GONE);
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        PostDialogProgressbar.setVisibility(View.GONE);
-                        return false;
-                    }
-                })
-                .into(PostDialogImageView);
-
-    }
-
 
     public String getCurrentActiveCommunityID() {
         return currentActiveCommunityID;

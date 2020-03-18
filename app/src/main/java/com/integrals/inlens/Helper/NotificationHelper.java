@@ -51,7 +51,7 @@ public class NotificationHelper extends ContextWrapper {
                 .setContentTitle(title)
             .setProgress(100,0,true)
 
-            .setSmallIcon(R.drawable.inlens_logo_m).setOnlyAlertOnce(true)
+            .setSmallIcon(R.drawable.inlens_logo).setOnlyAlertOnce(true)
                 ;
     }
 

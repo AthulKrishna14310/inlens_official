@@ -24,7 +24,7 @@
         android:layout_height="80dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="80dp"
-        android:src="@drawable/inlens_logo_m" />
+        android:src="@drawable/inlens_logo" />
 
     <RelativeLayout
         android:layout_width="wrap_content"
