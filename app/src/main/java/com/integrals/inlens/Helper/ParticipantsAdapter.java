@@ -1,5 +1,6 @@
 package com.integrals.inlens.Helper;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -10,67 +11,121 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.integrals.inlens.Models.PhotographerModel;
 import com.integrals.inlens.R;
 
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ParticipantsAdapter extends RecyclerView.Adapter<ParticipantsAdapter.ParticipantsViewHolder> {
+public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    List<String> ImagesList;
-    List<String> NamesList;
+    int VIEW_TYPE_PHOTOGRAPHER=0,VIEW_TYPE_ADD_BUTTON=1;
+    List<PhotographerModel> photographersList;
     Context context;
+    Dialog qrcodeDialog;
 
-    public ParticipantsAdapter(List<String> imagesList, List<String> namesList, Context context) {
-        ImagesList = imagesList;
-        NamesList = namesList;
+
+    public ParticipantsAdapter(List<PhotographerModel> photographersList, Context context, Dialog qrcodeDialog) {
+        this.photographersList = photographersList;
         this.context = context;
-    }
-
-    @NonNull
-    @Override
-    public ParticipantsAdapter.ParticipantsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
-        View view = LayoutInflater.from(context).inflate(R.layout.member_card,parent,false);
-        return new ParticipantsAdapter.ParticipantsViewHolder(view);
+        this.qrcodeDialog = qrcodeDialog;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ParticipantsAdapter.ParticipantsViewHolder holder, int position) {
-
-        if(NamesList.get(position).length() > 6)
+    public int getItemViewType(int position) {
+        if(photographersList.get(position).getName().equals("add") &&photographersList.get(position).getId().equals("add") &&photographersList.get(position).getImgUrl().equals("add") )
         {
-            String name =NamesList.get(position).substring(0,5)+"...";
-            holder.PName.setText(name);
+            return VIEW_TYPE_ADD_BUTTON;
 
         }
         else
         {
-            holder.PName.setText(NamesList.get(position));
-
+            return VIEW_TYPE_PHOTOGRAPHER;
         }
+    }
 
-        RequestOptions rq = new RequestOptions().placeholder(R.drawable.ic_account_circle);
-        Glide.with(context).load(ImagesList.get(position)).apply(rq).into(holder.PImage);
+    @NonNull
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
+        if(viewType==VIEW_TYPE_PHOTOGRAPHER)
+        {
+            View view = LayoutInflater.from(context).inflate(R.layout.member_card,parent,false);
+            return new ParticipantsViewHolder(view);
+        }
+        else if(viewType ==VIEW_TYPE_ADD_BUTTON)
+        {
+            View view = LayoutInflater.from(context).inflate(R.layout.member_add_card,parent,false);
+            return new AddParticipantsViewHolder(view);
+        }
+        else
+        {
+            return null;
+        }
     }
 
     @Override
-    public int getItemCount() {
-        return ImagesList.size();
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if(holder instanceof ParticipantsViewHolder)
+        {
+            ParticipantsViewHolder viewHolder = (ParticipantsViewHolder) holder;
+            if(photographersList.get(position).getName().length() > 6)
+            {
+                String name =photographersList.get(position).getName().substring(0,5)+"...";
+                viewHolder.PName.setText(name);
+
+            }
+            else
+            {
+                viewHolder.PName.setText(photographersList.get(position).getName());
+
+            }
+
+            RequestOptions rq = new RequestOptions().placeholder(R.drawable.ic_account_circle);
+            Glide.with(context).load(photographersList.get(position).getImgUrl()).apply(rq).into(viewHolder.PImage);
+        }
+        else if(holder instanceof  AddParticipantsViewHolder)
+        {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    qrcodeDialog.show();
+
+                }
+            });
+        }
+
+
     }
 
-    public class ParticipantsViewHolder extends RecyclerView.ViewHolder {
 
-        CircleImageView PImage;
-        TextView PName;
+    @Override
+    public int getItemCount() {
+        return photographersList.size();
+    }
 
-        public ParticipantsViewHolder(View itemView) {
-            super(itemView);
 
-            PImage = itemView.findViewById(R.id.participants_profile_pic);
-            PName = itemView.findViewById(R.id.participants_username);
-        }
+}
+
+class ParticipantsViewHolder extends RecyclerView.ViewHolder {
+
+    CircleImageView PImage;
+    TextView PName;
+
+    public ParticipantsViewHolder(View itemView) {
+        super(itemView);
+
+        PImage = itemView.findViewById(R.id.participants_profile_pic);
+        PName = itemView.findViewById(R.id.participants_username);
+    }
+}
+
+class AddParticipantsViewHolder extends RecyclerView.ViewHolder {
+
+    public AddParticipantsViewHolder(View itemView) {
+        super(itemView);
+
     }
 }

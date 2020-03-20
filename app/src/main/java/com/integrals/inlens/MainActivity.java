@@ -25,20 +25,25 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -47,14 +52,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LayoutAnimationController;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -93,22 +101,26 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.integrals.inlens.Activities.CreateCloudAlbum;
-import com.integrals.inlens.Activities.PhotoView;
+import com.integrals.inlens.Activities.InlensGalleryActivity;
 import com.integrals.inlens.Activities.ProfileActivity;
 import com.integrals.inlens.Activities.QRCodeReader;
 import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.BottomSheetFragment;
 import com.integrals.inlens.Helper.BottomSheetFragment_Inactive;
+import com.integrals.inlens.Helper.CustomHorizontalRecyclerViewScrollListener;
+import com.integrals.inlens.Helper.CustomVerticalRecyclerViewScrollListener;
 import com.integrals.inlens.Helper.ExpandableCardView;
 import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.Helper.HttpHandler;
+import com.integrals.inlens.Helper.LoadingViewHolder;
+import com.integrals.inlens.Helper.MainCommunityViewHolder;
 import com.integrals.inlens.Helper.ParticipantsAdapter;
 import com.integrals.inlens.Helper.ReadFirebaseData;
-import com.integrals.inlens.Helper.ToolbarAdapter;
 import com.integrals.inlens.Interface.FirebaseRead;
 import com.integrals.inlens.Interface.LoadMoreData;
 import com.integrals.inlens.JobScheduler.Scheduler;
 import com.integrals.inlens.Models.CommunityModel;
+import com.integrals.inlens.Models.PhotographerModel;
 import com.integrals.inlens.Models.PostModel;
 import com.integrals.inlens.Notification.AlarmManagerHelper;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
@@ -128,6 +140,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import id.zelory.compressor.Compressor;
@@ -136,12 +149,9 @@ import id.zelory.compressor.Compressor;
 public class MainActivity extends AppCompatActivity {
 
 
-    private String CurrentUserID = AppConstants.NOTAVALABLE, currentActiveCommunityID = AppConstants.NOTAVALABLE;
+    private String currentActiveCommunityID = AppConstants.NOTAVALABLE;
     private List<String> ParticipantIDs;
 
-    private List<CommunityModel> MyCommunityDetails;
-    private DatabaseReference Ref;
-    private FirebaseAuth InAuthentication;
     private ProgressBar MainLoadingProgressBar;
     private Dialog QRCodeDialog;
 
@@ -155,13 +165,11 @@ public class MainActivity extends AppCompatActivity {
     private static boolean COVER_CHANGE = false, PROFILE_CHANGE = false;
     private static boolean SEARCH_IN_PROGRESS = false;
     private NavigationView navigationView;
-
     private DrawerLayout RootForMainActivity;
 
     private int INTID = 3939;
 
     private RecyclerView MainHorizontalRecyclerview, MainVerticalRecyclerView;
-    private HorizontalScrollView MainHorizontalScrollView;
     private Boolean SHOW_TOUR = false;
 
 
@@ -175,15 +183,12 @@ public class MainActivity extends AppCompatActivity {
     private TextView NoInternetTextView;
 
 
-    private int Position = 0;
-
     private static final int JOB_ID = 465;
     private JobScheduler jobScheduler;
     private JobInfo jobInfo;
 
 
     RecyclerView ParticipantsRecyclerView;
-    List<String> ParticipantIdList;
 
 
     String name = "";
@@ -196,31 +201,35 @@ public class MainActivity extends AppCompatActivity {
 
     FloatingActionButton mainAddPhotosFab;
 
-    DatabaseReference userRef, communityRef, participantRef;
+    DatabaseReference userRef, communityRef, participantRef, postRef;
     FirebaseAuth firebaseAuth;
     String currentUserId;
-    ValueEventListener userRefListenerForActiveAlbum, communityRefListenerForActiveAlbum, coummunityUserAddListener;
+    ValueEventListener userRefListenerForActiveAlbum, communityRefListenerForActiveAlbum, coummunityUserAddListener, communitiesDataListener, postRefListener, participantRefListener;
     ReadFirebaseData readFirebaseData;
     AppBarLayout appBarLayout;
     ArrayList<String> userCommunityIdList;
+    MainHorizontalAdapter mainHorizontalAdapter;
+    MainVerticalAdapter mainVerticalAdapter;
 
-    // TODO placing of onClickListener for mainAddPhotosFab
-    /*
-    mainAddPhotosFab.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            Intent intent = new Intent(getApplicationContext(), InlensGalleryActivity.class);
-            intent.putExtra("CommunityID",currentActiveCommunityID);
-            intent.putExtra("CommunityName", getMyCommunityDetails().get(getPosition()).getTitle());
-            intent.putExtra("CommunityStartTime", getMyCommunityDetails().get(getPosition()).getStartTime());
-            intent.putExtra("CommunityEndTime", getMyCommunityDetails().get(getPosition()).getEndTime());
-            startActivity(intent);
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        }
-    });
-     */
+    // info : underscore tells that the second one is a copy of the first
+    List<CommunityModel> communityDataList = new ArrayList<>(), _communityDataList = new ArrayList<>();
+
+    // info : linearlayout for scan and new album
+    LinearLayout mainAlbumMenu;
+
+    List<PostModel> postImageList = new ArrayList<>(), _postImageList = new ArrayList<>();
+
 
     private ImageButton mainNewAlbumButton, mainScanQrButton;
+
+    // info : for vertical recyclerviewScrolling
+    int lastVisiblesItems, visibleItemCount, totalItemCount;
+    boolean loading = true;
+    ProgressBar mainRecyclerviewLoadingProgressbar;
+    boolean isLoading = true;
+
+    ParticipantsAdapter participantsAdapter;
+    List<PhotographerModel> photographerList = new ArrayList<>();
 
     public MainActivity() {
     }
@@ -237,12 +246,16 @@ public class MainActivity extends AppCompatActivity {
         toolbarCustomView = LayoutInflater.from(this).inflate(R.layout.custom_toolbar_layout, null);
 
 
-        // scan and new albumbutton of main
+        // scan and new albumbutton of main plus the menu
         mainNewAlbumButton = findViewById(R.id.main_horizontal_new_album_button);
         mainScanQrButton = findViewById(R.id.main_horizontal_scan_button);
+        mainAlbumMenu = findViewById(R.id.mainAlbumMenu);
 
         // Fab
         mainAddPhotosFab = findViewById(R.id.fabadd);
+
+        //photographers cardview
+        expandableCardView = findViewById(R.id.photographers);
 
         // navigation view and drawerLayout  (Root)
         RootForMainActivity = findViewById(R.id.root_for_main_activity);
@@ -259,6 +272,7 @@ public class MainActivity extends AppCompatActivity {
         userRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USERS).child(currentUserId);
         communityRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.COMMUNITIES);
         participantRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.PARTICIPANTS);
+        postRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.POSTS);
 
         // custom function for waiting until firebase read is complete
         readFirebaseData = new ReadFirebaseData();
@@ -332,6 +346,8 @@ public class MainActivity extends AppCompatActivity {
                     toolbarCustomView.setAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_back_up));
                     toolbarCustomView.clearAnimation();
                     toolbarCustomView.setVisibility(View.GONE);
+                } else {
+                    toolbarCustomView.setAlpha((Math.abs(verticalOffset) / appBarLayout.getTotalScrollRange()));
                 }
 
             }
@@ -354,6 +370,174 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        mainAddPhotosFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                CommunityModel model = getCommunityModel(currentActiveCommunityID);
+                Intent intent = new Intent(getApplicationContext(), InlensGalleryActivity.class);
+                intent.putExtra("CommunityID", currentActiveCommunityID);
+                intent.putExtra("CommunityName", model.getTitle());
+                intent.putExtra("CommunityStartTime", model.getStartTime());
+                intent.putExtra("CommunityEndTime", model.getEndTime());
+                startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            }
+        });
+
+        MainHorizontalRecyclerview = (RecyclerView) findViewById(R.id.main_horizontal_recyclerview);
+        MainHorizontalRecyclerview.setHasFixedSize(true);
+        MainHorizontalRecyclerview.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        mainHorizontalAdapter = new MainHorizontalAdapter(communityDataList, MainActivity.this, currentActiveCommunityID);
+        MainHorizontalRecyclerview.setAdapter(mainHorizontalAdapter);
+
+
+        MainHorizontalRecyclerview.addOnScrollListener(new CustomHorizontalRecyclerViewScrollListener() {
+            @Override
+            public void show() {
+
+                mainAlbumMenu.animate().translationX(0).setInterpolator(new DecelerateInterpolator(2));
+
+            }
+
+            @Override
+            public void hide() {
+
+                mainAlbumMenu.animate().translationX(mainAlbumMenu.getWidth()).setInterpolator(new AccelerateInterpolator(2));
+            }
+
+            @Override
+            public void loadMore() {
+
+                LinearLayoutManager manager = (LinearLayoutManager) MainHorizontalRecyclerview.getLayoutManager();
+                int visibleItemCount = manager.getChildCount();
+                int totalItemCount = manager.getItemCount();
+                int lastVisiblesItems = manager.findLastVisibleItemPosition();
+
+                if (isLoading) {
+
+                    if ((visibleItemCount + lastVisiblesItems) >= totalItemCount) {
+                        isLoading = false;
+                        if (communityDataList.size() < _communityDataList.size()) {
+                            isLoading = true;
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    int index = communityDataList.size();
+                                    int end;
+                                    if (index + 5 > _communityDataList.size()) {
+                                        end = index + (Math.abs(index + 5 - _communityDataList.size()));
+                                    } else {
+                                        end = index + 5;
+                                    }
+                                    for (int i = index; i < end; i++) {
+                                        try {
+                                            communityDataList.add(_communityDataList.get(i));
+                                            mainHorizontalAdapter.notifyItemInserted(i);
+                                        } catch (IndexOutOfBoundsException e) {
+                                        }
+
+                                    }
+
+                                }
+                            }, 1000);
+                        }
+
+
+                    }
+
+                }
+            }
+        });
+
+        ParticipantsRecyclerView = findViewById(R.id.main_bottomsheet_particpants_bottomsheet_recyclerview);
+        ParticipantsRecyclerView.setHasFixedSize(true);
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+
+        GridLayoutManager Gridmanager = new GridLayoutManager(getApplicationContext(), (int) Math.floor(dpWidth / 50));
+        ParticipantsRecyclerView.setLayoutManager(Gridmanager);
+
+        MainVerticalRecyclerView = findViewById(R.id.main_recyclerview);
+        MainVerticalRecyclerView.setHasFixedSize(true);
+        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL);
+        mainRecyclerviewLoadingProgressbar = findViewById(R.id.main_recyclerview_progressbar);
+        MainVerticalRecyclerView.setLayoutManager(staggeredGridLayoutManager);
+        mainVerticalAdapter = new MainVerticalAdapter(MainVerticalRecyclerView, MainActivity.this, postImageList, userRef, currentUserId);
+        mainVerticalAdapter.setHasStableIds(true);
+        MainVerticalRecyclerView.setAdapter(mainVerticalAdapter);
+
+        MainVerticalRecyclerView.addOnScrollListener(new CustomVerticalRecyclerViewScrollListener()
+        {
+            @Override
+            public void show() {
+
+                if (!currentActiveCommunityID.equals(AppConstants.NOTAVALABLE)) {
+                    mainAddPhotosFab.animate().translationY(0).setInterpolator(new AccelerateInterpolator(2)).start();
+                }
+            }
+
+            @Override
+            public void hide() {
+
+                if (!currentActiveCommunityID.equals(AppConstants.NOTAVALABLE)) {
+                    mainAddPhotosFab.animate().translationY(mainAddPhotosFab.getHeight() + Math.round(TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics()))).setInterpolator(new DecelerateInterpolator(2)).start();
+                }
+            }
+
+            @Override
+            public void loadMore() {
+
+                visibleItemCount = staggeredGridLayoutManager.getChildCount();
+                totalItemCount = staggeredGridLayoutManager.getItemCount();
+                int[] lastVisibleItemPositions = ((StaggeredGridLayoutManager) Objects.requireNonNull(MainVerticalRecyclerView.getLayoutManager())).findLastVisibleItemPositions(null);
+                lastVisiblesItems = getLastVisibleItem(lastVisibleItemPositions);
+
+                Log.i("verticalR","vIC : "+visibleItemCount+" total : "+totalItemCount+" last : "+lastVisiblesItems);
+
+                mainRecyclerviewLoadingProgressbar.setVisibility(View.VISIBLE);
+                if ((visibleItemCount + lastVisiblesItems) >= totalItemCount) {
+                    if (postImageList.size() < _postImageList.size()) {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                int index = postImageList.size();
+                                int end;
+                                if (index + 7 > _postImageList.size()) {
+                                    end = index + (Math.abs(index + 7 - _postImageList.size()));
+                                } else {
+                                    end = index + 7;
+                                }
+                                for (int i = index; i < end; i++) {
+                                    try {
+                                        postImageList.add(_postImageList.get(i));
+                                        MainVerticalRecyclerView.getAdapter().notifyItemInserted(i);
+                                    } catch (IndexOutOfBoundsException e) {
+                                    }
+
+                                }
+                            }
+                        }, 1000);
+
+                        mainRecyclerviewLoadingProgressbar.setVisibility(View.GONE);
+
+
+                    } else {
+                        mainRecyclerviewLoadingProgressbar.setVisibility(View.GONE);
+
+                    }
+
+                }
+                else {
+                    mainRecyclerviewLoadingProgressbar.setVisibility(View.GONE);
+
+                }
+
+            }
+        });
+
+
 
 
         /*
@@ -361,26 +545,15 @@ public class MainActivity extends AppCompatActivity {
 
         MyCommunityDetails = new ArrayList<>();
         ParticipantIDs = new ArrayList<>();
-        MainHorizontalScrollView = findViewById(R.id.main_horizontalscrollview);
-        MainHorizontalScrollView.setHorizontalScrollBarEnabled(false);
-        MainHorizontalScrollView.setVerticalScrollBarEnabled(false);
-
-        expandableCardView = findViewById(R.id.photographers);
-
-
-        ParticipantsRecyclerView = findViewById(R.id.main_bottomsheet_particpants_bottomsheet_recyclerview);
-        ParticipantsRecyclerView.setHasFixedSize(true);
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-
-        GridLayoutManager Gridmanager = new GridLayoutManager(getApplicationContext(), (int) Math.floor(dpWidth / 85));
-        ParticipantsRecyclerView.setLayoutManager(Gridmanager);
 
 
 
 
 
-        MainHorizontalScrollView.smoothScrollTo(0, 0);
+
+
+
+
 
 
 
@@ -392,31 +565,12 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-
-        MainHorizontalRecyclerview = (RecyclerView) findViewById(R.id.main_horizontal_recyclerview);
-        MainHorizontalRecyclerview.setHasFixedSize(true);
-        MainHorizontalRecyclerview.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-
-
-        MainVerticalRecyclerView = findViewById(R.id.main_recyclerview);
-        MainVerticalRecyclerView.setHasFixedSize(true);
-        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL);
-
-
-        MainVerticalRecyclerView.setLayoutManager(staggeredGridLayoutManager);
-
         MainLoadingProgressBar = findViewById(R.id.mainloadingpbar);
 
         FirebaseVariablesInit();
         CheckUserAuthentication();
         checkInternetConnection();
         InitPostDialog();
-
-
-
-
-
 
 
 
@@ -508,37 +662,7 @@ public class MainActivity extends AppCompatActivity {
 
         getParticipantDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
-        findViewById(R.id.add_photographers).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (getMyCommunityDetails().get(getPosition()).getCommunityID().equals(getCurrentActiveCommunityID())
-                        || getMyCommunityDetails().get(getPosition()).getCommunityID().equals(getCurrentActiveCommunityID())) {
-                    QRCodeInit(getMyCommunityDetails().get(getPosition()).getCommunityID());
 
-                } else {
-
-
-                    CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
-                            .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                            .setTitle("Album expired.")
-                            .setIcon(R.drawable.ic_warning_black_24dp)
-                            .setMessage("You can't add photographers or add photos to this album since it's expired.")
-                            .setCancelable(true)
-                            .addButton("Ok , I understand", -1, Color.parseColor("#3e3d63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
-                                    CFAlertDialog.CFAlertActionAlignment.END,
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-
-                                        }
-                                    });
-                    builder.show();
-
-
-                }
-            }
-        });
          */
 
 
@@ -617,9 +741,32 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-    
+
          */
 
+    }
+
+    public int getLastVisibleItem(int[] lastVisibleItemPositions) {
+        int maxSize = 0;
+        for (int i = 0; i < lastVisibleItemPositions.length; i++) {
+            if (i == 0) {
+                maxSize = lastVisibleItemPositions[i];
+            } else if (lastVisibleItemPositions[i] > maxSize) {
+                maxSize = lastVisibleItemPositions[i];
+            }
+        }
+        return maxSize;
+    }
+
+    private CommunityModel getCommunityModel(String currentActiveCommunityID) {
+        CommunityModel model = new CommunityModel();
+        for (int i = 0; i < _communityDataList.size(); i++) {
+            if (currentActiveCommunityID.equals(_communityDataList.get(i).getCommunityID())) {
+                model = _communityDataList.get(i);
+                break;
+            }
+        }
+        return model;
     }
 
     private void enableBackgroundServices() {
@@ -698,12 +845,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+        SharedPreferences LastShownNotificationInfo = getSharedPreferences("LastNotification.pref", Context.MODE_PRIVATE);
+        if (LastShownNotificationInfo.getAll().size() != 1) {
+            SharedPreferences.Editor editor = LastShownNotificationInfo.edit();
+            editor.putString("time", String.valueOf(System.currentTimeMillis()));
+            editor.commit();
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
 
         // FIXME has to update decryption and  encryption.
         decryptDeepLink();
-
         // get live community id and check if album  is active or the app should quit the user from the album
         // if the album status is true the we  can start the service from the getServerTime async task only if the end time has not been reached;
         userRefListenerForActiveAlbum = readFirebaseData.readData(userRef, new FirebaseRead() {
@@ -734,13 +892,7 @@ public class MainActivity extends AppCompatActivity {
                 if (snapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID)) {
 
                     currentActiveCommunityID = snapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString();
-
-
-                    // QRCodeInit should be initialized if only is user is a participant in an album;
                     QRCodeInit(currentActiveCommunityID);
-                    // FIXME dialog placing has to be update
-                    // FIXME user should not be added if album status if false
-                    //QRCodeDialog.show();
 
                     // make the add photo fab visible
                     mainAddPhotosFab.setVisibility(View.VISIBLE);
@@ -755,24 +907,26 @@ public class MainActivity extends AppCompatActivity {
                         public void onSuccess(DataSnapshot snapshot) {
 
                             // optimization 1 resulted in this error, everytime the album is quit even if the album is inactive
-                            // so first check the album status;
-                            String status = snapshot.child(FirebaseConstants.COMMUNITYSTATUS).getValue().toString();
-                            if (status.equals("T")) {
-                                long endtime = Long.parseLong(snapshot.child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString());
-                                //we need to get server time at zero offset
-                                new getServerTime(endtime).execute();
-                            } else {
-                                // stop the necessary services
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-                                    jobScheduler.cancel(JOB_ID);
+                            // so first check the album  has status status;
+                            if (snapshot.hasChild(FirebaseConstants.COMMUNITYSTATUS)) {
+
+                                String status = snapshot.child(FirebaseConstants.COMMUNITYSTATUS).getValue().toString();
+                                if (status.equals("T")) {
+                                    long endtime = Long.parseLong(snapshot.child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString());
+                                    //we need to get server time at zero offset
+                                    new getServerTime(endtime).execute();
+                                } else {
+                                    // stop the necessary services
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                        jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+                                        jobScheduler.cancel(JOB_ID);
+                                    }
+                                    AlarmManagerHelper helper = new AlarmManagerHelper(getApplicationContext());
+                                    helper.deinitateAlarmManager();
+
+
                                 }
-                                AlarmManagerHelper helper = new AlarmManagerHelper(getApplicationContext());
-                                helper.deinitateAlarmManager();
-
-
                             }
-
 
                         }
 
@@ -794,6 +948,7 @@ public class MainActivity extends AppCompatActivity {
 
                 }
 
+                getCloudAlbumData(userCommunityIdList);
 
             }
 
@@ -809,6 +964,95 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // todo  delete this
+    public String getDate(long time) {
+        try {
+            CharSequence Time = DateUtils.getRelativeDateTimeString(MainActivity.this, time, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
+            return String.valueOf(Time);
+        } catch (NumberFormatException e) {
+            return "Nil";
+        }
+    }
+
+    private void getCloudAlbumData(ArrayList<String> userCommunityIdList) {
+
+        communitiesDataListener = readFirebaseData.readData(communityRef, new FirebaseRead() {
+            @Override
+            public void onSuccess(DataSnapshot snapshot) {
+
+                for (String communityId : userCommunityIdList) {
+                    String admin = AppConstants.NOTAVALABLE, coverimage = AppConstants.NOTAVALABLE, description = AppConstants.NOTAVALABLE, endtime = AppConstants.NOTAVALABLE, starttime = AppConstants.NOTAVALABLE, status = AppConstants.NOTAVALABLE, title = AppConstants.NOTAVALABLE, type = AppConstants.NOTAVALABLE;
+                    if (snapshot.child(communityId).hasChild("admin")) {
+                        admin = snapshot.child(communityId).child("admin").getValue().toString();
+                    }
+                    if (snapshot.child(communityId).hasChild("coverimage")) {
+                        coverimage = snapshot.child(communityId).child("coverimage").getValue().toString();
+                    }
+                    if (snapshot.child(communityId).hasChild("description")) {
+                        description = snapshot.child(communityId).child("description").getValue().toString();
+                    }
+                    if (snapshot.child(communityId).hasChild("endtime")) {
+                        endtime = snapshot.child(communityId).child("endtime").getValue().toString();
+                    }
+                    if (snapshot.child(communityId).hasChild("starttime")) {
+                        starttime = snapshot.child(communityId).child("starttime").getValue().toString();
+                    }
+                    if (snapshot.child(communityId).hasChild("status")) {
+                        status = snapshot.child(communityId).child("status").getValue().toString();
+                    }
+                    if (snapshot.child(communityId).hasChild("title")) {
+                        title = snapshot.child(communityId).child("title").getValue().toString();
+                    }
+                    if (snapshot.child(communityId).hasChild("type")) {
+                        type = snapshot.child(communityId).child("type").getValue().toString();
+                    }
+
+                    CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId);
+                    if (!getCommunityKeys(_communityDataList).contains(communityId)) {
+                        _communityDataList.add(model);
+                    }
+                }
+                // info sorting by endtime
+                Collections.sort(_communityDataList, Collections.reverseOrder());
+                for (int i = 0; i < _communityDataList.size() && i < 5; i++) {
+                    communityDataList.add(_communityDataList.get(i));
+                }
+                mainHorizontalAdapter.notifyDataSetChanged();
+                MainHorizontalRecyclerview.scheduleLayoutAnimation();
+
+
+            }
+
+            @Override
+            public void onStart() {
+
+            }
+
+            @Override
+            public void onFailure(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private List<String> getCommunityKeys(List<CommunityModel> communityDataList) {
+        List<String> keys = new ArrayList<>();
+        for (int i = 0; i < communityDataList.size(); i++) {
+            keys.add(communityDataList.get(i).getCommunityID());
+        }
+
+        return keys;
+    }
+
+    private List<String> getPostKeys(List<PostModel> communityDataList) {
+        List<String> keys = new ArrayList<>();
+        for (int i = 0; i < communityDataList.size(); i++) {
+            keys.add(communityDataList.get(i).getPoskKey());
+        }
+
+        return keys;
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -821,6 +1065,15 @@ public class MainActivity extends AppCompatActivity {
         }
         if (coummunityUserAddListener != null) {
             userRef.removeEventListener(coummunityUserAddListener);
+        }
+        if (communitiesDataListener != null) {
+            communityRef.removeEventListener(communitiesDataListener);
+        }
+        if (postRefListener != null) {
+            postRef.removeEventListener(postRefListener);
+        }
+        if (participantRefListener != null) {
+            participantRef.removeEventListener(participantRefListener);
         }
 
 
@@ -916,8 +1169,8 @@ public class MainActivity extends AppCompatActivity {
                 newCommunities.addAll(userCommunityIdList);
                 userCommunityIdList.clear();
                 userCommunityIdList.addAll(newCommunities);
+                getCloudAlbumData(userCommunityIdList);
 
-                // todo refresh the recyclerview
             } else {
                 showDialogMessage("Album Inactive", "The album has expired or admin has made the album inactive.");
 
@@ -1136,6 +1389,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (currentActiveCommunityID.equals(AppConstants.NOTAVALABLE)) {
             startActivity(new Intent(MainActivity.this, CreateCloudAlbum.class));
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            finish();
         } else {
 
             CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
@@ -1210,12 +1465,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void ShowAllAlbums() {
-
-        final List<String> MyCommunities = new ArrayList<>();
-        List<CommunityModel> ComData = new ArrayList<>();
-
-        MainLoadingProgressBar.setVisibility(View.VISIBLE);
+    public void setVerticalRecyclerView(String communityID) {
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -1225,175 +1475,23 @@ public class MainActivity extends AppCompatActivity {
                     expandableCardView.collapse();
                 }
 
-
             }
-        }, 500);
+        }, 50);
 
 
-        Ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                MyCommunityDetails.clear();
-                MyCommunities.clear();
-                ComData.clear();
-                MainHorizontalRecyclerview.removeAllViews();
-
-                for (DataSnapshot snapshot : dataSnapshot.child("Users").child(CurrentUserID).child("Communities").getChildren()) {
-
-                    String key = snapshot.getKey();
-                    MyCommunities.add(key);
-
-                }
-
-                for (int i = 0; i < MyCommunities.size(); i++) {
-                    String admin = "unknown", coverimage = "unknown", description = "unknown", endtime = "unknown", starttime = "unknown", status = "unknown", title = "unknown", type = "unknown";
-
-
-                    if (dataSnapshot.child("Communities").child(MyCommunities.get(i)).hasChild("admin")) {
-                        admin = dataSnapshot.child("Communities").child(MyCommunities.get(i)).child("admin").getValue().toString();
-
-                    }
-                    if (dataSnapshot.child("Communities").child(MyCommunities.get(i)).hasChild("coverimage")) {
-                        coverimage = dataSnapshot.child("Communities").child(MyCommunities.get(i)).child("coverimage").getValue().toString();
-
-                    }
-                    if (dataSnapshot.child("Communities").child(MyCommunities.get(i)).hasChild("endtime")) {
-                        endtime = dataSnapshot.child("Communities").child(MyCommunities.get(i)).child("endtime").getValue().toString();
-
-                    }
-                    if (dataSnapshot.child("Communities").child(MyCommunities.get(i)).hasChild("description")) {
-                        description = dataSnapshot.child("Communities").child(MyCommunities.get(i)).child("description").getValue().toString();
-
-                    }
-                    if (dataSnapshot.child("Communities").child(MyCommunities.get(i)).hasChild("starttime")) {
-                        starttime = dataSnapshot.child("Communities").child(MyCommunities.get(i)).child("starttime").getValue().toString();
-
-                    }
-                    if (dataSnapshot.child("Communities").child(MyCommunities.get(i)).hasChild("status")) {
-                        status = dataSnapshot.child("Communities").child(MyCommunities.get(i)).child("status").getValue().toString();
-
-                    }
-                    if (dataSnapshot.child("Communities").child(MyCommunities.get(i)).hasChild("title")) {
-                        title = dataSnapshot.child("Communities").child(MyCommunities.get(i)).child("title").getValue().toString();
-
-                    }
-                    if (dataSnapshot.child("Communities").child(MyCommunities.get(i)).hasChild("type")) {
-                        type = dataSnapshot.child("Communities").child(MyCommunities.get(i)).child("type").getValue().toString();
-
-                    }
-
-
-                    CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, dataSnapshot.child("Communities").child(MyCommunities.get(i)).child("participants").getRef(), type, coverimage, admin, MyCommunities.get(i));
-                    MyCommunityDetails.add(model);
-                }
-
-
-                if (MyCommunityDetails.size() == 0) {
-                    MainLoadingProgressBar.setVisibility(View.GONE);
-                    MainHorizontalRecyclerview.setVisibility(View.VISIBLE);
-
-                    //show AppName in toolbar when collapsed
-
-                } else {
-
-                    MainLoadingProgressBar.setVisibility(View.GONE);
-                    MainHorizontalRecyclerview.setVisibility(View.VISIBLE);
-                    SharedPreferences LastShownNotificationInfo = getSharedPreferences("LastNotification.pref", Context.MODE_PRIVATE);
-                    if (LastShownNotificationInfo.getAll().size() != 1) {
-                        SharedPreferences.Editor editor = LastShownNotificationInfo.edit();
-                        editor.putString("time", String.valueOf(System.currentTimeMillis()));
-                        editor.commit();
-                    }
-
-                }
-
-
-                Collections.reverse(MyCommunityDetails);
-                RecyclerView toolbarRecyclerview = toolbarCustomView.findViewById(R.id.custom_toolbar_recyclerview);
-                toolbarRecyclerview.setHasFixedSize(true);
-                toolbarRecyclerview.setLayoutManager(new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false));
-                toolbarRecyclerview.setAdapter(new ToolbarAdapter(MyCommunityDetails, MainActivity.this));
-
-
-                for (int i = 0; i < MyCommunityDetails.size() && i < 5; i++) {
-                    ComData.add(MyCommunityDetails.get(i));
-                }
-
-                MainHorizontalAdapter adapter2 = new MainHorizontalAdapter(MainHorizontalRecyclerview, ComData, MainActivity.this);
-                MainHorizontalRecyclerview.setAdapter(adapter2);
-
-                adapter2.setLoadMoreData(new LoadMoreData() {
-                    @Override
-                    public void onLoadMoreData() {
-
-                        if (ComData.size() < MyCommunityDetails.size()) {
-                            ComData.add(null);
-                            adapter2.notifyItemInserted(ComData.size() - 1);
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ComData.remove(ComData.size() - 1);
-                                    adapter2.notifyItemRemoved(ComData.size());
-
-                                    int index = ComData.size();
-                                    int end;
-                                    if (index + 5 > MyCommunityDetails.size()) {
-                                        end = index + (Math.abs(index + 5 - MyCommunityDetails.size()));
-                                    } else {
-                                        end = index + 5;
-                                    }
-                                    for (int i = index; i < end; i++) {
-                                        try {
-                                            ComData.add(MyCommunityDetails.get(i));
-                                        } catch (IndexOutOfBoundsException e) {
-                                        }
-
-                                    }
-                                    adapter2.notifyDataSetChanged();
-                                    adapter2.setLoaded();
-
-
-                                }
-                            }, 3000);
-
-                        } else {
-                            Toast.makeText(MainActivity.this, "That's all !", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-
-    }
-
-
-    public void SetVerticalRecyclerView(String communityID) {
-
-
-        CurrentKeyShowninVerticialRecyclerview = communityID;
-
-        List<PostModel> PostList = new ArrayList<>();
-        setParticipants();
         try {
-            Ref.child("Communities").child(communityID).child("posts").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    MainVerticalRecyclerView.setVisibility(View.VISIBLE);
-                    PostList.clear();
-                    MainVerticalRecyclerView.removeAllViews();
+            setParticipants(communityID);
+
+            postRefListener = readFirebaseData.readData(postRef.child(communityID), new FirebaseRead() {
+                @Override
+                public void onSuccess(DataSnapshot dataSnapshot) {
+                    _postImageList.clear();
+                    postImageList.clear();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         String key = snapshot.getKey();
-                        String by = "unknown", time = "unknown", uri = "unknown";
+                        String by = AppConstants.NOTAVALABLE, time = AppConstants.NOTAVALABLE, uri = AppConstants.NOTAVALABLE;
 
                         if (snapshot.hasChild("by")) {
                             by = snapshot.child("by").getValue().toString();
@@ -1404,88 +1502,123 @@ public class MainActivity extends AppCompatActivity {
                         if (snapshot.hasChild("uri")) {
                             uri = snapshot.child("uri").getValue().toString();
                         }
-
-                        PostModel model = new PostModel(key, uri, time, by);
-                        PostList.add(model);
+                        if (!getPostKeys(_postImageList).contains(key)) {
+                            _postImageList.add(new PostModel(key, uri, time, by));
+                        }
 
                     }
 
-                    if (PostList.size() != 0) {
-                        Collections.reverse(PostList);
-                        MainVerticalAdapter verticalAdapter = new MainVerticalAdapter(getApplicationContext(), PostList, FirebaseDatabase.getInstance().getReference().child("Users"), communityID);
-                        MainVerticalRecyclerView.setAdapter(verticalAdapter);
-                    } else {
-                        MainVerticalRecyclerView.setVisibility(View.GONE);
+                    Collections.reverse(_postImageList);
+                    for (int i = 0; i < 7 && i < _postImageList.size(); i++) {
+                        if (!getPostKeys(postImageList).contains(_postImageList.get(i).getPoskKey())) {
+                            postImageList.add(_postImageList.get(i));
+                        }
+
                     }
+                    mainVerticalAdapter.notifyDataSetChanged();
+                    MainVerticalRecyclerView.scheduleLayoutAnimation();
+
 
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
+                public void onStart() {
+                }
+
+                @Override
+                public void onFailure(DatabaseError databaseError) {
 
                 }
             });
-
-        } catch (Exception e) {
-            MainVerticalRecyclerView.setVisibility(View.GONE);
+        } catch (NullPointerException e) {
+            Log.i("setVerticialRecyclervie", "Null Pointer");
+            e.printStackTrace();
         }
 
 
     }
 
 
-    private void setParticipants() {
-        ParticipantIdList = ParticipantIDs;
-        final List<String> MemberImageList = new ArrayList<>();
-        final List<String> MemberNamesList = new ArrayList<>();
-        ParticipantsRecyclerView.removeAllViews();
-        for (String id : ParticipantIdList) {
-            name = "NA";
-            imgurl = "NA";
+    private void setParticipants(String communityID) {
 
-            getParticipantDatabaseReference.child("Users").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    if (dataSnapshot.hasChild("Name")) {
-                        name = dataSnapshot.child("Name").getValue().toString();
-                        if (!MemberNamesList.contains(name) || !MemberNamesList.contains(id)) {
-                            if (FirebaseAuth.getInstance().getCurrentUser().getUid().equals(id)) {
-                                MemberNamesList.add("You");
+        participantRefListener = readFirebaseData.readData(participantRef.child(communityID), new FirebaseRead() {
+            @Override
+            public void onSuccess(DataSnapshot dataSnapshot) {
+                photographerList.clear();
+                if (currentActiveCommunityID.equals(communityID)) {
+                    photographerList.add(new PhotographerModel("add","add","add"));
 
-                            } else {
-                                MemberNamesList.add(name);
+                }
+                DatabaseReference photographerRef = FirebaseDatabase.getInstance().getReference().child("Users");
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    photographerRef.child(snapshot.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot userSnapshot) {
+
+                            String name = AppConstants.NOTAVALABLE, imgurl = AppConstants.NOTAVALABLE;
+                            if (userSnapshot.hasChild("Name")) {
+                                if (currentUserId.equals(snapshot.getKey())) {
+                                    name = "You";
+
+                                } else {
+                                    name = userSnapshot.child("Name").getValue().toString();
+                                }
+
+                            }
+                            if (userSnapshot.hasChild("Profile_picture")) {
+                                imgurl = userSnapshot.child("Profile_picture").getValue().toString();
                             }
 
-                        }
-                    } else {
-                        MemberNamesList.add(id);
-                    }
-                    if (dataSnapshot.hasChild("Profile_picture")) {
-                        imgurl = dataSnapshot.child("Profile_picture").getValue().toString();
-                        if (!MemberImageList.contains(imgurl) || !MemberImageList.contains(id)) {
-                            MemberImageList.add(imgurl);
+                            if (!getPhotographerKeys(photographerList).contains(snapshot.getKey())) {
+
+                                photographerList.add(new PhotographerModel(name, snapshot.getKey(), imgurl));
+
+                            }
+
 
                         }
-                    } else {
-                        MemberImageList.add(id);
 
-                    }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
 
                 }
-            });
+                participantsAdapter = new ParticipantsAdapter(photographerList, getApplicationContext(), QRCodeDialog);
+                ParticipantsRecyclerView.setAdapter(participantsAdapter);
+
+            }
+
+            @Override
+            public void onStart() {
+
+            }
+
+            @Override
+            public void onFailure(DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
+
+    private List<String> getPhotographerKeys(List<PhotographerModel> photographerList) {
+        List<String> keys = new ArrayList<>();
+        for (int i = 0; i < photographerList.size(); i++) {
+            try
+            {
+                keys.add(photographerList.get(i).getId());
+            }
+            catch (NullPointerException e)
+            {
+                continue;
+            }
         }
 
-
-        ParticipantsAdapter adapter = new ParticipantsAdapter(MemberImageList, MemberNamesList, getApplicationContext());
-        ParticipantsRecyclerView.setAdapter(adapter);
-
+        return keys;
     }
 
     public void quitCloudAlbum(boolean forceQuit) {
@@ -1790,7 +1923,7 @@ public class MainActivity extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     //MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
                                     Toast.makeText(MainActivity.this, "Successfully changed the Cover-Photo.", Toast.LENGTH_LONG).show();
-                                    ShowAllAlbums();
+                                    //ShowAllAlbums();
 
                                 } else {
                                     // MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
@@ -1846,7 +1979,8 @@ public class MainActivity extends AppCompatActivity {
             SetDefaultView();
         } else if (RootForMainActivity.isDrawerOpen(GravityCompat.START)) {
             RootForMainActivity.closeDrawer(GravityCompat.START);
-        } else if (toolbarCustomView.isShown()) {
+        }
+        else if (toolbarCustomView.isShown()) {
             toolbarCustomView.clearAnimation();
             toolbarCustomView.setAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_back_up));
             toolbarCustomView.clearAnimation();
@@ -1854,264 +1988,11 @@ public class MainActivity extends AppCompatActivity {
             appBarLayout.setExpanded(true);
 
             //TODO scroll the recyclerview to the top
-        } else {
+
+        }
+        else {
             super.onBackPressed();
         }
-/*
-else if (MainHorizontalScrollView.getScrollX() != 0) {
-            MainHorizontalScrollView.smoothScrollTo(0, 0);
-        }
- */
-    }
-
-
-    public class MainCommunityViewHolder extends RecyclerView.ViewHolder {
-
-
-        ImageView AlbumCoverButton, AlbumOptions;
-        TextView AlbumNameTextView;
-        TextView AlbumDescriptionTextView;
-        Button Indicator;
-        Button covePhotoChange;
-        CardView covePhotoChangeCard;
-
-        public MainCommunityViewHolder(View itemView) {
-            super(itemView);
-
-            AlbumCoverButton = itemView.findViewById(R.id.albumcard_image_view);
-            AlbumNameTextView = itemView.findViewById(R.id.album_card_textview);
-            covePhotoChange = itemView.findViewById(R.id.album_option_btn);
-            covePhotoChangeCard = itemView.findViewById(R.id.cardalbumoptions);
-
-
-            Indicator = itemView.findViewById(R.id.indication_button);
-        }
-
-
-    }
-
-    public class LoadingViewHolder extends RecyclerView.ViewHolder {
-        ProgressBar loadingProgressbar;
-
-        public LoadingViewHolder(View itemView) {
-            super(itemView);
-            loadingProgressbar = itemView.findViewById(R.id.item_loadingprogressBar);
-        }
-    }
-
-
-    public class MainHorizontalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-        List<CommunityModel> CommunityDetails;
-        private final int VIEW_TYPE_ALBUM = 0, VIEW_TYPE_LOADING = 1;
-        LoadMoreData loadMoreData;
-        boolean isLoading;
-        Activity activity;
-        int visibleThreshold = 5;
-        int lastVisibleItem, totalItemCount;
-
-        public MainHorizontalAdapter(RecyclerView recyclerView, List<CommunityModel> communityDetails, Activity activity) {
-            CommunityDetails = communityDetails;
-            this.activity = activity;
-
-            LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
-            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                    super.onScrolled(recyclerView, dx, dy);
-                    totalItemCount = manager.getItemCount();
-                    lastVisibleItem = manager.findLastVisibleItemPosition();
-
-                    if (!isLoading && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
-                        if (loadMoreData != null) {
-                            loadMoreData.onLoadMoreData();
-                        }
-                        isLoading = true;
-                    }
-                }
-            });
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            return CommunityDetails.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ALBUM;
-        }
-
-        public void setLoadMoreData(LoadMoreData loadMoreData) {
-            this.loadMoreData = loadMoreData;
-        }
-
-
-        public void setLoaded() {
-            isLoading = false;
-        }
-
-        @NonNull
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            if (viewType == VIEW_TYPE_ALBUM) {
-                View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.album_card, parent, false);
-                return new MainCommunityViewHolder(view);
-            } else if (viewType == VIEW_TYPE_LOADING) {
-                View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.item_loading_horizontal, parent, false);
-                return new LoadingViewHolder(view);
-            }
-            return null;
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-
-            if (holder instanceof MainCommunityViewHolder) {
-                MainCommunityViewHolder viewHolder = (MainCommunityViewHolder) holder;
-
-                if (!CommunityDetails.get(position).equals("unknown")) {
-
-                    Glide.with(getApplicationContext())
-                            .load(CommunityDetails.get(position)
-                                    .getCoverImage()).addListener(new RequestListener<Drawable>() {
-                        @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                            return false;
-                        }
-
-                        @Override
-                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                            return false;
-                        }
-                    })
-                            .into(viewHolder.AlbumCoverButton);
-                }
-
-                if (viewHolder.getLayoutPosition() == Position) {
-                    viewHolder.Indicator.setVisibility(View.VISIBLE);
-                    viewHolder.itemView.setAlpha((float) 1);
-                    SetVerticalRecyclerView(CommunityDetails.get(Position).getCommunityID());
-
-
-                }
-
-                viewHolder.covePhotoChange.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Position = holder.getLayoutPosition();
-                        ParticipantIDs.clear();
-                        Ref.child("Communities").child(CommunityDetails.get(position).getCommunityID()).child("participants").addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                    if (!ParticipantIDs.contains(snapshot.getKey())) {
-                                        ParticipantIDs.add(snapshot.getKey());
-                                    }
-                                }
-                                if (currentActiveCommunityID.contentEquals(CommunityDetails.get(position).getCommunityID())) {
-                                    BottomSheetFragment bottomSheetFragment = new BottomSheetFragment(MainActivity.this, ParticipantIDs);
-                                    bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
-                                } else {
-                                    BottomSheetFragment_Inactive bottomSheetFragment_inactive = new BottomSheetFragment_Inactive(MainActivity.this, ParticipantIDs);
-                                    bottomSheetFragment_inactive.show(getSupportFragmentManager(), bottomSheetFragment_inactive.getTag());
-
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-
-
-                    }
-                });
-
-                viewHolder.AlbumCoverButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (getCurrentCommunityinVerticialRecyclerview() != null && !getCurrentCommunityinVerticialRecyclerview().equals(CommunityDetails.get(position).getCommunityID())) {
-                            Position = holder.getLayoutPosition();
-                            ParticipantIDs.clear();
-                            Ref.child("Communities").child(CommunityDetails.get(Position).getCommunityID()).child("participants").addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                        if (!ParticipantIDs.contains(snapshot.getKey())) {
-                                            ParticipantIDs.add(snapshot.getKey());
-                                        }
-                                    }
-
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-
-
-                            ShowAllAlbums();
-                        }
-                    }
-                });
-
-                viewHolder.AlbumNameTextView.setText(CommunityDetails.get(position).getTitle());
-                viewHolder.AlbumDescriptionTextView.setText(CommunityDetails.get(position).getDescription());
-
-                viewHolder.AlbumCoverButton.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View view) {
-                        Position = holder.getLayoutPosition();
-                        ParticipantIDs.clear();
-                        Ref.child("Communities").child(CommunityDetails.get(position).getCommunityID()).child("participants").addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                    if (!ParticipantIDs.contains(snapshot.getKey())) {
-                                        ParticipantIDs.add(snapshot.getKey());
-                                    }
-                                }
-                                if (currentActiveCommunityID.contentEquals(CommunityDetails.get(position).getCommunityID())) {
-                                    BottomSheetFragment bottomSheetFragment = new BottomSheetFragment(MainActivity.this, ParticipantIDs);
-                                    bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
-                                } else {
-                                    BottomSheetFragment_Inactive bottomSheetFragment_inactive = new BottomSheetFragment_Inactive(MainActivity.this, ParticipantIDs);
-                                    bottomSheetFragment_inactive.show(getSupportFragmentManager(), bottomSheetFragment_inactive.getTag());
-
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-
-
-                        return false;
-                    }
-                });
-
-
-            } else if (holder instanceof LoadingViewHolder) {
-                ((LoadingViewHolder) holder).loadingProgressbar.setIndeterminate(true);
-            }
-        }
-
-
-        private String getCurrentCommunityinVerticialRecyclerview() {
-
-            return CurrentKeyShowninVerticialRecyclerview;
-        }
-
-
-        @Override
-        public int getItemCount() {
-            return CommunityDetails.size();
-        }
-
-
     }
 
 
@@ -2232,27 +2113,33 @@ else if (MainHorizontalScrollView.getScrollX() != 0) {
 
     public class MainVerticalAdapter extends RecyclerView.Adapter<MainVerticalAdapter.PostGridViewHolder> {
 
-        Context context;
         List<PostModel> PostList;
         DatabaseReference UserRef;
         Picasso picasso;
         String comID;
+        Activity activity;
 
-        public MainVerticalAdapter(Context context, List<PostModel> postList, DatabaseReference userRef, String ID) {
-            this.context = context;
+        public MainVerticalAdapter(RecyclerView recyclerView, Activity activity, List<PostModel> postList, DatabaseReference userRef, String ID) {
+            this.activity = activity;
             PostList = postList;
             UserRef = userRef;
             picasso = Picasso.get();
             picasso.setIndicatorsEnabled(false);
             comID = ID;
+
+
         }
 
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
 
         @NonNull
         @Override
         public PostGridViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-            View view = LayoutInflater.from(context).inflate(R.layout.post_layout, parent, false);
+            View view = LayoutInflater.from(activity).inflate(R.layout.post_layout, parent, false);
             return new MainVerticalAdapter.PostGridViewHolder(view);
         }
 
@@ -2261,7 +2148,7 @@ else if (MainHorizontalScrollView.getScrollX() != 0) {
 
             if (PostList.get(position) != null) {
                 holder.itemView.clearAnimation();
-                holder.itemView.setAnimation(AnimationUtils.loadAnimation(context, android.R.anim.fade_in));
+                holder.itemView.setAnimation(AnimationUtils.loadAnimation(activity, android.R.anim.fade_in));
                 holder.itemView.getAnimation().start();
 
                 RequestOptions requestOptions = new RequestOptions().placeholder(R.drawable.ic_photo_camera);
@@ -2274,7 +2161,7 @@ else if (MainHorizontalScrollView.getScrollX() != 0) {
                     .into(holder.PostImageView)
             ;
              */
-                Glide.with(context)
+                Glide.with(activity)
                         .load(PostList.get(position).getUri())
                         .apply(requestOptions)
                         .listener(new RequestListener<Drawable>() {
@@ -2305,10 +2192,10 @@ else if (MainHorizontalScrollView.getScrollX() != 0) {
                         }
                         if (dataSnapshot.hasChild("Profile_picture")) {
                             String UploaderImageUrl = dataSnapshot.child("Profile_picture").getValue().toString();
-                            Glide.with(context).load(UploaderImageUrl).into(holder.PostUploaderImageView);
+                            Glide.with(activity).load(UploaderImageUrl).into(holder.PostUploaderImageView);
 
                         } else {
-                            Glide.with(context).load(R.drawable.ic_account_circle).into(holder.PostUploaderImageView);
+                            Glide.with(activity).load(R.drawable.ic_account_circle).into(holder.PostUploaderImageView);
 
                         }
 
@@ -2335,11 +2222,13 @@ else if (MainHorizontalScrollView.getScrollX() != 0) {
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        /*
                         Intent i = new Intent(MainActivity.this, PhotoView.class);
                         i.putParcelableArrayListExtra("data", (ArrayList<? extends Parcelable>) PostList);
                         i.putExtra("position", position);
                         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        context.startActivity(i);
+                        activity.startActivity(i);
+                         */
                     }
                 });
             }
@@ -2374,13 +2263,132 @@ else if (MainHorizontalScrollView.getScrollX() != 0) {
 
     }
 
-    public String getCurrentActiveCommunityID() {
-        return currentActiveCommunityID;
-    }
+    public class MainHorizontalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+        List<CommunityModel> communityDetails;
+        private final int VIEW_TYPE_ALBUM = 0, VIEW_TYPE_LOADING = 1;
+        LoadMoreData loadMoreData;
+        Activity activity;
+        String currentActiveCommunityId;
+        int selectedAlbumPosition = 0;
+        String selectedAlbumKey;
+
+        public MainHorizontalAdapter(List<CommunityModel> communityDetails, Activity activity, String currentActiveCommunityId) {
+            this.communityDetails = communityDetails;
+            this.activity = activity;
+            this.currentActiveCommunityId = currentActiveCommunityId;
+            selectedAlbumKey = AppConstants.NOTAVALABLE;
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return communityDetails.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ALBUM;
+        }
+
+        @NonNull
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(activity).inflate(R.layout.album_card, parent, false);
+            return new MainCommunityViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+
+            if (holder instanceof MainCommunityViewHolder) {
+                MainCommunityViewHolder viewHolder = (MainCommunityViewHolder) holder;
+
+                if (selectedAlbumPosition == viewHolder.getLayoutPosition()) {
+                    viewHolder.Indicator.setVisibility(View.VISIBLE);
+                    viewHolder.itemView.setAlpha((float) 1);
+                    if (!selectedAlbumKey.equals(communityDetails.get(selectedAlbumPosition).getCommunityID())) {
+                        setVerticalRecyclerView(communityDetails.get(selectedAlbumPosition).getCommunityID());
+
+                    }
+                    selectedAlbumKey = communityDetails.get(selectedAlbumPosition).getCommunityID();
+
+                } else {
+                    viewHolder.Indicator.setVisibility(View.INVISIBLE);
+                    viewHolder.itemView.setAlpha((float) 0.85);
+                }
+
+                if (!communityDetails.get(position).equals("unknown")) {
+
+                    Glide.with(activity)
+                            .load(communityDetails.get(position)
+                                    .getCoverImage()).addListener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            return false;
+                        }
+                    }).into(viewHolder.AlbumCoverButton);
+                }
 
 
-    public List<CommunityModel> getMyCommunityDetails() {
-        return MyCommunityDetails;
+                viewHolder.AlbumCoverButton.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        if (communityDetails.get(position).getStatus().equals("T")) {
+                            BottomSheetFragment bottomSheetFragment = new BottomSheetFragment(activity, communityDetails.get(position));
+                            bottomSheetFragment.show(((FragmentActivity) activity).getSupportFragmentManager(), bottomSheetFragment.getTag());
+                        } else {
+                            BottomSheetFragment_Inactive bottomSheetFragment_inactive = new BottomSheetFragment_Inactive(activity, communityDetails.get(position));
+                            bottomSheetFragment_inactive.show(((FragmentActivity) activity).getSupportFragmentManager(), bottomSheetFragment_inactive.getTag());
+                        }
+                        return false;
+                    }
+                });
+
+                viewHolder.menuOptionsButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (communityDetails.get(position).getStatus().equals("T")) {
+                            BottomSheetFragment bottomSheetFragment = new BottomSheetFragment(activity, communityDetails.get(position));
+                            bottomSheetFragment.show(((FragmentActivity) activity).getSupportFragmentManager(), bottomSheetFragment.getTag());
+                        } else {
+                            BottomSheetFragment_Inactive bottomSheetFragment_inactive = new BottomSheetFragment_Inactive(activity, communityDetails.get(position));
+                            bottomSheetFragment_inactive.show(((FragmentActivity) activity).getSupportFragmentManager(), bottomSheetFragment_inactive.getTag());
+                        }
+
+                    }
+                });
+
+                viewHolder.AlbumCoverButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        if (selectedAlbumPosition != viewHolder.getAdapterPosition()) {
+                            notifyItemChanged(selectedAlbumPosition);
+                            notifyItemChanged(viewHolder.getAdapterPosition());
+                            selectedAlbumPosition = viewHolder.getAdapterPosition();
+                            setVerticalRecyclerView(communityDetails.get(position).getCommunityID());
+
+                        }
+                    }
+                });
+
+                viewHolder.AlbumNameTextView.setText(communityDetails.get(position).getTitle());
+                viewHolder.AlbumDescriptionTextView.setText(communityDetails.get(position).getDescription());
+
+
+            } else if (holder instanceof LoadingViewHolder) {
+
+                ((LoadingViewHolder) holder).loadingProgressbar.setIndeterminate(true);
+            }
+        }
+
+
+        @Override
+        public int getItemCount() {
+            return communityDetails.size();
+        }
+
+
     }
 
 
@@ -2392,14 +2400,8 @@ else if (MainHorizontalScrollView.getScrollX() != 0) {
         COVER_CHANGE = coverChange;
     }
 
-    public int getPosition() {
-        return Position;
-    }
-
-
     public static void setProfileChange(boolean profileChange) {
         PROFILE_CHANGE = profileChange;
     }
-
 
 }

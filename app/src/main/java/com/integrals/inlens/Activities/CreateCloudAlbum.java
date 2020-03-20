@@ -84,7 +84,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
     private FirebaseUser                        InUser;
     private DatabaseReference                   InUserReference;
     private String                              PostKey;
-    private DatabaseReference                   photographerReference,databaseReference,ComNotyRef;
+    private DatabaseReference                   photographerReference,databaseReference,ComNotyRef,participantRef;
     private String                              UserID;
     private ProgressBar                         UploadProgress;
     private static final int                    GALLERY_PICK=1 ;
@@ -128,8 +128,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
         CommunityDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Communities");
         InUserReference = FirebaseDatabase.getInstance().getReference().child("Users").child(InUser.getUid());
-
-
+        participantRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.PARTICIPANTS);
         EventPicker = findViewById(R.id.EventTypeText);
         CommunityAlbumTitle = (EditText) findViewById(R.id.AlbumTitleEditText);
         CommunityAlbumDescription = (EditText) findViewById(R.id.AlbumDescriptionEditText);
@@ -596,7 +595,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
                         ceditor.commit();
 
-                        CommunityPost.child("participants").child(UserID).setValue(ServerValue.TIMESTAMP);
+                        participantRef.child(pushid).child(UserID).setValue(ServerValue.TIMESTAMP);
 
                         PostDatabaseReference.child(pushid).child("title").setValue(TitleValue);
 
@@ -906,7 +905,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    finish();
+                                    dialog.dismiss();
                                 }
                             });
 

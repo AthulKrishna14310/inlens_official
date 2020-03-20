@@ -21,7 +21,8 @@ public class FirebaseConstants {
     public static final String PARTICIPANTS ="Participants";
     public static final String POSTBY ="by";
     public static final String POSTTIME ="time";
-    public static final String PSOTURL ="url";
+    public static final String POSTURL ="url";
+    public static final String POSTS ="posts";
 
     public FirebaseConstants() {
     }

@@ -37,7 +37,7 @@ public class ToolbarAdapter extends RecyclerView.Adapter<ToolbarAdapter.ToolbarV
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new MainActivity().SetVerticalRecyclerView(CommunityDetails.get(position).getCommunityID());
+                new MainActivity().setVerticalRecyclerView(CommunityDetails.get(position).getCommunityID());
             }
         });
     }

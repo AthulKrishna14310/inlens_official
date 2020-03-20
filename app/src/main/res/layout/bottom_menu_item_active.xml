@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:paddingBottom="8dp"
+    android:paddingTop="8dp"
     android:background="@color/transparent"
     >
 
@@ -27,7 +29,6 @@
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
             android:gravity="center"
-            android:textColor="@color/colorSecondary"
             android:text="Album Header"
             android:textSize="24sp"
             android:textStyle="bold" />
@@ -89,7 +90,7 @@
                 android:text="Album subtitle"
                 android:layout_gravity="center"
                 android:textSize="18sp"
-                android:textColor="@color/colorSecondary"
+                android:textStyle="bold"
                 android:layout_marginTop="10dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 />
@@ -107,40 +108,10 @@
             android:layout_marginStart="10dp"/>
 
         <LinearLayout
-            android:id="@+id/item_add_participants"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:clickable="true"
-            android:foreground="?attr/selectableItemBackground"
-            android:orientation="horizontal"
-            android:paddingLeft="@dimen/spacing_mxlarge"
-            android:layout_marginTop="10dp"
-            android:visibility="gone"
-            android:padding="3dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:src="@drawable/ic_participation" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="Add people"
-                android:textColor="#737373"
-                android:textSize="16sp"
-                android:layout_marginStart="10dp"
-                />
-
-        </LinearLayout>
-
-        <LinearLayout
             android:id="@+id/item_change_cover"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="15dp"
             android:clickable="true"
             android:foreground="?attr/selectableItemBackground"
@@ -179,7 +150,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:src="@drawable/ic_cancel_black_24dp" />
+                android:src="@drawable/ic_quit" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -208,19 +179,7 @@
                 android:textStyle="bold"
                 android:textSize="14sp"/>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/main_bottomsheet_particpants_bottomsheet_recyclerview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_margin="5dp"
-                android:background="@android:color/white">
-
-            </android.support.v7.widget.RecyclerView>
-
         </LinearLayout>
-
-
 
 
 

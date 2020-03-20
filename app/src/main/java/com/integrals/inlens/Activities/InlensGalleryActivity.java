@@ -54,6 +54,8 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+import com.integrals.inlens.Helper.AppConstants;
+import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.Helper.NotificationHelper;
 import com.integrals.inlens.Helper.PreOperationCheck;
 import com.integrals.inlens.Models.GalleryImageModel;
@@ -115,7 +117,7 @@ public class InlensGalleryActivity extends AppCompatActivity {
         CommunityStartTime =  getIntent().getStringExtra("CommunityStartTime");
         CommunityEndTime =  getIntent().getStringExtra("CommunityEndTime");
 
-        Ref = FirebaseDatabase.getInstance().getReference().child("Communities");
+        Ref = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.POSTS);
         UserRef =FirebaseDatabase.getInstance().getReference();
         StorageRef = FirebaseStorage.getInstance().getReference().child("situations");
 
@@ -350,17 +352,13 @@ public class InlensGalleryActivity extends AppCompatActivity {
         }
 
 
-        FirebaseDatabase.getInstance().getReference().child("Communities").child(CommunityID).addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.POSTS).child(CommunityID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-
-                if (dataSnapshot.hasChild("posts")) {
-                    for (DataSnapshot snapshot : dataSnapshot.child("posts").getChildren()) {
-                        String uri = snapshot.child("uri").getValue().toString().toLowerCase();
-                        AllImagesInCurrentCommunity.add(uri);
-                    }
-
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String uri = snapshot.child("uri").getValue().toString().toLowerCase();
+                    AllImagesInCurrentCommunity.add(uri);
                 }
 
             }
@@ -672,12 +670,12 @@ public class InlensGalleryActivity extends AppCompatActivity {
 
                                 if (task.isSuccessful()) {
                                     final String downloadUrl = task.getResult().getDownloadUrl().toString();
-                                    String pushid = Ref.child(CommunityID).child("posts").push().getKey();
+                                    String pushid = Ref.child(CommunityID).push().getKey();
                                     Map uploadmap = new HashMap();
                                     uploadmap.put("uri", downloadUrl);
                                     uploadmap.put("by", FirebaseAuth.getInstance().getCurrentUser().getUid());
                                     uploadmap.put("time", ServerValue.TIMESTAMP);
-                                    Ref.child(CommunityID).child("posts").child(pushid).setValue(uploadmap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    Ref.child(CommunityID).child(pushid).setValue(uploadmap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()) {
@@ -752,12 +750,12 @@ public class InlensGalleryActivity extends AppCompatActivity {
 
                                 if (task.isSuccessful()) {
                                     final String downloadUrl = task.getResult().getDownloadUrl().toString();
-                                    String pushid = Ref.child(CommunityID).child("posts").push().getKey();
+                                    String pushid = Ref.child(CommunityID).push().getKey();
                                     Map uploadmap = new HashMap();
                                     uploadmap.put("uri", downloadUrl);
                                     uploadmap.put("by", FirebaseAuth.getInstance().getCurrentUser().getUid());
                                     uploadmap.put("time", ServerValue.TIMESTAMP);
-                                    Ref.child(CommunityID).child("posts").child(pushid).setValue(uploadmap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    Ref.child(CommunityID).child(pushid).setValue(uploadmap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()) {

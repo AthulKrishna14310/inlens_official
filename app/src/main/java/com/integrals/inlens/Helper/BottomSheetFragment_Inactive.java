@@ -27,6 +27,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.integrals.inlens.Activities.InlensGalleryActivity;
 import com.integrals.inlens.MainActivity;
+import com.integrals.inlens.Models.CommunityModel;
 import com.integrals.inlens.R;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -39,20 +40,12 @@ import java.util.List;
 public class BottomSheetFragment_Inactive extends BottomSheetDialogFragment {
 
     public View view;
-    DatabaseReference ParcicipantsRef;
     Context context;
-    RecyclerView ParticipantsRecyclerView;
-    List <String> ParticipantIdList;
-
-    String name, imgurl;
-    String postKeyForEdit;
-    DatabaseReference getParticipantDatabaseReference;
-
-    public BottomSheetFragment_Inactive(Context applicationContext, List<String> participantIDs) {
+    CommunityModel communityModel;
+    public BottomSheetFragment_Inactive(Context applicationContext, CommunityModel communityModel) {
         // Required empty public constructor
         context = applicationContext;
-        getParticipantDatabaseReference = FirebaseDatabase.getInstance().getReference();
-        ParticipantIdList = participantIDs;
+        this.communityModel = communityModel;
 
     }
 
@@ -74,91 +67,19 @@ public class BottomSheetFragment_Inactive extends BottomSheetDialogFragment {
         TextView AlbumBottomStartDate = view.findViewById(R.id.albumstartdate);
         TextView AlbumBottomEndDate = view.findViewById(R.id.albumenddate);
 
-        AlbumTitle.setText(activity.getMyCommunityDetails().get(activity.getPosition()).getTitle());
-        if (TextUtils.isEmpty(activity.getMyCommunityDetails().get(activity.getPosition()).getDescription())) {
+        AlbumTitle.setText(communityModel.getTitle());
+        if (TextUtils.isEmpty(communityModel.getDescription())) {
             AlbumDescription.setVisibility(View.INVISIBLE);
         } else {
-            AlbumDescription.setText(activity.getMyCommunityDetails().get(activity.getPosition()).getDescription());
+            AlbumDescription.setText(communityModel.getDescription());
         }
-        AlbumBottomStartDate.setText(getDate(activity.getMyCommunityDetails().get(activity.getPosition()).getStartTime()));
-        AlbumBottomEndDate.setText(getDate(activity.getMyCommunityDetails().get(activity.getPosition()).getEndTime()));
+        AlbumBottomStartDate.setText(getDate(communityModel.getStartTime()));
+        AlbumBottomEndDate.setText(getDate(communityModel.getEndTime()));
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-        ParticipantsRecyclerView = view.findViewById(R.id.main_bottomsheet_particpants_bottomsheet_recyclerview);
-        ParticipantsRecyclerView.setHasFixedSize(true);
-        GridLayoutManager Gridmanager = new GridLayoutManager(context, 3);
-        ParticipantsRecyclerView.setLayoutManager(Gridmanager);
-        postKeyForEdit=activity.getMyCommunityDetails().get(activity.getPosition()).getCommunityID();
-
-
-        final List<String> MemberImageList = new ArrayList<>();
-        final List<String> MemberNamesList = new ArrayList<>();
-        ParticipantsRecyclerView.removeAllViews();
-
-
-        for (String id : ParticipantIdList)
-        {
-            name="NA";
-            imgurl="NA";
-
-            getParticipantDatabaseReference.child("Users").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    if(dataSnapshot.hasChild("Name"))
-                    {
-                        name=dataSnapshot.child("Name").getValue().toString();
-                        if(!MemberNamesList.contains(name) || !MemberNamesList.contains(id))
-                        {
-                            if (FirebaseAuth.getInstance().getCurrentUser().getUid().equals(id))
-                            {
-                                MemberNamesList.add("You");
-
-                            }
-                            else
-                            {
-                                MemberNamesList.add(name);
-                            }
-
-                        }
-                    }
-                    else
-                    {
-                        MemberNamesList.add(id);
-                    }
-                    if(dataSnapshot.hasChild("Profile_picture"))
-                    {
-                        imgurl=dataSnapshot.child("Profile_picture").getValue().toString();
-                        if(!MemberImageList.contains(imgurl) || !MemberImageList.contains(id))
-                        {
-                            MemberImageList.add(imgurl);
-
-                        }
-                    }
-                    else
-                    {
-                        MemberImageList.add(id);
-
-                    }
-
-
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        }
-
-
-        ParticipantsAdapter adapter = new ParticipantsAdapter(MemberImageList,MemberNamesList,context);
-        ParticipantsRecyclerView.setAdapter(adapter);
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -171,7 +92,7 @@ public class BottomSheetFragment_Inactive extends BottomSheetDialogFragment {
                 activity.setCoverChange(true);
                 activity.setProfileChange(false);
 
-                activity.setPostKeyForEdit(activity.getMyCommunityDetails().get(activity.getPosition()).getCommunityID());
+                activity.setPostKeyForEdit(communityModel.getCommunityID());
 
                 CropImage.activity()
                         .setGuidelines(CropImageView.Guidelines.ON)

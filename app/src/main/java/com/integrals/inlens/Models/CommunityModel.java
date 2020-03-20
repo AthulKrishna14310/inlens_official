@@ -1,15 +1,16 @@
 package com.integrals.inlens.Models;
 
+import android.support.annotation.NonNull;
+
 import com.google.firebase.database.DatabaseReference;
 
-public class CommunityModel {
+public class CommunityModel implements Comparable<CommunityModel> {
 
     private String Title;
     private String Description;
     private String Status;
     private String StartTime;
     private String EndTime;
-    private DatabaseReference ParticipantsRef;
     private String Type;
     private String CoverImage;
     private String Admin;
@@ -20,13 +21,12 @@ public class CommunityModel {
     public CommunityModel() {
     }
 
-    public CommunityModel(String title, String description, String status, String startTime, String endTime, DatabaseReference participantsRef, String type, String coverImage, String admin, String communityID) {
+    public CommunityModel(String title, String description, String status, String startTime, String endTime, String type, String coverImage, String admin, String communityID) {
         Title = title;
         Description = description;
         Status = status;
         StartTime = startTime;
         EndTime = endTime;
-        ParticipantsRef = participantsRef;
         Type = type;
         CoverImage = coverImage;
         Admin = admin;
@@ -81,13 +81,6 @@ public class CommunityModel {
         EndTime = endTime;
     }
 
-    public DatabaseReference getParticipantsRef() {
-        return ParticipantsRef;
-    }
-
-    public void setParticipantsRef(DatabaseReference participantsRef) {
-        ParticipantsRef = participantsRef;
-    }
 
     public String getType() {
         return Type;
@@ -111,5 +104,10 @@ public class CommunityModel {
 
     public void setAdmin(String admin) {
         Admin = admin;
+    }
+
+    @Override
+    public int compareTo(@NonNull CommunityModel communityModel) {
+        return this.getEndTime().compareTo(communityModel.getEndTime());
     }
 }

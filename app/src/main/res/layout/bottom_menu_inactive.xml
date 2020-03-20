@@ -3,16 +3,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-   >
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
 
     <!-- NOTE: This list should be displayed in a list
     instead of nested layouts -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="6dp"
+        android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
-        android:layout_marginRight="6dp"
+        android:layout_marginRight="5dp"
         android:orientation="vertical">
 
         <TextView
@@ -24,7 +25,6 @@
             android:layout_marginEnd="20dp"
             android:gravity="center"
             android:text="Album Header"
-            android:textColor="@color/colorSecondaryDark"
             android:textSize="24sp"
             android:textStyle="bold" />
 
@@ -83,8 +83,7 @@
                 android:gravity="center"
                 android:text="Album subtitle"
                 android:textSize="18sp"
-
-                android:textColor="@color/colorSecondary"
+                android:textStyle="bold"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 />
 
@@ -143,17 +142,6 @@
                 android:textStyle="bold"
                 android:visibility="gone"
                 android:textSize="14sp"/>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/main_bottomsheet_particpants_bottomsheet_recyclerview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_margin="5dp"
-                android:visibility="gone"
-                android:background="@android:color/white">
-
-            </android.support.v7.widget.RecyclerView>
 
         </LinearLayout>
 
