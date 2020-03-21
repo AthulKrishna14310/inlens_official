@@ -2,13 +2,9 @@ package com.integrals.inlens.Helper;
 
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialogFragment;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
@@ -17,24 +13,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.integrals.inlens.Activities.InlensGalleryActivity;
 import com.integrals.inlens.MainActivity;
 import com.integrals.inlens.Models.CommunityModel;
 import com.integrals.inlens.R;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @SuppressLint("ValidFragment")
 public class BottomSheetFragment_Inactive extends BottomSheetDialogFragment {
@@ -42,11 +28,12 @@ public class BottomSheetFragment_Inactive extends BottomSheetDialogFragment {
     public View view;
     Context context;
     CommunityModel communityModel;
-    public BottomSheetFragment_Inactive(Context applicationContext, CommunityModel communityModel) {
+    int pos;
+    public BottomSheetFragment_Inactive(Context applicationContext, CommunityModel communityModel, int position) {
         // Required empty public constructor
         context = applicationContext;
         this.communityModel = communityModel;
-
+        pos=position;
     }
 
     @Override
@@ -91,8 +78,7 @@ public class BottomSheetFragment_Inactive extends BottomSheetDialogFragment {
                 dismiss();
                 activity.setCoverChange(true);
                 activity.setProfileChange(false);
-
-                activity.setPostKeyForEdit(communityModel.getCommunityID());
+                activity.setCommunityKeyForEdit(communityModel.getCommunityID(),pos);
 
                 CropImage.activity()
                         .setGuidelines(CropImageView.Guidelines.ON)
