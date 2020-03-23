@@ -1,14 +1,13 @@
 package com.integrals.inlens.Activities;
 
 import android.content.DialogInterface;
-import android.os.AsyncTask;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.crowdfire.cfalertdialog.CFAlertDialog;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -19,28 +18,35 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.FirebaseConstants;
-import com.integrals.inlens.Helper.HttpHandler;
+import com.integrals.inlens.MainActivity;
 import com.integrals.inlens.R;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
+
 import info.androidhive.barcode.BarcodeReader;
 
 
 public class QRCodeReader extends AppCompatActivity implements BarcodeReader.BarcodeReaderListener {
 
     private BarcodeReader barcodeReader;
-    private DatabaseReference communityRef,userRef,participantRef;
+    private DatabaseReference communityRef, userRef, participantRef;
     String currentUserId;
     ProgressBar qrcodeReaderProgressbar;
+    List<String> userCommunityIdList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qrcode_reader);
         getSupportActionBar().hide();
+
+        userCommunityIdList = getIntent().getExtras().getStringArrayList(AppConstants.USERIDLIST);
+
 
         qrcodeReaderProgressbar = findViewById(R.id.qrcodeReaderProgressbar);
         barcodeReader = (BarcodeReader) getSupportFragmentManager().findFragmentById(R.id.barcode_fragment);
@@ -75,7 +81,7 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
                                         dialog.dismiss();
                                     }
                                 })
-                        .addButton("NO", -1,getResources().getColor( R.color.deep_orange_A400), CFAlertDialog.CFAlertActionStyle.NEGATIVE,
+                        .addButton("NO", -1, getResources().getColor(R.color.deep_orange_A400), CFAlertDialog.CFAlertActionStyle.NEGATIVE,
                                 CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -109,56 +115,7 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
 
     }
 
-    private class checkAlbumExpired extends AsyncTask<Void, Void, Void> {
-        long endtTime;
-        long serverTime;
-        String communityId;
-
-        public checkAlbumExpired(long endtTime,String comId) {
-            this.endtTime = endtTime;
-            communityId = comId;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            HttpHandler httpHandler = new HttpHandler();
-            String jsonStr = httpHandler.makeServiceCall("http://worldtimeapi.org/api/ip");
-
-            if (jsonStr != null) {
-                try {
-                    JSONObject jsonObject = new JSONObject(jsonStr);
-                    String serverTime = jsonObject.getString("unixtime");
-                    this.serverTime = Long.parseLong(serverTime) * 1000;
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            if (this.serverTime < endtTime)
-            {
-                userRef.child(FirebaseConstants.COMMUNITIES).child(communityId).setValue(ServerValue.TIMESTAMP);
-                participantRef.child(communityId).child(currentUserId).setValue(ServerValue.TIMESTAMP);
-                showDialogMessage("New Community","You have been added to a new community.");
-
-            }
-            else
-            {
-                showDialogMessage("Album Inactive","The album has expired or admin has made the album inactive.");
-
-            }
-
-            qrcodeReaderProgressbar.setVisibility(View.GONE);
-
-        }
-    }
-
-    public void showDialogMessage(String title, String message) {
+    public void showDialogMessage(String title, String message, List<String> userCommunityIdList) {
         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle(title)
@@ -170,25 +127,54 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
 
+                                Intent mainIntent = new Intent(QRCodeReader.this, MainActivity.class);
+                                if (userCommunityIdList.size() > 0) {
+                                    mainIntent.putStringArrayListExtra(AppConstants.USERIDLIST, (ArrayList<String>) userCommunityIdList);
+                                }
+                                startActivity(mainIntent);
+                                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                                finish();
+                                dialog.dismiss();
                             }
                         });
         builder.show();
     }
+
     private void AddPhotographerToCommunity(final String communityId) {
 
         communityRef.child(communityId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                if(dataSnapshot.hasChild(FirebaseConstants.COMMUNITYSTATUS)) {
+                if (dataSnapshot.hasChild(FirebaseConstants.COMMUNITYSTATUS)) {
                     long endtime = Long.parseLong(dataSnapshot.child("endtime").getValue().toString());
-                    new checkAlbumExpired(endtime,communityId).execute();
-                }
-                else
-                {
-                    showDialogMessage("Album Inactive","The album has expired or admin has made the album inactive.");
+                    TimeZone timeZone = TimeZone.getDefault();
+                    long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
+                    long serverTimeInMillis = (System.currentTimeMillis() - offsetInMillis);
+
+
+                    if (serverTimeInMillis < endtime) {
+
+                        userRef.child(FirebaseConstants.COMMUNITIES).child(communityId).setValue(ServerValue.TIMESTAMP);
+                        participantRef.child(communityId).child(currentUserId).setValue(ServerValue.TIMESTAMP);
+
+                        List<String> newCommunities = new ArrayList<>();
+                        newCommunities.add(communityId);
+                        newCommunities.addAll(userCommunityIdList);
+                        userCommunityIdList.clear();
+                        userCommunityIdList.addAll(newCommunities);
+                        showDialogMessage("New Community", "You have been added to a new community.", userCommunityIdList);
+
+
+                    } else {
+                        //Log.i("ClickTime","S : "+serverTimeInMillis+" E : "+endtime);
+                        showDialogMessage("Album Inactive", "The album has expired or admin has made the album inactive.", userCommunityIdList);
+
+                    }
+
+                } else {
+                    showDialogMessage("Album Inactive", "The album has expired or admin has made the album inactive.", userCommunityIdList);
 
                 }
 

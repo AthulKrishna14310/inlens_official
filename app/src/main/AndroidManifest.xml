@@ -37,9 +37,6 @@
         <activity
             android:name=".Activities.InlensGalleryActivity"
             android:theme="@style/NoActionBarTheme" />
-        <activity
-            android:name=".Activities.ProfileActivity"
-            android:theme="@style/NoActionBarTheme" />
 
         <receiver android:name=".Notification.MyBroadcastReceiver" />
 
@@ -52,8 +49,8 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:host="inlens.page.link" android:scheme="http"/>
-                <data android:host="inlens.page.link" android:scheme="https"/>
+                <data android:host="inlens.com" android:scheme="http"/>
+                <data android:host="inlens.com" android:scheme="https"/>
             </intent-filter>
         </activity>
         <activity

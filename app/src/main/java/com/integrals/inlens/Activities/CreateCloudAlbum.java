@@ -106,7 +106,6 @@ public class CreateCloudAlbum extends AppCompatActivity {
     List<String> userCommunityIdList;
     String currentUserId;
     static final int DELAY_IN_MILLIS=1000;
-    ValueEventListener listener;
 
 
     @Override
@@ -570,72 +569,76 @@ public class CreateCloudAlbum extends AppCompatActivity {
             SubmitButton.setEnabled(false);
             SetPostImage.setEnabled(false);
             UploadProgress.setVisibility(View.VISIBLE);
+            final String pushid = CommunityDatabaseReference.push().getKey();
+            final DatabaseReference CommunityPost = CommunityDatabaseReference.child(pushid);
+            final Uri DownloadUri = Uri.parse("default");
+            PostKey = pushid;
+            InUserReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    CommunityPost.child("title").setValue(TitleValue);
+                    CommunityPost.child("description").setValue(DescriptionValue);
+                    //CommunityPost.child("coverimage").setValue((DownloadUri).toString());
+                    CommunityPost.child("status").setValue("T");
+                    CommunityPost.child("type").setValue(EventType);
+                    CommunityPost.child("endtime").setValue(GetTimeStamp(AlbumTime));
+                    CommunityPost.child("starttime").setValue(ServerValue.TIMESTAMP);
+                    CommunityPost.child("admin").setValue(UserID);
 
+                    SharedPreferences CurrentActiveCommunity = getSharedPreferences("CurrentCommunity.pref",Context.MODE_PRIVATE);
+                    SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
+                    ceditor.putString("id",pushid);
+                    ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
+                    ceditor.commit();
+
+                    participantRef.child(pushid).child(UserID).setValue(ServerValue.TIMESTAMP);
+
+                    PostDatabaseReference.child(pushid).child("title").setValue(TitleValue);
+
+                    InUserReference.child("live_community").setValue(pushid).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+
+                            if(task.isSuccessful())
+                            {
+
+                                SubmitButton.setEnabled(false);
+                                SetPostImage.setEnabled(false);
+                                UploadProgress.setVisibility(View.GONE);
+                                FirebaseDatabase.getInstance().getReference().child("Users").child(UserID).child("dead_community").removeValue();
+                                showDialogue("Successfully created the Cloud-Album",true);
+
+                            }
+                            else
+                            {
+                                showDialogue("Error creating Cloud-Album. Please check your internet connection and try again",false);
+                                UploadProgress.setVisibility(View.GONE);
+                                SubmitButton.setEnabled(true);
+                                SetPostImage.setEnabled(true);
+                            }
+                        }
+                    });
+
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    showDialogue("Error creating Cloud-Album. Please check your internet " +
+                            "connection and try again",false);
+                    UploadProgress.setVisibility(View.GONE);
+                    SubmitButton.setEnabled(true);
+                    SetPostImage.setEnabled(true);
+
+                    Toast.makeText(CreateCloudAlbum.this, "Sorry database error ...please try again", Toast.LENGTH_LONG).show();
+                }
+            });
+
+
+           /*
             if(ImageUri==null)
             {
-                final String pushid = CommunityDatabaseReference.push().getKey();
-                final DatabaseReference CommunityPost = CommunityDatabaseReference.child(pushid);
-                final Uri DownloadUri = Uri.parse("default");
-                PostKey = pushid;
-                InUserReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        CommunityPost.child("title").setValue(TitleValue);
-                        CommunityPost.child("description").setValue(DescriptionValue);
-                        CommunityPost.child("coverimage").setValue((DownloadUri).toString());
-                        CommunityPost.child("status").setValue("T");
-                        CommunityPost.child("type").setValue(EventType);
-                        CommunityPost.child("endtime").setValue(GetTimeStamp(AlbumTime));
-                        CommunityPost.child("starttime").setValue(ServerValue.TIMESTAMP);
-                        CommunityPost.child("admin").setValue(UserID);
 
-                        SharedPreferences CurrentActiveCommunity = getSharedPreferences("CurrentCommunity.pref",Context.MODE_PRIVATE);
-                        SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
-                        ceditor.putString("id",pushid);
-                        ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
-                        ceditor.commit();
-
-                        participantRef.child(pushid).child(UserID).setValue(ServerValue.TIMESTAMP);
-
-                        PostDatabaseReference.child(pushid).child("title").setValue(TitleValue);
-
-                        InUserReference.child("live_community").setValue(pushid).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-
-                                if(task.isSuccessful())
-                                {
-
-                                    SubmitButton.setEnabled(false);
-                                    SetPostImage.setEnabled(false);
-                                    UploadProgress.setVisibility(View.GONE);
-                                     FirebaseDatabase.getInstance().getReference().child("Users").child(UserID).child("dead_community").removeValue();
-                                     showDialogue("Succesfully created the Cloud-Album",true);
-                                }
-                                else
-                                {
-                                    showDialogue("Error creating Cloud-Album. Please check your internet connection and try again",false);
-                                    UploadProgress.setVisibility(View.GONE);
-                                    SubmitButton.setEnabled(true);
-                                    SetPostImage.setEnabled(true);
-                                }
-                            }
-                        });
-
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        showDialogue("Error creating Cloud-Album. Please check your internet " +
-                                "connection and try again",false);
-                        UploadProgress.setVisibility(View.GONE);
-                        SubmitButton.setEnabled(true);
-                        SetPostImage.setEnabled(true);
-
-                        Toast.makeText(CreateCloudAlbum.this, "Sorry database error ...please try again", Toast.LENGTH_LONG).show();
-                    }
-                });
 
             }
             else
@@ -738,6 +741,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                 });
 
             }
+            */
 
 
         }
@@ -805,6 +809,8 @@ public class CreateCloudAlbum extends AppCompatActivity {
                     .start(this);
             finish();
 
+
+
         }
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
@@ -831,33 +837,30 @@ public class CreateCloudAlbum extends AppCompatActivity {
         {
             currentUserId  =  firebaseAuth.getCurrentUser().getUid();
             ReadFirebaseData readFirebaseData = new ReadFirebaseData();
-            listener= readFirebaseData.readData(userRef.child(currentUserId), new FirebaseRead() {
+            userRef.child(currentUserId).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onSuccess(DataSnapshot datasnapshot) {
+                public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    if (datasnapshot.hasChild(FirebaseConstants.COMMUNITIES)) {
-                        for (DataSnapshot snapshot : datasnapshot.child(FirebaseConstants.COMMUNITIES).getChildren()) {
+                    if (dataSnapshot.hasChild(FirebaseConstants.COMMUNITIES)) {
+                        for (DataSnapshot snapshot : dataSnapshot.child(FirebaseConstants.COMMUNITIES).getChildren()) {
                             userCommunityIdList.add(snapshot.getKey());
                         }
+
+                        Intent mainIntent =  new Intent(CreateCloudAlbum.this, MainActivity.class);
+                        mainIntent.putStringArrayListExtra(AppConstants.USERIDLIST, (ArrayList<String>) userCommunityIdList);
+                        startActivity(mainIntent);
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                        finish();
                     }
-                    Intent mainIntent =  new Intent(CreateCloudAlbum.this, MainActivity.class);
-                    mainIntent.putStringArrayListExtra(AppConstants.USERIDLIST, (ArrayList<String>) userCommunityIdList);
-                    startActivity(mainIntent);
-                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                    finish();
 
                 }
 
                 @Override
-                public void onStart() {
-
-                }
-
-                @Override
-                public void onFailure(DatabaseError databaseError) {
+                public void onCancelled(DatabaseError databaseError) {
 
                 }
             });
+
         }
     }
 
@@ -906,6 +909,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();
+                                    onBackPressed();
                                 }
                             });
 

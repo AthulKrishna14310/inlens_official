@@ -6,10 +6,6 @@
         android:title="@string/change_profile_picture"
         />
 
-    <item android:id="@+id/profile_activity"
-        android:icon="@drawable/ic_photo_library_black_24dp"
-        android:title="@string/my_uploads"/>
-
     <item android:id="@+id/profile_preference_bg_service"
         android:icon="@drawable/ic_perm_device_information_black_24dp"
         android:title="@string/background_service"/>

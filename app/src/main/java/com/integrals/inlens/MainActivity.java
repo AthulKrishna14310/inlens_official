@@ -26,6 +26,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -48,7 +49,6 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -67,7 +67,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
@@ -89,7 +88,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.google.zxing.BarcodeFormat;
@@ -98,7 +96,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.integrals.inlens.Activities.CreateCloudAlbum;
 import com.integrals.inlens.Activities.InlensGalleryActivity;
-import com.integrals.inlens.Activities.ProfileActivity;
+import com.integrals.inlens.Activities.PhotoView;
 import com.integrals.inlens.Activities.QRCodeReader;
 import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.BottomSheetFragment;
@@ -146,10 +144,6 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar MainLoadingProgressBar;
     private Dialog QRCodeDialog;
 
-    private Dialog PostDialog;
-    private ImageView PostDialogImageView;
-    private ProgressBar PostDialogProgressbar;
-
     private String PostKeyForEdit;
     int position;
     private static final int GALLERY_PICK = 1;
@@ -187,7 +181,6 @@ public class MainActivity extends AppCompatActivity {
     String imgurl = "";
     DatabaseReference getParticipantDatabaseReference;
     ExpandableCardView expandableCardView;
-
 
 
     FloatingActionButton mainAddPhotosFab;
@@ -277,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Snackbar.make(RootForMainActivity,"Search is being done and will be completed soon. Thanks for your cooperation.",Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(RootForMainActivity, "Search is being done and will be completed soon. Thank you for your cooperation.", Snackbar.LENGTH_SHORT).show();
 
             }
         });
@@ -314,10 +307,6 @@ public class MainActivity extends AppCompatActivity {
 
                     return true;
 
-                } else if (item.getItemId() == R.id.profile_activity) {
-                    startActivity(new Intent(MainActivity.this, ProfileActivity.class));
-                    overridePendingTransition(R.anim.activity_fade_in, R.anim.activity_fade_out);
-                    return true;
                 }
                 return true;
             }
@@ -409,13 +398,16 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                     for (int i = index; i < end; i++) {
                                         try {
-                                            communityDataList.add(_communityDataList.get(i));
-                                            mainHorizontalAdapter.notifyItemInserted(i);
+                                            // info to avoid repetition
+                                            if (!getCommunityKeys(communityDataList).contains(_communityDataList.get(i).getCommunityID())) {
+                                                communityDataList.add(_communityDataList.get(i));
+                                            }
                                         } catch (IndexOutOfBoundsException e) {
                                         }
 
                                     }
 
+                                    mainHorizontalAdapter.notifyDataSetChanged();
                                 }
                             }, 1000);
                         }
@@ -443,8 +435,7 @@ public class MainActivity extends AppCompatActivity {
         mainVerticalAdapter.setHasStableIds(true);
         MainVerticalRecyclerView.setAdapter(mainVerticalAdapter);
 
-        MainVerticalRecyclerView.addOnScrollListener(new CustomVerticalRecyclerViewScrollListener()
-        {
+        MainVerticalRecyclerView.addOnScrollListener(new CustomVerticalRecyclerViewScrollListener() {
             @Override
             public void show() {
 
@@ -495,7 +486,6 @@ public class MainActivity extends AppCompatActivity {
                         }, 1000);
 
 
-
                     }
 
                 }
@@ -536,7 +526,6 @@ public class MainActivity extends AppCompatActivity {
         FirebaseVariablesInit();
         CheckUserAuthentication();
         checkInternetConnection();
-        InitPostDialog();
 
 
 
@@ -753,8 +742,12 @@ public class MainActivity extends AppCompatActivity {
             }
         } else {
             // Set Content for Samsung
-            Toast.makeText(getApplicationContext(), "Please enable or disable background tasks for your phone  manually", Toast.LENGTH_SHORT).show();
+            showSnackbarMessage("Please enable or disable background tasks for your phone  manually");
         }
+    }
+
+    private void showSnackbarMessage(String message) {
+        Snackbar.make(RootForMainActivity, message, Snackbar.LENGTH_LONG).show();
     }
 
     @Override
@@ -827,8 +820,8 @@ public class MainActivity extends AppCompatActivity {
                                 if (status.equals("T")) {
                                     long endtime = Long.parseLong(snapshot.child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString());
                                     TimeZone timeZone = TimeZone.getDefault();
-                                    long offsetInMillis =  timeZone.getOffset(Calendar.ZONE_OFFSET);
-                                    long serverTimeInMillis = (System.currentTimeMillis()-offsetInMillis);
+                                    long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
+                                    long serverTimeInMillis = (System.currentTimeMillis() - offsetInMillis);
                                     //Log.i("time","Server : "+serverTimeInMillis+" End : "+endtime+" Systemmillis : "+System.currentTimeMillis());
                                     if (serverTimeInMillis >= endtime) {
                                         quitCloudAlbum(true);
@@ -949,7 +942,9 @@ public class MainActivity extends AppCompatActivity {
                 // info sorting by endtime
                 Collections.sort(_communityDataList, Collections.reverseOrder());
                 for (int i = 0; i < _communityDataList.size() && i < 5; i++) {
-                    communityDataList.add(_communityDataList.get(i));
+                    if (!getCommunityKeys(communityDataList).contains(_communityDataList.get(i).getCommunityID())) {
+                        communityDataList.add(_communityDataList.get(i));
+                    }
                 }
                 mainHorizontalAdapter.notifyDataSetChanged();
                 MainHorizontalRecyclerview.scheduleLayoutAnimation();
@@ -1203,11 +1198,14 @@ public class MainActivity extends AppCompatActivity {
                 if (dataSnapshot.hasChild(FirebaseConstants.COMMUNITYSTATUS)) {
                     long endtime = Long.parseLong(dataSnapshot.child("endtime").getValue().toString());
                     TimeZone timeZone = TimeZone.getDefault();
-                    long offsetInMillis =  timeZone.getOffset(Calendar.ZONE_OFFSET);
-                    long serverTimeInMillis = (System.currentTimeMillis()-offsetInMillis);
+                    long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
+                    long serverTimeInMillis = (System.currentTimeMillis() - offsetInMillis);
 
                     if (serverTimeInMillis < endtime) {
+
+                        currentActiveCommunityID = communityId;
                         currentUserRef.child(FirebaseConstants.COMMUNITIES).child(communityId).setValue(ServerValue.TIMESTAMP);
+                        currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).setValue(communityId);
                         participantRef.child(communityId).child(currentUserId).setValue(ServerValue.TIMESTAMP);
 
                         List<String> newCommunities = new ArrayList<>();
@@ -1218,6 +1216,7 @@ public class MainActivity extends AppCompatActivity {
                         getCloudAlbumData(userCommunityIdList);
 
                     } else {
+                        //Log.i("ClickTime","S : "+serverTimeInMillis+" E : "+endtime);
                         showDialogMessage("Album Inactive", "The album has expired or admin has made the album inactive.");
 
                     }
@@ -1271,8 +1270,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void scanQR() {
 
-        if (currentActiveCommunityID.equals("Not Available")) {
-            startActivity(new Intent(MainActivity.this, QRCodeReader.class));
+        if (currentActiveCommunityID.equals(AppConstants.NOTAVALABLE)) {
+            startActivity(new Intent(MainActivity.this, QRCodeReader.class).putStringArrayListExtra(AppConstants.USERIDLIST, (ArrayList<String>) userCommunityIdList));
+
         } else {
             CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
                     .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
@@ -1324,7 +1324,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }, 50);
-
 
 
         try {
@@ -1394,7 +1393,7 @@ public class MainActivity extends AppCompatActivity {
             public void onSuccess(DataSnapshot dataSnapshot) {
                 photographerList.clear();
                 if (currentActiveCommunityID.equals(communityID)) {
-                    photographerList.add(new PhotographerModel("add","add","add"));
+                    photographerList.add(new PhotographerModel("add", "add", "add"));
 
                 }
                 DatabaseReference photographerRef = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -1455,12 +1454,9 @@ public class MainActivity extends AppCompatActivity {
     private List<String> getPhotographerKeys(List<PhotographerModel> photographerList) {
         List<String> keys = new ArrayList<>();
         for (int i = 0; i < photographerList.size(); i++) {
-            try
-            {
+            try {
                 keys.add(photographerList.get(i).getId());
-            }
-            catch (NullPointerException e)
-            {
+            } catch (NullPointerException e) {
                 continue;
             }
         }
@@ -1665,14 +1661,16 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && !COVER_CHANGE && PROFILE_CHANGE) {
 
+            showSnackbarMessage("Profile picture is being uploaded. Please wait.");
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
 
 
                 Uri resultUri = result.getUri();
+                Bitmap bitmap = null;
                 try {
                     InputStream stream = getContentResolver().openInputStream(resultUri);
-                    Bitmap bitmap = BitmapFactory.decodeStream(stream);
+                    bitmap = BitmapFactory.decodeStream(stream);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -1706,39 +1704,40 @@ public class MainActivity extends AppCompatActivity {
                             final String downloadUrl = task.getResult().getDownloadUrl().toString();
 
 
-                            FirebaseDatabase.getInstance().getReference().child("Users").child(current_u_i_d).child("Profile_picture").setValue(downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            currentUserRef.child("Profile_picture").setValue(downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
                                         {
-                                            Toast.makeText(MainActivity.this, "SUCCESSFULLY UPLOADED", Toast.LENGTH_LONG).show();
-
+                                            showSnackbarMessage("Successfully uploaded your profile picture.");
+                                            Glide.with(MainActivity.this).load(downloadUrl).into(mainProfileImageview);
+                                            for(int i=0;i<photographerList.size();i++)
+                                            {
+                                                if(photographerList.get(i).getId().equals(currentUserId))
+                                                {
+                                                    photographerList.get(i).setImgUrl(downloadUrl);
+                                                    participantsAdapter.notifyItemChanged(i);
+                                                }
+                                            }
 
                                         }
                                     } else {
-                                        Toast.makeText(MainActivity.this, "FAILED TO SAVE TO DATABASE.MAKE SURE YOUR INTERNET IS CONNECTED AND TRY AGAIN.", Toast.LENGTH_LONG).show();
-
+                                        showSnackbarMessage("Failed to upload picture. Please try again.");
                                     }
 
                                 }
                             });
                         } else {
-                            Toast.makeText(MainActivity.this, "FAILED TO UPLOAD", Toast.LENGTH_LONG).show();
+                            showSnackbarMessage("Failed to upload picture. Please try again.");
 
                         }
                     }
 
 
-                }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                        Toast.makeText(getApplicationContext(), "Uploading your profile-picture please wait ", Toast.LENGTH_SHORT).show();
-                    }
                 });
 
-
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Toast.makeText(MainActivity.this, "FAILED TO UPLOAD", Toast.LENGTH_LONG).show();
+                showSnackbarMessage("Image cropping error. Please try again.");
             }
         }
 
@@ -1769,19 +1768,19 @@ public class MainActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
                                     //MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-                                    Toast.makeText(MainActivity.this, "Successfully changed the Cover-Photo.", Toast.LENGTH_LONG).show();
+                                    showSnackbarMessage("Successfully uploaded the cover photo.");
                                     communityDataList.get(position).setCoverImage(downloadUrl);
                                     mainHorizontalAdapter.notifyItemChanged(position);
                                 } else {
                                     // MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-                                    Toast.makeText(MainActivity.this, "Unable to perform to change cover now.", Toast.LENGTH_LONG).show();
+                                    showSnackbarMessage("Failed to uploaded the cover photo. Please try again.");
 
                                 }
                             }
                         });
                     } else {
                         //MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-                        Toast.makeText(MainActivity.this, "Unable to perform to change cover now.", Toast.LENGTH_LONG).show();
+                        showSnackbarMessage("Failed to uploaded the cover photo. Please try again.");
 
 
                     }
@@ -1791,27 +1790,13 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     //MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-                    Toast.makeText(MainActivity.this, "Unable to perform to change cover now.", Toast.LENGTH_LONG).show();
-                }
-            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                    double progress =
-                            (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
-                                    .getTotalByteCount());
-                    Toast toast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
-                    toast.setText("Uploading your cover photo  " +
-                            (int) progress + "%  " +
-                            "completed.");
-                    toast.setGravity(Gravity.CENTER, 0, 0);
-                    toast.show();
-
+                    showSnackbarMessage("Failed to uploaded the cover photo. Please try again.");
                 }
             });
 
         } else {
             // MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-            Toast.makeText(MainActivity.this, "Unable to perform to change cover now.", Toast.LENGTH_LONG).show();
+            showSnackbarMessage("Failed to uploaded the cover photo. Please try again.");
         }
 
 
@@ -1851,7 +1836,7 @@ public class MainActivity extends AppCompatActivity {
         final Intent SharingIntent = new Intent(Intent.ACTION_SEND);
         SharingIntent.setType("text/plain");
         SharingIntent.putExtra(Intent.EXTRA_TEXT, "Inlens Community Invite Link \n" + url);
-        MainActivity.this.startActivity(SharingIntent);
+        startActivity(SharingIntent);
 
     }
 
@@ -2003,13 +1988,7 @@ public class MainActivity extends AppCompatActivity {
                 RequestOptions requestOptions = new RequestOptions().placeholder(R.drawable.ic_photo_camera);
 
 
-            /*
-            picasso.load(PostList.get(position).getUri())
-                    .resizeDimen(R.dimen.main_image_dimen200,R.dimen.main_image_dimen200)
-                    .centerCrop()
-                    .into(holder.PostImageView)
-            ;
-             */
+
                 Glide.with(activity)
                         .load(PostList.get(position).getUri())
                         .apply(requestOptions)
@@ -2041,10 +2020,10 @@ public class MainActivity extends AppCompatActivity {
                         }
                         if (dataSnapshot.hasChild("Profile_picture")) {
                             String UploaderImageUrl = dataSnapshot.child("Profile_picture").getValue().toString();
-                            Glide.with(activity).load(UploaderImageUrl).into(holder.PostUploaderImageView);
+                            Glide.with(getApplicationContext()).load(UploaderImageUrl).into(holder.PostUploaderImageView);
 
                         } else {
-                            Glide.with(activity).load(R.drawable.ic_account_circle).into(holder.PostUploaderImageView);
+                            Glide.with(getApplicationContext()).load(R.drawable.ic_account_circle).into(holder.PostUploaderImageView);
 
                         }
 
@@ -2056,28 +2035,18 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-                holder.itemView.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View view, MotionEvent motionEvent) {
-
-                        if (motionEvent.getAction() == MotionEvent.ACTION_UP && PostDialog.isShowing()) {
-                            PostDialog.dismiss();
-                        }
-                        return false;
-                    }
-                });
 
 
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        /*
+
                         Intent i = new Intent(MainActivity.this, PhotoView.class);
                         i.putParcelableArrayListExtra("data", (ArrayList<? extends Parcelable>) PostList);
                         i.putExtra("position", position);
                         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         activity.startActivity(i);
-                         */
+
                     }
                 });
             }
@@ -2092,7 +2061,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public class PostGridViewHolder extends RecyclerView.ViewHolder {
-
             ImageView PostImageView;
             ProgressBar PostProgressbar;
             TextView PostUploaderNameTextView;
@@ -2154,7 +2122,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     selectedAlbumKey = communityDetails.get(selectedAlbumPosition).getCommunityID();
 
-                }else {
+                } else {
                     viewHolder.Indicator.setVisibility(View.INVISIBLE);
                     viewHolder.itemView.setAlpha((float) 0.85);
                 }
@@ -2181,10 +2149,10 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public boolean onLongClick(View view) {
                         if (communityDetails.get(position).getCommunityID().equals(currentActiveCommunityID)) {
-                            BottomSheetFragment bottomSheetFragment = new BottomSheetFragment(activity, communityDetails.get(position),position);
+                            BottomSheetFragment bottomSheetFragment = new BottomSheetFragment(activity, communityDetails.get(position), position);
                             bottomSheetFragment.show(((FragmentActivity) activity).getSupportFragmentManager(), bottomSheetFragment.getTag());
                         } else {
-                            BottomSheetFragment_Inactive bottomSheetFragment_inactive = new BottomSheetFragment_Inactive(activity, communityDetails.get(position),position);
+                            BottomSheetFragment_Inactive bottomSheetFragment_inactive = new BottomSheetFragment_Inactive(activity, communityDetails.get(position), position);
                             bottomSheetFragment_inactive.show(((FragmentActivity) activity).getSupportFragmentManager(), bottomSheetFragment_inactive.getTag());
                         }
                         return false;
@@ -2236,7 +2204,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void setCommunityKeyForEdit(String postKeyForEdit,int pos) {
+    public void setCommunityKeyForEdit(String postKeyForEdit, int pos) {
         PostKeyForEdit = postKeyForEdit;
         position = pos;
     }
