@@ -183,7 +183,15 @@ public class InlensGalleryActivity extends AppCompatActivity {
         else
         {
             DisplayImagesBasedOnTime();
-            GalleyHeaderTextView.setText(CommunityName+" Gallery");
+            if(CommunityName.length() >20)
+            {
+                GalleyHeaderTextView.setText(CommunityName.substring(0,20)+"...");
+            }
+            else
+            {
+                GalleyHeaderTextView.setText(CommunityName+" Gallery");
+            }
+
 
         }
 

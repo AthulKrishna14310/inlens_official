@@ -15,6 +15,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -30,10 +31,13 @@ import android.os.Parcelable;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -57,9 +61,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -67,6 +69,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
@@ -106,10 +109,10 @@ import com.integrals.inlens.Helper.CustomVerticalRecyclerViewScrollListener;
 import com.integrals.inlens.Helper.ExpandableCardView;
 import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.Helper.MainCommunityViewHolder;
+import com.integrals.inlens.Helper.MainHorizontalLoadingViewHolder;
 import com.integrals.inlens.Helper.ParticipantsAdapter;
 import com.integrals.inlens.Helper.ReadFirebaseData;
 import com.integrals.inlens.Interface.FirebaseRead;
-import com.integrals.inlens.Interface.LoadMoreData;
 import com.integrals.inlens.JobScheduler.Scheduler;
 import com.integrals.inlens.Models.CommunityModel;
 import com.integrals.inlens.Models.PhotographerModel;
@@ -119,7 +122,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
-import com.vistrav.ask.Ask;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -131,17 +134,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.TimeZone;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 import id.zelory.compressor.Compressor;
+
+import static com.integrals.inlens.Helper.AppConstants.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE;
 
 
 public class MainActivity extends AppCompatActivity {
 
 
-    private String currentActiveCommunityID = AppConstants.NOTAVALABLE;
-    private List<String> ParticipantIDs;
+    private String currentActiveCommunityID = AppConstants.NOT_AVALABLE;
 
-    private ProgressBar MainLoadingProgressBar;
     private Dialog QRCodeDialog;
 
     private String PostKeyForEdit;
@@ -149,20 +153,13 @@ public class MainActivity extends AppCompatActivity {
     private static final int GALLERY_PICK = 1;
     private static final int COVER_GALLERY_PICK = 78;
     private static boolean COVER_CHANGE = false, PROFILE_CHANGE = false;
-    private static boolean SEARCH_IN_PROGRESS = false;
     private NavigationView navigationView;
     private DrawerLayout RootForMainActivity;
 
-    private int INTID = 3939;
 
     private RecyclerView MainHorizontalRecyclerview, MainVerticalRecyclerView;
-    private Boolean SHOW_TOUR = false;
-
 
     private CircleImageView mainProfileImageview;
-    private ImageButton MainSearchButton, MainBackButton;
-    private EditText MainSearchEdittext;
-    private RelativeLayout MainActionbar, MainSearchView;
 
     private BroadcastReceiver br;
     private RelativeLayout NoInternetView;
@@ -175,11 +172,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     RecyclerView ParticipantsRecyclerView;
-
-
-    String name = "";
-    String imgurl = "";
-    DatabaseReference getParticipantDatabaseReference;
     ExpandableCardView expandableCardView;
 
 
@@ -216,6 +208,11 @@ public class MainActivity extends AppCompatActivity {
     // info : toolbar
     ImageButton mainSearchButton;
 
+    // info onbackpressed
+    AppBarLayout appBarLayout;
+
+    boolean isAppbarOpen = true;
+
     public MainActivity() {
     }
 
@@ -224,6 +221,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // on backpressed
+        appBarLayout = findViewById(R.id.main_appbarlayout);
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (Math.abs(verticalOffset) == appBarLayout.getTotalScrollRange()) {
+                    isAppbarOpen = false;
+                } else isAppbarOpen = verticalOffset == 0;
+            }
+        });
 
         // main actionbar
         mainProfileImageview = findViewById(R.id.mainactivity_actionbar_profileimageview);
@@ -262,9 +270,19 @@ public class MainActivity extends AppCompatActivity {
         // custom function for waiting until firebase read is complete
         readFirebaseData = new ReadFirebaseData();
 
-        // receiving all the community id under the user
-        userCommunityIdList = getIntent().getExtras().getStringArrayList(AppConstants.USERIDLIST);
-        Collections.reverse(userCommunityIdList);
+        // receiving all the community id under the user and sorting them in reverse order to get the latest first
+        try {
+
+            userCommunityIdList = getIntent().getExtras().getStringArrayList(AppConstants.USER_ID_LIST);
+            //info removing all null values
+            if(userCommunityIdList.contains(null))
+            {
+                userCommunityIdList.removeAll(null);
+            }
+            Collections.sort(userCommunityIdList, Collections.reverseOrder());
+        } catch (Exception e) {
+            //
+        }
 
         mainSearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -340,14 +358,32 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                CommunityModel model = getCommunityModel(currentActiveCommunityID);
-                Intent intent = new Intent(getApplicationContext(), InlensGalleryActivity.class);
-                intent.putExtra("CommunityID", currentActiveCommunityID);
-                intent.putExtra("CommunityName", model.getTitle());
-                intent.putExtra("CommunityStartTime", model.getStartTime());
-                intent.putExtra("CommunityEndTime", model.getEndTime());
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                if (ContextCompat.checkSelfPermission(MainActivity.this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
+                            Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                        showPermissionDialog();
+
+                    } else {
+                        ActivityCompat.requestPermissions(MainActivity.this,
+                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+
+
+                    }
+                } else {
+                    CommunityModel model = getCommunityModel(currentActiveCommunityID);
+                    Intent intent = new Intent(getApplicationContext(), InlensGalleryActivity.class);
+                    intent.putExtra("CommunityID", currentActiveCommunityID);
+                    intent.putExtra("CommunityName", model.getTitle());
+                    intent.putExtra("CommunityStartTime", model.getStartTime());
+                    intent.putExtra("CommunityEndTime", model.getEndTime());
+                    startActivity(intent);
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                }
+
             }
         });
 
@@ -389,6 +425,10 @@ public class MainActivity extends AppCompatActivity {
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
+                                    if(communityDataList.get(communityDataList.size()-1)==null)
+                                    {
+                                        communityDataList.remove(communityDataList.size() - 1);
+                                    }
                                     int index = communityDataList.size();
                                     int end;
                                     if (index + 5 > _communityDataList.size()) {
@@ -406,7 +446,9 @@ public class MainActivity extends AppCompatActivity {
                                         }
 
                                     }
-
+                                    if (communityDataList.size() < _communityDataList.size()) {
+                                        communityDataList.add(null);
+                                    }
                                     mainHorizontalAdapter.notifyDataSetChanged();
                                 }
                             }, 1000);
@@ -414,6 +456,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                     }
+
 
                 }
             }
@@ -439,7 +482,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void show() {
 
-                if (!currentActiveCommunityID.equals(AppConstants.NOTAVALABLE)) {
+                if (!currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
                     mainAddPhotosFab.animate().translationY(0).setInterpolator(new AccelerateInterpolator(2)).start();
                 }
             }
@@ -447,7 +490,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void hide() {
 
-                if (!currentActiveCommunityID.equals(AppConstants.NOTAVALABLE)) {
+                if (!currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
                     mainAddPhotosFab.animate().translationY(mainAddPhotosFab.getHeight() + Math.round(TypedValue.applyDimension(
                             TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics()))).setInterpolator(new DecelerateInterpolator(2)).start();
                 }
@@ -455,6 +498,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void loadMore() {
+
 
                 visibleItemCount = staggeredGridLayoutManager.getChildCount();
                 totalItemCount = staggeredGridLayoutManager.getItemCount();
@@ -489,6 +533,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 }
+
 
             }
         });
@@ -623,6 +668,37 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void showPermissionDialog() {
+
+        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
+                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                .setTitle("Storage Permission")
+                .setIcon(R.drawable.ic_info)
+                .setMessage("InLens require storage permission to access your photos. Please enable it and try again.")
+                .setCancelable(false)
+                .addButton("OK", -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                ActivityCompat.requestPermissions(MainActivity.this,
+                                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                        MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+                                dialog.dismiss();
+                            }
+                        })
+                .addButton("CANCEl", -1, getResources().getColor(R.color.deep_orange_A400), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+        builder.show();
+    }
+
     public static void slideView(View view,
                                  int currentHeight,
                                  int newHeight) {
@@ -753,7 +829,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
         SharedPreferences LastShownNotificationInfo = getSharedPreferences("LastNotification.pref", Context.MODE_PRIVATE);
         if (LastShownNotificationInfo.getAll().size() != 1) {
             SharedPreferences.Editor editor = LastShownNotificationInfo.edit();
@@ -908,30 +983,30 @@ public class MainActivity extends AppCompatActivity {
             public void onSuccess(DataSnapshot snapshot) {
 
                 for (String communityId : userCommunityIdList) {
-                    String admin = AppConstants.NOTAVALABLE, coverimage = AppConstants.NOTAVALABLE, description = AppConstants.NOTAVALABLE, endtime = AppConstants.NOTAVALABLE, starttime = AppConstants.NOTAVALABLE, status = AppConstants.NOTAVALABLE, title = AppConstants.NOTAVALABLE, type = AppConstants.NOTAVALABLE;
-                    if (snapshot.child(communityId).hasChild("admin")) {
-                        admin = snapshot.child(communityId).child("admin").getValue().toString();
+                    String admin = AppConstants.NOT_AVALABLE, coverimage = AppConstants.NOT_AVALABLE, description = AppConstants.NOT_AVALABLE, endtime = AppConstants.NOT_AVALABLE, starttime = AppConstants.NOT_AVALABLE, status = AppConstants.NOT_AVALABLE, title = AppConstants.NOT_AVALABLE, type = AppConstants.NOT_AVALABLE;
+                    if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYADMIN)) {
+                        admin = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYADMIN).getValue().toString();
                     }
-                    if (snapshot.child(communityId).hasChild("coverimage")) {
-                        coverimage = snapshot.child(communityId).child("coverimage").getValue().toString();
+                    if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYCOVERIMAGE)) {
+                        coverimage = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYCOVERIMAGE).getValue().toString();
                     }
-                    if (snapshot.child(communityId).hasChild("description")) {
-                        description = snapshot.child(communityId).child("description").getValue().toString();
+                    if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYDESC)) {
+                        description = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYDESC).getValue().toString();
                     }
-                    if (snapshot.child(communityId).hasChild("endtime")) {
-                        endtime = snapshot.child(communityId).child("endtime").getValue().toString();
+                    if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYENDTIME)) {
+                        endtime = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString();
                     }
-                    if (snapshot.child(communityId).hasChild("starttime")) {
-                        starttime = snapshot.child(communityId).child("starttime").getValue().toString();
+                    if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYSTARTTIME)) {
+                        starttime = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYSTARTTIME).getValue().toString();
                     }
-                    if (snapshot.child(communityId).hasChild("status")) {
-                        status = snapshot.child(communityId).child("status").getValue().toString();
+                    if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYSTATUS)) {
+                        status = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYSTATUS).getValue().toString();
                     }
-                    if (snapshot.child(communityId).hasChild("title")) {
-                        title = snapshot.child(communityId).child("title").getValue().toString();
+                    if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYTITLE)) {
+                        title = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYTITLE).getValue().toString();
                     }
-                    if (snapshot.child(communityId).hasChild("type")) {
-                        type = snapshot.child(communityId).child("type").getValue().toString();
+                    if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYTYPE)) {
+                        type = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYTYPE).getValue().toString();
                     }
 
                     CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId);
@@ -946,8 +1021,8 @@ public class MainActivity extends AppCompatActivity {
                         communityDataList.add(_communityDataList.get(i));
                     }
                 }
+                communityDataList.add(null);
                 mainHorizontalAdapter.notifyDataSetChanged();
-                MainHorizontalRecyclerview.scheduleLayoutAnimation();
 
 
             }
@@ -967,7 +1042,9 @@ public class MainActivity extends AppCompatActivity {
     private List<String> getCommunityKeys(List<CommunityModel> communityDataList) {
         List<String> keys = new ArrayList<>();
         for (int i = 0; i < communityDataList.size(); i++) {
-            keys.add(communityDataList.get(i).getCommunityID());
+            if (communityDataList.get(i) != null) {
+                keys.add(communityDataList.get(i).getCommunityID());
+            }
         }
 
         return keys;
@@ -1012,25 +1089,8 @@ public class MainActivity extends AppCompatActivity {
     public void GetStartedWithNewProfileImage() {
         CropImage.activity()
                 .setGuidelines(CropImageView.Guidelines.ON)
+                .setAspectRatio(1, 1)
                 .start(MainActivity.this);
-    }
-
-
-    private void SetDefaultView() {
-
-        SEARCH_IN_PROGRESS = false;
-        MainSearchEdittext.setText("");
-
-        final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm.isAcceptingText()) {
-            imm.hideSoftInputFromWindow(MainSearchEdittext.getWindowToken(), 0);
-        }
-
-        MainSearchView.setVisibility(View.GONE);
-
-        MainActionbar.setVisibility(View.VISIBLE);
-
-
     }
 
 
@@ -1069,7 +1129,7 @@ public class MainActivity extends AppCompatActivity {
         final MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
 
 
-        if (!CommunityID.equals(AppConstants.NOTAVALABLE)) {
+        if (!CommunityID.equals(AppConstants.NOT_AVALABLE)) {
             try {
                 BitMatrix bitMatrix = multiFormatWriter.encode(CommunityID, BarcodeFormat.QR_CODE, 200, 200);
                 BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
@@ -1116,7 +1176,7 @@ public class MainActivity extends AppCompatActivity {
                 if (pendingDynamicLinkData != null) {
                     Uri deeplink = pendingDynamicLinkData.getLink();
                     String communityId = deeplink.toString().replace("https://inlens.com=", "");
-                    if (currentActiveCommunityID.equals(AppConstants.NOTAVALABLE)) {
+                    if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
 
                         // fixme add cancel option too
                         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
@@ -1129,7 +1189,7 @@ public class MainActivity extends AppCompatActivity {
                                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                AddCommunityToUserRef(communityId);
+                                                addCommunityToUserRef(communityId);
                                                 dialog.dismiss();
                                             }
                                         })
@@ -1161,7 +1221,7 @@ public class MainActivity extends AppCompatActivity {
                                             CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
-                                                    AddCommunityToUserRef(communityId);
+                                                    addCommunityToUserRef(communityId);
                                                     dialog.dismiss();
                                                 }
                                             })
@@ -1189,7 +1249,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void AddCommunityToUserRef(final String communityId) {
+    private void addCommunityToUserRef(final String communityId) {
 
         communityRef.child(communityId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -1208,12 +1268,48 @@ public class MainActivity extends AppCompatActivity {
                         currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).setValue(communityId);
                         participantRef.child(communityId).child(currentUserId).setValue(ServerValue.TIMESTAMP);
 
-                        List<String> newCommunities = new ArrayList<>();
-                        newCommunities.add(communityId);
-                        newCommunities.addAll(userCommunityIdList);
-                        userCommunityIdList.clear();
-                        userCommunityIdList.addAll(newCommunities);
-                        getCloudAlbumData(userCommunityIdList);
+                        userCommunityIdList.add(0, communityId);
+                        communityRef.child(communityId).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot snapshot) {
+
+                                String admin = AppConstants.NOT_AVALABLE, coverimage = AppConstants.NOT_AVALABLE, description = AppConstants.NOT_AVALABLE, endtime = AppConstants.NOT_AVALABLE, starttime = AppConstants.NOT_AVALABLE, status = AppConstants.NOT_AVALABLE, title = AppConstants.NOT_AVALABLE, type = AppConstants.NOT_AVALABLE;
+                                if (snapshot.hasChild(FirebaseConstants.COMMUNITYADMIN)) {
+                                    admin = snapshot.child(FirebaseConstants.COMMUNITYADMIN).getValue().toString();
+                                }
+                                if (snapshot.hasChild(FirebaseConstants.COMMUNITYCOVERIMAGE)) {
+                                    coverimage = snapshot.child(FirebaseConstants.COMMUNITYCOVERIMAGE).getValue().toString();
+                                }
+                                if (snapshot.hasChild(FirebaseConstants.COMMUNITYDESC)) {
+                                    description = snapshot.child(FirebaseConstants.COMMUNITYDESC).getValue().toString();
+                                }
+                                if (snapshot.hasChild(FirebaseConstants.COMMUNITYENDTIME)) {
+                                    endtime = snapshot.child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString();
+                                }
+                                if (snapshot.hasChild(FirebaseConstants.COMMUNITYSTARTTIME)) {
+                                    starttime = snapshot.child(FirebaseConstants.COMMUNITYSTARTTIME).getValue().toString();
+                                }
+                                if (snapshot.hasChild(FirebaseConstants.COMMUNITYSTATUS)) {
+                                    status = snapshot.child(FirebaseConstants.COMMUNITYSTATUS).getValue().toString();
+                                }
+                                if (snapshot.hasChild(FirebaseConstants.COMMUNITYTITLE)) {
+                                    title = snapshot.child(FirebaseConstants.COMMUNITYTITLE).getValue().toString();
+                                }
+                                if (snapshot.hasChild(FirebaseConstants.COMMUNITYTYPE)) {
+                                    type = snapshot.child(FirebaseConstants.COMMUNITYTYPE).getValue().toString();
+                                }
+
+                                CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId);
+                                communityDataList.add(0, model);
+                                mainHorizontalAdapter.notifyItemInserted(0);
+                                showSnackbarMessage("You have been added to " + title);
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
 
                     } else {
                         //Log.i("ClickTime","S : "+serverTimeInMillis+" E : "+endtime);
@@ -1240,8 +1336,8 @@ public class MainActivity extends AppCompatActivity {
     private void createAlbum() {
 
 
-        if (currentActiveCommunityID.equals(AppConstants.NOTAVALABLE)) {
-            startActivity(new Intent(MainActivity.this, CreateCloudAlbum.class));
+        if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
+            startActivity(new Intent(MainActivity.this, CreateCloudAlbum.class).putStringArrayListExtra(AppConstants.USER_ID_LIST, (ArrayList<String>) userCommunityIdList));
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             finish();
         } else {
@@ -1249,7 +1345,7 @@ public class MainActivity extends AppCompatActivity {
             CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
                     .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                     .setTitle("Album Active")
-                    .setIcon(R.drawable.ic_warning_black_24dp)
+                    .setIcon(R.drawable.ic_info)
                     .setMessage("You have to leave the currently active album before creating a new album.")
                     .setCancelable(true)
                     .addButton("   Quit album  ", -1, Color.parseColor("#3e3d63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
@@ -1270,14 +1366,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void scanQR() {
 
-        if (currentActiveCommunityID.equals(AppConstants.NOTAVALABLE)) {
-            startActivity(new Intent(MainActivity.this, QRCodeReader.class).putStringArrayListExtra(AppConstants.USERIDLIST, (ArrayList<String>) userCommunityIdList));
+        if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
+            startActivity(new Intent(MainActivity.this, QRCodeReader.class).putStringArrayListExtra(AppConstants.USER_ID_LIST, (ArrayList<String>) userCommunityIdList));
+            finish();
 
         } else {
             CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
                     .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                     .setTitle("Album Active")
-                    .setIcon(R.drawable.ic_warning_black_24dp)
+                    .setIcon(R.drawable.ic_info)
                     .setMessage("You have to leave the currently active album before joining a new album.")
                     .setCancelable(true)
                     .addButton("   Quit album  ", -1, Color.parseColor("#3e3d63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
@@ -1292,23 +1389,6 @@ public class MainActivity extends AppCompatActivity {
             builder.show();
         }
 
-    }
-
-
-    private void PermissionsInit() {
-        Ask.on(this)
-                .id(INTID) // in case you are invoking multiple time Ask from same activity or fragment
-                .forPermissions(
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                        , Manifest.permission.WRITE_EXTERNAL_STORAGE
-                        , Manifest.permission.INTERNET
-                        , Manifest.permission.CAMERA
-                        , Manifest.permission.ACCESS_FINE_LOCATION
-                        , Manifest.permission.RECORD_AUDIO
-                        , Manifest.permission.VIBRATE
-                        , Manifest.permission.SYSTEM_ALERT_WINDOW
-                )
-                .go();
     }
 
 
@@ -1337,7 +1417,7 @@ public class MainActivity extends AppCompatActivity {
                     postImageList.clear();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         String key = snapshot.getKey();
-                        String by = AppConstants.NOTAVALABLE, time = AppConstants.NOTAVALABLE, uri = AppConstants.NOTAVALABLE;
+                        String by = AppConstants.NOT_AVALABLE, time = AppConstants.NOT_AVALABLE, uri = AppConstants.NOT_AVALABLE;
 
                         if (snapshot.hasChild("by")) {
                             by = snapshot.child("by").getValue().toString();
@@ -1361,8 +1441,17 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                     }
-                    mainVerticalAdapter.notifyDataSetChanged();
-                    MainVerticalRecyclerView.scheduleLayoutAnimation();
+                    if (postImageList.size() > 0) {
+                        StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL);
+                        MainVerticalRecyclerView.setLayoutManager(manager);
+                        mainVerticalAdapter.notifyDataSetChanged();
+
+                    } else {
+                        postImageList.add(new PostModel(AppConstants.NOT_AVALABLE, AppConstants.NOT_AVALABLE, AppConstants.NOT_AVALABLE, AppConstants.NOT_AVALABLE));
+                        StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL);
+                        MainVerticalRecyclerView.setLayoutManager(manager);
+                        mainVerticalAdapter.notifyDataSetChanged();
+                    }
 
 
                 }
@@ -1392,17 +1481,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(DataSnapshot dataSnapshot) {
                 photographerList.clear();
+
                 if (currentActiveCommunityID.equals(communityID)) {
                     photographerList.add(new PhotographerModel("add", "add", "add"));
-
                 }
+
                 DatabaseReference photographerRef = FirebaseDatabase.getInstance().getReference().child("Users");
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     photographerRef.child(snapshot.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot userSnapshot) {
 
-                            String name = AppConstants.NOTAVALABLE, imgurl = AppConstants.NOTAVALABLE;
+                            String name = AppConstants.NOT_AVALABLE, imgurl = AppConstants.NOT_AVALABLE;
                             if (userSnapshot.hasChild("Name")) {
                                 if (currentUserId.equals(snapshot.getKey())) {
                                     name = "You";
@@ -1466,18 +1556,23 @@ public class MainActivity extends AppCompatActivity {
 
     public void quitCloudAlbum(boolean forceQuit) {
 
+
         if (forceQuit) {
             communityRef.child(currentActiveCommunityID).child(FirebaseConstants.COMMUNITYSTATUS).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
                         currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).removeValue();
-                        currentActiveCommunityID = AppConstants.NOTAVALABLE;
+                        currentActiveCommunityID = AppConstants.NOT_AVALABLE;
                         mainAddPhotosFab.setVisibility(View.GONE);
                         AlarmManagerHelper alarmManagerHelper =
                                 new AlarmManagerHelper(getApplicationContext());
                         alarmManagerHelper.deinitateAlarmManager();
                         showDialogMessage("Cloud-Album Quit", "Successfully left from the Cloud-Album");
+                        if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
+                            photographerList.remove(0);
+                            participantsAdapter.notifyItemRemoved(0);
+                        }
                         //SetDefaultView();
 
                     } else {
@@ -1528,12 +1623,16 @@ public class MainActivity extends AppCompatActivity {
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     if (task.isSuccessful()) {
                                                         currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).removeValue();
-                                                        currentActiveCommunityID = AppConstants.NOTAVALABLE;
+                                                        currentActiveCommunityID = AppConstants.NOT_AVALABLE;
                                                         mainAddPhotosFab.setVisibility(View.GONE);
                                                         AlarmManagerHelper alarmManagerHelper =
                                                                 new AlarmManagerHelper(getApplicationContext());
                                                         alarmManagerHelper.deinitateAlarmManager();
                                                         showDialogMessage("Cloud-Album Quit", "Successfully left from the Cloud-Album");
+                                                        if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
+                                                            photographerList.remove(0);
+                                                            participantsAdapter.notifyItemRemoved(0);
+                                                        }
                                                         //SetDefaultView();
 
                                                     } else {
@@ -1607,7 +1706,7 @@ public class MainActivity extends AppCompatActivity {
         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle("Cloud-Album Quit")
-                .setIcon(R.drawable.ic_cancel_black_24dp)
+                .setIcon(R.drawable.ic_info)
                 .setMessage("Unable to Quit Cloud-Album. Please check your internet connection or whether you are participating in a Cloud-Album")
                 .setCancelable(false)
                 .addButton("    OK    ", -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE,
@@ -1623,6 +1722,26 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    CommunityModel model = getCommunityModel(currentActiveCommunityID);
+                    Intent intent = new Intent(getApplicationContext(), InlensGalleryActivity.class);
+                    intent.putExtra("CommunityID", currentActiveCommunityID);
+                    intent.putExtra("CommunityName", model.getTitle());
+                    intent.putExtra("CommunityStartTime", model.getStartTime());
+                    intent.putExtra("CommunityEndTime", model.getEndTime());
+                    startActivity(intent);
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                } else {
+                    showPermissionDialog();
+                }
+            }
+        }
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -1645,27 +1764,20 @@ public class MainActivity extends AppCompatActivity {
                     .start(this);
             finish();
 
-        }
-
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && COVER_CHANGE && !PROFILE_CHANGE) {
+        } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && COVER_CHANGE && !PROFILE_CHANGE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
                 Uri ImageUri = result.getUri();
                 //MainBottomSheetAlbumCoverEditUserImage.setImageURI(ImageUri);
                 //MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.VISIBLE);
-                UploadCoverPhoto(ImageUri);
+                uploadCoverPhoto(ImageUri);
             }
-        } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+        } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && !COVER_CHANGE && PROFILE_CHANGE) {
 
-        }
-
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && !COVER_CHANGE && PROFILE_CHANGE) {
-
-            showSnackbarMessage("Profile picture is being uploaded. Please wait.");
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
 
-
+                showSnackbarMessage("Profile picture is being uploaded. Please wait.");
                 Uri resultUri = result.getUri();
                 Bitmap bitmap = null;
                 try {
@@ -1711,10 +1823,8 @@ public class MainActivity extends AppCompatActivity {
                                         {
                                             showSnackbarMessage("Successfully uploaded your profile picture.");
                                             Glide.with(MainActivity.this).load(downloadUrl).into(mainProfileImageview);
-                                            for(int i=0;i<photographerList.size();i++)
-                                            {
-                                                if(photographerList.get(i).getId().equals(currentUserId))
-                                                {
+                                            for (int i = 0; i < photographerList.size(); i++) {
+                                                if (photographerList.get(i).getId().equals(currentUserId)) {
                                                     photographerList.get(i).setImgUrl(downloadUrl);
                                                     participantsAdapter.notifyItemChanged(i);
                                                 }
@@ -1743,9 +1853,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void UploadCoverPhoto(Uri imageUri) {
+    private void uploadCoverPhoto(Uri imageUri) {
 
         // MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.VISIBLE);
+        showSnackbarMessage("Uploading the cover photo. Please wait.");
         if (!TextUtils.isEmpty(PostKeyForEdit) && imageUri != null) {
 
             StorageReference
@@ -1807,26 +1918,18 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
 
 
-        if (SEARCH_IN_PROGRESS) {
-            SetDefaultView();
-        } else if (RootForMainActivity.isDrawerOpen(GravityCompat.START)) {
+        if (RootForMainActivity.isDrawerOpen(GravityCompat.START)) {
             RootForMainActivity.closeDrawer(GravityCompat.START);
         }
-       /*
-        else if (toolbarCustomView.isShown()) {
-            toolbarCustomView.clearAnimation();
-            toolbarCustomView.setAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_back_up));
-            toolbarCustomView.clearAnimation();
-            toolbarCustomView.setVisibility(View.GONE);
-            appBarLayout.setExpanded(true);
-
-            //TODO scroll the recyclerview to the top
-
+        else if(!isAppbarOpen){
+            appBarLayout.setExpanded(true,true);
+            MainVerticalRecyclerView.smoothScrollToPosition(0);
         }
-        */
-        else {
+        else
+        {
             super.onBackPressed();
         }
+
     }
 
 
@@ -1872,7 +1975,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }, 1000);
 
-                    } else {
+                    } else if (state == NetworkInfo.State.DISCONNECTED) {
 
                         NoInternetTextView.setText("Internet connection lost.");
                         NoInternetView.setBackgroundColor(Color.parseColor("#ffc53929"));
@@ -1881,6 +1984,8 @@ public class MainActivity extends AppCompatActivity {
                         NoInternetView.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_up));
                         NoInternetView.getAnimation().start();
                         NoInternetView.setVisibility(View.VISIBLE);
+                    } else {
+                        NoInternetView.setVisibility(View.GONE);
                     }
 
                 }
@@ -1929,7 +2034,7 @@ public class MainActivity extends AppCompatActivity {
         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle(title)
-                .setIcon(R.drawable.ic_info_black_24dp)
+                .setIcon(R.drawable.ic_info)
                 .setMessage(message)
                 .setCancelable(false)
                 .addButton("OK", -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.POSITIVE,
@@ -1944,14 +2049,38 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
+    public class PostGridViewHolder extends RecyclerView.ViewHolder {
+        ImageView PostImageView;
+        ProgressBar PostProgressbar;
+        TextView PostUploaderNameTextView;
+        CircleImageView PostUploaderImageView;
 
-    public class MainVerticalAdapter extends RecyclerView.Adapter<MainVerticalAdapter.PostGridViewHolder> {
+        public PostGridViewHolder(View itemView) {
+            super(itemView);
+
+            PostImageView = itemView.findViewById(R.id.post_layout_imageview);
+            PostProgressbar = itemView.findViewById(R.id.post_layout_progressbar);
+            PostUploaderImageView = itemView.findViewById(R.id.post_layout_userimageview);
+            PostUploaderNameTextView = itemView.findViewById(R.id.post_layout_usernametextview);
+
+        }
+    }
+
+    public class EmptyGridViewHolder extends RecyclerView.ViewHolder {
+        public EmptyGridViewHolder(View itemView) {
+            super(itemView);
+
+        }
+    }
+
+    public class MainVerticalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         List<PostModel> PostList;
         DatabaseReference UserRef;
         Picasso picasso;
         String comID;
         Activity activity;
+        int VIEW_TYPE_PHOTO = 1, VIEW_TYPE_EMPTY = 0;
 
         public MainVerticalAdapter(RecyclerView recyclerView, Activity activity, List<PostModel> postList, DatabaseReference userRef, String ID) {
             this.activity = activity;
@@ -1971,86 +2100,102 @@ public class MainActivity extends AppCompatActivity {
 
         @NonNull
         @Override
-        public PostGridViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-            View view = LayoutInflater.from(activity).inflate(R.layout.post_layout, parent, false);
-            return new MainVerticalAdapter.PostGridViewHolder(view);
+            if (viewType == VIEW_TYPE_EMPTY) {
+                View view = LayoutInflater.from(activity).inflate(R.layout.verticial_recyclerview_empty_layout, parent, false);
+                return new EmptyGridViewHolder(view);
+            } else {
+                View view = LayoutInflater.from(activity).inflate(R.layout.post_layout, parent, false);
+                return new PostGridViewHolder(view);
+            }
+
+        }
+
+
+        @Override
+        public int getItemViewType(int position) {
+
+            return PostList.get(position).getPoskKey().equals(AppConstants.NOT_AVALABLE) &&
+                    PostList.get(position).getPostBy().equals(AppConstants.NOT_AVALABLE) &&
+                    PostList.get(position).getTime().equals(AppConstants.NOT_AVALABLE) &&
+                    PostList.get(position).getUri().equals(AppConstants.NOT_AVALABLE) ? VIEW_TYPE_EMPTY : VIEW_TYPE_PHOTO;
         }
 
         @Override
-        public void onBindViewHolder(@NonNull final PostGridViewHolder holder, final int position) {
+        public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
 
-            if (PostList.get(position) != null) {
-                holder.itemView.clearAnimation();
-                holder.itemView.setAnimation(AnimationUtils.loadAnimation(activity, android.R.anim.fade_in));
-                holder.itemView.getAnimation().start();
+            if (holder instanceof PostGridViewHolder) {
+                PostGridViewHolder viewHolder = (PostGridViewHolder) holder;
+                if (PostList.get(position) != null) {
+                    holder.itemView.clearAnimation();
+                    holder.itemView.setAnimation(AnimationUtils.loadAnimation(activity, android.R.anim.fade_in));
+                    holder.itemView.getAnimation().start();
 
-                RequestOptions requestOptions = new RequestOptions().placeholder(R.drawable.ic_photo_camera);
+                    RequestOptions requestOptions = new RequestOptions().placeholder(R.drawable.ic_photo_camera);
 
 
+                    Glide.with(activity)
+                            .load(PostList.get(position).getUri())
+                            .apply(requestOptions)
+                            .listener(new RequestListener<Drawable>() {
+                                @Override
+                                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                    viewHolder.PostProgressbar.setVisibility(View.GONE);
+                                    return false;
+                                }
 
-                Glide.with(activity)
-                        .load(PostList.get(position).getUri())
-                        .apply(requestOptions)
-                        .listener(new RequestListener<Drawable>() {
-                            @Override
-                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                holder.PostProgressbar.setVisibility(View.GONE);
-                                return false;
+                                @Override
+                                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                    viewHolder.PostProgressbar.setVisibility(View.GONE);
+                                    return false;
+                                }
+                            })
+                            .into(viewHolder.PostImageView);
+
+                    UserRef.child(PostList.get(position).getPostBy()).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+
+                            if (dataSnapshot.hasChild("Name")) {
+                                String name = dataSnapshot.child("Name").getValue().toString();
+                                viewHolder.PostUploaderNameTextView.setText(name);
+
+                            } else {
+                                viewHolder.PostUploaderNameTextView.setText("Unknown");
+                            }
+                            if (dataSnapshot.hasChild("Profile_picture")) {
+                                String UploaderImageUrl = dataSnapshot.child("Profile_picture").getValue().toString();
+                                Glide.with(getApplicationContext()).load(UploaderImageUrl).into(viewHolder.PostUploaderImageView);
+
+                            } else {
+                                Glide.with(getApplicationContext()).load(R.drawable.ic_account_circle).into(viewHolder.PostUploaderImageView);
+
                             }
 
-                            @Override
-                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                                holder.PostProgressbar.setVisibility(View.GONE);
-                                return false;
-                            }
-                        })
-                        .into(holder.PostImageView);
-
-                UserRef.child(PostList.get(position).getPostBy()).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-
-                        if (dataSnapshot.hasChild("Name")) {
-                            String name = dataSnapshot.child("Name").getValue().toString();
-                            holder.PostUploaderNameTextView.setText(name);
-
-                        } else {
-                            holder.PostUploaderNameTextView.setText("Unknown");
-                        }
-                        if (dataSnapshot.hasChild("Profile_picture")) {
-                            String UploaderImageUrl = dataSnapshot.child("Profile_picture").getValue().toString();
-                            Glide.with(getApplicationContext()).load(UploaderImageUrl).into(holder.PostUploaderImageView);
-
-                        } else {
-                            Glide.with(getApplicationContext()).load(R.drawable.ic_account_circle).into(holder.PostUploaderImageView);
-
                         }
 
-                    }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
+                        }
+                    });
 
 
+                    holder.itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
 
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
+                            Intent i = new Intent(MainActivity.this, PhotoView.class);
+                            i.putParcelableArrayListExtra("data", (ArrayList<? extends Parcelable>) PostList);
+                            i.putExtra("position", position);
+                            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            activity.startActivity(i);
 
-                        Intent i = new Intent(MainActivity.this, PhotoView.class);
-                        i.putParcelableArrayListExtra("data", (ArrayList<? extends Parcelable>) PostList);
-                        i.putExtra("position", position);
-                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        activity.startActivity(i);
-
-                    }
-                });
+                        }
+                    });
+                }
             }
-
 
         }
 
@@ -2060,31 +2205,12 @@ public class MainActivity extends AppCompatActivity {
             return PostList.size();
         }
 
-        public class PostGridViewHolder extends RecyclerView.ViewHolder {
-            ImageView PostImageView;
-            ProgressBar PostProgressbar;
-            TextView PostUploaderNameTextView;
-            CircleImageView PostUploaderImageView;
-
-            public PostGridViewHolder(View itemView) {
-                super(itemView);
-
-                PostImageView = itemView.findViewById(R.id.post_layout_imageview);
-                PostProgressbar = itemView.findViewById(R.id.post_layout_progressbar);
-                PostUploaderImageView = itemView.findViewById(R.id.post_layout_userimageview);
-                PostUploaderNameTextView = itemView.findViewById(R.id.post_layout_usernametextview);
-
-            }
-        }
-
-
     }
 
     public class MainHorizontalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         List<CommunityModel> communityDetails;
         private final int VIEW_TYPE_ALBUM = 0, VIEW_TYPE_LOADING = 1;
-        LoadMoreData loadMoreData;
         Activity activity;
         int selectedAlbumPosition = 0;
         String selectedAlbumKey;
@@ -2092,7 +2218,7 @@ public class MainActivity extends AppCompatActivity {
         public MainHorizontalAdapter(List<CommunityModel> communityDetails, Activity activity) {
             this.communityDetails = communityDetails;
             this.activity = activity;
-            selectedAlbumKey = AppConstants.NOTAVALABLE;
+            selectedAlbumKey = AppConstants.NOT_AVALABLE;
         }
 
         @Override
@@ -2102,9 +2228,15 @@ public class MainActivity extends AppCompatActivity {
 
         @NonNull
         @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(activity).inflate(R.layout.album_card, parent, false);
-            return new MainCommunityViewHolder(view);
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            if (viewType == VIEW_TYPE_ALBUM) {
+                View view = LayoutInflater.from(activity).inflate(R.layout.album_card, parent, false);
+                return new MainCommunityViewHolder(view);
+            } else if (viewType == VIEW_TYPE_LOADING) {
+                View view = LayoutInflater.from(activity).inflate(R.layout.item_loading_horizontal, parent, false);
+                return new MainHorizontalLoadingViewHolder(view);
+            }
+            return null;
         }
 
         @Override
@@ -2127,7 +2259,7 @@ public class MainActivity extends AppCompatActivity {
                     viewHolder.itemView.setAlpha((float) 0.85);
                 }
 
-                if (!communityDetails.get(position).equals(AppConstants.NOTAVALABLE)) {
+                if (!communityDetails.get(position).equals(AppConstants.NOT_AVALABLE)) {
 
                     Glide.with(activity)
                             .load(communityDetails.get(position)
@@ -2191,6 +2323,9 @@ public class MainActivity extends AppCompatActivity {
                 viewHolder.AlbumDescriptionTextView.setText(communityDetails.get(position).getDescription());
 
 
+            } else if (holder instanceof MainHorizontalLoadingViewHolder) {
+                MainHorizontalLoadingViewHolder viewHolder = (MainHorizontalLoadingViewHolder) holder;
+                viewHolder.progressBar.setIndeterminate(true);
             }
         }
 

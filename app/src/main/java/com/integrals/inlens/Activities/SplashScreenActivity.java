@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -71,7 +70,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             Intent mainIntent =  new Intent(SplashScreenActivity.this, MainActivity.class);
-                            mainIntent.putStringArrayListExtra(AppConstants.USERIDLIST, (ArrayList<String>) userCommunityIdList);
+                            mainIntent.putStringArrayListExtra(AppConstants.USER_ID_LIST, (ArrayList<String>) userCommunityIdList);
                             startActivity(mainIntent);
                             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                             finish();

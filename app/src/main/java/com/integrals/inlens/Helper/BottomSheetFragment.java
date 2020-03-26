@@ -99,7 +99,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
 
                 CropImage.activity()
                         .setGuidelines(CropImageView.Guidelines.ON)
-                        .setAspectRatio((int) 360, 180)
+                        .setAspectRatio((int) 37, 29)
                         .setFixAspectRatio(true)
                         .start(getActivity());
 
