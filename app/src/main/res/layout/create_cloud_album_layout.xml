@@ -21,7 +21,7 @@
             android:layout_width="@dimen/back_button_size_create_cloud_album_activity"
             android:layout_height="@dimen/back_button_size_create_cloud_album_activity"
             android:layout_marginLeft="@dimen/back_button_margin_left_create_cloud_album_activity"
-            android:background="?attr/selectableItemBackground"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_arrow_back"
             android:layout_marginTop="@dimen/back_button_margin_top_create_cloud_album"
             android:layout_marginBottom="@dimen/back_button_margin_bottom_create_cloud_album"
@@ -40,10 +40,10 @@
                 android:layout_marginLeft="@dimen/underline_margin_left_create_cloud_album_activity"
                 android:layout_marginBottom="@dimen/spacing_middle"
                 android:text="Create Cloud-Album"
-
+                android:fontFamily="@font/base_font"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                 android:textColor="@color/colorPrimary"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 />
 
             <View
@@ -77,6 +77,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="ALBUM NAME"
+                        android:fontFamily="@font/base_font"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
                         android:textColor="@color/grey_40" />
 
@@ -86,6 +87,7 @@
                         android:layout_height="wrap_content"
                         android:inputType="text"
                         android:maxLength="50"
+                        android:fontFamily="@font/base_font"
                         android:maxLines="1"
                         android:singleLine="true"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
@@ -103,6 +105,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="ALBUM DESCRIPTION"
+                        android:fontFamily="@font/base_font"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
                         android:textColor="@color/grey_40" />
 
@@ -112,6 +115,7 @@
                         android:layout_height="wrap_content"
                         android:maxLength="50"
                         android:maxLines="1"
+                        android:fontFamily="@font/base_font"
                         android:inputType="text"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                         android:textColor="@color/colorPrimary"
@@ -126,17 +130,18 @@
     android:layout_marginTop="@dimen/spacing_large"
     android:layout_gravity="center_horizontal"
     >
-                    <android.support.v7.widget.AppCompatCheckBox
-                        android:id="@+id/TimeEditText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                         android:text=" Album-Expiry date"
-                        android:textColor="@color/colorSecondaryDark"
-                        android:layout_centerHorizontal="true"
-                        android:textSize="14sp"
-                        android:layout_centerVertical="true"
 
-                        android:theme="@style/Checkbox.Blue" />
+    <android.support.v7.widget.AppCompatCheckBox
+        android:id="@+id/TimeEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:fontFamily="@font/maven_pro_medium"
+        android:text=" Album-Expiry date"
+        android:textColor="@color/colorSecondaryDark"
+
+        android:textSize="14sp"
+        android:theme="@style/Checkbox.Blue" />
 
                     <ImageButton
                         android:layout_width="@dimen/image_button_create_album_layout_activity"
@@ -156,6 +161,7 @@
                         >
                         <android.support.v7.widget.AppCompatCheckBox
                             android:id="@+id/EventTypeText"
+                            android:fontFamily="@font/base_font"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text=" Album-Event type"
@@ -201,7 +207,8 @@
         style="@style/RippleStyleWhite"
         android:layout_margin="@dimen/done_button_margin_create_cloud_album_activity"
         android:layout_width="fill_parent"
-        android:layout_height="?actionBarSize"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
         android:layout_alignParentBottom="true"
 
         android:background="@drawable/create_cloud_album_done_btn_bg">
@@ -213,6 +220,7 @@
             android:layout_gravity="center"
             android:textSize="18sp"
             android:text="DONE"
+            android:fontFamily="@font/base_font"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
             android:textColor="@color/colorSecondary" />
     </com.balysv.materialripple.MaterialRippleLayout>

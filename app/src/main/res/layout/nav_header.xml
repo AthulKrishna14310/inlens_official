@@ -35,6 +35,7 @@
                  android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
                  android:text="James Pratterson"
+                 android:fontFamily="@font/base_font"
                  android:textAppearance="@style/TextAppearance.AppCompat.Title"
                  android:textColor="@color/grey_90"
                  android:textSize="16sp"/>
@@ -55,10 +56,11 @@
                     android:id="@+id/headerEmailX"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/base_font"
                     android:text="San Francisco, CA"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     android:textColor="@color/grey_60"
-                    android:textSize="12sp" />
+                    android:textSize="10sp" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

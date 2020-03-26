@@ -4,15 +4,17 @@
     android:paddingRight="20dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <TextView
+        android:id="@+id/textTitle"
+        android:layout_margin="6dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:id="@+id/textTitle"
-        android:text="Upload instructions..."
         android:layout_centerHorizontal="true"
+        android:fontFamily="@font/base_font"
+        android:text="Upload instructions..."
         android:textColor="@color/colorPrimaryDark"
-        />
+        android:textSize="24sp" />
 <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -28,15 +30,16 @@
         android:layout_height="40dp"
         android:id="@+id/bttx"
         android:background="@drawable/ic_block_black_24dp"></ImageButton>
+
     <TextView
         android:id="@+id/txt1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:layout_toRightOf="@+id/bttx"
         android:layout_marginLeft="10dp"
+        android:fontFamily="@font/base_font"
+        android:layout_toRightOf="@+id/bttx"
         android:text="Step 1: Close this app"
-        ></TextView>
+        android:textSize="16sp"></TextView>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -63,15 +66,16 @@
             android:layout_height="40dp"
             android:id="@+id/bttx1"
             android:background="@drawable/ic_camera_ga_alt_black_24dp"></ImageButton>
+
         <TextView
+            android:id="@+id/txt2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:layout_toRightOf="@+id/bttx1"
             android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/bttx1"
             android:text="Step 2: Take photos "
-            android:id="@+id/txt2"
-            ></TextView>
+            android:fontFamily="@font/base_font"
+            android:textSize="16sp"></TextView>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -99,15 +103,16 @@
         android:layout_height="40dp"
         android:id="@+id/bttx3"
         android:background="@drawable/ic_notifications_black_24dp"></ImageButton>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:layout_toRightOf="@+id/bttx3"
-        android:layout_marginLeft="10dp"
-        android:id="@+id/txt3"
-        android:text="Step 3: Tap on Notification"
-        ></TextView>
+
+        <TextView
+            android:id="@+id/txt3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/bttx3"
+            android:fontFamily="@font/base_font"
+            android:text="Step 3: Tap on Notification"
+            android:textSize="16sp"></TextView>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -133,15 +138,16 @@
             android:layout_height="40dp"
             android:id="@+id/bttx2"
             android:background="@drawable/ic_add_to_photos_24dp"></ImageButton>
+
         <TextView
+            android:id="@+id/txt4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:id="@+id/txt4"
-            android:layout_toRightOf="@+id/bttx2"
+            android:fontFamily="@font/base_font"
             android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/bttx2"
             android:text="Step 4: Select photos and upload"
-            ></TextView>
+            android:textSize="16sp"></TextView>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

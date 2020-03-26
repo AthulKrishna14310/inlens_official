@@ -37,9 +37,10 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="20dp"
                 android:text="Manual Verification"
+                android:fontFamily="@font/base_font"
                 android:textSize="20sp"
                 android:layout_margin="20dp"
-                android:textColor="#000000"/>
+                android:textColor="@color/colorPrimaryDark"/>
 
             <EditText
                 android:id="@+id/verification_edittext"
@@ -51,6 +52,7 @@
                 android:gravity="center"
                 android:textSize="14sp"
                 android:inputType="number"
+                android:fontFamily="@font/base_font"
                 android:layout_margin="20dp"
                 android:layout_marginTop="20dp"
                 android:textColor="@color/white"
@@ -86,6 +88,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="20dp"
                 android:text="Timeout : 60 s"
+                android:fontFamily="@font/base_font"
                 android:textColor="@color/brightdark"/>
 
             <Button
@@ -98,6 +101,7 @@
                 android:padding="5dp"
                 android:text="Manual Verification"
                 android:textColor="#ffffff"
+                android:fontFamily="@font/base_font"
                 android:textSize="12sp"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
@@ -112,6 +116,7 @@
                 android:textSize="14sp"
                 android:layout_marginTop="10dp"
                 android:layout_margin="20dp"
+                android:fontFamily="@font/base_font"
                 android:textColor="@android:color/holo_red_light"
                 android:text="*NOTE \nGo  for manual verification if automatic verification failed."/>
 

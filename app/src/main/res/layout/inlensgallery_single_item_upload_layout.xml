@@ -15,6 +15,7 @@
         android:text="Inlens gallery upload"
         android:textColor="@color/white"
         android:textSize="14sp"
+        android:fontFamily="@font/base_font"
         android:maxLength="30"
         android:layout_margin="5dp"/>
 
@@ -24,6 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=" 59%"
+        android:fontFamily="@font/base_font"
         android:layout_below="@id/inlens_gallery_dialog_title"
         android:textColor="@color/white"
         android:textSize="13sp"

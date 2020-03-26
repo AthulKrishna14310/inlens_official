@@ -42,7 +42,8 @@
                         <RelativeLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal">
+                            android:orientation="horizontal"
+                            android:background="@color/white">
 
 
                             <android.support.v7.widget.RecyclerView
@@ -85,7 +86,7 @@
                                         android:layout_gravity="center_horizontal"
                                         android:gravity="center"
                                         android:text="New"
-                                        android:textSize="10sp"
+                                        android:textSize="12sp"
                                         android:textColor="@color/black"
                                         android:background="@drawable/rounded_corners"
                                         android:backgroundTint="@color/white"
@@ -150,15 +151,21 @@
                             >
                         </com.integrals.inlens.Helper.ExpandableCardView>
 
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:background="@android:color/darker_gray" />
                         <TextView
+                            android:layout_margin="10dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Photos"
                             android:id="@+id/photoText"
                             android:textSize="16sp"
+                            android:fontFamily="@font/base_font"
                             android:layout_below="@id/photographers"
                             android:layout_marginStart="10dp"
-                            android:textColor="@color/black">
+                            android:textColor="@color/colorPrimaryDark">
                         </TextView>
 
                     </LinearLayout>
@@ -189,6 +196,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerInParent="true"
                                     android:text="@string/app_name"
+                                    android:fontFamily="@font/base_font"
                                     android:textColor="@color/colorPrimary"
                                     android:textSize="20sp"
                                     android:textStyle="bold"
@@ -212,8 +220,7 @@
                                     android:layout_alignParentEnd="true"
                                     android:layout_centerVertical="true"
                                     android:layout_margin="5dp"
-                                    android:foreground="?attr/selectableItemBackgroundBorderless"
-                                    android:background="@android:color/transparent"
+                                    android:background="?selectableItemBackgroundBorderless"
                                     android:src="@drawable/ic_search" />
 
                             </RelativeLayout>

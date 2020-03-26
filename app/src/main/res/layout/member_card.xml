@@ -36,6 +36,7 @@
             android:layout_centerVertical="false"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
+            android:fontFamily="@font/base_font"
             android:layout_marginBottom="5dp"
             android:maxLength="9"
             android:text="username"
