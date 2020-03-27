@@ -11,33 +11,13 @@ public class CustomHorizontalRecyclerViewScrollListener extends RecyclerView.OnS
     public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
         super.onScrolled(recyclerView, dx, dy);
 
-        if (isVisible && scrollDist > MINIMUM) {
-            hide();
-            scrollDist = 0;
-            isVisible = false;
-        }
-        else if (!isVisible && scrollDist < -MINIMUM) {
-            show();
-            scrollDist = 0;
-            isVisible = true;
-        }
-        else  if(dx > MINIMUM)
+
+        if(dx > MINIMUM)
         {
             loadMore();
         }
 
-        if ((isVisible && dx > 0) || (!isVisible && dx < 0)) {
-            scrollDist += dx;
-        }
 
-
-    }
-
-    public void show() {
-
-    }
-
-    public void hide() {
 
     }
 

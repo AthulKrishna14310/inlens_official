@@ -69,6 +69,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -101,6 +102,7 @@ import com.integrals.inlens.Activities.CreateCloudAlbum;
 import com.integrals.inlens.Activities.InlensGalleryActivity;
 import com.integrals.inlens.Activities.PhotoView;
 import com.integrals.inlens.Activities.QRCodeReader;
+import com.integrals.inlens.Helper.AlbumOptionsBottomSheetFragment;
 import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.BottomSheetFragment;
 import com.integrals.inlens.Helper.BottomSheetFragment_Inactive;
@@ -110,6 +112,7 @@ import com.integrals.inlens.Helper.ExpandableCardView;
 import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.Helper.MainCommunityViewHolder;
 import com.integrals.inlens.Helper.MainHorizontalLoadingViewHolder;
+import com.integrals.inlens.Helper.MainHorizontalOptionsViewHolder;
 import com.integrals.inlens.Helper.ParticipantsAdapter;
 import com.integrals.inlens.Helper.ReadFirebaseData;
 import com.integrals.inlens.Interface.FirebaseRead;
@@ -141,7 +144,7 @@ import id.zelory.compressor.Compressor;
 import static com.integrals.inlens.Helper.AppConstants.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AlbumOptionsBottomSheetFragment.IScanCallback, AlbumOptionsBottomSheetFragment.ICreateCallback {
 
 
     private String currentActiveCommunityID = AppConstants.NOT_AVALABLE;
@@ -189,13 +192,8 @@ public class MainActivity extends AppCompatActivity {
     // info : underscore tells that the second one is a copy of the first
     List<CommunityModel> communityDataList = new ArrayList<>(), _communityDataList = new ArrayList<>();
 
-    // info : linearlayout for scan and new album
-    LinearLayout mainAlbumMenu;
 
     List<PostModel> postImageList = new ArrayList<>(), _postImageList = new ArrayList<>();
-
-
-    private ImageButton mainNewAlbumButton, mainScanQrButton;
 
     // info : for vertical recyclerviewScrolling
     int lastVisiblesItems, visibleItemCount, totalItemCount;
@@ -237,11 +235,6 @@ public class MainActivity extends AppCompatActivity {
         mainProfileImageview = findViewById(R.id.mainactivity_actionbar_profileimageview);
         mainSearchButton = findViewById(R.id.mainactivity_actionbar_searchbutton);
 
-        // scan and new albumbutton of main plus the menu
-        mainNewAlbumButton = findViewById(R.id.main_horizontal_new_album_button);
-        mainScanQrButton = findViewById(R.id.main_horizontal_scan_button);
-        mainAlbumMenu = findViewById(R.id.mainAlbumMenu);
-
         // Fab
         mainAddPhotosFab = findViewById(R.id.fabadd);
 
@@ -275,8 +268,7 @@ public class MainActivity extends AppCompatActivity {
 
             userCommunityIdList = getIntent().getExtras().getStringArrayList(AppConstants.USER_ID_LIST);
             //info removing all null values
-            if(userCommunityIdList.contains(null))
-            {
+            if (userCommunityIdList.contains(null)) {
                 userCommunityIdList.removeAll(null);
             }
             Collections.sort(userCommunityIdList, Collections.reverseOrder());
@@ -338,21 +330,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        mainNewAlbumButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                createAlbum();
-            }
-        });
-
-        mainScanQrButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                scanQR();
-            }
-        });
 
         mainAddPhotosFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -396,19 +374,6 @@ public class MainActivity extends AppCompatActivity {
 
         MainHorizontalRecyclerview.addOnScrollListener(new CustomHorizontalRecyclerViewScrollListener() {
             @Override
-            public void show() {
-
-                mainAlbumMenu.animate().translationX(0).setInterpolator(new DecelerateInterpolator(2));
-
-            }
-
-            @Override
-            public void hide() {
-
-                mainAlbumMenu.animate().translationX(mainAlbumMenu.getWidth()).setInterpolator(new AccelerateInterpolator(2));
-            }
-
-            @Override
             public void loadMore() {
 
                 LinearLayoutManager manager = (LinearLayoutManager) MainHorizontalRecyclerview.getLayoutManager();
@@ -425,9 +390,12 @@ public class MainActivity extends AppCompatActivity {
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if(communityDataList.get(communityDataList.size()-1)==null)
+                                    for(int i=communityDataList.size()-1;i>-1;i--)
                                     {
-                                        communityDataList.remove(communityDataList.size() - 1);
+                                        if(communityDataList.get(i)==null)
+                                        {
+                                            communityDataList.remove(i);
+                                        }
                                     }
                                     int index = communityDataList.size();
                                     int end;
@@ -966,17 +934,37 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // todo  delete this
-    public String getDate(long time) {
-        try {
-            CharSequence Time = DateUtils.getRelativeDateTimeString(MainActivity.this, time, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
-            return String.valueOf(Time);
-        } catch (NumberFormatException e) {
-            return "Nil";
-        }
-    }
 
     private void getCloudAlbumData(ArrayList<String> userCommunityIdList) {
+
+        if(communityDataList.size()==0)
+        {
+            communityDataList.add(new CommunityModel(
+                AppConstants.NOT_AVALABLE,
+                AppConstants.NOT_AVALABLE,
+                AppConstants.NOT_AVALABLE,
+                AppConstants.NOT_AVALABLE,
+                AppConstants.NOT_AVALABLE,
+                AppConstants.NOT_AVALABLE,
+                AppConstants.NOT_AVALABLE,
+                AppConstants.NOT_AVALABLE,
+                AppConstants.MORE_OPTIONS
+            ));
+        }
+        else if(!communityDataList.get(0).getCommunityID().equals(AppConstants.MORE_OPTIONS) )
+        {
+            communityDataList.add(0,new CommunityModel(
+                    AppConstants.NOT_AVALABLE,
+                    AppConstants.NOT_AVALABLE,
+                    AppConstants.NOT_AVALABLE,
+                    AppConstants.NOT_AVALABLE,
+                    AppConstants.NOT_AVALABLE,
+                    AppConstants.NOT_AVALABLE,
+                    AppConstants.NOT_AVALABLE,
+                    AppConstants.NOT_AVALABLE,
+                    AppConstants.MORE_OPTIONS
+            ));
+        }
 
         communitiesDataListener = readFirebaseData.readData(communityRef, new FirebaseRead() {
             @Override
@@ -1019,6 +1007,13 @@ public class MainActivity extends AppCompatActivity {
                 for (int i = 0; i < _communityDataList.size() && i < 5; i++) {
                     if (!getCommunityKeys(communityDataList).contains(_communityDataList.get(i).getCommunityID())) {
                         communityDataList.add(_communityDataList.get(i));
+                    }
+                }
+                for(int i=communityDataList.size()-1;i>-1;i--)
+                {
+                    if(communityDataList.get(i)==null)
+                    {
+                        communityDataList.remove(i);
                     }
                 }
                 communityDataList.add(null);
@@ -1301,7 +1296,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId);
                                 communityDataList.add(0, model);
-                                mainHorizontalAdapter.notifyItemInserted(0);
+                                mainHorizontalAdapter.notifyItemInserted(1);
                                 showSnackbarMessage("You have been added to " + title);
                             }
 
@@ -1333,7 +1328,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void createAlbum() {
+    public void createAlbum() {
 
 
         if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
@@ -1364,7 +1359,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void scanQR() {
+    public void scanQR() {
 
         if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
             startActivity(new Intent(MainActivity.this, QRCodeReader.class).putStringArrayListExtra(AppConstants.USER_ID_LIST, (ArrayList<String>) userCommunityIdList));
@@ -1849,6 +1844,7 @@ public class MainActivity extends AppCompatActivity {
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 showSnackbarMessage("Image cropping error. Please try again.");
             }
+
         }
 
     }
@@ -1920,13 +1916,10 @@ public class MainActivity extends AppCompatActivity {
 
         if (RootForMainActivity.isDrawerOpen(GravityCompat.START)) {
             RootForMainActivity.closeDrawer(GravityCompat.START);
-        }
-        else if(!isAppbarOpen){
-            appBarLayout.setExpanded(true,true);
+        } else if (!isAppbarOpen) {
+            appBarLayout.setExpanded(true, true);
             MainVerticalRecyclerView.smoothScrollToPosition(0);
-        }
-        else
-        {
+        } else {
             super.onBackPressed();
         }
 
@@ -2210,9 +2203,9 @@ public class MainActivity extends AppCompatActivity {
     public class MainHorizontalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         List<CommunityModel> communityDetails;
-        private final int VIEW_TYPE_ALBUM = 0, VIEW_TYPE_LOADING = 1;
+        private final int VIEW_TYPE_ALBUM = 0, VIEW_TYPE_LOADING = 1,VIEW_TYPE_OPTIONS = -1;
         Activity activity;
-        int selectedAlbumPosition = 0;
+        int selectedAlbumPosition = 1;
         String selectedAlbumKey;
 
         public MainHorizontalAdapter(List<CommunityModel> communityDetails, Activity activity) {
@@ -2223,7 +2216,15 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getItemViewType(int position) {
-            return communityDetails.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ALBUM;
+            if(communityDetails.get(position) == null)
+            {
+                return VIEW_TYPE_LOADING;
+            }
+            else
+            {
+                return communityDetails.get(position).getCommunityID().equals(AppConstants.MORE_OPTIONS) ? VIEW_TYPE_OPTIONS : VIEW_TYPE_ALBUM;
+
+            }
         }
 
         @NonNull
@@ -2235,6 +2236,11 @@ public class MainActivity extends AppCompatActivity {
             } else if (viewType == VIEW_TYPE_LOADING) {
                 View view = LayoutInflater.from(activity).inflate(R.layout.item_loading_horizontal, parent, false);
                 return new MainHorizontalLoadingViewHolder(view);
+            }
+            else if(viewType ==VIEW_TYPE_OPTIONS)
+            {
+                View view = LayoutInflater.from(activity).inflate(R.layout.album_options_card, parent, false);
+                return new MainHorizontalOptionsViewHolder(view);
             }
             return null;
         }
@@ -2326,6 +2332,17 @@ public class MainActivity extends AppCompatActivity {
             } else if (holder instanceof MainHorizontalLoadingViewHolder) {
                 MainHorizontalLoadingViewHolder viewHolder = (MainHorizontalLoadingViewHolder) holder;
                 viewHolder.progressBar.setIndeterminate(true);
+            }
+            else if(holder instanceof MainHorizontalOptionsViewHolder)
+            {
+                MainHorizontalOptionsViewHolder viewHolder = (MainHorizontalOptionsViewHolder) holder;
+                viewHolder.imageview.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        AlbumOptionsBottomSheetFragment optionsBottomSheetFragment = new AlbumOptionsBottomSheetFragment(activity);
+                        optionsBottomSheetFragment.show(((FragmentActivity) activity).getSupportFragmentManager(), optionsBottomSheetFragment.getTag());
+                    }
+                });
             }
         }
 

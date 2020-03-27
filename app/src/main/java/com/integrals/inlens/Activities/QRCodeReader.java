@@ -248,7 +248,14 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
 
     }
 
-
+    @Override
+    public void onBackPressed() {
+        Intent mainIntent = new Intent(QRCodeReader.this, MainActivity.class);
+        mainIntent.putStringArrayListExtra(AppConstants.USER_ID_LIST, (ArrayList<String>) userCommunityIdList);
+        startActivity(mainIntent);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        finish();
+    }
 }
 
 
