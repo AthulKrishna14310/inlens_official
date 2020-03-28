@@ -11,29 +11,30 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="5dp"
+
+
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/AlbumTitleBottom"
+            android:textAlignment="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="16dp"
+            android:textColor="@color/colorSecondaryDark"
             android:layout_marginEnd="20dp"
-            android:gravity="center"
+            android:fontFamily="@font/base_font"
             android:text="Album Header"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:textSize="20sp"
+            />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
+
             android:layout_marginTop="@dimen/spacing_small"
-            android:layout_marginEnd="20dp"
+
             android:orientation="vertical">
 
             <LinearLayout
@@ -45,13 +46,12 @@
                     android:id="@+id/albumstartdate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="3dp"
-                    android:layout_marginEnd="2dp"
                     android:layout_weight="1"
+                    android:layout_marginRight="5dp"
+                    android:fontFamily="@font/base_font"
                     android:background="@drawable/starttime_background"
                     android:gravity="center"
                     android:inputType="text"
-                    android:padding="2dp"
                     android:text="end"
                     android:textColor="@color/white"
                     android:textSize="12sp" />
@@ -60,12 +60,11 @@
                     android:id="@+id/albumenddate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="2dp"
-                    android:layout_marginEnd="3dp"
                     android:layout_weight="1"
                     android:background="@drawable/endtime_background"
-
+                    android:fontFamily="@font/base_font"
                     android:gravity="center"
+                    android:layout_marginLeft="5dp"
                     android:inputType="text"
                     android:padding="2dp"
                     android:text="end"
@@ -80,10 +79,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
-                android:gravity="center"
                 android:text="Album subtitle"
-                android:textSize="18sp"
-                android:textStyle="bold"
+                android:textAlignment="center"
+                android:textColor="@color/colorSecondaryDark"
+                android:textSize="16sp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 />
 
@@ -92,27 +91,28 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="10dp"
             android:text="Options"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
-
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray" />
         <LinearLayout
             android:id="@+id/item_change_cover"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="15dp"
             android:clickable="true"
             android:foreground="?attr/selectableItemBackground"
             android:orientation="horizontal"
-            android:padding="3dp">
+            android:padding="10dp">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="16dp"
                 android:src="@drawable/ic_coverphoto" />
 
             <TextView
@@ -121,16 +121,21 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="10dp"
                 android:text="Change cover"
-                android:textColor="#737373"
+                android:textColor="@color/colorSecondary"
                 android:textSize="18sp" />
 
         </LinearLayout>
 
-
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_gravity="bottom"
+            android:background="@android:color/darker_gray" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
+            android:visibility="gone"
             android:layout_margin="10dp"
             android:background="@android:color/white"
             android:orientation="vertical">

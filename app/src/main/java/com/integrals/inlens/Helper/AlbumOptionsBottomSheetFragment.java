@@ -12,13 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.integrals.inlens.MainActivity;
 import com.integrals.inlens.R;
 
 @SuppressLint("ValidFragment")
 public class AlbumOptionsBottomSheetFragment extends BottomSheetDialogFragment {
-    LinearLayout scanLayout,createLayout;
+    RelativeLayout scanLayout,createLayout;
     ImageButton scanImageButton,createImageButton;
 
 

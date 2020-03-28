@@ -19,12 +19,14 @@
             android:id="@+id/LeftPhotoSwipe"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
             android:layout_centerVertical="true"
             android:background="@drawable/ic_swipe_left" />
 
         <Button
             android:id="@+id/RightPhotoSwipe"
             android:layout_width="40dp"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
             android:layout_height="40dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
@@ -128,7 +130,7 @@
                 android:layout_toRightOf="@+id/WeatherButton"
                 android:text="Weather"
                 android:textAlignment="center"
-                android:textColor="#FFF"
+                android:textColor="@color/white"
                 android:textSize="12sp" />
 
         </RelativeLayout>

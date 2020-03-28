@@ -28,10 +28,11 @@
             android:layout_gravity="center"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
+            android:fontFamily="@font/base_font"
             android:gravity="center"
             android:text="Album Header"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:textSize="20sp"
+            android:textColor="@color/colorSecondaryDark"/>
 
 
         <LinearLayout
@@ -89,8 +90,9 @@
                 android:gravity="center"
                 android:text="Album subtitle"
                 android:layout_gravity="center"
-                android:textSize="18sp"
-                android:textStyle="bold"
+                android:textSize="16sp"
+                android:fontFamily="@font/base_font"
+                android:textColor="@color/colorSecondaryDark"
                 android:layout_marginTop="10dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 />
@@ -106,17 +108,19 @@
             android:textSize="14sp"
             android:layout_marginTop="10dp"
             android:layout_marginStart="10dp"/>
-
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray" />
         <LinearLayout
             android:id="@+id/item_change_cover"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="15dp"
+
             android:clickable="true"
             android:foreground="?attr/selectableItemBackground"
             android:orientation="horizontal"
-            android:padding="3dp">
+            android:padding="10dp">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -129,22 +133,25 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text="Change Cloud-Album cover"
-                android:textColor="#737373"
+                android:textColor="@color/colorSecondary"
                 android:textSize="16sp"
+                android:fontFamily="@font/base_font"
                 android:layout_marginStart="10dp"
                 />
 
         </LinearLayout>
-
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray" />
         <LinearLayout
             android:id="@+id/item_quit_cloud_album"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
             android:clickable="true"
             android:foreground="?attr/selectableItemBackground"
             android:orientation="horizontal"
-            android:padding="3dp">
+            android:padding="15dp">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -157,8 +164,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text="@string/quit_cloud_album"
-                android:textColor="#737373"
+                android:textColor="@color/colorSecondary"
                 android:textSize="16sp"
+                android:fontFamily="@font/base_font"
                 android:layout_marginStart="10dp"/>
 
         </LinearLayout>
