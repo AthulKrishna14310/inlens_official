@@ -45,6 +45,7 @@ dependencies {
     implementation 'com.crowdfire.cfalertdialog:cfalertdialog:1.1.0'
     implementation 'info.androidhive:barcode-reader:1.1.5'
     implementation 'com.google.android.gms:play-services-vision:11.0.2'
+    implementation 'com.skyfishjy.ripplebackground:library:1.0.1'
 
     implementation 'id.zelory:compressor:2.1.0'
     implementation 'de.hdodenhof:circleimageview:2.1.0'

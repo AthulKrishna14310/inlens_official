@@ -60,6 +60,7 @@ import com.integrals.inlens.Helper.NotificationHelper;
 import com.integrals.inlens.Helper.PreOperationCheck;
 import com.integrals.inlens.Models.GalleryImageModel;
 import com.integrals.inlens.R;
+import com.skyfishjy.library.RippleBackground;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -402,23 +403,8 @@ public class InlensGalleryActivity extends AppCompatActivity {
                 }
 
                 if (AllCommunityImages.size() == 0) {
-                    final View customLayout = getLayoutInflater().inflate(R.layout.dialog_layout_inlens_gallery, null);
-
-
-                    new AlertDialog.Builder(InlensGalleryActivity.this)
-                            .setMessage(" ")
-                            .setPositiveButton("Ok, I understand", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-
-                                    dialogInterface.dismiss();
-
-                                }
-                            })
-                            .setView(customLayout)
-                            .setCancelable(true)
-                            .create()
-                            .show();
+                    final RippleBackground rippleBackground=(RippleBackground)findViewById(R.id.content);
+                    rippleBackground.startRippleAnimation();
                 }
 
             }
