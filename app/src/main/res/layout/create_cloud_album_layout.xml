@@ -133,11 +133,13 @@
 
     <android.support.v7.widget.AppCompatCheckBox
         android:id="@+id/TimeEditText"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:fontFamily="@font/maven_pro_medium"
         android:text=" Album-Expiry date"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
         android:textColor="@color/colorSecondaryDark"
 
         android:textSize="14sp"
@@ -159,18 +161,19 @@
                         android:layout_marginTop="@dimen/spacing_large"
                         android:layout_gravity="center_horizontal"
                         >
-                        <android.support.v7.widget.AppCompatCheckBox
-                            android:id="@+id/EventTypeText"
-                            android:fontFamily="@font/base_font"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text=" Album-Event type"
-                            android:textColor="@color/colorSecondaryDark"
-                            android:layout_centerHorizontal="true"
-                            android:textSize="14sp"
-                            android:layout_centerVertical="true"
 
-                            android:theme="@style/Checkbox.Blue" />
+                       <android.support.v7.widget.AppCompatCheckBox
+                           android:id="@+id/EventTypeText"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:layout_centerInParent="true"
+                           android:fontFamily="@font/base_font"
+                           android:text=" Album-Event type"
+                           android:textColor="@color/colorSecondaryDark"
+                           android:layout_marginLeft="50dp"
+                           android:layout_marginRight="50dp"
+                           android:textSize="14sp"
+                           android:theme="@style/Checkbox.Blue" />
 
                         <ImageButton
                             android:layout_width="@dimen/image_button_create_album_layout_activity"

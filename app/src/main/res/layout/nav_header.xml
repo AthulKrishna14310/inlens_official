@@ -11,7 +11,7 @@
     <LinearLayout
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:padding="@dimen/spacing_mlarge"
+        android:padding="10dp"
         android:clickable="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -36,8 +36,7 @@
                  android:layout_height="wrap_content"
                  android:text="James Pratterson"
                  android:fontFamily="@font/base_font"
-                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                 android:textColor="@color/grey_90"
+                 android:textColor="@color/colorPrimary"
                  android:textSize="16sp"/>
 
             <LinearLayout android:gravity="center"
@@ -60,7 +59,7 @@
                     android:text="San Francisco, CA"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     android:textColor="@color/grey_60"
-                    android:textSize="10sp" />
+                    android:textSize="12sp" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
