@@ -19,6 +19,9 @@ import com.integrals.inlens.R;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.util.Calendar;
+import java.util.TimeZone;
+
 //// to do if
 
 @SuppressLint("ValidFragment")
@@ -125,6 +128,9 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
         try
         {
             long time = Long.parseLong(timestamp);
+            TimeZone timeZone = TimeZone.getDefault();
+            long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
+            time+=offsetInMillis;
             CharSequence Time = DateUtils.getRelativeDateTimeString(context, time, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
             return String.valueOf(Time);
         }

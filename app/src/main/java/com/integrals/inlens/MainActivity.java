@@ -797,12 +797,13 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     @Override
     protected void onStart() {
         super.onStart();
-        SharedPreferences LastShownNotificationInfo = getSharedPreferences("LastNotification.pref", Context.MODE_PRIVATE);
-        if (LastShownNotificationInfo.getAll().size() != 1) {
+        SharedPreferences LastShownNotificationInfo = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
+        if (!LastShownNotificationInfo.contains("time")) {
             SharedPreferences.Editor editor = LastShownNotificationInfo.edit();
             editor.putString("time", String.valueOf(System.currentTimeMillis()));
             editor.commit();
         }
+
     }
 
     @Override
@@ -838,9 +839,17 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                 }
 
+                SharedPreferences LastShownNotificationInfo = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
+
                 if (snapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID)) {
 
                     currentActiveCommunityID = snapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString();
+                    if (!LastShownNotificationInfo.contains("id")) {
+                        SharedPreferences.Editor editor = LastShownNotificationInfo.edit();
+                        editor.putString("id", currentActiveCommunityID);
+                        editor.commit();
+                    }
+
                     QRCodeInit(currentActiveCommunityID);
 
                     // make the add photo fab visible
@@ -862,10 +871,17 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                 String status = snapshot.child(FirebaseConstants.COMMUNITYSTATUS).getValue().toString();
                                 if (status.equals("T")) {
                                     long endtime = Long.parseLong(snapshot.child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString());
+
+                                    if (!LastShownNotificationInfo.contains("stopAt")) {
+                                        SharedPreferences.Editor editor = LastShownNotificationInfo.edit();
+                                        editor.putString("stopAt", String.valueOf(endtime));
+                                        editor.commit();
+                                    }
+
                                     TimeZone timeZone = TimeZone.getDefault();
                                     long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
                                     long serverTimeInMillis = (System.currentTimeMillis() - offsetInMillis);
-                                    //Log.i("time","Server : "+serverTimeInMillis+" End : "+endtime+" Systemmillis : "+System.currentTimeMillis());
+                                    Log.i("timeQuit","Server : "+serverTimeInMillis+" End : "+endtime+" Systemmillis : "+System.currentTimeMillis());
                                     if (serverTimeInMillis >= endtime) {
                                         quitCloudAlbum(true);
                                     } else {

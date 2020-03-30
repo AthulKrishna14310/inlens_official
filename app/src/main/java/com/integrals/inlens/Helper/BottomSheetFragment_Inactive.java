@@ -20,7 +20,9 @@ import com.integrals.inlens.R;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 @SuppressLint("ValidFragment")
 public class BottomSheetFragment_Inactive extends BottomSheetDialogFragment {
@@ -97,6 +99,9 @@ public class BottomSheetFragment_Inactive extends BottomSheetDialogFragment {
     public String getDate(String timestamp)
     {
         long time = Long.parseLong(timestamp);
+        TimeZone timeZone = TimeZone.getDefault();
+        long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
+        time+=offsetInMillis;
         CharSequence Time = DateUtils.getRelativeDateTimeString(context, time, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
         String timesubstring = Time.toString().substring(Time.length() - 8);
         Date date = new Date(time);

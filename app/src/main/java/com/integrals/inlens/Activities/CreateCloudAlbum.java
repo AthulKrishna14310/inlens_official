@@ -54,6 +54,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import com.integrals.inlens.R;
@@ -476,8 +477,8 @@ public class CreateCloudAlbum extends AppCompatActivity {
             communitymap.put(FirebaseConstants.COMMUNITYDESC,descriptionValue);
             communitymap.put(FirebaseConstants.COMMUNITYSTATUS,"T");
             communitymap.put(FirebaseConstants.COMMUNITYTYPE,eventType);
-            communitymap.put(FirebaseConstants.COMMUNITYENDTIME, getTimeStamp(albumTime));
-            communitymap.put(FirebaseConstants.COMMUNITYSTARTTIME,ServerValue.TIMESTAMP);
+            communitymap.put(FirebaseConstants.COMMUNITYENDTIME, getOffsetDeletedTime(getTimeStamp(albumTime)));
+            communitymap.put(FirebaseConstants.COMMUNITYSTARTTIME,getOffsetDeletedTime(String.valueOf(System.currentTimeMillis())));
             communitymap.put(FirebaseConstants.COMMUNITYADMIN,currentUserId);
 
             communityRef.child(newCommunityId).setValue(communitymap).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -489,7 +490,10 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
                         ceditor.putString("id", newCommunityId);
                         ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
+                        ceditor.putString("stopAt", getOffsetDeletedTime(getTimeStamp(albumTime)));
+                        ceditor.putBoolean("notified", false);
                         ceditor.commit();
+
                         photographerRef.child(newCommunityId).child(currentUserId).setValue(ServerValue.TIMESTAMP);
                         currentUserRef.child(FirebaseConstants.COMMUNITIES).child(newCommunityId).setValue(ServerValue.TIMESTAMP);
                         currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).setValue(newCommunityId);
@@ -523,6 +527,15 @@ public class CreateCloudAlbum extends AppCompatActivity {
             showDialogue("Please fill up all the provided fields and continue.",false);
         }
     }
+
+    private String getOffsetDeletedTime(String timeStamp) {
+        TimeZone timeZone = TimeZone.getDefault();
+        long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
+        long givenTime = Long.parseLong(timeStamp);
+        long offsetDeletedTime = givenTime-offsetInMillis;
+        return String.valueOf(offsetDeletedTime);
+    }
+
 
     private String getTimeStamp(String albumTime) {
 
@@ -650,11 +663,6 @@ public class CreateCloudAlbum extends AppCompatActivity {
     }
 
     public void initiateNotificationService() {
-        SharedPreferences LastShownNotificationInfo = getSharedPreferences(AppConstants.LAST_NOTIFICATION_PREF, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = LastShownNotificationInfo.edit();
-        editor.putString("time", String.valueOf(System.currentTimeMillis()));
-        editor.commit();
-
         AlarmManagerHelper alarmManagerHelper = new AlarmManagerHelper(getApplicationContext());
         alarmManagerHelper.initiateAlarmManager(5);
 

@@ -14,6 +14,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.integrals.inlens.Activities.InlensGalleryActivity;
+import com.integrals.inlens.MainActivity;
 import com.integrals.inlens.R;
 import java.io.File;
 import java.io.IOException;
@@ -26,6 +27,9 @@ public class NotificationHelper {
     private String imageUri;
     int notificationID=7907;
 
+    public NotificationHelper(Context context) {
+        this.context = context;
+    }
 
     public NotificationHelper(Context context, String imageuri) {
         this.context = context;
@@ -66,6 +70,42 @@ public class NotificationHelper {
 
         }
          notificationManager.notify(notificationID,builder.build());
+
+    }
+
+    public void displayAlbumEndedNotification(){
+
+
+        Intent intent = new Intent(context, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(context, (int) (Math.random() * 100),
+                intent, 0);
+
+
+
+        NotificationCompat.Builder builder=new NotificationCompat.Builder(context);
+        builder.setSmallIcon(R.drawable.inlens_logo)
+                .setContentTitle("Cloud Album Ended.")
+                .setContentText("Your cloud album has ended. Create a new album to upload more.")
+                .setAutoCancel(true)
+                .setOngoing(false)
+                .setContentIntent(contentIntent);
+
+        Uri path= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        builder.setSound(path);
+        NotificationManager notificationManager=
+                (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) {
+            String channelID = "ID_504";
+            NotificationChannel notificationChannel = new
+                    NotificationChannel(channelID,
+                    "Cloud Album Ended",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            notificationManager.createNotificationChannel(notificationChannel);
+            builder.setChannelId(channelID);
+
+        }
+        notificationManager.notify(notificationID,builder.build());
 
     }
 
