@@ -30,6 +30,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_scrollFlags="scroll|exitUntilCollapsed"
+
                     android:background="@color/white">
 
                     <LinearLayout
@@ -92,7 +93,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="?attr/actionBarSize"
                         app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
-                        android:elevation="20dp"
                         app:layout_collapseMode="pin"
                         app:contentInsetLeft="0dp"
                         app:contentInsetStart="0dp">
@@ -101,6 +101,7 @@
                             android:id="@+id/mainactivity_toolbar"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            app:cardElevation="10dp"
                             android:padding="4dp">
 
                             <RelativeLayout
@@ -125,7 +126,10 @@
                                     android:layout_height="40dp"
                                     android:layout_alignParentStart="true"
                                     android:layout_centerVertical="true"
-                                    android:layout_margin="5dp"
+                                    android:layout_marginLeft="16dp"
+                                    android:layout_marginRight="5dp"
+                                    android:layout_marginTop="5dp"
+                                    android:layout_marginBottom="5dp"
                                     android:foreground="?attr/selectableItemBackgroundBorderless"
                                     android:background="@android:color/transparent"
                                     android:src="@drawable/ic_account_circle" />
@@ -136,7 +140,10 @@
                                     android:layout_height="40dp"
                                     android:layout_alignParentEnd="true"
                                     android:layout_centerVertical="true"
-                                    android:layout_margin="5dp"
+                                    android:layout_marginRight="16dp"
+                                    android:layout_marginLeft="5dp"
+                                    android:layout_marginTop="5dp"
+                                    android:layout_marginBottom="5dp"
                                     android:background="?selectableItemBackgroundBorderless"
                                     android:src="@drawable/ic_search" />
 

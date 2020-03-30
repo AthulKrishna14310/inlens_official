@@ -1112,8 +1112,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         QRCodeDialog.setCanceledOnTouchOutside(true);
         QRCodeDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         QRCodeDialog.setContentView(R.layout.qrcode_generator_layout);
-        QRCodeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
+        QRCodeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
         QRCodeDialog.getWindow().getAttributes().windowAnimations = R.style.BottomUpSlideDialogAnimation;
 
         Window QRCodewindow = QRCodeDialog.getWindow();
