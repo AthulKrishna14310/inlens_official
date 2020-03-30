@@ -59,7 +59,7 @@ public class ScannerTask extends AsyncTask {
             editor.commit();
             notificationHelper = new NotificationHelper(context);
             notificationHelper.displayAlbumEndedNotification();
-
+            alarmManagerHelper.deinitateAlarmManager();
         }
         else
         {
@@ -74,7 +74,7 @@ public class ScannerTask extends AsyncTask {
     protected void onPreExecute() {
         super.onPreExecute();
 
-        SharedPreferences LastShownNotificationInfo = context.getSharedPreferences(AppConstants.LAST_NOTIFICATION_PREF, Context.MODE_PRIVATE);
+        SharedPreferences LastShownNotificationInfo = context.getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
         if (!LastShownNotificationInfo.contains("time")) {
             SharedPreferences.Editor editor = LastShownNotificationInfo.edit();
             editor.putString("time", String.valueOf(System.currentTimeMillis()));
