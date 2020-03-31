@@ -2,12 +2,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_for_gallery"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Activities.InlensGalleryActivity">
 
-    <include layout="@layout/mytoolbar_layout"
-        android:id="@+id/gallery_toolbar"/>
+    <include
+        android:id="@+id/gallery_toolbar"
+        layout="@layout/mytoolbar_layout" />
 
 
     <android.support.v4.widget.SwipeRefreshLayout
@@ -26,19 +28,18 @@
     </android.support.v4.widget.SwipeRefreshLayout>
 
 
-
-     <android.support.design.widget.FloatingActionButton
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/gallery_upload_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_margin="10dp"
-        app:fabSize="normal"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:backgroundTint="@color/colorSecondary"
         android:src="@drawable/ic_file_upload"
         android:tint="@color/white"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        app:fabSize="normal" />
 
 </RelativeLayout>

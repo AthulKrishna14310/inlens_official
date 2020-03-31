@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -107,6 +108,7 @@ public class InlensGalleryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_inlens_gallery);
+
 
         UploadDialogInit();
 
@@ -405,6 +407,7 @@ public class InlensGalleryActivity extends AppCompatActivity {
                 if (AllCommunityImages.size() == 0) {
                     final RippleBackground rippleBackground=(RippleBackground)findViewById(R.id.content);
                     rippleBackground.startRippleAnimation();
+
                 }
 
             }
