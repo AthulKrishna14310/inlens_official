@@ -1,18 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ImageView
-        android:id="@+id/gallery_item_imageview"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center"
-        android:adjustViewBounds="true"
-        android:background="#ffffff"
-        android:scaleType="center"
-        android:layout_margin=".5dp"
-        android:layout_centerInParent="true"/>
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/gallery_item_imageview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:adjustViewBounds="true"
+            android:background="#ffffff"
+            android:scaleType="center"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_margin=".5dp"/>
+
+    </android.support.constraint.ConstraintLayout>
 
     <ImageButton
         android:id="@+id/gallery_item_selected_imagebutton"
@@ -20,9 +33,55 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_done"
         android:background="@drawable/circle_primary"
-        android:padding="10dp"
+        android:padding="5dp"
         android:layout_centerInParent="true"
         android:backgroundTint="@color/colorGreen"
         android:visibility="gone"/>
+
+    <RelativeLayout
+        android:id="@+id/gallery_item_progress_wrapper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        >
+
+        <ProgressBar
+            android:id="@+id/gallery_item_progressbar"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:progressTint="@color/colorAccent"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:indeterminate="false"
+            android:max="100"
+            android:progressDrawable="@drawable/progress_circle"
+            android:secondaryProgress="100"
+            android:visibility="gone"
+            />
+
+        <RelativeLayout
+            android:id="@+id/gallery_item_textview_wrapper"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="@drawable/circle"
+            android:backgroundTint="@color/white"
+            android:layout_centerInParent="true"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/gallery_item_progress_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="100%"
+                android:textSize="12sp"
+                android:textColor="@color/colorPrimaryDark"
+                />
+
+        </RelativeLayout>
+
+
+
+    </RelativeLayout>
+
 
 </RelativeLayout>

@@ -355,9 +355,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                     CommunityModel model = getCommunityModel(currentActiveCommunityID);
                     Intent intent = new Intent(getApplicationContext(), InlensGalleryActivity.class);
                     intent.putExtra("CommunityID", currentActiveCommunityID);
-                    intent.putExtra("CommunityName", model.getTitle());
                     intent.putExtra("CommunityStartTime", model.getStartTime());
-                    intent.putExtra("CommunityEndTime", model.getEndTime());
                     startActivity(intent);
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 }
@@ -2335,6 +2333,15 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                             notifyItemChanged(viewHolder.getAdapterPosition());
                             selectedAlbumPosition = viewHolder.getAdapterPosition();
                             setVerticalRecyclerView(communityDetails.get(position).getCommunityID());
+                            if(currentActiveCommunityID.equals(communityDetails.get(position).getCommunityID()))
+                            {
+                                mainAddPhotosFab.setVisibility(View.VISIBLE);
+                            }
+                            else
+                            {
+                                mainAddPhotosFab.setVisibility(View.GONE);
+
+                            }
 
                         }
                     }

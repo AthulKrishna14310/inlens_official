@@ -1,42 +1,33 @@
 package com.integrals.inlens.Activities;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.Notification;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
-import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.crowdfire.cfalertdialog.CFAlertDialog;
@@ -48,17 +39,16 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.FirebaseConstants;
-import com.integrals.inlens.Helper.NotificationHelper;
 import com.integrals.inlens.Helper.PreOperationCheck;
+import com.integrals.inlens.Helper.ReadFirebaseData;
+import com.integrals.inlens.Interface.FirebaseRead;
 import com.integrals.inlens.Models.GalleryImageModel;
 import com.integrals.inlens.R;
 import com.skyfishjy.library.RippleBackground;
@@ -67,9 +57,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import id.zelory.compressor.Compressor;
 
@@ -78,31 +71,29 @@ public class InlensGalleryActivity extends AppCompatActivity {
     private static final int PORTRAIT = 0;
     private static final int LANDSCAPE = 1;
 
-    private List<GalleryImageModel> AllCommunityImages;
-    private static final String FILE_NAME = "UserInfo.ser";
-    private RecyclerView GalleryGridView;
-    private FloatingActionButton GalleryUploadFab;
-    private SwipeRefreshLayout GallerySwipeRefreshLayout;
-    final int PROGRESS_MAX = 100;
+    private List<GalleryImageModel> allCommunityImages;
+    private RecyclerView galleryGridRecyclerView;
+    private FloatingActionButton galleryUploadFab;
     int PROGRESS_CURRENT = 0;
-    private static final String Channel_ID = "123";
-    private List<String> AllImagesInCurrentCommunity;
-    private ImageButton GallerBackButton, GalleryInfoButton;
-    private TextView GalleyHeaderTextView;
-    private StorageTask UploadStorageTask;
-    private DatabaseReference UserRef,Ref;
-    private StorageReference StorageRef;
+    private List<String> allImagesInCurrentCommunity;
+    private ImageButton galleryBackButton, galleryInfoButton;
+    private TextView galleyHeaderTextView;
+    private DatabaseReference currentUserRef, postRef;
+    private StorageReference storageRef;
 
-    //upload dialog items
-    private Dialog UploadDialog;
-    private RecyclerView UploadRecyclerView;
-    private int UploadCount = 0;
 
-    private String CommunityID = "Not Available";
-    private String CommunityName = "Not Available";
-    private String CommunityStartTime = "Not Available";
-    private String CommunityEndTime = "Not Available";
+    private String communityID = AppConstants.NOT_AVALABLE;
+    private String communityStartTime = AppConstants.NOT_AVALABLE;
 
+    String currentUserId;
+    ImageAdapter imageAdapter;
+    int imagesToUpload=0;
+    boolean isUploading=false;
+    RelativeLayout rootGalleryRelativeLayout;
+    SwipeRefreshLayout gallerySwipeRefresh;
+
+
+    @SuppressLint("CutPasteId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,27 +101,27 @@ public class InlensGalleryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_inlens_gallery);
 
 
-        UploadDialogInit();
+        rootGalleryRelativeLayout = findViewById(R.id.root_for_gallery);
+        gallerySwipeRefresh = findViewById(R.id.gallerySwipeRefreshLayout);
 
-        AllCommunityImages = new ArrayList<>();
-        AllImagesInCurrentCommunity = new ArrayList<>();
+        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        CommunityID = getIntent().getStringExtra("CommunityID");
-        CommunityName =  getIntent().getStringExtra("CommunityName");
-        CommunityStartTime =  getIntent().getStringExtra("CommunityStartTime");
-        CommunityEndTime =  getIntent().getStringExtra("CommunityEndTime");
+        allCommunityImages = new ArrayList<>();
+        allImagesInCurrentCommunity = new ArrayList<>();
 
-        Ref = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.POSTS);
-        UserRef =FirebaseDatabase.getInstance().getReference();
-        StorageRef = FirebaseStorage.getInstance().getReference().child("situations");
+        communityID = getIntent().getStringExtra("CommunityID");
+        communityStartTime =  getIntent().getStringExtra("CommunityStartTime");
 
-        GallerBackButton = findViewById(R.id.gallery_toolbar).findViewById(R.id.mytoolbar_back_button);
-        GalleyHeaderTextView = findViewById(R.id.gallery_toolbar).findViewById(R.id.mytoolbar_textview);
-        GalleryInfoButton = findViewById(R.id.gallery_toolbar).findViewById(R.id.mytoolbar_info_button);
-        GallerySwipeRefreshLayout = findViewById(R.id.gallery_swipe_refresh_layout);
+        postRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.POSTS);
+        currentUserRef =FirebaseDatabase.getInstance().getReference();
+        storageRef = FirebaseStorage.getInstance().getReference().child("situations");
 
+        galleryBackButton = findViewById(R.id.gallery_toolbar).findViewById(R.id.mytoolbar_back_button);
+        galleyHeaderTextView = findViewById(R.id.gallery_toolbar).findViewById(R.id.mytoolbar_textview);
+        galleyHeaderTextView.setText("Your Gallery");
+        galleryInfoButton = findViewById(R.id.gallery_toolbar).findViewById(R.id.mytoolbar_info_button);
 
-        GallerBackButton.setOnClickListener(new View.OnClickListener() {
+        galleryBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -139,70 +130,21 @@ public class InlensGalleryActivity extends AppCompatActivity {
             }
         });
 
+        galleryGridRecyclerView = findViewById(R.id.gallery_recyclerview);
+        galleryGridRecyclerView.setHasFixedSize(true);
 
-        if(CommunityID ==null && CommunityStartTime==null)
-        {
-            if(new PreOperationCheck().checkInternetConnectivity(InlensGalleryActivity.this))
-            {
-                UserRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+        gallerySwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
 
-                        if(dataSnapshot.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).hasChild("live_community"))
-                        {
-                            CommunityID  = dataSnapshot.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("live_community").getValue().toString();
-                            CommunityStartTime = dataSnapshot.child("Communities").child(CommunityID).child("starttime").getValue().toString();
-                            DisplayImagesBasedOnTime();
-                        }
-                        else if(dataSnapshot.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).hasChild("dead_community"))
-                        {
-                            CommunityID  = dataSnapshot.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("dead_community").getValue().toString();
-                            CommunityStartTime = dataSnapshot.child("Communities").child(CommunityID).child("starttime").getValue().toString();
-                            DisplayImagesBasedOnTime();
-                        }
-
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
-                GalleyHeaderTextView.setText("Gallery");
+                gallerySwipeRefresh.setRefreshing(true);
+                displayImagesBasedOnTime(communityID,communityStartTime);
 
             }
-            else
-            {
-                SharedPreferences CurrentActiveCommunity = getSharedPreferences("CurrentCommunity.pref",Context.MODE_PRIVATE);
-                CommunityID = CurrentActiveCommunity.getString("id","Unknown");
-                CommunityStartTime=CurrentActiveCommunity.getString("time", String.valueOf(System.currentTimeMillis()));
-                GalleyHeaderTextView.setText("Gallery");
-                DisplayImagesBasedOnTime();
-            }
+        });
 
-        }
-        else
-        {
-            DisplayImagesBasedOnTime();
-            if(CommunityName.length() >20)
-            {
-                GalleyHeaderTextView.setText(CommunityName.substring(0,20)+"...");
-            }
-            else
-            {
-                GalleyHeaderTextView.setText(CommunityName+" Gallery");
-            }
-
-
-        }
-
-
-
-
-        GalleryInfoButton.setVisibility(View.VISIBLE);
-        GalleryInfoButton.setOnClickListener(new View.OnClickListener() {
+        galleryInfoButton.setVisibility(View.VISIBLE);
+        galleryInfoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final View customLayout = getLayoutInflater().inflate(R.layout.dialog_layout_inlens_gallery, null);
@@ -225,193 +167,158 @@ public class InlensGalleryActivity extends AppCompatActivity {
         });
 
 
-        GalleryUploadFab = findViewById(R.id.gallery_upload_fab);
-        GalleryGridView = findViewById(R.id.gallery_recyclerview);
-        GalleryGridView.setHasFixedSize(true);
+        galleryUploadFab = findViewById(R.id.gallery_upload_fab);
 
-
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-
-        GalleryGridView.setLayoutManager(new GridLayoutManager(this, (int) (dpWidth / 100) + 1));
-        final List<String> UploadQueue = new ArrayList<>();
-
-        AllImagesInCurrentCommunity.clear();
-
-
-        GallerySwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimaryDark), getResources().getColor(R.color.colorAccent), getResources().getColor(R.color.colorPrimaryLight));
-
-        GallerySwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-
-
-                GetAllImagesFromDatabase();
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        try
-                        {
-                            AllCommunityImages = getAllShownImagesPath(Long.parseLong(CommunityStartTime));
-                            if(AllCommunityImages.size()>0)
-                            {
-                                SharedPreferences LastShownNotificationInfo = getSharedPreferences("LastNotification.pref",Context.MODE_PRIVATE);
-                                SharedPreferences.Editor editor = LastShownNotificationInfo.edit();
-                                editor.putString("time",AllCommunityImages.get(AllCommunityImages.size()-1).getCreatedTime());
-                                editor.commit();
-                            }
-
-                            ImageAdapter adapter = new ImageAdapter(getApplicationContext(), AllCommunityImages);
-                            GalleryGridView.removeAllViews();
-                            GalleryGridView.setAdapter(adapter);
-                            GallerySwipeRefreshLayout.setRefreshing(false);
-                        }
-                        catch (NumberFormatException e)
-                        {
-                            Toast.makeText(InlensGalleryActivity.this, "UserInfo sync required.", Toast.LENGTH_SHORT).show();
-                        }
-
-
-
-                    }
-                }, 2000);
-            }
-        });
-
-        GalleryUploadFab.setOnClickListener(new View.OnClickListener() {
+        galleryUploadFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                UploadQueue.clear();
-
-                for (int i = 0; i < AllCommunityImages.size(); i++) {
-                    if (AllCommunityImages.get(i).isSelected()) {
-                        UploadQueue.add(AllCommunityImages.get(i).getImageUri());
+                galleryUploadFab.setVisibility(View.GONE);
+                imagesToUpload = 0;
+                for(int i=0;i<allCommunityImages.size();i++)
+                {
+                    if(allCommunityImages.get(i).isSelected())
+                    {
+                        imagesToUpload++;
+                        allCommunityImages.get(i).setQueued(true);
+                        imageAdapter.notifyItemChanged(i);
                     }
                 }
-
-                if (UploadQueue.size() == 0) {
-                    Toast.makeText(getApplicationContext(), "No images selected.", Toast.LENGTH_SHORT).show();
-
-                } else {
-
-                    UploadCount = 0;
-                    UploadAdapter adapter = new UploadAdapter(UploadQueue);
-                    UploadRecyclerView.setAdapter(adapter);
-                    UploadDialog.show();
-                }
-
             }
         });
 
 
     }
 
-    private void UploadDialogInit() {
 
-        UploadDialog = new Dialog(this);
-        UploadDialog.setContentView(R.layout.inlens_gallery_upload_dialog_layout);
-        UploadDialog.setCancelable(false);
-        UploadDialog.setCanceledOnTouchOutside(false);
-        UploadDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+    @Override
+    protected void onResume() {
+        super.onResume();
 
-        UploadRecyclerView = UploadDialog.findViewById(R.id.inlensgallery_uploadqueue_recylerview);
-        UploadRecyclerView.setHasFixedSize(true);
-        UploadRecyclerView.setLayoutManager(new LinearLayoutManager(InlensGalleryActivity.this));
+        gallerySwipeRefresh.setRefreshing(true);
 
+        if(communityID==null && communityStartTime==null)
+        {
+            if(new PreOperationCheck().checkInternetConnectivity(InlensGalleryActivity.this))
+            {
+                currentUserRef.child(FirebaseConstants.USERS).child(currentUserId).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        if(dataSnapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID))
+                        {
+                            communityID  = dataSnapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString();
+                            communityStartTime = dataSnapshot.child(FirebaseConstants.COMMUNITIES).child(communityID).getValue().toString();
+                            displayImagesBasedOnTime(communityID,communityStartTime);
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+                galleyHeaderTextView.setText("Gallery");
+
+            }
+
+        }
+        else
+        {
+            displayImagesBasedOnTime(communityID,communityStartTime);
+        }
+    }
+
+    private String getOffsetDeletedTime(String timeStamp) {
+        TimeZone timeZone = TimeZone.getDefault();
+        long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
+        long givenTime = Long.parseLong(timeStamp);
+        long offsetDeletedTime = givenTime-offsetInMillis;
+        return String.valueOf(offsetDeletedTime);
     }
 
     @Override
     public void onBackPressed() {
-        if (GallerySwipeRefreshLayout.isRefreshing()) {
-            Toast.makeText(this, "Wait until refresh is complete.", Toast.LENGTH_SHORT).show();
-        } else if (UploadDialog.isShowing()) {
-            Toast.makeText(this, "Wait until upload is complete.", Toast.LENGTH_SHORT).show();
-
+        if (isUploading) {
+            Snackbar.make(rootGalleryRelativeLayout,"Wait until upload is complete.",Snackbar.LENGTH_SHORT).show();
         } else {
             super.onBackPressed();
         }
     }
 
-    public void showDialogMessage(String title, String message) {
-        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
-                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                .setTitle(title)
-                .setIcon(R.drawable.ic_check_circle_black_24dp)
-                .setMessage(message)
-                .setCancelable(false)
-                .addButton("OK", -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.POSITIVE,
-                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-
-                            }
-                        });
-        builder.show();
-    }
-
-    private void GetAllImagesFromDatabase() {
-
-        AllImagesInCurrentCommunity.clear();
-
-        if (!new PreOperationCheck().checkInternetConnectivity(getApplicationContext())) {
-            showDialogMessage("No Internet Connection","Please turn on mobile data  or connect to a wifi and try again.");
-        }
+    private void displayImagesBasedOnTime(String communityID, String communityStartTime) {
 
 
-        FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.POSTS).child(CommunityID).addListenerForSingleValueEvent(new ValueEventListener() {
+        ReadFirebaseData readFirebaseData = new ReadFirebaseData();
+        readFirebaseData.readData(postRef.child(communityID), new FirebaseRead() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String uri = snapshot.child("uri").getValue().toString().toLowerCase();
-                    AllImagesInCurrentCommunity.add(uri);
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-    }
-
-    private void DisplayImagesBasedOnTime() {
-
-
-        GetAllImagesFromDatabase();
-        GallerySwipeRefreshLayout.setRefreshing(true);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
-                try
+            public void onSuccess(DataSnapshot dataSnapshot) {
+                allImagesInCurrentCommunity.clear();
+                for (DataSnapshot snapshot:dataSnapshot.getChildren())
                 {
-                    AllCommunityImages = getAllShownImagesPath(Long.parseLong(CommunityStartTime));
-                    ImageAdapter adapter = new ImageAdapter(getApplicationContext(), AllCommunityImages);
-                    GalleryGridView.removeAllViews();
-                    GalleryGridView.setAdapter(adapter);
-                    GallerySwipeRefreshLayout.setRefreshing(false);
-                }
-                catch (NumberFormatException e)
-                {
-                    e.printStackTrace();
+                    if(snapshot.hasChild(FirebaseConstants.POSTURL))
+                    {
+                        String uri=snapshot.child(FirebaseConstants.POSTURL).getValue().toString();
+                        if(!allImagesInCurrentCommunity.contains(uri))
+                        {
+                            allImagesInCurrentCommunity.add(uri);
+                        }
+                    }
                 }
 
-                if (AllCommunityImages.size() == 0) {
+                allCommunityImages = getAllShownImagesPath(Long.parseLong(communityStartTime));
+                if (allCommunityImages.size() == 0) {
                     final RippleBackground rippleBackground=(RippleBackground)findViewById(R.id.content);
                     rippleBackground.startRippleAnimation();
 
+                    allCommunityImages.add(null);
+                    galleryGridRecyclerView.setLayoutManager(new GridLayoutManager(InlensGalleryActivity.this,  1));
+                    imageAdapter = new ImageAdapter(getApplicationContext(), allCommunityImages);
+                    galleryGridRecyclerView.removeAllViews();
+                    galleryGridRecyclerView.setAdapter(imageAdapter);
+                    galleryUploadFab.setVisibility(View.GONE);
+                }
+                else
+                {
+
+                    galleryGridRecyclerView.setLayoutManager(new GridLayoutManager(InlensGalleryActivity.this, 3));
+                    Collections.reverse(allCommunityImages);
+                    imageAdapter = new ImageAdapter(getApplicationContext(), allCommunityImages);
+                    galleryGridRecyclerView.removeAllViews();
+                    galleryGridRecyclerView.setAdapter(imageAdapter);
                 }
 
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        gallerySwipeRefresh.setRefreshing(false);
+
+                    }
+                },2000);
             }
-        }, 2000);
+
+            @Override
+            public void onStart() {
+
+            }
+
+            @Override
+            public void onFailure(DatabaseError databaseError) {
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        gallerySwipeRefresh.setRefreshing(false);
+
+                    }
+                },2000);
+            }
+        });
+
     }
 
 
@@ -419,6 +326,9 @@ public class InlensGalleryActivity extends AppCompatActivity {
 
     private List<GalleryImageModel> getAllShownImagesPath(long starttime) {
 
+        TimeZone timeZone = TimeZone.getDefault();
+        long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
+        starttime+=offsetInMillis;
         Uri uri;
         Cursor cursor;
         int column_index_data;
@@ -468,119 +378,264 @@ public class InlensGalleryActivity extends AppCompatActivity {
 
     private boolean ImageNotAlreadyUploaded(String lastsegmentedpath) {
 
-        for (int i = 0; i < AllImagesInCurrentCommunity.size(); i++) {
-            if (AllImagesInCurrentCommunity.get(i).toLowerCase().contains(lastsegmentedpath.toLowerCase())) {
+        for (int i = 0; i < allImagesInCurrentCommunity.size(); i++) {
+            if (allImagesInCurrentCommunity.get(i).toLowerCase().contains(lastsegmentedpath.toLowerCase())) {
                 return false;
             }
 
         }
-
         return true;
 
     }
 
-    private class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHolder> {
+    public class EmptyGridViewHolder extends RecyclerView.ViewHolder {
+        public EmptyGridViewHolder(View itemView) {
+            super(itemView);
+
+        }
+    }
+
+    class ImageViewHolder extends RecyclerView.ViewHolder {
+
+        ImageView galleryImage;
+        ImageButton galleryItemSelectedButton;
+        ProgressBar progressBar;
+        TextView progressTextView;
+        RelativeLayout progressWrapper,textviewWrapper;
+
+        public ImageViewHolder(View itemView) {
+            super(itemView);
+
+            galleryImage = itemView.findViewById(R.id.gallery_item_imageview);
+            galleryItemSelectedButton = itemView.findViewById(R.id.gallery_item_selected_imagebutton);
+            progressBar = itemView.findViewById(R.id.gallery_item_progressbar);
+            progressTextView  =itemView.findViewById(R.id.gallery_item_progress_textview);
+            progressWrapper = itemView.findViewById(R.id.gallery_item_progress_wrapper);
+            textviewWrapper =itemView.findViewById(R.id.gallery_item_textview_wrapper);
+        }
+    }
+
+    private class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private Context context;
         private List<GalleryImageModel> ImageList;
+        private int VIEW_TYPE_EMPTY=1,VIEW_TYPE_IMAGE=0;
+        private int uploadCount;
 
         public ImageAdapter(Context context, List<GalleryImageModel> imageList) {
             this.context = context;
             ImageList = imageList;
+            uploadCount=0;
+
         }
 
+
+        @Override
+        public int getItemViewType(int position) {
+            return ImageList.get(position)==null?VIEW_TYPE_EMPTY:VIEW_TYPE_IMAGE;
+        }
 
         @NonNull
         @Override
-        public ImageAdapter.ImageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new ImageAdapter.ImageViewHolder(LayoutInflater.from(context).inflate(R.layout.gallery_item_card, parent, false));
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            if(viewType==VIEW_TYPE_IMAGE)
+            {
+                return new ImageViewHolder(LayoutInflater.from(context).inflate(R.layout.gallery_item_card, parent, false));
+
+            }
+            else if(viewType==VIEW_TYPE_EMPTY)
+            {
+                View view = LayoutInflater.from(context).inflate(R.layout.empty_layout, parent, false);
+                return new EmptyGridViewHolder(view);
+            }
+
+            return null;
         }
 
         @Override
-        public void onBindViewHolder(@NonNull final ImageAdapter.ImageViewHolder holder, final int position) {
+        public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
+
+            if (holder instanceof ImageViewHolder) {
+                ImageViewHolder viewHolder = (ImageViewHolder) holder;
 
 
-            Glide.with(context).load(ImageList.get(position).getImageUri())
-                    .apply(new RequestOptions().placeholder(R.drawable.ic_photo_camera).centerCrop())
-                    .into(holder.GallerImage);
+                Glide.with(context).load(ImageList.get(position).getImageUri())
+                        .apply(new RequestOptions().placeholder(R.drawable.ic_photo_camera).centerCrop())
+                        .into(viewHolder.galleryImage);
+
+                if (ImageList.get(position).isSelected() && ImageList.get(position).isQueued()) {
+                    viewHolder.galleryImage.setColorFilter(Color.argb(155, 185, 185, 185), PorterDuff.Mode.SRC_ATOP);
+                    viewHolder.galleryItemSelectedButton.setVisibility(View.VISIBLE);
+                    isUploading = true;
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    Bitmap bitmapAfterCompression = compressUploadFile(new File(allCommunityImages.get(position).getImageUri()));
+                    if (bitmapAfterCompression != null) {
+
+                        viewHolder.progressBar.setVisibility(View.VISIBLE);
+                        viewHolder.textviewWrapper.setVisibility(View.VISIBLE);
+
+                        viewHolder.progressBar.setIndeterminate(false);
+                        viewHolder.progressBar.setProgress(0);
+                        viewHolder.progressBar.setSecondaryProgress(100);
+                        viewHolder.progressBar.setMax(100);
+                        viewHolder.progressBar.setProgressDrawable(getResources().getDrawable(R.drawable.progress_circle));
+
+                        bitmapAfterCompression.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                        byte[] compressedImage = baos.toByteArray();
 
 
-            if (ImageList.get(position).isSelected()) {
+                        storageRef.child(Uri.fromFile(new File(allCommunityImages.get(position).getImageUri())).getLastPathSegment().toLowerCase() + System.currentTimeMillis()).putBytes(compressedImage).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
 
-                holder.GallerImage.setColorFilter(Color.argb(155, 185, 185, 185), PorterDuff.Mode.SRC_ATOP);
-                holder.GalleryItemSelectedButton.setVisibility(View.VISIBLE);
-                CheckFabVisibility();
 
-            } else {
-                holder.GallerImage.clearColorFilter();
-                holder.GalleryItemSelectedButton.setVisibility(View.GONE);
-                CheckFabVisibility();
+                                if (task.isSuccessful()) {
+                                    final String downloadUrl = task.getResult().getDownloadUrl().toString();
+                                    String pushid = postRef.child(communityID).push().getKey();
+                                    Map uploadmap = new HashMap();
+                                    uploadmap.put(FirebaseConstants.POSTURL, downloadUrl);
+                                    uploadmap.put(FirebaseConstants.POSTBY, FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                    uploadmap.put(FirebaseConstants.POSTTIME, getOffsetDeletedTime(String.valueOf(System.currentTimeMillis())));
+                                    postRef.child(communityID).child(pushid).setValue(uploadmap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+
+                                                gallerySwipeRefresh.setRefreshing(true);
+                                                uploadCount++;
+                                                viewHolder.galleryItemSelectedButton.setVisibility(View.VISIBLE);
+                                                viewHolder.progressBar.setVisibility(View.GONE);
+
+
+                                                if (uploadCount == imagesToUpload || imagesToUpload == 0) {
+                                                    isUploading = false;
+                                                    onResume();
+                                                }
+
+                                            } else {
+                                                uploadCount++;
+                                                if (uploadCount == imagesToUpload) {
+                                                    isUploading = false;
+                                                }
+                                            }
+                                        }
+                                    });
+
+                                } else {
+                                    uploadCount++;
+                                    if (uploadCount == imagesToUpload) {
+                                        isUploading = false;
+                                    }
+                                }
+                            }
+                        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+
+                                PROGRESS_CURRENT = (int) ((100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount());
+                                viewHolder.progressBar.setProgress(PROGRESS_CURRENT);
+                                viewHolder.progressTextView.setText(PROGRESS_CURRENT + "%");
+
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                                uploadCount++;
+                                if (uploadCount == imagesToUpload) {
+                                    isUploading = false;
+                                }
+                                viewHolder.galleryItemSelectedButton.setVisibility(View.VISIBLE);
+                                viewHolder.galleryItemSelectedButton.setBackgroundResource(R.drawable.ic_info);
+                                viewHolder.progressBar.setVisibility(View.GONE);
+
+                            }
+                        });
+
+
+                    } else {
+                        Snackbar.make(rootGalleryRelativeLayout,"Image compression failed. Please try again later.",Snackbar.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+
+                    if (ImageList.get(position).isSelected()) {
+
+                        viewHolder.galleryImage.setColorFilter(Color.argb(155, 185, 185, 185), PorterDuff.Mode.SRC_ATOP);
+                        viewHolder.galleryItemSelectedButton.setVisibility(View.VISIBLE);
+                        CheckFabVisibility();
+
+                    } else {
+                        viewHolder.galleryImage.clearColorFilter();
+                        viewHolder.galleryItemSelectedButton.setVisibility(View.GONE);
+                        CheckFabVisibility();
+
+                    }
+
+                    viewHolder.galleryImage.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+
+                            try
+                            {
+                                if (ImageList.get(position).isSelected()) {
+                                    ImageList.get(position).setSelected(false);
+                                    imageAdapter.notifyItemChanged(position);
+                                    CheckFabVisibility();
+
+                                } else {
+                                    ImageList.get(position).setSelected(true);
+                                    imageAdapter.notifyItemChanged(position);
+                                    CheckFabVisibility();
+
+                                }
+                            }
+                            catch (IndexOutOfBoundsException e)
+                            {
+
+                            }
+
+
+                        }
+                    });
+
+                    viewHolder.galleryItemSelectedButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            if (ImageList.get(position).isSelected()) {
+                                ImageList.get(position).setSelected(false);
+                                imageAdapter.notifyItemChanged(position);
+                                CheckFabVisibility();
+
+                            } else {
+                                ImageList.get(position).setSelected(true);
+                                imageAdapter.notifyItemChanged(position);
+                                CheckFabVisibility();
+
+                            }
+
+                        }
+                    });
+                }
+
 
             }
-
-            holder.GallerImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-
-                    if (ImageList.get(position).isSelected()) {
-                        ImageList.get(position).setSelected(false);
-                        holder.GallerImage.clearColorFilter();
-                        holder.GalleryItemSelectedButton.setVisibility(View.GONE);
-
-
-                        CheckFabVisibility();
-
-                    } else {
-                        ImageList.get(position).setSelected(true);
-                        holder.GallerImage.setColorFilter(Color.argb(155, 185, 185, 185), PorterDuff.Mode.SRC_ATOP);
-                        holder.GalleryItemSelectedButton.setVisibility(View.VISIBLE);
-
-                        CheckFabVisibility();
-
-                    }
-
-
-                }
-            });
-
-            holder.GalleryItemSelectedButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    if (ImageList.get(position).isSelected()) {
-                        ImageList.get(position).setSelected(false);
-                        holder.GallerImage.clearColorFilter();
-                        holder.GalleryItemSelectedButton.setVisibility(View.GONE);
-
-                        CheckFabVisibility();
-
-                    } else {
-                        ImageList.get(position).setSelected(true);
-                        holder.GallerImage.setColorFilter(Color.argb(155, 185, 185, 185), PorterDuff.Mode.SRC_ATOP);
-                        holder.GalleryItemSelectedButton.setVisibility(View.VISIBLE);
-
-                        CheckFabVisibility();
-
-                    }
-
-                }
-            });
-
-
         }
+
 
         private void CheckFabVisibility() {
 
             for (int k = 0; k < ImageList.size(); k++) {
                 if (ImageList.get(k).isSelected()) {
-                    GalleryUploadFab.show();
-                    GalleryUploadFab.setVisibility(View.VISIBLE);
+                    galleryUploadFab.show();
+                    galleryUploadFab.setVisibility(View.VISIBLE);
                     break;
                 } else {
                     if (k == ImageList.size() - 1) {
-                        GalleryUploadFab.hide();
-                        GalleryUploadFab.setVisibility(View.GONE);
+                        galleryUploadFab.hide();
+                        galleryUploadFab.setVisibility(View.GONE);
 
                     }
                 }
@@ -592,276 +647,10 @@ public class InlensGalleryActivity extends AppCompatActivity {
             return ImageList.size();
         }
 
-        class ImageViewHolder extends RecyclerView.ViewHolder {
 
-            ImageView GallerImage;
-            ImageButton GalleryItemSelectedButton;
-
-            public ImageViewHolder(View itemView) {
-                super(itemView);
-
-                GallerImage = itemView.findViewById(R.id.gallery_item_imageview);
-                GalleryItemSelectedButton = itemView.findViewById(R.id.gallery_item_selected_imagebutton);
-
-            }
-        }
     }
 
-    private class UploadAdapter extends RecyclerView.Adapter<UploadAdapter.UploadViewHolder> {
 
-        List<String> uploadQueue;
-
-        public UploadAdapter(List<String> uploadQueue) {
-            this.uploadQueue = uploadQueue;
-        }
-
-        @NonNull
-        @Override
-        public UploadViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
-            View v = LayoutInflater.from(getApplicationContext()).inflate(R.layout.inlensgallery_single_item_upload_layout, parent, false);
-            return new UploadAdapter.UploadViewHolder(v);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull final UploadViewHolder holder, final int position) {
-
-            final int j = position + 1;
-
-
-            if (CommunityID.equals("Not Available")) {
-                Toast.makeText(InlensGalleryActivity.this, "No community currently active.", Toast.LENGTH_SHORT).show();
-            }
-            else if(CommunityID.equals("Unknown"))
-            {
-                Toast.makeText(InlensGalleryActivity.this, "Please connect to internet and try again.", Toast.LENGTH_SHORT).show();
-
-            }
-            else {
-                holder.UploadFileName.setText(Uri.fromFile(new File(uploadQueue.get(position))).getLastPathSegment());
-                holder.UploadProgressbar.setIndeterminate(true);
-                holder.UploadPercentage.setText("0%");
-
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                Bitmap bitmapAfterCompression = compressUploadFile(new File(uploadQueue.get(position)));
-
-                holder.UploadPreview.setImageBitmap(bitmapAfterCompression);
-
-                if (bitmapAfterCompression != null)
-                {
-                    bitmapAfterCompression.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                    byte[] compressedImage = baos.toByteArray();
-
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
-                        final NotificationHelper helper = new NotificationHelper(InlensGalleryActivity.this);
-                        final Notification.Builder builder = helper.getNotificationBuilder("title", "Starting upload");
-                        helper.getManager().notify(123, builder.build());
-
-
-                        UploadStorageTask = StorageRef.child(Uri.fromFile(new File(uploadQueue.get(position))).getLastPathSegment().toLowerCase() + System.currentTimeMillis()).putBytes(compressedImage).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-
-
-                                if (task.isSuccessful()) {
-                                    final String downloadUrl = task.getResult().getDownloadUrl().toString();
-                                    String pushid = Ref.child(CommunityID).push().getKey();
-                                    Map uploadmap = new HashMap();
-                                    uploadmap.put("uri", downloadUrl);
-                                    uploadmap.put("by", FirebaseAuth.getInstance().getCurrentUser().getUid());
-                                    uploadmap.put("time", ServerValue.TIMESTAMP);
-                                    Ref.child(CommunityID).child(pushid).setValue(uploadmap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
-                                                Toast.makeText(getApplicationContext(), "Uploaded image.", Toast.LENGTH_SHORT).show();
-                                                DisplayImagesBasedOnTime();
-                                                helper.getManager().cancelAll();
-                                                UploadCount++;
-                                                holder.UploadPercentage.setText("Upload complete.");
-                                                holder.UploadProgressbar.setProgress(100);
-
-                                                if (UploadCount == uploadQueue.size()) {
-                                                    UploadDialog.dismiss();
-                                                }
-
-                                            } else {
-                                                helper.getManager().cancelAll();
-                                                holder.UploadPercentage.setText("Some error was encountered.");
-                                                UploadCount++;
-                                                if (UploadCount == uploadQueue.size()) {
-                                                    UploadDialog.dismiss();
-                                                }
-                                            }
-                                        }
-                                    });
-
-                                } else {
-                                    helper.getManager().cancelAll();
-                                    holder.UploadPercentage.setText("Some error was encountered.");
-                                    UploadCount++;
-                                    if (UploadCount == uploadQueue.size()) {
-                                        UploadDialog.dismiss();
-                                    }
-                                }
-                            }
-                        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-
-
-                                PROGRESS_CURRENT = (int) (100.0 * ((double) (taskSnapshot.getBytesTransferred() / (1024 * 1024)) / ((double) taskSnapshot.getTotalByteCount() / (1024 * 1024))));
-                                helper.getNotificationBuilder("Inlens", "Uploading post " + j).setProgress(PROGRESS_MAX, PROGRESS_CURRENT, false);
-                                helper.getManager().notify(123, builder.build());
-
-                                holder.UploadProgressbar.setIndeterminate(false);
-                                holder.UploadProgressbar.setProgress(PROGRESS_CURRENT, true);
-                                holder.UploadPercentage.setText(String.format("%.2f / %.2f Mb", (double) taskSnapshot.getBytesTransferred() / (1024 * 1024), (double) taskSnapshot.getTotalByteCount() / (1024 * 1024)) + "  " + PROGRESS_CURRENT + " %");
-
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-
-                                helper.getManager().cancelAll();
-                                UploadCount++;
-                                if (UploadCount == uploadQueue.size()) {
-                                    UploadDialog.dismiss();
-                                }
-                            }
-                        });
-                    }
-                    else
-                    {
-                        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(InlensGalleryActivity.this);
-                        final NotificationCompat.Builder builder = new NotificationCompat.Builder(InlensGalleryActivity.this, Channel_ID);
-                        builder.setContentTitle("Inlens")
-                                .setProgress(100, 0, true)
-                                .setSmallIcon(R.drawable.inlens_logo)
-                                .setPriority(NotificationCompat.PRIORITY_HIGH);
-                        UploadStorageTask = StorageRef.child(Uri.fromFile(new File(uploadQueue.get(position))).getLastPathSegment() + System.currentTimeMillis()).putBytes(compressedImage).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-
-                                if (task.isSuccessful()) {
-                                    final String downloadUrl = task.getResult().getDownloadUrl().toString();
-                                    String pushid = Ref.child(CommunityID).push().getKey();
-                                    Map uploadmap = new HashMap();
-                                    uploadmap.put("uri", downloadUrl);
-                                    uploadmap.put("by", FirebaseAuth.getInstance().getCurrentUser().getUid());
-                                    uploadmap.put("time", ServerValue.TIMESTAMP);
-                                    Ref.child(CommunityID).child(pushid).setValue(uploadmap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
-                                                Toast.makeText(getApplicationContext(), "Uploaded image.", Toast.LENGTH_SHORT).show();
-                                                DisplayImagesBasedOnTime();
-                                                notificationManager.cancelAll();
-                                                UploadCount++;
-                                                holder.UploadProgressbar.setProgress(100);
-                                                holder.UploadPercentage.setText("Upload complete.");
-                                                if (UploadCount == uploadQueue.size()) {
-                                                    UploadDialog.dismiss();
-                                                }
-
-                                            } else {
-                                                notificationManager.cancelAll();
-                                                UploadCount++;
-                                                holder.UploadPercentage.setText("Some error was encountered.");
-                                                if (UploadCount == uploadQueue.size()) {
-                                                    UploadDialog.dismiss();
-                                                }
-                                            }
-                                        }
-                                    });
-
-                                } else {
-                                    notificationManager.cancelAll();
-                                    holder.UploadPercentage.setText("Some error was encountered.");
-                                    UploadCount++;
-                                    if (UploadCount == uploadQueue.size()) {
-                                        UploadDialog.dismiss();
-                                    }
-                                }
-                            }
-                        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-
-
-                                PROGRESS_CURRENT = (int) (100.0 * ((double) (taskSnapshot.getBytesTransferred() / (1024 * 1024)) / (((double) taskSnapshot.getTotalByteCount() / (1024 * 1024)))));
-                                builder.setContentText("Uploading post " + j).setProgress(PROGRESS_MAX, PROGRESS_CURRENT, false);
-                                notificationManager.notify(123, builder.build());
-
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                    holder.UploadProgressbar.setIndeterminate(false);
-                                    holder.UploadProgressbar.setProgress(PROGRESS_CURRENT, true);
-                                }
-
-                                holder.UploadPercentage.setText(String.format("%.2f / %.2f Mb", (double) taskSnapshot.getBytesTransferred() / (1024 * 1024), (double) taskSnapshot.getTotalByteCount() / (1024 * 1024)) + "  " + PROGRESS_CURRENT + " %");
-
-
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-
-                                notificationManager.cancelAll();
-                                UploadCount++;
-                                if (UploadCount == uploadQueue.size()) {
-                                    UploadDialog.dismiss();
-                                }
-                            }
-                        });
-                    }
-
-
-                }
-                else
-                {
-                    Toast.makeText(InlensGalleryActivity.this, "Image compression failed. Please try again later.", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            holder.UploadCancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-
-                    UploadStorageTask.cancel();
-                    holder.UploadPercentage.setText("Upload cancelled by user.");
-                    holder.UploadCancel.setEnabled(false);
-
-                }
-            });
-
-        }
-
-        @Override
-        public int getItemCount() {
-            return uploadQueue.size();
-        }
-
-        public class UploadViewHolder extends RecyclerView.ViewHolder {
-
-            ProgressBar UploadProgressbar;
-            TextView UploadFileName, UploadPercentage;
-            ImageButton UploadCancel;
-            ImageView UploadPreview;
-
-            public UploadViewHolder(View itemView) {
-                super(itemView);
-
-                UploadProgressbar = itemView.findViewById(R.id.inlens_gallery_dialog_progressbar);
-                UploadFileName = itemView.findViewById(R.id.inlens_gallery_dialog_title);
-                UploadPercentage = itemView.findViewById(R.id.inlens_gallery_dialog_percentage_message);
-                UploadCancel = itemView.findViewById(R.id.inlens_gallery_dialog_cancel_btn);
-                UploadPreview = itemView.findViewById(R.id.inlens_gallery_dialog_upload_imageview);
-            }
-        }
-    }
 
 
     public Bitmap compressUploadFile(File bitmapFile) {

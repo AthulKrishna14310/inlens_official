@@ -1,5 +1,6 @@
 package com.integrals.inlens.Notification;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -25,7 +26,7 @@ public class NotificationHelper {
     private Context context;
     private Bitmap  recentImageBitmap;
     private String imageUri;
-    int notificationID=7907;
+    int notificationIDAlbumEnd=7907,notificationIDAlbumPhoto=7907;
 
     public NotificationHelper(Context context) {
         this.context = context;
@@ -44,32 +45,36 @@ public class NotificationHelper {
         PendingIntent contentIntent = PendingIntent.getActivity(context, (int) (Math.random() * 100),
                 intent, 0);
 
+        NotificationManager notificationManager= (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-
-        NotificationCompat.Builder builder=new NotificationCompat.Builder(context);
-        builder.setSmallIcon(R.drawable.inlens_logo)
-                .setContentTitle("Tap to view recent-images.")
-                .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(recentImageBitmap))
-                .setAutoCancel(true)
-                .setOngoing(false)
-                .setContentIntent(contentIntent);
-
-        Uri path= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        builder.setSound(path);
-        NotificationManager notificationManager=
-                (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) {
             String channelID = "ID_503";
-            NotificationChannel notificationChannel = new
-                    NotificationChannel(channelID,
-                    "InLens recent image notification",
-                    NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel notificationChannel = new NotificationChannel(channelID,"Cloud Album Photos", NotificationManager.IMPORTANCE_DEFAULT);
             notificationManager.createNotificationChannel(notificationChannel);
-            builder.setChannelId(channelID);
 
+            Notification.Builder notificationBuilder = new Notification.Builder(context, channelID)
+                    .setContentTitle("InLens recent image notification.")
+                    .setContentText("Tap to view recent-images.")
+                    .setSmallIcon(R.drawable.inlens_logo)
+                    .setAutoCancel(true);
+
+            notificationManager.notify(notificationIDAlbumEnd,notificationBuilder.build());
         }
-         notificationManager.notify(notificationID,builder.build());
+        else
+        {
+            NotificationCompat.Builder builder=new NotificationCompat.Builder(context);
+            builder.setSmallIcon(R.drawable.inlens_logo)
+                    .setContentTitle("Tap to view recent-images.")
+                    .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(recentImageBitmap))
+                    .setAutoCancel(true)
+                    .setOngoing(false)
+                    .setContentIntent(contentIntent);
+
+            Uri path= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            builder.setSound(path);
+            notificationManager.notify(notificationIDAlbumPhoto,builder.build());
+        }
 
     }
 
@@ -82,30 +87,35 @@ public class NotificationHelper {
 
 
 
-        NotificationCompat.Builder builder=new NotificationCompat.Builder(context);
-        builder.setSmallIcon(R.drawable.inlens_logo)
-                .setContentTitle("Cloud Album Ended.")
-                .setContentText("Your cloud album has ended. Create a new album to upload more.")
-                .setAutoCancel(true)
-                .setOngoing(false)
-                .setContentIntent(contentIntent);
-
-        Uri path= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        builder.setSound(path);
-        NotificationManager notificationManager=
-                (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) {
             String channelID = "ID_504";
-            NotificationChannel notificationChannel = new
-                    NotificationChannel(channelID,
-                    "Cloud Album Ended",
-                    NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel notificationChannel = new NotificationChannel(channelID,"Cloud Album Ended", NotificationManager.IMPORTANCE_DEFAULT);
             notificationManager.createNotificationChannel(notificationChannel);
-            builder.setChannelId(channelID);
 
+            Notification.Builder notificationBuilder = new Notification.Builder(context, channelID)
+                    .setContentTitle("Cloud Album Ended.")
+                    .setContentText("Your cloud album has ended. Create a new album to upload more.")
+                    .setSmallIcon(R.drawable.inlens_logo)
+                    .setAutoCancel(true);
+
+            notificationManager.notify(notificationIDAlbumEnd,notificationBuilder.build());
         }
-        notificationManager.notify(notificationID,builder.build());
+        else
+        {
+            NotificationCompat.Builder builder=new NotificationCompat.Builder(context);
+            builder.setSmallIcon(R.drawable.inlens_logo)
+                    .setContentTitle("Cloud Album Ended.")
+                    .setContentText("Your cloud album has ended. Create a new album to upload more.")
+                    .setAutoCancel(true)
+                    .setOngoing(false)
+                    .setContentIntent(contentIntent);
+
+            Uri path= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            builder.setSound(path);
+            notificationManager.notify(notificationIDAlbumEnd,builder.build());
+        }
 
     }
 

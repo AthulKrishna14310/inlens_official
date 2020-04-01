@@ -495,7 +495,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         ceditor.commit();
 
                         photographerRef.child(newCommunityId).child(currentUserId).setValue(ServerValue.TIMESTAMP);
-                        currentUserRef.child(FirebaseConstants.COMMUNITIES).child(newCommunityId).setValue(ServerValue.TIMESTAMP);
+                        currentUserRef.child(FirebaseConstants.COMMUNITIES).child(newCommunityId).setValue(getOffsetDeletedTime(String.valueOf(System.currentTimeMillis())));
                         currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).setValue(newCommunityId);
                         submitButton.setEnabled(false);
                         uploadProgressbar.setVisibility(View.GONE);

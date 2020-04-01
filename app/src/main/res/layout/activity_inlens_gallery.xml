@@ -11,9 +11,8 @@
         android:id="@+id/gallery_toolbar"
         layout="@layout/mytoolbar_layout" />
 
-
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/gallery_swipe_refresh_layout"
+        android:id="@+id/gallerySwipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/gallery_toolbar">
@@ -22,10 +21,10 @@
             android:id="@+id/gallery_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
         </android.support.v7.widget.RecyclerView>
 
     </android.support.v4.widget.SwipeRefreshLayout>
+
 
 
     <android.support.design.widget.FloatingActionButton
