@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -25,19 +26,14 @@ import id.zelory.compressor.Compressor;
 public class NotificationHelper {
     private Context context;
     private Bitmap  recentImageBitmap;
-    private String imageUri;
     int notificationIDAlbumEnd=7907,notificationIDAlbumPhoto=7907;
+    int count;
 
     public NotificationHelper(Context context) {
         this.context = context;
     }
 
-    public NotificationHelper(Context context, String imageuri) {
-        this.context = context;
-        this.imageUri = imageuri;
-    }
-
-    public void displayRecentImageNotification(){
+    public void displayRecentImageNotification(String imageUri,int count,int notiCount){
 
         generateNotificationBitmap(imageUri);
 
@@ -51,13 +47,27 @@ public class NotificationHelper {
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) {
             String channelID = "ID_503";
             NotificationChannel notificationChannel = new NotificationChannel(channelID,"Cloud Album Photos", NotificationManager.IMPORTANCE_DEFAULT);
+            if(notiCount<2)
+            {
+                Uri path= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                notificationChannel.enableVibration(true);
+                notificationChannel.setVibrationPattern(new long[]{400,200,400});
+                AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .setUsage(AudioAttributes.USAGE_ALARM)
+                        .build();
+                notificationChannel.setSound(path,audioAttributes);
+
+            }
             notificationManager.createNotificationChannel(notificationChannel);
 
             Notification.Builder notificationBuilder = new Notification.Builder(context, channelID)
-                    .setContentTitle("InLens recent image notification.")
-                    .setContentText("Tap to view recent-images.")
+                    .setContentTitle("InLens Recent Image")
+                    .setContentText("You have "+count+" new photos to upload to your album.")
                     .setSmallIcon(R.drawable.inlens_logo)
                     .setAutoCancel(true);
+
+
 
             notificationManager.notify(notificationIDAlbumEnd,notificationBuilder.build());
         }
@@ -65,14 +75,19 @@ public class NotificationHelper {
         {
             NotificationCompat.Builder builder=new NotificationCompat.Builder(context);
             builder.setSmallIcon(R.drawable.inlens_logo)
-                    .setContentTitle("Tap to view recent-images.")
+                    .setContentTitle("InLens Recent Images")
+                    .setContentText("You have "+count+" new photos to upload to your album.")
                     .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(recentImageBitmap))
                     .setAutoCancel(true)
                     .setOngoing(false)
                     .setContentIntent(contentIntent);
 
-            Uri path= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            builder.setSound(path);
+            if(notiCount<2)
+            {
+                Uri path= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                builder.setSound(path);
+                builder.setVibrate(new long[]{400,200,400});
+            }
             notificationManager.notify(notificationIDAlbumPhoto,builder.build());
         }
 

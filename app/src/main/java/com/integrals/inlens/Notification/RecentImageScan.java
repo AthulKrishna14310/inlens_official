@@ -4,8 +4,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Models.GalleryImageModel;
 import com.integrals.inlens.Models.UnNotifiedImageModel;
 
@@ -26,9 +29,12 @@ public class RecentImageScan {
         this.lastnotifiedtime = lastnotifiedtime;
     }
 
-    public UnNotifiedImageModel checkForNotifiedImageExist()
+
+    public InlensImageModel getNotifiedImageCount()
     {
-        UnNotifiedImageModel unNotifiedImageModel=new UnNotifiedImageModel(null,null);
+        int count=0;
+        String imgUri = "";
+        String createdTime="";
         Uri uri;
         Cursor cursor;
         int column_index_data;
@@ -40,20 +46,39 @@ public class RecentImageScan {
 
         cursor = context.getContentResolver().query(uri, projection, null, null, null);
 
-        column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
-        cursor.moveToLast();
 
-        // currently detect all images we need to modify it to detect only images in camera
+        try
+        {
+            column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+            cursor.moveToLast();
+            // currently detect all images we need to modify it to detect only images in camera
 
-        absolutePathOfImage = cursor.getString(column_index_data);
-        File img = new File(absolutePathOfImage);
-        if (img.lastModified() > lastnotifiedtime) {
+            do
+            {
+                absolutePathOfImage = cursor.getString(column_index_data);
+                File img = new File(absolutePathOfImage);
+                if (img.lastModified() > lastnotifiedtime) {
 
-            unNotifiedImageModel.setUri(absolutePathOfImage);
-            unNotifiedImageModel.setCreatedTime(String.valueOf(img.lastModified()));
+                    if(createdTime.equals("") && imgUri.equals(""))
+                    {
+                        imgUri = absolutePathOfImage;
+                        createdTime=String.valueOf(img.lastModified());
+                    }
+                    count++;
+                }
+                else
+                {
+                    break;
+                }
+            }while (cursor.moveToPrevious());
+        }
+        catch (Exception e)
+        {
+            //todo There are zero photos in the phone.
         }
 
-        return unNotifiedImageModel;
+
+        return new InlensImageModel(count,imgUri,createdTime);
     }
 
     public List<GalleryImageModel> getAllShownImagesPath() {

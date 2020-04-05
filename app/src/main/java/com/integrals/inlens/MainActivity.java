@@ -46,7 +46,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -65,11 +64,15 @@ import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.work.Constraints;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -116,11 +119,10 @@ import com.integrals.inlens.Helper.MainHorizontalOptionsViewHolder;
 import com.integrals.inlens.Helper.ParticipantsAdapter;
 import com.integrals.inlens.Helper.ReadFirebaseData;
 import com.integrals.inlens.Interface.FirebaseRead;
-import com.integrals.inlens.JobScheduler.Scheduler;
 import com.integrals.inlens.Models.CommunityModel;
 import com.integrals.inlens.Models.PhotographerModel;
 import com.integrals.inlens.Models.PostModel;
-import com.integrals.inlens.Notification.AlarmManagerHelper;
+import com.integrals.inlens.WorkManager.MyWorker;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
@@ -137,6 +139,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import id.zelory.compressor.Compressor;
@@ -292,16 +295,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 if (item.getItemId() == R.id.profile_preference_bg_service) {
                     enableBackgroundServices();
                     return true;
-                } else if (item.getItemId() == R.id.profile_notification_stop) {
-
-                    AlarmManagerHelper helper = new AlarmManagerHelper(MainActivity.this);
-                    helper.deinitateAlarmManager();
-
-                } else if (item.getItemId() == R.id.profile_notification_start) {
-
-                    AlarmManagerHelper helper = new AlarmManagerHelper(MainActivity.this);
-                    helper.initiateAlarmManager(5);
-
                 } else if (item.getItemId() == R.id.profile_preference_battery_optimization) {
 
                     Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
@@ -851,12 +844,10 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                     QRCodeInit(currentActiveCommunityID);
 
                     // make the add photo fab visible
-                    mainAddPhotosFab.setVisibility(View.VISIBLE);
+                    mainAddPhotosFab.show();
 
 
                     // make the start and stop services in navigation drawer visible
-                    navigationView.getMenu().findItem(R.id.profile_notification_start).setVisible(true);
-                    navigationView.getMenu().findItem(R.id.profile_notification_stop).setVisible(true);
 
                     communityRefListenerForActiveAlbum = readFirebaseData.readData(communityRef.child(currentActiveCommunityID), new FirebaseRead() {
                         @Override
@@ -884,30 +875,20 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                         quitCloudAlbum(true);
                                     } else {
                                         // start the necessary services
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                            ComponentName componentName = new ComponentName(MainActivity.this, Scheduler.class);
-                                            JobInfo.Builder builder = new JobInfo.Builder(JOB_ID, componentName);
-                                            builder.setPeriodic(5000);
-                                            builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
-                                            builder.setPersisted(true);
-                                            jobInfo = builder.build();
-                                            jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-                                            jobScheduler.schedule(jobInfo);
-                                        }
-                                        AlarmManagerHelper helper = new AlarmManagerHelper(getApplicationContext());
-                                        helper.initiateAlarmManager(5);
+                                        Constraints constraints = new Constraints.Builder()
+                                                .setRequiredNetworkType(NetworkType.CONNECTED)
+                                                .build();
+                                        PeriodicWorkRequest periodicWorkRequest = new PeriodicWorkRequest
+                                                .Builder(MyWorker.class,15, TimeUnit.MINUTES)
+                                                .setConstraints(constraints)
+                                                .build();
+                                        WorkManager.getInstance().enqueueUniquePeriodicWork(AppConstants.PHOTO_SCAN_WORK, ExistingPeriodicWorkPolicy.REPLACE,periodicWorkRequest);
 
                                     }
 
                                 } else {
                                     // stop the necessary services
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                        jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-                                        jobScheduler.cancel(JOB_ID);
-                                    }
-                                    AlarmManagerHelper helper = new AlarmManagerHelper(getApplicationContext());
-                                    helper.deinitateAlarmManager();
-
+                                    WorkManager.getInstance().cancelAllWorkByTag(AppConstants.PHOTO_SCAN_WORK);
 
                                 }
                             }
@@ -925,13 +906,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                         }
                     });
-                } else {
-                    navigationView.getMenu().findItem(R.id.profile_notification_start).setVisible(false);
-                    navigationView.getMenu().findItem(R.id.profile_notification_stop).setVisible(false);
-
-
                 }
-
                 getCloudAlbumData(userCommunityIdList);
 
             }
@@ -1572,10 +1547,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                     if (task.isSuccessful()) {
                         currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).removeValue();
                         currentActiveCommunityID = AppConstants.NOT_AVALABLE;
-                        mainAddPhotosFab.setVisibility(View.GONE);
-                        AlarmManagerHelper alarmManagerHelper =
-                                new AlarmManagerHelper(getApplicationContext());
-                        alarmManagerHelper.deinitateAlarmManager();
+                        mainAddPhotosFab.hide();
+                        WorkManager.getInstance().cancelAllWorkByTag(AppConstants.PHOTO_SCAN_WORK);
                         showDialogMessage("Cloud-Album Quit", "Successfully left from the Cloud-Album");
                         if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
                             photographerList.remove(0);
@@ -1632,10 +1605,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                     if (task.isSuccessful()) {
                                                         currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).removeValue();
                                                         currentActiveCommunityID = AppConstants.NOT_AVALABLE;
-                                                        mainAddPhotosFab.setVisibility(View.GONE);
-                                                        AlarmManagerHelper alarmManagerHelper =
-                                                                new AlarmManagerHelper(getApplicationContext());
-                                                        alarmManagerHelper.deinitateAlarmManager();
+                                                        mainAddPhotosFab.hide();
+                                                        WorkManager.getInstance().cancelAllWorkByTag(AppConstants.PHOTO_SCAN_WORK);
                                                         showDialogMessage("Cloud-Album Quit", "Successfully left from the Cloud-Album");
                                                         if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
                                                             photographerList.remove(0);
@@ -1663,9 +1634,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                                                     if (task.isSuccessful()) {
 
-                                                        AlarmManagerHelper alarmManagerHelper =
-                                                                new AlarmManagerHelper(getApplicationContext());
-                                                        alarmManagerHelper.deinitateAlarmManager();
+                                                        WorkManager.getInstance().cancelAllWorkByTag(AppConstants.PHOTO_SCAN_WORK);
+                                                        mainAddPhotosFab.hide();
                                                         showDialogMessage("Cloud-Album Quit", "Successfully left from the Cloud-Album");
                                                         //SetDefaultView();
 
@@ -2335,11 +2305,11 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                             setVerticalRecyclerView(communityDetails.get(position).getCommunityID());
                             if(currentActiveCommunityID.equals(communityDetails.get(position).getCommunityID()))
                             {
-                                mainAddPhotosFab.setVisibility(View.VISIBLE);
+                                mainAddPhotosFab.show();
                             }
                             else
                             {
-                                mainAddPhotosFab.setVisibility(View.GONE);
+                                mainAddPhotosFab.hide();
 
                             }
 

@@ -35,8 +35,6 @@
             android:name=".Activities.InlensGalleryActivity"
             android:theme="@style/NoActionBarTheme" />
 
-        <receiver android:name=".Notification.MyBroadcastReceiver" />
-
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait"
@@ -80,10 +78,6 @@
             android:theme="@style/NoActionBarTheme"
             android:windowSoftInputMode="adjustResize" />
 
-        <service
-            android:name=".JobScheduler.Scheduler"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 
 </manifest>

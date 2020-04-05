@@ -43,7 +43,6 @@ import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.Helper.PreOperationCheck;
 import com.integrals.inlens.MainActivity;
-import com.integrals.inlens.Notification.AlarmManagerHelper;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -491,6 +490,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         ceditor.putString("id", newCommunityId);
                         ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
                         ceditor.putString("stopAt", getOffsetDeletedTime(getTimeStamp(albumTime)));
+                        ceditor.putInt("notiCount", 0);
                         ceditor.putBoolean("notified", false);
                         ceditor.commit();
 
@@ -501,7 +501,6 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         uploadProgressbar.setVisibility(View.GONE);
                         userCommunityIdList.add(newCommunityId);
                         showDialogue("Successfully created the Cloud-Album", true);
-                        initiateNotificationService();
                     }
                     else
                     {
@@ -662,9 +661,4 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
     }
 
-    public void initiateNotificationService() {
-        AlarmManagerHelper alarmManagerHelper = new AlarmManagerHelper(getApplicationContext());
-        alarmManagerHelper.initiateAlarmManager(5);
-
-    }
 }

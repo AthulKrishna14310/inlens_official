@@ -1,31 +1,27 @@
-package com.integrals.inlens.JobScheduler;
+package com.integrals.inlens.AsynchTasks;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
+
+import androidx.work.WorkManager;
 
 import com.integrals.inlens.Helper.AppConstants;
-import com.integrals.inlens.Models.GalleryImageModel;
 import com.integrals.inlens.Models.UnNotifiedImageModel;
-import com.integrals.inlens.Notification.AlarmManagerHelper;
+import com.integrals.inlens.Notification.InlensImageModel;
 import com.integrals.inlens.Notification.NotificationHelper;
 import com.integrals.inlens.Notification.RecentImageScan;
 
 import java.util.Calendar;
-import java.util.List;
 import java.util.TimeZone;
 
-public class ScannerTask extends AsyncTask {
+public class ScannerTask extends AsyncTask<Void,Void,Void> {
 
     private NotificationHelper notificationHelper;
-    private AlarmManagerHelper alarmManagerHelper;
-    private UnNotifiedImageModel unNotifiedImage;
+    private InlensImageModel imageModel;
     private Context context;
 
     public ScannerTask(Context context) {
@@ -33,7 +29,7 @@ public class ScannerTask extends AsyncTask {
     }
 
     @Override
-    protected Object doInBackground(Object[] objects) {
+    protected Void doInBackground(Void... voids) {
 
         SharedPreferences LastShownNotificationInfo = context.getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = LastShownNotificationInfo.edit();
@@ -41,14 +37,20 @@ public class ScannerTask extends AsyncTask {
         long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
         long serverTimeInMillis = System.currentTimeMillis()-offsetInMillis;
         long endTime = Long.parseLong(LastShownNotificationInfo.getString("stopAt",String.valueOf(System.currentTimeMillis())));
-        if(unNotifiedImage !=null)
-        {
-            if (unNotifiedImage.getCreatedTime() != null) {
 
-                notificationHelper.displayRecentImageNotification();
-                editor.putString("time", unNotifiedImage.getCreatedTime());
-                editor.commit();
+        notificationHelper = new NotificationHelper(context);
+
+
+        if(!imageModel.getUri().equals("") && !imageModel.getLastModified().equals(""))
+        {
+            int notiCount = LastShownNotificationInfo.getInt("notiCount",0);
+            notificationHelper.displayRecentImageNotification(imageModel.getUri(),imageModel.getCount(),notiCount);
+            if(notiCount<2)
+            {
+                editor.putInt("notiCount", ++notiCount);
             }
+            editor.putString("time", imageModel.getLastModified());
+            editor.commit();
         }
         boolean isNotified = LastShownNotificationInfo.getBoolean("notified",false);
         //Log.i("timeScanner","serverTime "+serverTimeInMillis+" EndTime "+endTime+" SysTime "+System.currentTimeMillis()+" offset "+offsetInMillis);
@@ -57,15 +59,10 @@ public class ScannerTask extends AsyncTask {
             //Log.i("timeScannerNotif","Notification deploy");
             editor.putBoolean("notified", true);
             editor.commit();
-            notificationHelper = new NotificationHelper(context);
             notificationHelper.displayAlbumEndedNotification();
-            alarmManagerHelper.deinitateAlarmManager();
+            WorkManager.getInstance().cancelAllWorkByTag(AppConstants.PHOTO_SCAN_WORK);
         }
-        else
-        {
-            alarmManagerHelper.initiateAlarmManager(5);
 
-        }
 
         return null;
     }
@@ -84,17 +81,10 @@ public class ScannerTask extends AsyncTask {
         long time = Long.parseLong(LastShownNotificationInfo.getString("time", String.valueOf(System.currentTimeMillis())));
         RecentImageScan recentImageScan = new RecentImageScan(context, time);
 
-        if (ContextCompat.checkSelfPermission(context,
-                Manifest.permission.READ_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED) {
-            unNotifiedImage = recentImageScan.checkForNotifiedImageExist();
-            if (unNotifiedImage.getUri() != null) {
-                notificationHelper = new NotificationHelper(context, unNotifiedImage.getUri());
-            }
-            alarmManagerHelper = new AlarmManagerHelper(context);
-
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED)
+        {
+            imageModel = recentImageScan.getNotifiedImageCount();
         }
-
 
     }
 }
