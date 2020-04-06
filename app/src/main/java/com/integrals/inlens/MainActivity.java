@@ -880,9 +880,10 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                 .build();
                                         PeriodicWorkRequest periodicWorkRequest = new PeriodicWorkRequest
                                                 .Builder(MyWorker.class,15, TimeUnit.MINUTES)
+                                                .addTag(AppConstants.PHOTO_SCAN_WORK)
                                                 .setConstraints(constraints)
                                                 .build();
-                                        WorkManager.getInstance().enqueueUniquePeriodicWork(AppConstants.PHOTO_SCAN_WORK, ExistingPeriodicWorkPolicy.REPLACE,periodicWorkRequest);
+                                        WorkManager.getInstance().enqueueUniquePeriodicWork(AppConstants.PHOTO_SCAN_WORK, ExistingPeriodicWorkPolicy.REPLACE, periodicWorkRequest);
 
                                     }
 

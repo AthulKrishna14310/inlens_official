@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 
 import androidx.work.WorkManager;
 
@@ -31,38 +32,40 @@ public class ScannerTask extends AsyncTask<Void,Void,Void> {
     @Override
     protected Void doInBackground(Void... voids) {
 
-        SharedPreferences LastShownNotificationInfo = context.getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = LastShownNotificationInfo.edit();
-        TimeZone timeZone = TimeZone.getDefault();
-        long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
-        long serverTimeInMillis = System.currentTimeMillis()-offsetInMillis;
-        long endTime = Long.parseLong(LastShownNotificationInfo.getString("stopAt",String.valueOf(System.currentTimeMillis())));
-
-        notificationHelper = new NotificationHelper(context);
-
-
-        if(!imageModel.getUri().equals("") && !imageModel.getLastModified().equals(""))
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED)
         {
-            int notiCount = LastShownNotificationInfo.getInt("notiCount",0);
-            notificationHelper.displayRecentImageNotification(imageModel.getUri(),imageModel.getCount(),notiCount);
-            if(notiCount<2)
+            SharedPreferences LastShownNotificationInfo = context.getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = LastShownNotificationInfo.edit();
+            TimeZone timeZone = TimeZone.getDefault();
+            long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
+            long serverTimeInMillis = System.currentTimeMillis()-offsetInMillis;
+            long endTime = Long.parseLong(LastShownNotificationInfo.getString("stopAt",String.valueOf(System.currentTimeMillis())));
+
+            notificationHelper = new NotificationHelper(context);
+            boolean isNotified = LastShownNotificationInfo.getBoolean("notified",false);
+
+
+            if(!imageModel.getUri().equals("") && !imageModel.getLastModified().equals("") && !isNotified)
             {
-                editor.putInt("notiCount", ++notiCount);
+                int notiCount = LastShownNotificationInfo.getInt("notiCount",0);
+                notificationHelper.displayRecentImageNotification(imageModel.getUri(),imageModel.getCount(),notiCount);
+                if(notiCount<2)
+                {
+                    editor.putInt("notiCount", ++notiCount);
+                }
+                editor.putString("time", imageModel.getLastModified());
+                editor.commit();
             }
-            editor.putString("time", imageModel.getLastModified());
-            editor.commit();
+            //Log.i("timeScanner","serverTime "+serverTimeInMillis+" EndTime "+endTime+" SysTime "+System.currentTimeMillis()+" offset "+offsetInMillis);
+            if(!isNotified && serverTimeInMillis > endTime)
+            {
+                //Log.i("timeScannerNotif","Notification deploy");
+                editor.putBoolean("notified", true);
+                editor.commit();
+                notificationHelper.displayAlbumEndedNotification();
+                WorkManager.getInstance().cancelAllWorkByTag(AppConstants.PHOTO_SCAN_WORK);
+            }
         }
-        boolean isNotified = LastShownNotificationInfo.getBoolean("notified",false);
-        //Log.i("timeScanner","serverTime "+serverTimeInMillis+" EndTime "+endTime+" SysTime "+System.currentTimeMillis()+" offset "+offsetInMillis);
-        if(!isNotified && serverTimeInMillis > endTime)
-        {
-            //Log.i("timeScannerNotif","Notification deploy");
-            editor.putBoolean("notified", true);
-            editor.commit();
-            notificationHelper.displayAlbumEndedNotification();
-            WorkManager.getInstance().cancelAllWorkByTag(AppConstants.PHOTO_SCAN_WORK);
-        }
-
 
         return null;
     }
@@ -77,14 +80,22 @@ public class ScannerTask extends AsyncTask<Void,Void,Void> {
             editor.putString("time", String.valueOf(System.currentTimeMillis()));
             editor.commit();
         }
-
-        long time = Long.parseLong(LastShownNotificationInfo.getString("time", String.valueOf(System.currentTimeMillis())));
-        RecentImageScan recentImageScan = new RecentImageScan(context, time);
-
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED)
+        else
         {
-            imageModel = recentImageScan.getNotifiedImageCount();
+            String timeStr = LastShownNotificationInfo.getString("time", String.valueOf(System.currentTimeMillis()));
+            if(!TextUtils.isEmpty(timeStr))
+            {
+                RecentImageScan recentImageScan = new RecentImageScan(context, Long.parseLong(timeStr));
+
+                if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED)
+                {
+                    imageModel = recentImageScan.getNotifiedImageCount();
+                }
+            }
+
         }
+
+
 
     }
 }
