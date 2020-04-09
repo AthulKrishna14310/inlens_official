@@ -5,155 +5,234 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingBottom="8dp"
-    android:paddingTop="8dp"
-    android:background="@color/transparent"
-    >
+    android:background="@color/white">
 
-    <!-- NOTE: This list should be displayed in a list
-    instead of nested layouts -->
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginEnd="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginStart="5dp"
         android:orientation="vertical"
+        android:background="@color/white"
         >
 
         <TextView
             android:id="@+id/AlbumTitleBottom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
+            android:maxLines="1"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            android:textStyle="bold"
+            android:background="@color/white"
             android:fontFamily="@font/base_font"
-            android:gravity="center"
             android:text="Album Header"
             android:textSize="20sp"
             android:textColor="@color/colorSecondaryDark"/>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="DETAILS"
+            android:layout_margin="1dp"
+            android:background="@color/white"
+            android:textSize="12sp"
+            android:alpha="0.8"
+            android:textAlignment="center"
+            android:textStyle="bold" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:alpha="0.8"
+            android:background="@android:color/darker_gray" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_small"
             android:orientation="vertical"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp">
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/albumstartdate"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="3dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/starttime_background"
-                    android:backgroundTint="@color/red_400"
-                    android:gravity="center"
-                    android:inputType="text"
-                    android:padding="2dp"
-                    android:text="end"
-                    android:textColor="@color/white"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/albumenddate"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="2dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/endtime_background"
-                    android:backgroundTint="@color/red_400"
-                    android:gravity="center"
-                    android:inputType="text"
-                    android:padding="2dp"
-                    android:text="end"
-                    android:textColor="@color/white"
-                    android:textSize="12sp" />
-
-            </LinearLayout>
-
+            android:background="@color/white"
+            >
             <TextView
                 android:layout_width="match_parent"
                 android:id="@+id/AlbumDescriptionBottom"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:text="Album subtitle"
-                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:layout_marginTop="6dp"
+                android:background="@color/white"
+                android:layout_marginBottom="6dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:textSize="16sp"
                 android:fontFamily="@font/base_font"
                 android:textColor="@color/colorSecondaryDark"
-                android:layout_marginTop="10dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 />
+          
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="6dp"
+                android:background="@color/white">
+                <TextView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:fontFamily="@font/base_font"
+                    android:inputType="text"
+                    android:background="@color/white"
+                    android:text=" Type -"
+                    android:textColor="@color/colorSecondary"
+                    android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/albumtype"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:inputType="text"
+                    android:background="@color/white"
+                    android:fontFamily="@font/base_font"
+                    android:text="typw"
+                    android:textColor="@color/colorSecondary"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="6dp"
+                android:background="@color/white">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:background="@color/white"
+                    android:inputType="text"
+                    android:text="Started at -"
+                    android:fontFamily="@font/base_font"
+                    android:textColor="@color/colorSecondary"
+                    android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/albumstartdate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:inputType="text"
+                    android:background="@color/white"
+                    android:fontFamily="@font/base_font"
+                    android:text="start"
+                    android:textColor="@color/colorSecondary"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="6dp"
+                android:background="@color/white">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:inputType="text"
+                    android:background="@color/white"
+                    android:text="End -"
+                    android:fontFamily="@font/base_font"
+                    android:textColor="@color/colorSecondary"
+                    android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/albumenddate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:inputType="text"
+                    android:background="@color/white"
+                    android:fontFamily="@font/base_font"
+                    android:textStyle="bold|italic"
+                    android:text="end"
+                    android:textColor="@color/red_500"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
 
 
         </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
+         <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Options"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:layout_marginTop="10dp"
-            android:layout_marginStart="10dp"/>
+            android:text="OPTIONS"
+             android:textAlignment="center"
+            android:textSize="12sp"
+             android:alpha="0.8"
+             android:background="@color/white"
+             android:layout_margin="1dp"
+            android:textStyle="bold" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:alpha="0.8"
+            android:background="@android:color/darker_gray" />
 
         <LinearLayout
             android:id="@+id/item_change_cover"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
+             android:padding="16dp"
             android:clickable="true"
             android:foreground="?attr/selectableItemBackground"
             android:orientation="horizontal"
-            android:padding="10dp">
+            android:background="@color/white"
+            >
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
                 android:src="@drawable/ic_coverphoto" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="Change Cloud-Album cover"
+                android:text="Change cover PHOTO"
                 android:textColor="@color/colorSecondary"
-                android:textSize="16sp"
+                android:textSize="14sp"
+                android:background="@color/white"
                 android:fontFamily="@font/base_font"
-                android:layout_marginStart="10dp"
+                android:textAllCaps="true"
+                android:layout_marginStart="16dp"
+
+
                 />
 
         </LinearLayout>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray" />
         <LinearLayout
+            android:padding="16dp"
             android:id="@+id/item_quit_cloud_album"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="true"
             android:foreground="?attr/selectableItemBackground"
             android:orientation="horizontal"
-            android:padding="15dp">
+            android:background="@color/white"
+            >
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:tint="@color/red_500"
                 android:src="@drawable/ic_quit" />
 
             <TextView
@@ -161,30 +240,17 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text="@string/quit_cloud_album"
-                android:textColor="@color/colorSecondary"
-                android:textSize="16sp"
+                android:textColor="@color/red_900"
+                android:textSize="14sp"
+                android:background="@color/white"
                 android:fontFamily="@font/base_font"
-                android:layout_marginStart="10dp"/>
+                android:textAllCaps="true"
+                android:layout_marginStart="16dp"
+
+                />
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:layout_margin="10dp"
-            android:background="@android:color/white"
-            android:visibility="gone"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Participants"
-                android:textStyle="bold"
-                android:textSize="14sp"/>
-
-        </LinearLayout>
 
 
 

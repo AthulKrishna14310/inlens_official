@@ -349,6 +349,7 @@ public class InlensGalleryActivity extends AppCompatActivity {
                 null, null);
 
         column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+
         while (cursor.moveToNext()) {
             absolutePathOfImage = cursor.getString(column_index_data);
 

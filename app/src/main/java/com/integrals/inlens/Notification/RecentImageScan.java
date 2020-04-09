@@ -30,55 +30,52 @@ public class RecentImageScan {
     }
 
 
-    public InlensImageModel getNotifiedImageCount()
+    public int getNotifiedImageCount()
     {
         int count=0;
         String imgUri = "";
-        String createdTime="";
+        String createdTime= "";
         Uri uri;
         Cursor cursor;
         int column_index_data;
         String absolutePathOfImage = null;
         uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
-        String[] projection = {MediaStore.MediaColumns.DATA,
-                MediaStore.Images.Media.BUCKET_DISPLAY_NAME};
+        String[] projection = {MediaStore.MediaColumns.DATA,MediaStore.Images.Media.BUCKET_DISPLAY_NAME};
 
         cursor = context.getContentResolver().query(uri, projection, null, null, null);
 
 
         try
         {
-            column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
             cursor.moveToLast();
+            column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+
             // currently detect all images we need to modify it to detect only images in camera
 
             do
             {
                 absolutePathOfImage = cursor.getString(column_index_data);
+
                 File img = new File(absolutePathOfImage);
+                Log.i(AppConstants.PHOTO_SCAN_WORK,"last modified time : "+img.lastModified()+" lastNotifiedTime : "+lastnotifiedtime);
+
                 if (img.lastModified() > lastnotifiedtime) {
 
-                    if(createdTime.equals("") && imgUri.equals(""))
-                    {
-                        imgUri = absolutePathOfImage;
-                        createdTime=String.valueOf(img.lastModified());
-                    }
                     count++;
                 }
-                else
-                {
-                    break;
-                }
+
             }while (cursor.moveToPrevious());
         }
         catch (Exception e)
         {
             //todo There are zero photos in the phone.
+            Log.i(AppConstants.PHOTO_SCAN_WORK,"Exception caught"+ e.toString());
+
         }
 
 
-        return new InlensImageModel(count,imgUri,createdTime);
+        return count;
     }
 
     public List<GalleryImageModel> getAllShownImagesPath() {
@@ -101,8 +98,10 @@ public class RecentImageScan {
 
         cursor = context.getContentResolver().query(uri, projection, null,
                 null, null);
+        cursor.moveToLast();
 
         column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+
         while (cursor.moveToNext()) {
             absolutePathOfImage = cursor.getString(column_index_data);
 

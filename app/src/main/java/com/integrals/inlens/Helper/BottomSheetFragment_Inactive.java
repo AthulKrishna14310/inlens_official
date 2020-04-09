@@ -55,6 +55,7 @@ public class BottomSheetFragment_Inactive extends BottomSheetDialogFragment {
         TextView AlbumDescription = view.findViewById(R.id.AlbumDescriptionBottom);
         TextView AlbumBottomStartDate = view.findViewById(R.id.albumstartdate);
         TextView AlbumBottomEndDate = view.findViewById(R.id.albumenddate);
+        TextView AlbumType = view.findViewById(R.id.albumtype);
 
         AlbumTitle.setText(communityModel.getTitle());
         if (TextUtils.isEmpty(communityModel.getDescription())) {
@@ -64,7 +65,7 @@ public class BottomSheetFragment_Inactive extends BottomSheetDialogFragment {
         }
         AlbumBottomStartDate.setText(getDate(communityModel.getStartTime()));
         AlbumBottomEndDate.setText(getDate(communityModel.getEndTime()));
-
+        AlbumType.setText(communityModel.getType());
         ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 

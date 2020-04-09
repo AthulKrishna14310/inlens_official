@@ -3,7 +3,7 @@
     xmlns:aapt="http://schemas.android.com/aapt"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="165dp"
+    android:layout_width="140dp"
     android:layout_height="wrap_content"
     android:layout_marginLeft="12dp"
     android:layout_marginTop="4dp"
@@ -24,14 +24,11 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_gravity="end"
-        android:layout_margin="2dp"
+        android:layout_margin="4dp"
         android:visibility="visible"
-        app:cardBackgroundColor="@color/colorSecondary"
+        app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="12dp"
-        app:cardElevation="0.1dip"
-        app:cardMaxElevation="0.1dip"
-
-        >
+        app:cardElevation="0.1dp">
 
         <Button
             android:id="@+id/coverphotochangebutton"
@@ -81,16 +78,7 @@
             android:visibility="invisible"></Button>
 
 
-        <TextView
-            android:id="@+id/albumcard_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:text="Support Text"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-            android:textColor="@color/grey_10"
-            android:visibility="gone" />
+
 
 
     </RelativeLayout>

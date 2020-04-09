@@ -6,6 +6,8 @@
         <item name="colorPrimary">@color/colorPrimaryLight</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorPrimary</item>
+        <item name="android:fontFamily">@font/base_font</item>
+
     </style>
 
     <style name="AppThemeGallery" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -28,6 +30,7 @@
         <item name="colorControlHighlight">@color/blue_600</item>
         <item name="colorControlNormal">@color/grey_40</item>
         <item name="colorPrimary">@color/blue_600</item>
+        <item name="fontFamily">@font/base_font</item>
     </style>
     <style name="RippleStyleWhite">
         <item name="mrl_rippleAlpha">1.5</item>

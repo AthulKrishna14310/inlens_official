@@ -2319,7 +2319,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 });
 
                 viewHolder.AlbumNameTextView.setText(communityDetails.get(position).getTitle());
-                viewHolder.AlbumDescriptionTextView.setText(communityDetails.get(position).getDescription());
+
 
 
             } else if (holder instanceof MainHorizontalLoadingViewHolder) {

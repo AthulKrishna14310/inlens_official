@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/white">
 
     <RelativeLayout
-        android:layout_width="100dp"
+        android:layout_width="125dp"
         android:layout_height="wrap_content"
         android:layout_gravity="left"
+        android:background="@color/white"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp">
+        >
 
         <TextView
             android:id="@+id/txt1"
@@ -19,8 +21,12 @@
             android:layout_centerHorizontal="true"
             android:fontFamily="@font/base_font"
             android:text="New Album"
+            android:textAllCaps="true"
+
             android:textColor="@color/colorPrimaryDark"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+
+            />
 
         <View
             android:layout_width="match_parent"
@@ -41,11 +47,9 @@
             android:id="@+id/option_create_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
             android:foreground="?attr/selectableItemBackgroundBorderless"
             android:orientation="vertical"
-            android:padding="10dp"
+            android:padding="16dp"
 
             >
 
@@ -55,7 +59,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_gravity="left"
-                android:layout_marginLeft="16dp"
+
                 android:background="@drawable/circle_primary"
                 android:elevation="1dp"
                 android:scaleType="center"
@@ -67,13 +71,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
-                android:layout_centerHorizontal="true"
+                android:layout_toRightOf="@+id/main_horizontal_new_album_button"
                 android:layout_centerVertical="true"
+                android:layout_marginLeft="16dp"
                 android:fontFamily="@font/base_font"
-                android:padding="2dp"
                 android:text="Create your Cloud-Album"
                 android:textAlignment="center"
+                android:textStyle="bold"
+                android:textAllCaps="true"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="14sp" />
 
@@ -84,27 +89,26 @@
             android:layout_height="0.5dp"
             android:layout_below="@id/option_create_layout"
             android:background="@android:color/darker_gray" />
+
         <RelativeLayout
             android:id="@+id/option_scan_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/option_create_layout"
             android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginBottom="10dp"
+            android:padding="16dp"
+            android:background="@color/white"
             android:layout_weight="1"
             android:foreground="?attr/selectableItemBackgroundBorderless"
             android:orientation="vertical"
-            android:padding="10dp">
+          >
 
             <RelativeLayout
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="left"
-                android:layout_marginLeft="16dp"
-                android:background="@drawable/circle_primary"
-                >
+                android:id="@+id/scanlayout"
+                android:background="@drawable/circle_primary">
 
                 <ImageButton
                     android:id="@+id/main_horizontal_scan_button"
@@ -114,6 +118,7 @@
                     android:background="#00FFFFFF"
                     android:scaleType="center"
 
+
                     android:src="@drawable/ic_qr_inlens" />
 
             </RelativeLayout>
@@ -121,11 +126,13 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_gravity="center_horizontal"
+                android:layout_toRightOf="@+id/scanlayout"
+                android:layout_marginLeft="16dp"
                 android:layout_centerVertical="true"
+                android:layout_gravity="center_horizontal"
                 android:fontFamily="@font/base_font"
-                android:padding="2dp"
+                android:textAllCaps="true"
+                android:textStyle="bold"
                 android:text="Scan Cloud-Album"
                 android:textAlignment="center"
                 android:textColor="@color/colorPrimaryDark"

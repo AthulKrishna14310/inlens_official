@@ -32,6 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:orientation="vertical"
+            android:background="@color/white"
             android:padding="@dimen/spacing_smlarge">
 
             <TextView
@@ -70,6 +71,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
+                    android:background="@color/white"
                     android:padding="@dimen/spacing_mlarge">
 
 
@@ -136,13 +138,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:fontFamily="@font/maven_pro_medium"
+        android:fontFamily="@font/base_font"
         android:text=" Album-Expiry date"
+
         android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:textColor="@color/colorSecondaryDark"
+        android:layout_marginRight="40dp"
+        android:textColor="@color/colorSecondary"
 
         android:textSize="14sp"
+
         android:theme="@style/Checkbox.Blue" />
 
                     <ImageButton
@@ -169,9 +173,10 @@
                            android:layout_centerInParent="true"
                            android:fontFamily="@font/base_font"
                            android:text=" Album-Event type"
-                           android:textColor="@color/colorSecondaryDark"
+
+                           android:textColor="@color/colorSecondary"
                            android:layout_marginLeft="50dp"
-                           android:layout_marginRight="50dp"
+                           android:layout_marginRight="40dp"
                            android:textSize="14sp"
                            android:theme="@style/Checkbox.Blue" />
 

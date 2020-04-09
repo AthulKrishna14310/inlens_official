@@ -16,6 +16,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.integrals.inlens.Activities.InlensGalleryActivity;
+import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.MainActivity;
 import com.integrals.inlens.R;
 import java.io.File;
@@ -25,17 +26,15 @@ import id.zelory.compressor.Compressor;
 
 public class NotificationHelper {
     private Context context;
-    private Bitmap  recentImageBitmap;
     int notificationIDAlbumEnd=7907,notificationIDAlbumPhoto=7907;
-    int count;
+
 
     public NotificationHelper(Context context) {
         this.context = context;
     }
 
-    public void displayRecentImageNotification(String imageUri,int count,int notiCount){
+    public void displayRecentImageNotification(int count,int notiCount){
 
-        generateNotificationBitmap(imageUri);
 
         Intent intent = new Intent(context, InlensGalleryActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(context, (int) (Math.random() * 100),
@@ -77,7 +76,7 @@ public class NotificationHelper {
             builder.setSmallIcon(R.drawable.inlens_logo)
                     .setContentTitle("InLens Recent Images")
                     .setContentText("You have "+count+" new photos to upload to your album.")
-                    .setStyle(new NotificationCompat.BigPictureStyle().bigPicture(recentImageBitmap))
+
                     .setAutoCancel(true)
                     .setOngoing(false)
                     .setContentIntent(contentIntent);
@@ -134,28 +133,28 @@ public class NotificationHelper {
 
     }
 
-    private void generateNotificationBitmap(String imageLocation)
-    {
-        try {
-            File imageFile=new File(imageLocation);
-            recentImageBitmap = new Compressor(context)
-                    .setMaxHeight(130)
-                    .setMaxWidth(130)
-                    .setQuality(85)
-                    .setCompressFormat(Bitmap.CompressFormat.JPEG)
-                    .compressToBitmap(imageFile);
-        } catch (IOException e) {
-            Log.d("InLens","Bitmap creation failed");
-            e.printStackTrace();
-
-        }catch (NullPointerException e){
-
-            recentImageBitmap=BitmapFactory.decodeResource(context.getResources(),
-                    R.drawable.scenery);
-        }
-
-
-
-    }
+//    private void generateNotificationBitmap(String imageLocation)
+//    {
+//        try {
+//            File imageFile=new File(imageLocation);
+//            recentImageBitmap = new Compressor(context)
+//                    .setMaxHeight(130)
+//                    .setMaxWidth(130)
+//                    .setQuality(85)
+//                    .setCompressFormat(Bitmap.CompressFormat.JPEG)
+//                    .compressToBitmap(imageFile);
+//        } catch (IOException e) {
+//            Log.d("InLens","Bitmap creation failed");
+//            e.printStackTrace();
+//
+//        }catch (NullPointerException e){
+//
+//            recentImageBitmap=BitmapFactory.decodeResource(context.getResources(),
+//                    R.drawable.scenery);
+//        }
+//
+//
+//
+//    }
 
 }
