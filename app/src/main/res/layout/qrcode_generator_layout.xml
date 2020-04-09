@@ -21,7 +21,6 @@
             android:layout_alignParentEnd="true"
             android:layout_marginTop="4dp"
             android:background="@drawable/circle"
-            android:foreground="?attr/selectableItemBackground"
             android:backgroundTint="@color/colorSecondary"
             android:src="@drawable/ic_closedialog" />
 
@@ -64,7 +63,6 @@
             android:layout_marginTop="15dp"
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="15dp"
-            android:foreground="?attr/selectableItemBackground"
             android:background="@drawable/rounded_corners"
             android:backgroundTint="@color/colorSecondary"
             android:paddingStart="20dp"

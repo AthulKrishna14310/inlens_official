@@ -636,7 +636,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                 dialog.dismiss();
                             }
                         })
-                .addButton("CANCEl", -1, getResources().getColor(R.color.deep_orange_A400), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                .addButton("CANCEl", -1, getResources().getColor(R.color.quantum_googred300), CFAlertDialog.CFAlertActionStyle.POSITIVE,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -1115,6 +1115,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                 QRCodeDialog.dismiss();
 
+
             }
         });
         final TextView textView = QRCodeDialog.findViewById(R.id.textViewAlbumQR);
@@ -1187,7 +1188,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                 dialog.dismiss();
                                             }
                                         })
-                                .addButton("Cancel", -1, getResources().getColor(R.color.deep_orange_A400), CFAlertDialog.CFAlertActionStyle.NEGATIVE,
+                                .addButton("Cancel", -1, getResources().getColor(R.color.quantum_googred300), CFAlertDialog.CFAlertActionStyle.NEGATIVE,
                                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
@@ -1219,7 +1220,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                     dialog.dismiss();
                                                 }
                                             })
-                                    .addButton("NO", -1, getResources().getColor(R.color.deep_orange_A400), CFAlertDialog.CFAlertActionStyle.NEGATIVE,
+                                    .addButton("NO", -1, getResources().getColor(R.color.quantum_googred300), CFAlertDialog.CFAlertActionStyle.NEGATIVE,
                                             CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
@@ -1618,7 +1619,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 .setIcon(R.drawable.ic_cancel_black_24dp)
                 .setMessage(message)
                 .setCancelable(false)
-                .addButton(negativeButtonMessage, -1, getResources().getColor(R.color.deep_orange_A400), CFAlertDialog.CFAlertActionStyle.NEGATIVE,
+                .addButton(negativeButtonMessage, -1, getResources().getColor(R.color.quantum_googred300), CFAlertDialog.CFAlertActionStyle.NEGATIVE,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
