@@ -140,6 +140,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.TimeZone;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -289,16 +290,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-                if (item.getItemId() == R.id.profile_preference_bg_service) {
-                    enableBackgroundServices();
-                    return true;
-                } else if (item.getItemId() == R.id.profile_preference_battery_optimization) {
-
-                    Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-                    intent.setData(Uri.parse("package:" + getPackageName()));
-                    startActivity(intent);
-                    return true;
-                } else if (item.getItemId() == R.id.profile_preference) {
+                if (item.getItemId() == R.id.profile_preference) {
 
                     // no need to check internet connection as if is given by default
                     setCoverChange(false);
@@ -883,7 +875,10 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                     .setConstraints(constraints)
                                                     .build();
                                             WorkManager.getInstance().enqueueUniquePeriodicWork(AppConstants.PHOTO_SCAN_WORK, ExistingPeriodicWorkPolicy.REPLACE, periodicWorkRequest);
-
+                                            SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
+                                            SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
+                                            ceditor.putString("scanWorkerId", String.valueOf(periodicWorkRequest.getId()));
+                                            ceditor.commit();
                                         }
                                         else
                                         {
@@ -1564,7 +1559,26 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                         currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).removeValue();
                         currentActiveCommunityID = AppConstants.NOT_AVALABLE;
                         mainAddPhotosFab.hide();
-                        WorkManager.getInstance().cancelAllWorkByTag(AppConstants.PHOTO_SCAN_WORK);
+                        SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
+                        String scanWorkId = CurrentActiveCommunity.getString("scanWorkerId",AppConstants.NOT_AVALABLE);
+                        String albumEndWorkId = CurrentActiveCommunity.getString("albumendWorkerId",AppConstants.NOT_AVALABLE);
+                        if(scanWorkId.equals(AppConstants.NOT_AVALABLE))
+                        {
+                            WorkManager.getInstance().cancelUniqueWork(AppConstants.PHOTO_SCAN_WORK);
+                        }
+                        else
+                        {
+                            WorkManager.getInstance().cancelWorkById(UUID.fromString(scanWorkId));
+                        }
+                        if(albumEndWorkId.equals(AppConstants.NOT_AVALABLE))
+                        {
+                            WorkManager.getInstance().cancelAllWork();
+                        }
+                        else
+                        {
+                            WorkManager.getInstance().cancelWorkById(UUID.fromString(albumEndWorkId));
+                        }
+
                         showDialogMessage("Cloud-Album Quit", "Successfully left from the Cloud-Album");
                         if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
                             photographerList.remove(0);
@@ -1622,7 +1636,25 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                         currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).removeValue();
                                                         currentActiveCommunityID = AppConstants.NOT_AVALABLE;
                                                         mainAddPhotosFab.hide();
-                                                        WorkManager.getInstance().cancelAllWorkByTag(AppConstants.PHOTO_SCAN_WORK);
+                                                        SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
+                                                        String scanWorkId = CurrentActiveCommunity.getString("scanWorkerId",AppConstants.NOT_AVALABLE);
+                                                        String albumEndWorkId = CurrentActiveCommunity.getString("albumendWorkerId",AppConstants.NOT_AVALABLE);
+                                                        if(scanWorkId.equals(AppConstants.NOT_AVALABLE))
+                                                        {
+                                                            WorkManager.getInstance().cancelUniqueWork(AppConstants.PHOTO_SCAN_WORK);
+                                                        }
+                                                        else
+                                                        {
+                                                            WorkManager.getInstance().cancelWorkById(UUID.fromString(scanWorkId));
+                                                        }
+                                                        if(albumEndWorkId.equals(AppConstants.NOT_AVALABLE))
+                                                        {
+                                                            WorkManager.getInstance().cancelAllWork();
+                                                        }
+                                                        else
+                                                        {
+                                                            WorkManager.getInstance().cancelWorkById(UUID.fromString(albumEndWorkId));
+                                                        }
                                                         showDialogMessage("Cloud-Album Quit", "Successfully left from the Cloud-Album");
                                                         if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
                                                             photographerList.remove(0);
@@ -1650,8 +1682,25 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                                                     if (task.isSuccessful()) {
 
-                                                        WorkManager.getInstance().cancelAllWorkByTag(AppConstants.PHOTO_SCAN_WORK);
-                                                        mainAddPhotosFab.hide();
+                                                        SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
+                                                        String scanWorkId = CurrentActiveCommunity.getString("scanWorkerId",AppConstants.NOT_AVALABLE);
+                                                        String albumEndWorkId = CurrentActiveCommunity.getString("albumendWorkerId",AppConstants.NOT_AVALABLE);
+                                                        if(scanWorkId.equals(AppConstants.NOT_AVALABLE))
+                                                        {
+                                                            WorkManager.getInstance().cancelUniqueWork(AppConstants.PHOTO_SCAN_WORK);
+                                                        }
+                                                        else
+                                                        {
+                                                            WorkManager.getInstance().cancelWorkById(UUID.fromString(scanWorkId));
+                                                        }
+                                                        if(albumEndWorkId.equals(AppConstants.NOT_AVALABLE))
+                                                        {
+                                                            WorkManager.getInstance().cancelAllWork();
+                                                        }
+                                                        else
+                                                        {
+                                                            WorkManager.getInstance().cancelWorkById(UUID.fromString(albumEndWorkId));
+                                                        }                                                        mainAddPhotosFab.hide();
                                                         showDialogMessage("Cloud-Album Quit", "Successfully left from the Cloud-Album");
                                                         //SetDefaultView();
 
@@ -1747,6 +1796,11 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                             .setConstraints(constraints)
                             .build();
                     WorkManager.getInstance().enqueueUniquePeriodicWork(AppConstants.PHOTO_SCAN_WORK, ExistingPeriodicWorkPolicy.REPLACE, periodicWorkRequest);
+
+                    SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
+                    SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
+                    ceditor.putString("scanWorkerId", String.valueOf(periodicWorkRequest.getId()));
+                    ceditor.commit();
 
                 }
             }

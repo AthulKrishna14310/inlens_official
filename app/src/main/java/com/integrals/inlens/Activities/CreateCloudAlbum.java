@@ -1,7 +1,9 @@
 package com.integrals.inlens.Activities;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,6 +14,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -28,6 +31,9 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import com.crowdfire.cfalertdialog.CFAlertDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -57,6 +63,7 @@ import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import com.integrals.inlens.R;
+import com.integrals.inlens.WorkManager.AlbumEndWorker;
 
 
 public class CreateCloudAlbum extends AppCompatActivity {
@@ -491,8 +498,24 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
                         ceditor.putString("stopAt", getOffsetDeletedTime(getTimeStamp(albumTime)));
                         ceditor.putInt("notiCount", 0);
-                        ceditor.putBoolean("notified", false);
                         ceditor.commit();
+
+                        try
+                        {
+                            long time =Long.parseLong(getTimeStamp(albumTime))-System.currentTimeMillis() ;
+                            OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(AlbumEndWorker.class)
+                                    .setInitialDelay(time,TimeUnit.MILLISECONDS)
+                                    .build();
+                            WorkManager.getInstance().enqueue(oneTimeWorkRequest);
+                            ceditor.putString("albumendWorkerId", String.valueOf(oneTimeWorkRequest.getId()));
+                            ceditor.commit();
+
+                            Log.i("CreateCloudAlbum","Work enqueued "+time);
+                        }
+                        catch (Exception e)
+                        {
+                            Log.i("CreateCloudAlbum","Error : "+e.toString());
+                        }
 
                         photographerRef.child(newCommunityId).child(currentUserId).setValue(ServerValue.TIMESTAMP);
                         currentUserRef.child(FirebaseConstants.COMMUNITIES).child(newCommunityId).setValue(getOffsetDeletedTime(String.valueOf(System.currentTimeMillis())));

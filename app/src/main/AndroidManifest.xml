@@ -20,7 +20,13 @@
         android:roundIcon="@drawable/inlens_logo"
         android:supportsRtl="true"
         android:theme="@style/NoActionBarTheme">
-        <activity android:name=".Activities.SplashScreenActivity"
+        <receiver
+            android:name=".BroadCastReceiver.MyReceiver"
+            android:enabled="true"
+            android:exported="true"></receiver>
+
+        <activity
+            android:name=".Activities.SplashScreenActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,19 +40,24 @@
         <activity
             android:name=".Activities.InlensGalleryActivity"
             android:theme="@style/NoActionBarTheme" />
-
         <activity
             android:name=".MainActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/NoActionBarTheme"
-            android:windowSoftInputMode="adjustNothing"
-            android:launchMode="singleTask">
+            android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:host="inlens.com" android:scheme="http"/>
-                <data android:host="inlens.com" android:scheme="https"/>
+
+                <data
+                    android:host="inlens.com"
+                    android:scheme="http" />
+                <data
+                    android:host="inlens.com"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
         <activity
@@ -77,7 +88,6 @@
             android:name=".Activities.UserNameInfoActivity"
             android:theme="@style/NoActionBarTheme"
             android:windowSoftInputMode="adjustResize" />
-
     </application>
 
 </manifest>

@@ -64,7 +64,8 @@ public class NotificationHelper {
                     .setContentTitle("InLens Recent Image")
                     .setContentText("You have "+count+" new photos to upload to your album.")
                     .setSmallIcon(R.drawable.inlens_logo)
-                    .setAutoCancel(true);
+                    .setAutoCancel(true)
+                    .setContentIntent(contentIntent);
 
 
 
@@ -76,7 +77,6 @@ public class NotificationHelper {
             builder.setSmallIcon(R.drawable.inlens_logo)
                     .setContentTitle("InLens Recent Images")
                     .setContentText("You have "+count+" new photos to upload to your album.")
-
                     .setAutoCancel(true)
                     .setOngoing(false)
                     .setContentIntent(contentIntent);

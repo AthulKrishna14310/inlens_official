@@ -41,5 +41,7 @@ public class MyWorker extends Worker {
         Log.i(AppConstants.PHOTO_SCAN_WORK,"Work Stopped");
 
     }
+
+
 }
 

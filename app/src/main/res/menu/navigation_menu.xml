@@ -6,15 +6,6 @@
         android:title="@string/change_profile_picture"
         />
 
-    <item android:id="@+id/profile_preference_bg_service"
-        android:icon="@drawable/ic_perm_device_information_black_24dp"
-        android:title="@string/background_service"/>
-
-    <item android:id="@+id/profile_preference_battery_optimization"
-        android:icon="@drawable/ic_battery_alert_black_24dp"
-        android:title="Battery Optimisation"/>
-
-
 
 
 </menu>
