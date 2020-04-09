@@ -133,6 +133,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.Permission;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -145,6 +146,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import id.zelory.compressor.Compressor;
 
 import static com.integrals.inlens.Helper.AppConstants.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE;
+import static com.integrals.inlens.Helper.AppConstants.MY_PERMISSIONS_REQUEST_START_WROKMANAGER;
 
 
 public class MainActivity extends AppCompatActivity implements AlbumOptionsBottomSheetFragment.IScanCallback, AlbumOptionsBottomSheetFragment.ICreateCallback {
@@ -170,11 +172,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     private BroadcastReceiver br;
     private RelativeLayout NoInternetView;
     private TextView NoInternetTextView;
-
-
-    private static final int JOB_ID = 465;
-    private JobScheduler jobScheduler;
-    private JobInfo jobInfo;
 
 
     RecyclerView ParticipantsRecyclerView;
@@ -875,16 +872,34 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                         quitCloudAlbum(true);
                                     } else {
                                         // start the necessary services
-                                        Constraints constraints = new Constraints.Builder()
-                                                .setRequiredNetworkType(NetworkType.CONNECTED)
-                                                .build();
-                                        PeriodicWorkRequest periodicWorkRequest = new PeriodicWorkRequest
-                                                .Builder(MyWorker.class,15, TimeUnit.MINUTES)
-                                                .addTag(AppConstants.PHOTO_SCAN_WORK)
-                                                .setConstraints(constraints)
-                                                .build();
-                                        WorkManager.getInstance().enqueueUniquePeriodicWork(AppConstants.PHOTO_SCAN_WORK, ExistingPeriodicWorkPolicy.REPLACE, periodicWorkRequest);
+                                        if(ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED)
+                                        {
+                                            Constraints constraints = new Constraints.Builder()
+                                                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                                                    .build();
+                                            PeriodicWorkRequest periodicWorkRequest = new PeriodicWorkRequest
+                                                    .Builder(MyWorker.class,15, TimeUnit.MINUTES)
+                                                    .addTag(AppConstants.PHOTO_SCAN_WORK)
+                                                    .setConstraints(constraints)
+                                                    .build();
+                                            WorkManager.getInstance().enqueueUniquePeriodicWork(AppConstants.PHOTO_SCAN_WORK, ExistingPeriodicWorkPolicy.REPLACE, periodicWorkRequest);
 
+                                        }
+                                        else
+                                        {
+
+                                            if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
+                                                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                                                showPermissionDialog();
+
+                                            } else {
+                                                ActivityCompat.requestPermissions(MainActivity.this,
+                                                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                                        MY_PERMISSIONS_REQUEST_START_WROKMANAGER);
+
+
+                                            }
+                                        }
                                     }
 
                                 } else {
@@ -1717,6 +1732,22 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 } else {
                     showPermissionDialog();
+                }
+            }
+            break;
+            case MY_PERMISSIONS_REQUEST_START_WROKMANAGER:{
+                if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED)
+                {
+                    Constraints constraints = new Constraints.Builder()
+                            .setRequiredNetworkType(NetworkType.CONNECTED)
+                            .build();
+                    PeriodicWorkRequest periodicWorkRequest = new PeriodicWorkRequest
+                            .Builder(MyWorker.class,15, TimeUnit.MINUTES)
+                            .addTag(AppConstants.PHOTO_SCAN_WORK)
+                            .setConstraints(constraints)
+                            .build();
+                    WorkManager.getInstance().enqueueUniquePeriodicWork(AppConstants.PHOTO_SCAN_WORK, ExistingPeriodicWorkPolicy.REPLACE, periodicWorkRequest);
+
                 }
             }
         }

@@ -58,7 +58,7 @@ public class RecentImageScan {
                 absolutePathOfImage = cursor.getString(column_index_data);
 
                 File img = new File(absolutePathOfImage);
-                Log.i(AppConstants.PHOTO_SCAN_WORK,"last modified time : "+img.lastModified()+" lastNotifiedTime : "+lastnotifiedtime);
+                //Log.i(AppConstants.PHOTO_SCAN_WORK,"last modified time : "+img.lastModified()+" lastNotifiedTime : "+lastnotifiedtime);
 
                 if (img.lastModified() > lastnotifiedtime) {
 
@@ -70,7 +70,7 @@ public class RecentImageScan {
         catch (Exception e)
         {
             //todo There are zero photos in the phone.
-            Log.i(AppConstants.PHOTO_SCAN_WORK,"Exception caught"+ e.toString());
+            //Log.i(AppConstants.PHOTO_SCAN_WORK,"Exception caught"+ e.toString());
 
         }
 

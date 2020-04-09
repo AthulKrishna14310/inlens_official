@@ -29,13 +29,13 @@ public class ScannerTask extends AsyncTask<Void,Void,Void> {
     @Override
     protected Void doInBackground(Void... voids) {
 
-        Log.i(AppConstants.PHOTO_SCAN_WORK,"started doing in background");
+        //Log.i(AppConstants.PHOTO_SCAN_WORK,"started doing in background");
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED)
         {
             try {
 
 
-            Log.i(AppConstants.PHOTO_SCAN_WORK,"get into notified block");
+            //Log.i(AppConstants.PHOTO_SCAN_WORK,"get into notified block");
 
             SharedPreferences LastShownNotificationInfo = context.getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = LastShownNotificationInfo.edit();
@@ -47,10 +47,10 @@ public class ScannerTask extends AsyncTask<Void,Void,Void> {
             notificationHelper = new NotificationHelper(context);
             boolean isNotified = LastShownNotificationInfo.getBoolean("notified",false);
 
-            Log.i(AppConstants.PHOTO_SCAN_WORK,count+" Recent Image count");
+            //Log.i(AppConstants.PHOTO_SCAN_WORK,count+" Recent Image count");
             if( count>0 && !isNotified)
             {
-                Log.i(AppConstants.PHOTO_SCAN_WORK,"started doing in display notification");
+                //Log.i(AppConstants.PHOTO_SCAN_WORK,"started doing in display notification");
                 int notiCount = LastShownNotificationInfo.getInt("notiCount",0);
                 notificationHelper.displayRecentImageNotification(count,notiCount);
                 if(notiCount<2)
@@ -93,7 +93,7 @@ public class ScannerTask extends AsyncTask<Void,Void,Void> {
         {
 
             String timeStr = LastShownNotificationInfo.getString("time", String.valueOf(System.currentTimeMillis()));
-            Log.i(AppConstants.PHOTO_SCAN_WORK,"TimeString "+timeStr);
+            //Log.i(AppConstants.PHOTO_SCAN_WORK,"TimeString "+timeStr);
 
             if(!TextUtils.isEmpty(timeStr))
             {
