@@ -1,8 +1,10 @@
 package com.integrals.inlens.Activities;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -204,6 +206,14 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
         builder.show();
     }
 
+    private String getOffsetDeletedTime(String timeStamp) {
+        TimeZone timeZone = TimeZone.getDefault();
+        long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
+        long givenTime = Long.parseLong(timeStamp);
+        long offsetDeletedTime = givenTime-offsetInMillis;
+        return String.valueOf(offsetDeletedTime);
+    }
+
     private void addPhotographerToCommunity(final String communityId) {
 
         communityRef.child(communityId).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -225,6 +235,14 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
                         participantRef.child(communityId).child(currentUserId).setValue(ServerValue.TIMESTAMP);
                         userCommunityIdList.add(0,communityId);
                         showDialogMessage("New Community", "You have been added to a new community.");
+
+                        SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
+                        SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
+                        ceditor.putString("id", communityId);
+                        ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
+                        ceditor.putString("stopAt", getOffsetDeletedTime(String.valueOf(endtime)));
+                        ceditor.putInt("notiCount", 0);
+                        ceditor.commit();
 
 
                     } else {
