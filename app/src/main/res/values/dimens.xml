@@ -180,7 +180,7 @@
     <dimen name="progress_bar_size_create_album_activity">48dp</dimen>
     <dimen name="progress_bar_margin_create_cloud_album_activity">6dp</dimen>
     <dimen name="done_button_margin_create_cloud_album_activity">4dp</dimen>
-    <dimen name="back_button_size_create_cloud_album_activity">36dp</dimen>
+    <dimen name="back_button_size_create_cloud_album_activity">24dp</dimen>
     <dimen name="card_margin_create_cloud_album_activity">4dp</dimen>
     <dimen name="image_button_margin_create_cloud_album">5dp</dimen>
     <dimen name="view_width_create_cloud_album_activity">0dp</dimen>
