@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -20,6 +21,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +30,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.crowdfire.cfalertdialog.CFAlertDialog;
@@ -45,6 +49,7 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.integrals.inlens.Helper.AppConstants;
+import com.integrals.inlens.Helper.DirectoryFragment;
 import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.Helper.PreOperationCheck;
 import com.integrals.inlens.Helper.ReadFirebaseData;
@@ -66,7 +71,7 @@ import java.util.TimeZone;
 
 import id.zelory.compressor.Compressor;
 
-public class InlensGalleryActivity extends AppCompatActivity {
+public class InlensGalleryActivity extends AppCompatActivity implements DirectoryFragment.ResumeCallback {
 
     private static final int PORTRAIT = 0;
     private static final int LANDSCAPE = 1;
@@ -91,6 +96,8 @@ public class InlensGalleryActivity extends AppCompatActivity {
     boolean isUploading=false;
     RelativeLayout rootGalleryRelativeLayout;
     SwipeRefreshLayout gallerySwipeRefresh;
+    ImageButton dirSelectionButton;
+    DirectoryFragment directoryFragment;
 
 
     @SuppressLint("CutPasteId")
@@ -120,12 +127,23 @@ public class InlensGalleryActivity extends AppCompatActivity {
         galleyHeaderTextView = findViewById(R.id.gallery_toolbar).findViewById(R.id.mytoolbar_textview);
         galleyHeaderTextView.setText("Your Gallery");
         galleryInfoButton = findViewById(R.id.gallery_toolbar).findViewById(R.id.mytoolbar_info_button);
+        dirSelectionButton = findViewById(R.id.gallery_toolbar).findViewById(R.id.mytoolbar_dir_options);
 
         galleryBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 onBackPressed();
+
+            }
+        });
+
+        directoryFragment =  new DirectoryFragment(InlensGalleryActivity.this);
+        dirSelectionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                directoryFragment.show(getSupportFragmentManager(),directoryFragment.getTag());
 
             }
         });
@@ -348,33 +366,55 @@ public class InlensGalleryActivity extends AppCompatActivity {
         cursor = getContentResolver().query(uri, projection, null,
                 null, null);
 
-        column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+        SharedPreferences dirPreference = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF,Context.MODE_PRIVATE);
+        String directories = dirPreference.getString(AppConstants.SELECTED_DIRECTORIES,"");
 
-        while (cursor.moveToNext()) {
-            absolutePathOfImage = cursor.getString(column_index_data);
+       try
+       {
+           column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
 
-            File img = new File(absolutePathOfImage);
-            if (img.lastModified() > starttime && !absolutePathOfImage.toLowerCase().contains("screenshot") && !absolutePathOfImage.toLowerCase().contains("whatsapp")) {
+           while (cursor.moveToNext()) {
+               absolutePathOfImage = cursor.getString(column_index_data);
+               String[] pathSegments = absolutePathOfImage.split("/");
+               if(pathSegments.length>4)
+               {
+                   if(!directories.contains(pathSegments[4].toLowerCase()))
+                   {
+                       File img = new File(absolutePathOfImage);
+                       //if (img.lastModified() > starttime && !absolutePathOfImage.toLowerCase().contains("screenshot") && !absolutePathOfImage.toLowerCase().contains("whatsapp")) {
+                       if (img.lastModified() > starttime) {
 
-                String lastsegmentedpath = Uri.fromFile(new File(absolutePathOfImage)).getLastPathSegment();
+                           String lastsegmentedpath = Uri.fromFile(new File(absolutePathOfImage)).getLastPathSegment();
 
-                if (!listOfAllImages.contains(lastsegmentedpath) && ImageNotAlreadyUploaded(lastsegmentedpath)) {
+                           if (!listOfAllImages.contains(lastsegmentedpath) && ImageNotAlreadyUploaded(lastsegmentedpath)) {
 
-                    listOfAllImages.add(absolutePathOfImage);
-                    lastmodifieddate.add(String.valueOf(img.lastModified()));
+                               listOfAllImages.add(absolutePathOfImage);
+                               lastmodifieddate.add(String.valueOf(img.lastModified()));
 
-                }
-
-
-            }
-        }
-
-        for (int i = 0; i < listOfAllImages.size(); i++) {
-            AllImagesList.add(new GalleryImageModel(listOfAllImages.get(i), false,lastmodifieddate.get(i)));
-        }
+                           }
 
 
-        return AllImagesList;
+                       }
+                   }
+               }
+
+
+           }
+
+
+           for (int i = 0; i < listOfAllImages.size(); i++) {
+               AllImagesList.add(new GalleryImageModel(listOfAllImages.get(i), false,lastmodifieddate.get(i)));
+           }
+           return AllImagesList;
+
+       }
+       catch (Exception e)
+       {
+           return AllImagesList;
+
+       }
+
+
     }
 
     private boolean ImageNotAlreadyUploaded(String lastsegmentedpath) {
@@ -386,6 +426,18 @@ public class InlensGalleryActivity extends AppCompatActivity {
 
         }
         return true;
+
+    }
+
+    @Override
+    public void reloadData() {
+
+        if(directoryFragment !=null)
+        {
+            directoryFragment.dismiss();
+        }
+        onResume();
+
 
     }
 

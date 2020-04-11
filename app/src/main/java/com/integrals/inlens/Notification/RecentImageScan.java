@@ -1,6 +1,7 @@
 package com.integrals.inlens.Notification;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -46,6 +47,11 @@ public class RecentImageScan {
         cursor = context.getContentResolver().query(uri, projection, null, null, null);
 
 
+        SharedPreferences dirPreference = context.getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF,Context.MODE_PRIVATE);
+        String directories = dirPreference.getString(AppConstants.SELECTED_DIRECTORIES,"");
+
+
+
         try
         {
             cursor.moveToLast();
@@ -56,14 +62,18 @@ public class RecentImageScan {
             do
             {
                 absolutePathOfImage = cursor.getString(column_index_data);
+                String[] pathSegments = absolutePathOfImage.split("/");
+                if(pathSegments.length>4 && !directories.contains(pathSegments[4].toLowerCase()))
+                {
+                    File img = new File(absolutePathOfImage);
+                    //Log.i(AppConstants.PHOTO_SCAN_WORK,"last modified time : "+img.lastModified()+" lastNotifiedTime : "+lastnotifiedtime);
 
-                File img = new File(absolutePathOfImage);
-                //Log.i(AppConstants.PHOTO_SCAN_WORK,"last modified time : "+img.lastModified()+" lastNotifiedTime : "+lastnotifiedtime);
+                    if (img.lastModified() > lastnotifiedtime) {
 
-                if (img.lastModified() > lastnotifiedtime) {
-
-                    count++;
+                        count++;
+                    }
                 }
+
 
             }while (cursor.moveToPrevious());
         }
