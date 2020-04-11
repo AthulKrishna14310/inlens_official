@@ -77,6 +77,7 @@ import androidx.work.WorkManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
@@ -361,6 +362,21 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 int totalItemCount = manager.getItemCount();
                 int lastVisiblesItems = manager.findLastVisibleItemPosition();
 
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        for(int i=communityDataList.size()-1;i>-1;i--)
+                        {
+                            if(communityDataList.get(i)==null)
+                            {
+                                communityDataList.remove(i);
+                            }
+                        }
+
+                    }
+                },1000);
+
                 if (isLoading) {
 
                     if ((visibleItemCount + lastVisiblesItems) >= totalItemCount) {
@@ -420,9 +436,9 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
         MainVerticalRecyclerView = findViewById(R.id.main_recyclerview);
         MainVerticalRecyclerView.setHasFixedSize(true);
-        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL);
-        MainVerticalRecyclerView.setLayoutManager(staggeredGridLayoutManager);
-        mainVerticalAdapter = new MainVerticalAdapter(MainVerticalRecyclerView, MainActivity.this, postImageList, FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USERS), currentUserId);
+        GridLayoutManager gridLayoutManager  = new GridLayoutManager(this,3);
+        MainVerticalRecyclerView.setLayoutManager(gridLayoutManager);
+        mainVerticalAdapter = new MainVerticalAdapter(MainVerticalRecyclerView, MainActivity.this, postImageList, currentUserId);
         mainVerticalAdapter.setHasStableIds(true);
         MainVerticalRecyclerView.setAdapter(mainVerticalAdapter);
 
@@ -448,8 +464,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             public void loadMore() {
 
 
-                visibleItemCount = staggeredGridLayoutManager.getChildCount();
-                totalItemCount = staggeredGridLayoutManager.getItemCount();
+                visibleItemCount = gridLayoutManager.getChildCount();
+                totalItemCount = gridLayoutManager.getItemCount();
                 int[] lastVisibleItemPositions = ((StaggeredGridLayoutManager) Objects.requireNonNull(MainVerticalRecyclerView.getLayoutManager())).findLastVisibleItemPositions(null);
                 lastVisiblesItems = getLastVisibleItem(lastVisibleItemPositions);
 
@@ -1437,14 +1453,14 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                     }
                     if (postImageList.size() > 0) {
-                        StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL);
-                        MainVerticalRecyclerView.setLayoutManager(manager);
+                        GridLayoutManager gridLayoutManager  = new GridLayoutManager(MainActivity.this,3);
+                        MainVerticalRecyclerView.setLayoutManager(gridLayoutManager);
                         mainVerticalAdapter.notifyDataSetChanged();
 
                     } else {
                         postImageList.add(new PostModel(AppConstants.NOT_AVALABLE, AppConstants.NOT_AVALABLE, AppConstants.NOT_AVALABLE, AppConstants.NOT_AVALABLE));
-                        StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(1, LinearLayoutManager.VERTICAL);
-                        MainVerticalRecyclerView.setLayoutManager(manager);
+                        GridLayoutManager gridLayoutManager  = new GridLayoutManager(MainActivity.this,1);
+                        MainVerticalRecyclerView.setLayoutManager(gridLayoutManager);
                         mainVerticalAdapter.notifyDataSetChanged();
                     }
 
@@ -2115,16 +2131,14 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     public class PostGridViewHolder extends RecyclerView.ViewHolder {
         ImageView PostImageView;
         ProgressBar PostProgressbar;
-        TextView PostUploaderNameTextView;
-        CircleImageView PostUploaderImageView;
+        ImageButton postRefresButton;
 
         public PostGridViewHolder(View itemView) {
             super(itemView);
 
             PostImageView = itemView.findViewById(R.id.post_layout_imageview);
             PostProgressbar = itemView.findViewById(R.id.post_layout_progressbar);
-            PostUploaderImageView = itemView.findViewById(R.id.post_layout_userimageview);
-            PostUploaderNameTextView = itemView.findViewById(R.id.post_layout_usernametextview);
+            postRefresButton = itemView.findViewById(R.id.post_layout_refresh_button);
 
         }
     }
@@ -2139,16 +2153,14 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     public class MainVerticalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         List<PostModel> PostList;
-        DatabaseReference UserRef;
         Picasso picasso;
         String comID;
         Activity activity;
         int VIEW_TYPE_PHOTO = 1, VIEW_TYPE_EMPTY = 0;
 
-        public MainVerticalAdapter(RecyclerView recyclerView, Activity activity, List<PostModel> postList, DatabaseReference userRef, String ID) {
+        public MainVerticalAdapter(RecyclerView recyclerView, Activity activity, List<PostModel> postList, String ID) {
             this.activity = activity;
             PostList = postList;
-            UserRef = userRef;
             picasso = Picasso.get();
             picasso.setIndicatorsEnabled(false);
             comID = ID;
@@ -2197,6 +2209,34 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                     RequestOptions requestOptions = new RequestOptions().placeholder(R.drawable.ic_photo_camera);
 
+                    viewHolder.postRefresButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            viewHolder.postRefresButton.clearAnimation();
+                            viewHolder.postRefresButton.setAnimation(AnimationUtils.loadAnimation(activity,R.anim.rotate));
+                            viewHolder.postRefresButton.getAnimation().start();
+                            Glide.with(activity)
+                                    .load(PostList.get(position).getUri())
+                                    .apply(requestOptions)
+                                    .listener(new RequestListener<Drawable>() {
+                                        @Override
+                                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                            viewHolder.postRefresButton.setVisibility(View.VISIBLE);
+                                            return false;
+                                        }
+
+                                        @Override
+                                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                            viewHolder.postRefresButton.setVisibility(View.GONE);
+                                            return false;
+                                        }
+
+                                    })
+                                    .into(viewHolder.PostImageView);
+
+                        }
+                    });
 
                     Glide.with(activity)
                             .load(PostList.get(position).getUri())
@@ -2205,45 +2245,19 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                 @Override
                                 public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                                     viewHolder.PostProgressbar.setVisibility(View.GONE);
+                                    viewHolder.postRefresButton.setVisibility(View.VISIBLE);
                                     return false;
                                 }
 
                                 @Override
                                 public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                                     viewHolder.PostProgressbar.setVisibility(View.GONE);
+                                    viewHolder.postRefresButton.setVisibility(View.GONE);
                                     return false;
                                 }
+
                             })
                             .into(viewHolder.PostImageView);
-
-                    UserRef.child(PostList.get(position).getPostBy()).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-
-                            if (dataSnapshot.hasChild("Name")) {
-                                String name = dataSnapshot.child("Name").getValue().toString();
-                                viewHolder.PostUploaderNameTextView.setText(name);
-
-                            } else {
-                                viewHolder.PostUploaderNameTextView.setText("Unknown");
-                            }
-                            if (dataSnapshot.hasChild("Profile_picture")) {
-                                String UploaderImageUrl = dataSnapshot.child("Profile_picture").getValue().toString();
-                                Glide.with(getApplicationContext()).load(UploaderImageUrl).into(viewHolder.PostUploaderImageView);
-
-                            } else {
-                                Glide.with(getApplicationContext()).load(R.drawable.ic_account_circle).into(viewHolder.PostUploaderImageView);
-
-                            }
-
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-
 
                     holder.itemView.setOnClickListener(new View.OnClickListener() {
                         @Override

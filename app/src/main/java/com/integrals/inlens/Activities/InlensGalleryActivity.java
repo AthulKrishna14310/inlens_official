@@ -173,7 +173,7 @@ public class InlensGalleryActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                galleryUploadFab.setVisibility(View.GONE);
+                galleryUploadFab.hide();
                 imagesToUpload = 0;
                 for(int i=0;i<allCommunityImages.size();i++)
                 {
@@ -278,7 +278,7 @@ public class InlensGalleryActivity extends AppCompatActivity {
                     imageAdapter = new ImageAdapter(getApplicationContext(), allCommunityImages);
                     galleryGridRecyclerView.removeAllViews();
                     galleryGridRecyclerView.setAdapter(imageAdapter);
-                    galleryUploadFab.setVisibility(View.GONE);
+                    galleryUploadFab.hide();
                 }
                 else
                 {
@@ -631,12 +631,12 @@ public class InlensGalleryActivity extends AppCompatActivity {
             for (int k = 0; k < ImageList.size(); k++) {
                 if (ImageList.get(k).isSelected()) {
                     galleryUploadFab.show();
-                    galleryUploadFab.setVisibility(View.VISIBLE);
+                    galleryUploadFab.show();
                     break;
                 } else {
                     if (k == ImageList.size() - 1) {
                         galleryUploadFab.hide();
-                        galleryUploadFab.setVisibility(View.GONE);
+                        galleryUploadFab.hide();
 
                     }
                 }
