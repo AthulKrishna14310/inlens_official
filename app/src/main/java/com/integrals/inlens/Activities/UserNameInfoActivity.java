@@ -28,6 +28,9 @@ import com.integrals.inlens.Helper.PreOperationCheck;
 import com.integrals.inlens.MainActivity;
 import com.integrals.inlens.R;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class UserNameInfoActivity extends AppCompatActivity {
 
     private DatabaseReference userRef;
@@ -86,7 +89,7 @@ public class UserNameInfoActivity extends AppCompatActivity {
                 Name = UserNameEdittext.getText().toString();
                 Email = UserEmailEdittext.getText().toString();
 
-                if(!TextUtils.isEmpty(Name) && !TextUtils.isEmpty(Email))
+                if(!TextUtils.isEmpty(Name) && !TextUtils.isEmpty(Email) && isEmailValid(Email))
                 {
                     PreOperationCheck check = new PreOperationCheck();
                     check.hideSoftKeyboard(UserNameInfoActivity.this,UserNameEdittext);
@@ -137,6 +140,12 @@ public class UserNameInfoActivity extends AppCompatActivity {
                     {
                         showDialogMessage("Email Missing","Please type in your email");
                     }
+                    else if(!isEmailValid(Email))
+                    {
+                        showDialogMessage("Invalid Email","Please type in your valid email again ");
+
+                    }
+
                     else
                     {
                         showDialogMessage("Fields Missing","Please type in your username and email.");
@@ -200,5 +209,11 @@ public class UserNameInfoActivity extends AppCompatActivity {
             finish();
         }
 
+    }
+    public static boolean isEmailValid(String email) {
+        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 }

@@ -160,7 +160,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(CreateCloudAlbum.this)
                                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                                 .setTitle("Album expiry on " + albumTime)
-                                .setIcon(R.drawable.ic_info)
+                                .setIcon(R.drawable.ic_warning_black_24dp)
                                 .setMessage("You can only upload images and add participants to this album till " + albumTime)
                                 .setCancelable(false)
                                 .addButton("    OK    ", -1, Color.parseColor("#3e3d63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
@@ -430,7 +430,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                SetCheckFalse(EventWedding, EventOthers, EventParty, EventCeremony, EventParty);
+                SetCheckFalse(EventWedding, EventOthers, EventParty, EventCeremony, EventTravel);
                 EventHangout.setBackgroundResource(R.drawable.radiobutton_pressed);
                 EventHangout.setTextColor(Color.parseColor("#ffffff"));
                 eventType = "Hangouts";

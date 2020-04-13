@@ -151,7 +151,8 @@ import static com.integrals.inlens.Helper.AppConstants.MY_PERMISSIONS_REQUEST_RE
 import static com.integrals.inlens.Helper.AppConstants.MY_PERMISSIONS_REQUEST_START_WROKMANAGER;
 
 
-public class MainActivity extends AppCompatActivity implements AlbumOptionsBottomSheetFragment.IScanCallback, AlbumOptionsBottomSheetFragment.ICreateCallback {
+public class MainActivity extends AppCompatActivity implements
+        AlbumOptionsBottomSheetFragment.IScanCallback, AlbumOptionsBottomSheetFragment.ICreateCallback  {
 
 
     private String currentActiveCommunityID = AppConstants.NOT_AVALABLE;
@@ -218,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -1108,8 +1109,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     public void QRCodeInit(final String CommunityID) {
 
         QRCodeDialog = new Dialog(MainActivity.this, android.R.style.Theme_Light_NoTitleBar);
-        QRCodeDialog.setCancelable(true);
         QRCodeDialog.setCanceledOnTouchOutside(true);
+        QRCodeDialog.setCancelable(true);
         QRCodeDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         QRCodeDialog.setContentView(R.layout.qrcode_generator_layout);
         QRCodeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
@@ -1121,21 +1122,19 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         QRCodewindow.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         QRCodewindow.setDimAmount(0.75f);
         QRCodewindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-
         Button InviteLinkButton = QRCodeDialog.findViewById(R.id.InviteLinkButton);
-
         ImageButton QRCodeCloseBtn = QRCodeDialog.findViewById(R.id.QR_dialog_closebtn);
+
+        final TextView textView = QRCodeDialog.findViewById(R.id.textViewAlbumQR);
+        final ImageView QRCodeImageView = QRCodeDialog.findViewById(R.id.QR_Display);
+
         QRCodeCloseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                QRCodeDialog.dismiss();
-
-
+              QRCodeDialog.cancel();
+              QRCodeDialog.dismiss();
             }
         });
-        final TextView textView = QRCodeDialog.findViewById(R.id.textViewAlbumQR);
-        final ImageView QRCodeImageView = QRCodeDialog.findViewById(R.id.QR_Display);
 
         final MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
 
@@ -1359,14 +1358,32 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                     .setIcon(R.drawable.ic_info)
                     .setMessage("You have to leave the currently active album before creating a new album.")
                     .setCancelable(true)
-                    .addButton("   Quit album  ", -1, Color.parseColor("#3e3d63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
-                            CFAlertDialog.CFAlertActionAlignment.END,
+
+                    .addButton("   Quit Cloud-Album  ",
+                            Color.RED,
+                            Color.WHITE,
+                            CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                            CFAlertDialog.CFAlertActionAlignment.CENTER,
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();
                                     quitCloudAlbum(false);
                                 }
+                            })
+
+                    .addButton("               Cancel             ",
+                            Color.parseColor("#3d3e63"),
+                            Color.WHITE,
+                            CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                            CFAlertDialog.CFAlertActionAlignment.CENTER,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+
+                                }
+
                             });
             builder.show();
 
@@ -1386,16 +1403,34 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                     .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                     .setTitle("Album Active")
                     .setIcon(R.drawable.ic_info)
-                    .setMessage("You have to leave the currently active album before joining a new album.")
+                    .setMessage("You have to leave the currently active album before creating a new album.")
                     .setCancelable(true)
-                    .addButton("   Quit album  ", -1, Color.parseColor("#3e3d63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
-                            CFAlertDialog.CFAlertActionAlignment.END,
+
+                    .addButton("   Quit Cloud-Album  ",
+                            Color.RED,
+                            Color.WHITE,
+                            CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                            CFAlertDialog.CFAlertActionAlignment.CENTER,
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();
                                     quitCloudAlbum(false);
                                 }
+                            })
+
+                    .addButton("               Cancel             ",
+                            Color.parseColor("#3d3e63"),
+                            Color.WHITE,
+                            CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                            CFAlertDialog.CFAlertActionAlignment.CENTER,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+
+                                }
+
                             });
             builder.show();
         }
