@@ -961,101 +961,108 @@ public class MainActivity extends AppCompatActivity implements
 
     private void getCloudAlbumData(ArrayList<String> userCommunityIdList) {
 
-        if(communityDataList.size()==0)
+        try
         {
-            communityDataList.add(new CommunityModel(
-                AppConstants.NOT_AVALABLE,
-                AppConstants.NOT_AVALABLE,
-                AppConstants.NOT_AVALABLE,
-                AppConstants.NOT_AVALABLE,
-                AppConstants.NOT_AVALABLE,
-                AppConstants.NOT_AVALABLE,
-                AppConstants.NOT_AVALABLE,
-                AppConstants.NOT_AVALABLE,
-                AppConstants.MORE_OPTIONS
-            ));
-        }
-        else if(!communityDataList.get(0).getCommunityID().equals(AppConstants.MORE_OPTIONS) )
-        {
-            communityDataList.add(0,new CommunityModel(
-                    AppConstants.NOT_AVALABLE,
-                    AppConstants.NOT_AVALABLE,
-                    AppConstants.NOT_AVALABLE,
-                    AppConstants.NOT_AVALABLE,
-                    AppConstants.NOT_AVALABLE,
-                    AppConstants.NOT_AVALABLE,
-                    AppConstants.NOT_AVALABLE,
-                    AppConstants.NOT_AVALABLE,
-                    AppConstants.MORE_OPTIONS
-            ));
-        }
+            if(communityDataList.size()==0)
+            {
+                communityDataList.add(new CommunityModel(
+                        AppConstants.NOT_AVALABLE,
+                        AppConstants.NOT_AVALABLE,
+                        AppConstants.NOT_AVALABLE,
+                        AppConstants.NOT_AVALABLE,
+                        AppConstants.NOT_AVALABLE,
+                        AppConstants.NOT_AVALABLE,
+                        AppConstants.NOT_AVALABLE,
+                        AppConstants.NOT_AVALABLE,
+                        AppConstants.MORE_OPTIONS
+                ));
+            }
+            else if(!communityDataList.get(0).getCommunityID().equals(AppConstants.MORE_OPTIONS) )
+            {
+                communityDataList.add(0,new CommunityModel(
+                        AppConstants.NOT_AVALABLE,
+                        AppConstants.NOT_AVALABLE,
+                        AppConstants.NOT_AVALABLE,
+                        AppConstants.NOT_AVALABLE,
+                        AppConstants.NOT_AVALABLE,
+                        AppConstants.NOT_AVALABLE,
+                        AppConstants.NOT_AVALABLE,
+                        AppConstants.NOT_AVALABLE,
+                        AppConstants.MORE_OPTIONS
+                ));
+            }
 
-        communitiesDataListener = readFirebaseData.readData(communityRef, new FirebaseRead() {
-            @Override
-            public void onSuccess(DataSnapshot snapshot) {
+            communitiesDataListener = readFirebaseData.readData(communityRef, new FirebaseRead() {
+                @Override
+                public void onSuccess(DataSnapshot snapshot) {
 
-                for (String communityId : userCommunityIdList) {
-                    String admin = AppConstants.NOT_AVALABLE, coverimage = AppConstants.NOT_AVALABLE, description = AppConstants.NOT_AVALABLE, endtime = AppConstants.NOT_AVALABLE, starttime = AppConstants.NOT_AVALABLE, status = AppConstants.NOT_AVALABLE, title = AppConstants.NOT_AVALABLE, type = AppConstants.NOT_AVALABLE;
-                    if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYADMIN)) {
-                        admin = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYADMIN).getValue().toString();
-                    }
-                    if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYCOVERIMAGE)) {
-                        coverimage = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYCOVERIMAGE).getValue().toString();
-                    }
-                    if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYDESC)) {
-                        description = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYDESC).getValue().toString();
-                    }
-                    if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYENDTIME)) {
-                        endtime = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString();
-                    }
-                    if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYSTARTTIME)) {
-                        starttime = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYSTARTTIME).getValue().toString();
-                    }
-                    if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYSTATUS)) {
-                        status = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYSTATUS).getValue().toString();
-                    }
-                    if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYTITLE)) {
-                        title = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYTITLE).getValue().toString();
-                    }
-                    if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYTYPE)) {
-                        type = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYTYPE).getValue().toString();
-                    }
+                    for (String communityId : userCommunityIdList) {
+                        String admin = AppConstants.NOT_AVALABLE, coverimage = AppConstants.NOT_AVALABLE, description = AppConstants.NOT_AVALABLE, endtime = AppConstants.NOT_AVALABLE, starttime = AppConstants.NOT_AVALABLE, status = AppConstants.NOT_AVALABLE, title = AppConstants.NOT_AVALABLE, type = AppConstants.NOT_AVALABLE;
+                        if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYADMIN)) {
+                            admin = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYADMIN).getValue().toString();
+                        }
+                        if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYCOVERIMAGE)) {
+                            coverimage = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYCOVERIMAGE).getValue().toString();
+                        }
+                        if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYDESC)) {
+                            description = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYDESC).getValue().toString();
+                        }
+                        if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYENDTIME)) {
+                            endtime = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString();
+                        }
+                        if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYSTARTTIME)) {
+                            starttime = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYSTARTTIME).getValue().toString();
+                        }
+                        if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYSTATUS)) {
+                            status = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYSTATUS).getValue().toString();
+                        }
+                        if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYTITLE)) {
+                            title = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYTITLE).getValue().toString();
+                        }
+                        if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYTYPE)) {
+                            type = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYTYPE).getValue().toString();
+                        }
 
-                    CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId);
-                    if (!getCommunityKeys(_communityDataList).contains(communityId)) {
-                        _communityDataList.add(model);
+                        CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId);
+                        if (!getCommunityKeys(_communityDataList).contains(communityId)) {
+                            _communityDataList.add(model);
+                        }
                     }
-                }
-                // info sorting by endtime
-                Collections.sort(_communityDataList, Collections.reverseOrder());
-                for (int i = 0; i < _communityDataList.size() && i < 5; i++) {
-                    if (!getCommunityKeys(communityDataList).contains(_communityDataList.get(i).getCommunityID())) {
-                        communityDataList.add(_communityDataList.get(i));
+                    // info sorting by endtime
+                    Collections.sort(_communityDataList, Collections.reverseOrder());
+                    for (int i = 0; i < _communityDataList.size() && i < 5; i++) {
+                        if (!getCommunityKeys(communityDataList).contains(_communityDataList.get(i).getCommunityID())) {
+                            communityDataList.add(_communityDataList.get(i));
+                        }
                     }
-                }
-                for(int i=communityDataList.size()-1;i>-1;i--)
-                {
-                    if(communityDataList.get(i)==null)
+                    for(int i=communityDataList.size()-1;i>-1;i--)
                     {
-                        communityDataList.remove(i);
+                        if(communityDataList.get(i)==null)
+                        {
+                            communityDataList.remove(i);
+                        }
                     }
+                    communityDataList.add(null);
+                    mainHorizontalAdapter.notifyDataSetChanged();
+
+
                 }
-                communityDataList.add(null);
-                mainHorizontalAdapter.notifyDataSetChanged();
 
+                @Override
+                public void onStart() {
 
-            }
+                }
 
-            @Override
-            public void onStart() {
+                @Override
+                public void onFailure(DatabaseError databaseError) {
 
-            }
-
-            @Override
-            public void onFailure(DatabaseError databaseError) {
-
-            }
-        });
+                }
+            });
+        }
+        catch (NullPointerException e)
+        {
+            Log.i("MainActivity","getCloudAlbumData "+e);
+        }
     }
 
     private List<String> getCommunityKeys(List<CommunityModel> communityDataList) {
