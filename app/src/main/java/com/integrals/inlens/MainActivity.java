@@ -2433,7 +2433,7 @@ public class MainActivity extends AppCompatActivity implements
                 viewHolder.menuOptionsButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (communityDetails.get(position).getStatus().equals("T")) {
+                        if (communityDetails.get(position).getCommunityID().equals(currentActiveCommunityID)) {
                             BottomSheetFragment bottomSheetFragment = new BottomSheetFragment(activity, communityDetails.get(position), position);
                             bottomSheetFragment.show(((FragmentActivity) activity).getSupportFragmentManager(), bottomSheetFragment.getTag());
                         } else {
