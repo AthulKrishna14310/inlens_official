@@ -193,7 +193,7 @@ public class AuthActivity extends AppCompatActivity {
     }
 
     public void showDialogMessage(String title, String message) {
-        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
+        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(getApplicationContext())
                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle(title)
                 .setIcon(R.drawable.ic_check_circle_black_24dp)
