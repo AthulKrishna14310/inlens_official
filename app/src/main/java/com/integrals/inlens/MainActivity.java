@@ -213,6 +213,7 @@ public class MainActivity extends AppCompatActivity implements
     AppBarLayout appBarLayout;
 
     boolean isAppbarOpen = true;
+    int POST_IMAGE_LOAD_COUNT=9;
 
     public MainActivity() {
     }
@@ -222,6 +223,13 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // to calculate screen width
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int width =  metrics.widthPixels;
+        int height = metrics.heightPixels;
+        POST_IMAGE_LOAD_COUNT= ((int) Math.ceil((height/(width/3))+3))*3;
 
         // on backpressed
         appBarLayout = findViewById(R.id.main_appbarlayout);
@@ -467,8 +475,7 @@ public class MainActivity extends AppCompatActivity implements
 
                 visibleItemCount = gridLayoutManager.getChildCount();
                 totalItemCount = gridLayoutManager.getItemCount();
-                int[] lastVisibleItemPositions = ((StaggeredGridLayoutManager) Objects.requireNonNull(MainVerticalRecyclerView.getLayoutManager())).findLastVisibleItemPositions(null);
-                lastVisiblesItems = getLastVisibleItem(lastVisibleItemPositions);
+                lastVisiblesItems = gridLayoutManager.findLastVisibleItemPosition();
 
 
                 if ((visibleItemCount + lastVisiblesItems) >= totalItemCount) {
@@ -478,10 +485,10 @@ public class MainActivity extends AppCompatActivity implements
                             public void run() {
                                 int index = postImageList.size();
                                 int end;
-                                if (index + 7 > _postImageList.size()) {
-                                    end = index + (Math.abs(index + 7 - _postImageList.size()));
+                                if (index + POST_IMAGE_LOAD_COUNT > _postImageList.size()) {
+                                    end = index + (Math.abs(index + POST_IMAGE_LOAD_COUNT - _postImageList.size()));
                                 } else {
-                                    end = index + 7;
+                                    end = index + POST_IMAGE_LOAD_COUNT;
                                 }
                                 for (int i = index; i < end; i++) {
                                     try {
@@ -1481,7 +1488,7 @@ public class MainActivity extends AppCompatActivity implements
                     }
 
                     Collections.reverse(_postImageList);
-                    for (int i = 0; i < 7 && i < _postImageList.size(); i++) {
+                    for (int i = 0; i < POST_IMAGE_LOAD_COUNT && i < _postImageList.size(); i++) {
                         if (!getPostKeys(postImageList).contains(_postImageList.get(i).getPoskKey())) {
                             postImageList.add(_postImageList.get(i));
                         }
