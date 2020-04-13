@@ -992,6 +992,14 @@ public class MainActivity extends AppCompatActivity implements
                 ));
             }
 
+            for(int i=1;i<communityDataList.size();i++)
+            {
+                if(communityDataList.get(i).getCommunityID().equals(AppConstants.MORE_OPTIONS))
+                {
+                    userCommunityIdList.remove(i);
+                }
+            }
+
             communitiesDataListener = readFirebaseData.readData(communityRef, new FirebaseRead() {
                 @Override
                 public void onSuccess(DataSnapshot snapshot) {
