@@ -33,12 +33,19 @@ public class AlbumOptionsBottomSheetFragment extends BottomSheetDialogFragment {
         void createAlbum();
     }
 
+    public interface  IDismissDialog
+    {
+        void dismissDialog();
+    }
+
     IScanCallback scanCallback;
     ICreateCallback createCallback;
+    IDismissDialog dismissDialog;
 
     public AlbumOptionsBottomSheetFragment(Activity activity) {
         scanCallback = (IScanCallback) activity;
         createCallback = (ICreateCallback) activity;
+        dismissDialog = (IDismissDialog) activity;
     }
 
     @Nullable
@@ -56,25 +63,29 @@ public class AlbumOptionsBottomSheetFragment extends BottomSheetDialogFragment {
             public void onClick(View view) {
 
                 scanCallback.scanQR();
+                dismissDialog.dismissDialog();
+
             }
         });
         createLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 createCallback.createAlbum();
+                dismissDialog.dismissDialog();
             }
         });
         scanImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 scanCallback.scanQR();
-
+                dismissDialog.dismissDialog();
             }
         });
         createImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 createCallback.createAlbum();
+                dismissDialog.dismissDialog();
             }
         });
         return albumOptionsView;

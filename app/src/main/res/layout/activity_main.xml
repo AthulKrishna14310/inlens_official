@@ -68,14 +68,16 @@
                             app:expandOnClick="true"
                             app:inner_view="@layout/photographers_layout"
                             app:startExpanded="false"
-
                             app:title="@string/photographer"
+                            android:visibility="gone"
                             >
                         </com.integrals.inlens.Helper.ExpandableCardView>
 
                         <View
+                            android:id="@+id/linePhotographer"
                             android:layout_width="match_parent"
                             android:layout_height="0.3dp"
+                            android:visibility="gone"
                             android:background="@android:color/darker_gray" />
 
                         <TextView
@@ -92,7 +94,8 @@
                             android:background="@color/white"
                             android:textColor="@color/colorPrimary"
                             android:textSize="14sp"
-                            android:textStyle="bold"></TextView>
+                            android:textStyle="bold"
+                            android:visibility="gone"/>
 
                     </LinearLayout>
 

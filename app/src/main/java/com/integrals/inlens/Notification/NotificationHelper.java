@@ -6,27 +6,19 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import com.integrals.inlens.Activities.InlensGalleryActivity;
-import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.MainActivity;
 import com.integrals.inlens.R;
-import java.io.File;
-import java.io.IOException;
-
-import id.zelory.compressor.Compressor;
 
 public class NotificationHelper {
     private Context context;
-    int notificationIDAlbumEnd=7907,notificationIDAlbumPhoto=7907;
+    int notificationIdAlbumEnd =7908, notificationIdAlbumPhoto =7907,notificationIdAlbumStart=7906;
 
 
     public NotificationHelper(Context context) {
@@ -41,7 +33,7 @@ public class NotificationHelper {
                 intent, 0);
 
         NotificationManager notificationManager= (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-
+        notificationManager.cancelAll();
 
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) {
             String channelID = "ID_503";
@@ -69,7 +61,7 @@ public class NotificationHelper {
 
 
 
-            notificationManager.notify(notificationIDAlbumEnd,notificationBuilder.build());
+            notificationManager.notify(notificationIdAlbumEnd,notificationBuilder.build());
         }
         else
         {
@@ -87,7 +79,7 @@ public class NotificationHelper {
                 builder.setSound(path);
                 builder.setVibrate(new long[]{400,200,400});
             }
-            notificationManager.notify(notificationIDAlbumPhoto,builder.build());
+            notificationManager.notify(notificationIdAlbumPhoto,builder.build());
         }
 
     }
@@ -102,7 +94,7 @@ public class NotificationHelper {
 
 
         NotificationManager notificationManager=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-
+        notificationManager.cancelAll();
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) {
             String channelID = "ID_504";
             NotificationChannel notificationChannel = new NotificationChannel(channelID,"Cloud Album Ended", NotificationManager.IMPORTANCE_DEFAULT);
@@ -114,7 +106,7 @@ public class NotificationHelper {
                     .setSmallIcon(R.drawable.inlens_logo)
                     .setAutoCancel(true);
 
-            notificationManager.notify(notificationIDAlbumEnd,notificationBuilder.build());
+            notificationManager.notify(notificationIdAlbumEnd,notificationBuilder.build());
         }
         else
         {
@@ -128,10 +120,62 @@ public class NotificationHelper {
 
             Uri path= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             builder.setSound(path);
-            notificationManager.notify(notificationIDAlbumEnd,builder.build());
+            notificationManager.notify(notificationIdAlbumEnd,builder.build());
         }
 
     }
+
+    public void displayAlbumStartNotification(String title){
+
+
+        Intent intent = new Intent(context, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(context, (int) (Math.random() * 100),
+                intent, 0);
+
+
+
+        NotificationManager notificationManager=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
+
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) {
+            String channelID = "ID_505";
+            NotificationChannel notificationChannel = new NotificationChannel(channelID,"Cloud Album Ended", NotificationManager.IMPORTANCE_DEFAULT);
+            notificationManager.createNotificationChannel(notificationChannel);
+
+            Notification.Builder notificationBuilder = new Notification.Builder(context, channelID)
+                    .setContentTitle(title)
+                    .setOngoing(true)
+                    .setContentText("You have 0 new photos to upload to your album.")
+                    .setSmallIcon(R.drawable.inlens_logo)
+                    .setAutoCancel(false);
+            Uri path= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            notificationChannel.enableVibration(true);
+            notificationChannel.setVibrationPattern(new long[]{400,200,400});
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .setUsage(AudioAttributes.USAGE_ALARM)
+                    .build();
+            notificationChannel.setSound(path,audioAttributes);
+
+            notificationManager.notify(notificationIdAlbumStart,notificationBuilder.build());
+        }
+        else
+        {
+            NotificationCompat.Builder builder=new NotificationCompat.Builder(context);
+            builder.setSmallIcon(R.drawable.inlens_logo)
+                    .setContentTitle(title)
+                    .setContentText("You have 0 new photos to upload to your album.")
+                    .setAutoCancel(false)
+                    .setOngoing(true)
+                    .setContentIntent(contentIntent);
+            Uri path= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            builder.setSound(path);
+            builder.setVibrate(new long[]{400,200,400});
+            notificationManager.notify(notificationIdAlbumStart,builder.build());
+        }
+
+    }
+
 
 //    private void generateNotificationBitmap(String imageLocation)
 //    {

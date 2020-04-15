@@ -23,11 +23,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.Helper.PreOperationCheck;
 import com.integrals.inlens.MainActivity;
 import com.integrals.inlens.R;
 
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,8 +45,7 @@ public class UserNameInfoActivity extends AppCompatActivity {
 
     private String Name,Email;
 
-    private TextView  CustomToastTitle, CustomToastMessage;
-    private ProgressBar CustomToastProgressbar;
+    private ProgressBar userInfoProgressbar;
 
 
     @Override
@@ -56,25 +57,29 @@ public class UserNameInfoActivity extends AppCompatActivity {
         CheckUserAuthentication();
         VariablesInit();
 
-        userRef.child("Users").child(Auth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                if(dataSnapshot.hasChild("Name"))
+                if(dataSnapshot.hasChild(FirebaseConstants.NAME))
                 {
-                    Name = dataSnapshot.child("Name").getValue().toString();
+                    Name = dataSnapshot.child(FirebaseConstants.NAME).getValue().toString();
                     UserNameEdittext.append(Name);
 
                 }
-                if(dataSnapshot.hasChild("Email"))
+                if(dataSnapshot.hasChild(FirebaseConstants.EMAIL))
                 {
-                    Email = dataSnapshot.child("Email").getValue().toString();
+                    Email = dataSnapshot.child(FirebaseConstants.EMAIL).getValue().toString();
                     UserEmailEdittext.append(Email);
                 }
+                userInfoProgressbar.setVisibility(View.INVISIBLE);
+
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                userInfoProgressbar.setVisibility(View.INVISIBLE);
 
             }
         });
@@ -102,9 +107,8 @@ public class UserNameInfoActivity extends AppCompatActivity {
                             if(task.isSuccessful())
                             {
 
-
                                 userRef.child("Email").setValue(Email);
-                                startActivity(new Intent(UserNameInfoActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK).putExtra("ShowTour",true));
+                                startActivity(new Intent(UserNameInfoActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK).putStringArrayListExtra(AppConstants.USER_ID_LIST, (ArrayList<String>) new ArrayList<String>()));
                                 overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                                 finish();
                             }
@@ -185,11 +189,13 @@ public class UserNameInfoActivity extends AppCompatActivity {
         MyToolbarBackButton = MyToolbar.findViewById(R.id.mytoolbar_back_button);
 
         MyToolbarBackButton.setVisibility(View.GONE);
+        MyToolbar.findViewById(R.id.mytoolbar_dir_options).setVisibility(View.GONE);
 
         UserNameEdittext = findViewById(R.id.user_name_activity_edittext);
         UserNameDoneButton = findViewById(R.id.user_name_activity_done_button);
         UserNameTextview = findViewById(R.id.user_name_activity_textview);
         UserEmailEdittext= findViewById(R.id.user_email_activity_edittext);
+        userInfoProgressbar = findViewById(R.id.user_email_activity_progressbar);
     }
 
     private void FirebaseInit() {

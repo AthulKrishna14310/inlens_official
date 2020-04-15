@@ -1,9 +1,7 @@
 package com.integrals.inlens.Activities;
 
-import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -62,6 +60,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
+import com.integrals.inlens.Notification.NotificationHelper;
 import com.integrals.inlens.R;
 import com.integrals.inlens.WorkManager.AlbumEndWorker;
 
@@ -524,6 +523,40 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         uploadProgressbar.setVisibility(View.GONE);
                         userCommunityIdList.add(newCommunityId);
                         showDialogue("Successfully created the Cloud-Album", true);
+
+                        final long dy = TimeUnit.MILLISECONDS.toDays(Long.parseLong(getTimeStamp(albumTime))-System.currentTimeMillis());
+                        final long hr = TimeUnit.MILLISECONDS.toHours(Long.parseLong(getTimeStamp(albumTime))-System.currentTimeMillis())
+                                - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(Long.parseLong(getTimeStamp(albumTime))-System.currentTimeMillis()));
+                        final long min = TimeUnit.MILLISECONDS.toMinutes(Long.parseLong(getTimeStamp(albumTime))-System.currentTimeMillis())
+                                - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(Long.parseLong(getTimeStamp(albumTime))-System.currentTimeMillis()));
+
+                        NotificationHelper helper = new NotificationHelper(getApplicationContext());
+                        String notificationStr = "";
+                        if (titleValue.length() >15)
+                        {
+                            notificationStr+=titleValue.substring(0,15)+"...";
+                        }
+                        else
+                        {
+                            notificationStr+=titleValue;
+                        }
+                        if(dy>0)
+                        {
+                            notificationStr+=", "+ (int) dy +" days";
+                        }
+                        else
+                        {
+                            notificationStr+=",";
+                        }
+                        if(hr>0)
+                        {
+                            notificationStr+=" "+(int)hr+" hrs left";
+                        }
+                        if(hr<1 && dy<1)
+                        {
+                            notificationStr+=" "+(int)min+"minutes left";
+                        }
+                        helper.displayAlbumStartNotification(notificationStr);
                     }
                     else
                     {

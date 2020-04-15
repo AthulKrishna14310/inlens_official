@@ -26,6 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.MainActivity;
+import com.integrals.inlens.Notification.NotificationHelper;
 import com.integrals.inlens.R;
 
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import info.androidhive.barcode.BarcodeReader;
 
@@ -226,7 +228,7 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
                     long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
                     long serverTimeInMillis = (System.currentTimeMillis() - offsetInMillis);
 
-
+                    String titleValue = dataSnapshot.child(FirebaseConstants.COMMUNITYTITLE).getValue().toString();
                     if (serverTimeInMillis < endtime) {
 
                         userRef.child(FirebaseConstants.COMMUNITIES).child(communityId).setValue(ServerValue.TIMESTAMP);
@@ -244,6 +246,39 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
                         ceditor.putInt("notiCount", 0);
                         ceditor.commit();
 
+                        final long dy = TimeUnit.MILLISECONDS.toDays(Long.parseLong(getTimeStamp(endtime))-System.currentTimeMillis());
+                        final long hr = TimeUnit.MILLISECONDS.toHours(Long.parseLong(getTimeStamp(endtime))-System.currentTimeMillis())
+                                - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(Long.parseLong(getTimeStamp(endtime))-System.currentTimeMillis()));
+                        final long min = TimeUnit.MILLISECONDS.toMinutes(Long.parseLong(getTimeStamp(endtime))-System.currentTimeMillis())
+                                - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(Long.parseLong(getTimeStamp(endtime))-System.currentTimeMillis()));
+
+                        NotificationHelper helper = new NotificationHelper(getApplicationContext());
+                        String notificationStr = "";
+                        if (titleValue.length() >15)
+                        {
+                            notificationStr+=titleValue.substring(0,15)+"...";
+                        }
+                        else
+                        {
+                            notificationStr+=titleValue;
+                        }
+                        if(dy>0)
+                        {
+                            notificationStr+=", "+ (int) dy +" days";
+                        }
+                        else
+                        {
+                            notificationStr+=",";
+                        }
+                        if(hr>0)
+                        {
+                            notificationStr+=" "+(int)hr+" hrs left";
+                        }
+                        if(hr<1 && dy<1)
+                        {
+                            notificationStr+=" "+(int)min+"minutes left";
+                        }
+                        helper.displayAlbumStartNotification(notificationStr);
 
                     } else {
 
@@ -263,6 +298,15 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
 
             }
         });
+
+    }
+
+    private String getTimeStamp(long endtime) {
+
+        TimeZone timeZone = TimeZone.getDefault();
+        long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
+        long notificationTime  = endtime+offsetInMillis;
+        return String.valueOf(notificationTime);
 
     }
 

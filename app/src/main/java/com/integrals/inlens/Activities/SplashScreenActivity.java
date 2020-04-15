@@ -49,11 +49,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     private void CheckUserAuthentication() {
 
-        if (firebaseAuth.getCurrentUser() == null) {
-            startActivity(new Intent(SplashScreenActivity.this, AuthActivity.class));
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            finish();
-        } else {
+        if (firebaseAuth.getCurrentUser() != null) {
 
             currentUserId  =  firebaseAuth.getCurrentUser().getUid();
             ReadFirebaseData readFirebaseData = new ReadFirebaseData();
@@ -89,6 +85,19 @@ public class SplashScreenActivity extends AppCompatActivity {
 
                 }
             });
+
+        } else {
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startActivity(new Intent(SplashScreenActivity.this, AuthActivity.class));
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                    finish();
+                }
+            },DELAY_IN_MILLIS);
+
+
         }
     }
 

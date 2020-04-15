@@ -10,6 +10,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,6 +31,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,6 +72,7 @@ public class AuthActivity extends AppCompatActivity {
     private Button VerifyGoManualButton;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks Callbacks;
     private CountDownTimer countDownTimer;
+    private RelativeLayout authRoot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +80,7 @@ public class AuthActivity extends AppCompatActivity {
         setContentView(R.layout.activity_auth);
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-
+        authRoot = findViewById(R.id.rootAuth);
         InitCountryNames();
         InitAllCountryDialog();
         VerifyDialogInit();
@@ -92,12 +95,10 @@ public class AuthActivity extends AppCompatActivity {
         FadeIn = AnimationUtils.loadAnimation(getApplicationContext(),android.R.anim.fade_in);
         FadeOut = AnimationUtils.loadAnimation(getApplicationContext(),android.R.anim.fade_out);
 
-
         AuthNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                GetDefaultCountry();
 
                 if(!AuthCodeButton.isShown() && !AuthEditText.isShown())
                 {
@@ -113,6 +114,7 @@ public class AuthActivity extends AppCompatActivity {
                     AuthContainer.setAnimation(FadeIn);
                     AuthContainer.getAnimation().start();
                     AuthContainer.setVisibility(View.VISIBLE);
+
                 }
                 else if (AuthCodeButton.isShown() && AuthEditText.isShown() && !TextUtils.isEmpty(AuthEditText.getText().toString()))
                 {
@@ -167,7 +169,7 @@ public class AuthActivity extends AppCompatActivity {
             @Override
             public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
 
-                showDialogMessage("Login Successful","Successfully completed verification.");
+                Snackbar.make(authRoot,"Login Successful",Snackbar.LENGTH_SHORT).show();
                 SignInWithCredential(phoneAuthCredential);
 
             }
@@ -175,10 +177,21 @@ public class AuthActivity extends AppCompatActivity {
             @Override
             public void onVerificationFailed(FirebaseException e) {
 
+                /*
                 VerifyTextViewNote.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(),android.R.anim.fade_out));
                 VerifyTextViewNote.setText("*NOTE \nVerification failed. Please try after sometime.");
                 VerifyTextViewNote.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(),android.R.anim.fade_in));
                 VerifyTextViewNote.setVisibility(View.VISIBLE);
+                 */
+                if(VerificationDialog !=null)
+                {
+                    VerificationDialog.dismiss();
+                }
+                if(countDownTimer != null)
+                {
+                    countDownTimer.cancel();
+                }
+                Log.i("authTag","e "+e.toString());
                 showDialogMessage("Authentication Failed"," Unable to connect to database.");
             }
 
@@ -192,8 +205,11 @@ public class AuthActivity extends AppCompatActivity {
 
     }
 
+
+
+
     public void showDialogMessage(String title, String message) {
-        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(getApplicationContext())
+        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(AuthActivity.this)
                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle(title)
                 .setIcon(R.drawable.ic_check_circle_black_24dp)
@@ -240,7 +256,7 @@ public class AuthActivity extends AppCompatActivity {
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            Log.i("authTag",""+e.toString());
         }
 
     }
@@ -705,7 +721,7 @@ public class AuthActivity extends AppCompatActivity {
         {
             AuthIMM.hideSoftInputFromWindow(AuthEditText.getWindowToken(),0);
         }
-
+        GetDefaultCountry();
 
     }
 
