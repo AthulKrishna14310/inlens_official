@@ -46,6 +46,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.FirebaseDatabase;
+import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.CountryItem;
 import com.integrals.inlens.R;
 
@@ -78,7 +79,6 @@ public class AuthActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
-        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         authRoot = findViewById(R.id.rootAuth);
         InitCountryNames();
@@ -192,7 +192,8 @@ public class AuthActivity extends AppCompatActivity {
                     countDownTimer.cancel();
                 }
                 Log.i("authTag","e "+e.toString());
-                showDialogMessage("Authentication Failed"," Unable to connect to database.");
+                showDialogMessageFailed("Authentication Failed",e.getMessage());
+                Log.i(AppConstants.AUTH,e.getMessage());
             }
 
             @Override
@@ -227,6 +228,25 @@ public class AuthActivity extends AppCompatActivity {
         builder.show();
     }
 
+    public void showDialogMessageFailed(String title, String message) {
+        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(AuthActivity.this)
+                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                .setTitle(title)
+                .setIcon(R.drawable.ic_cancel_black_24dp)
+
+                .setMessage(message)
+                .setCancelable(false)
+                .addButton("OK", -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+
+                            }
+                        });
+        builder.show();
+    }
     private void GetDefaultCountry() {
 
         try

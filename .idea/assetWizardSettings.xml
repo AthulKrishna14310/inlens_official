@@ -45,6 +45,18 @@
                                 <PersistentState>
                                   <option name="children">
                                     <map>
+                                      <entry key="foregroundClipArt">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="color" value="000000" />
+                                                <entry key="trimmed" value="true" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
                                       <entry key="foregroundImage">
                                         <value>
                                           <PersistentState>
@@ -62,9 +74,11 @@
                                   </option>
                                   <option name="values">
                                     <map>
+                                      <entry key="backgroundAssetType" value="COLOR" />
+                                      <entry key="backgroundColor" value="ffffff" />
                                       <entry key="backgroundImage" value="$PROJECT_DIR$/app/src/main/res/drawable/transparent_background.xml" />
-                                      <entry key="foregroundImage" value="$PROJECT_DIR$/../Downloads/download.png" />
-                                      <entry key="outputName" value="ic_scan_album" />
+                                      <entry key="foregroundImage" value="/home/athul/Downloads/red-carpet.svg" />
+                                      <entry key="outputName" value="ic_ceremony" />
                                     </map>
                                   </option>
                                 </PersistentState>

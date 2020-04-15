@@ -2485,20 +2485,77 @@ public class MainActivity extends AppCompatActivity implements
                 }
 
                 if (!communityDetails.get(position).equals(AppConstants.NOT_AVALABLE)) {
+                    if(communityDetails.get(position).getType().contentEquals("Ceremony")||communityDetails.get(position).getType().contentEquals("Wedding")){
+                        Glide.with(activity)
+                                .load(communityDetails.get(position)
+                                        .getCoverImage()).placeholder(R.drawable.ic_ceremony_foreground)
+                                .addListener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
 
-                    Glide.with(activity)
-                            .load(communityDetails.get(position)
-                                    .getCoverImage()).addListener(new RequestListener<Drawable>() {
-                        @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                            return false;
-                        }
+                                return false;
+                            }
 
-                        @Override
-                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                            return false;
-                        }
-                    }).into(viewHolder.AlbumCoverButton);
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                return false;
+                            }
+                        }).into(viewHolder.AlbumCoverButton);
+                    }
+                    else if(communityDetails.get(position).getType().contentEquals("Hangouts")){
+                        Glide.with(activity)
+                                .load(communityDetails.get(position)
+                                        .getCoverImage()).placeholder(R.drawable.ic_hangout_foreground)
+                                .addListener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                return false;
+                            }
+                        }).into(viewHolder.AlbumCoverButton);
+                    }
+                    else if(communityDetails.get(position).getType().contentEquals("Travel")){
+                        Glide.with(activity)
+                                .load(communityDetails.get(position)
+                                        .getCoverImage()).placeholder(R.drawable.ic_travel_foreground)
+                                .addListener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                return false;
+                            }
+                        }).into(viewHolder.AlbumCoverButton);
+                    }
+                    else if(communityDetails.get(position).getType().contentEquals("Party")){
+                        Glide.with(activity)
+                                .load(communityDetails.get(position)
+                                        .getCoverImage()).placeholder(R.drawable.ic_party_foreground).addListener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                return false;
+                            }
+                        }).into(viewHolder.AlbumCoverButton);
+                    }
+
+
+
+
                 }
 
 
