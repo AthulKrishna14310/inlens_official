@@ -276,7 +276,7 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
                         }
                         if(hr<1 && dy<1)
                         {
-                            notificationStr+=" "+(int)min+"minutes left";
+                            notificationStr+=" "+(int)min+" minutes left";
                         }
                         helper.displayAlbumStartNotification(notificationStr);
 

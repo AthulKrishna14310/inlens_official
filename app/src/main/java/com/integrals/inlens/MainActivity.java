@@ -379,20 +379,6 @@ public class MainActivity extends AppCompatActivity implements
                 int totalItemCount = manager.getItemCount();
                 int lastVisiblesItems = manager.findLastVisibleItemPosition();
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        for(int i=communityDataList.size()-1;i>-1;i--)
-                        {
-                            if(communityDataList.get(i)==null)
-                            {
-                                communityDataList.remove(i);
-                            }
-                        }
-
-                    }
-                },1000);
 
                 if (isLoading) {
 
@@ -977,9 +963,9 @@ public class MainActivity extends AppCompatActivity implements
 
         try
         {
-            if(communityDataList.size()==0)
+            if(_communityDataList.size()==0)
             {
-                communityDataList.add(new CommunityModel(
+                _communityDataList.add(new CommunityModel(
                         AppConstants.NOT_AVALABLE,
                         AppConstants.NOT_AVALABLE,
                         AppConstants.NOT_AVALABLE,
@@ -991,9 +977,9 @@ public class MainActivity extends AppCompatActivity implements
                         AppConstants.MORE_OPTIONS
                 ));
             }
-            else if(!communityDataList.get(0).getCommunityID().equals(AppConstants.MORE_OPTIONS) )
+            else if(!_communityDataList.get(0).getCommunityID().equals(AppConstants.MORE_OPTIONS) )
             {
-                communityDataList.add(0,new CommunityModel(
+                _communityDataList.add(0,new CommunityModel(
                         AppConstants.NOT_AVALABLE,
                         AppConstants.NOT_AVALABLE,
                         AppConstants.NOT_AVALABLE,
@@ -1006,9 +992,9 @@ public class MainActivity extends AppCompatActivity implements
                 ));
             }
 
-            for(int i=1;i<communityDataList.size();i++)
+            for(int i=1;i<_communityDataList.size();i++)
             {
-                if(communityDataList.get(i).getCommunityID().equals(AppConstants.MORE_OPTIONS))
+                if(_communityDataList.get(i).getCommunityID().equals(AppConstants.MORE_OPTIONS))
                 {
                     userCommunityIdList.remove(i);
                 }
@@ -1070,7 +1056,7 @@ public class MainActivity extends AppCompatActivity implements
                                 communityDataList.remove(i);
                             }
                         }
-                        if(communityDataList.size()>5)
+                        if(_communityDataList.size()>5)
                         {
                             communityDataList.add(null);
                         }
@@ -1417,7 +1403,7 @@ public class MainActivity extends AppCompatActivity implements
                                 }
                                  if(hr<1 && dy<1)
                                 {
-                                    notificationStr+=" "+(int)min+"minutes left";
+                                    notificationStr+=" "+(int)min+" minutes left";
                                 }
                                 helper.displayAlbumStartNotification(notificationStr);
                             }
