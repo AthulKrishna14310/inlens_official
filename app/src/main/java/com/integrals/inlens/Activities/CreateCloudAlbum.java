@@ -30,6 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
@@ -502,10 +503,11 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         try
                         {
                             long time =Long.parseLong(getTimeStamp(albumTime))-System.currentTimeMillis() ;
+                            Log.i("endReq","time "+time);
                             OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(AlbumEndWorker.class)
                                     .setInitialDelay(time,TimeUnit.MILLISECONDS)
                                     .build();
-                            WorkManager.getInstance().enqueue(oneTimeWorkRequest);
+                            WorkManager.getInstance().enqueueUniqueWork(AppConstants.ALBUM_END_WORK, ExistingWorkPolicy.KEEP,oneTimeWorkRequest);
                             ceditor.putString("albumendWorkerId", String.valueOf(oneTimeWorkRequest.getId()));
                             ceditor.commit();
 

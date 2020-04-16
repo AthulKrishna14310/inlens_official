@@ -27,6 +27,7 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -60,6 +61,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
@@ -237,6 +239,7 @@ public class MainActivity extends AppCompatActivity implements
                 } else isAppbarOpen = verticalOffset == 0;
             }
         });
+
 
         // main actionbar
         mainProfileImageview = findViewById(R.id.mainactivity_actionbar_profileimageview);
@@ -633,6 +636,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
     }
+
 
     private CFAlertDialog showAddPhotoFabPermissionDialog(CFAlertDialog.Builder builder) {
 
@@ -1062,6 +1066,15 @@ public class MainActivity extends AppCompatActivity implements
                         }
 
                         mainHorizontalAdapter.notifyDataSetChanged();
+                    }
+                    else
+                    {
+                        if (communityDataList.size()<1) {
+                            communityDataList.add(_communityDataList.get(0));
+                        }
+                        appBarLayout.setExpanded(true,true);
+                        mainHorizontalAdapter.notifyDataSetChanged();
+
                     }
 
 
@@ -2552,7 +2565,6 @@ public class MainActivity extends AppCompatActivity implements
                             }
                         }).into(viewHolder.AlbumCoverButton);
                     }
-
 
 
 
