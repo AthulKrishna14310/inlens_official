@@ -126,19 +126,11 @@
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@+id/bttx3"
             android:fontFamily="@font/base_font"
+            android:layout_centerVertical="true"
             android:textStyle="bold"
-            android:text="Step 3: Tap on Notification"
+
+            android:text="Step 3: Tap on InLens Notification"
             android:textSize="16sp"></TextView>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="10sp"
-            android:layout_toRightOf="@+id/bttx3"
-            android:layout_marginLeft="10dp"
-            android:layout_below="@id/txt3"
-            android:textColor="@color/red_300"
-            android:text="Captured photo will be notified automatically. Please tap on the notification"
-            ></TextView>
 
     </RelativeLayout>
     <RelativeLayout

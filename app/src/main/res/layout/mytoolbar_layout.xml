@@ -61,7 +61,7 @@ e
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_info_final_albumviewholder_24dp"
                 android:tint="@color/white"
-                android:visibility="gone" />
+                android:visibility="visible" />
         </com.skyfishjy.library.RippleBackground>
 
         <ImageButton

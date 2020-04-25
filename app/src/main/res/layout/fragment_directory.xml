@@ -7,7 +7,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@color/colorPrimaryLight"
+        android:background="@color/colorPrimary"
         android:gravity="center">
 
         <TextView
@@ -16,6 +16,7 @@
             android:text="Directories"
             android:textSize="20sp"
             android:textColor="@color/white"
+            android:fontFamily="@font/base_font"
             android:textStyle="bold"
             />
 
@@ -25,9 +26,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="16sp"
-        android:text="Select the directories that you want inlens to avoid scanning."
+        android:text="Select the folders that you want InLens to avoid scanning."
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
+        android:fontFamily="@font/base_font"
+        android:textColor="@color/colorPrimaryDark"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"/>
 

@@ -88,6 +88,7 @@ public class ExpandableCardView extends LinearLayout {
 
     public ExpandableCardView(Context context) {
         super(context);
+
     }
 
     public ExpandableCardView(Context context, AttributeSet attrs) {
@@ -95,6 +96,7 @@ public class ExpandableCardView extends LinearLayout {
 
         initAttributes(context, attrs);
         initView(context);
+
     }
 
     public ExpandableCardView(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -102,6 +104,7 @@ public class ExpandableCardView extends LinearLayout {
 
         initAttributes(context, attrs);
         initView(context);
+
     }
 
     private void initView(Context context){
@@ -109,6 +112,7 @@ public class ExpandableCardView extends LinearLayout {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.expandable_cardview, this);
+
     }
 
     private void initAttributes(Context context, AttributeSet attrs){
@@ -121,6 +125,7 @@ public class ExpandableCardView extends LinearLayout {
         animDuration = typedArray.getInteger(R.styleable.ExpandableCardView_animationDuration, DEFAULT_ANIM_DURATION);
         startExpanded = typedArray.getBoolean(R.styleable.ExpandableCardView_startExpanded, false);
         typedArray.recycle();
+
     }
 
     @Override

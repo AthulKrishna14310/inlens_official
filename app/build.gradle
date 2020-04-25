@@ -46,7 +46,7 @@ dependencies {
     implementation 'info.androidhive:barcode-reader:1.1.5'
     implementation 'com.google.android.gms:play-services-vision:11.0.2'
     implementation 'com.skyfishjy.ripplebackground:library:1.0.1'
-
+    implementation 'com.github.Shashank02051997:FancyToast-Android:0.1.6'
     implementation 'id.zelory:compressor:2.1.0'
     implementation 'de.hdodenhof:circleimageview:2.1.0'
     implementation 'com.github.chrisbanes.photoview:library:1.2.4'

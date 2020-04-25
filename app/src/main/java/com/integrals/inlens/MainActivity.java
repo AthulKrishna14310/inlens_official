@@ -4,6 +4,7 @@ package com.integrals.inlens;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -24,6 +25,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -71,6 +73,7 @@ import androidx.work.WorkManager;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
@@ -120,6 +123,7 @@ import com.integrals.inlens.Models.PostModel;
 import com.integrals.inlens.Notification.NotificationHelper;
 import com.integrals.inlens.WorkManager.MyWorker;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
+import com.skyfishjy.library.RippleBackground;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -129,6 +133,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.Format;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -159,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements
     private static boolean COVER_CHANGE = false, PROFILE_CHANGE = false;
     private NavigationView navigationView;
     private DrawerLayout RootForMainActivity;
-
+    private boolean displayed=false;
 
     private RecyclerView MainHorizontalRecyclerview, MainVerticalRecyclerView;
 
@@ -196,6 +201,7 @@ public class MainActivity extends AppCompatActivity implements
     boolean loading = true;
     boolean isLoading = true;
 
+
     ParticipantsAdapter participantsAdapter;
     List<PhotographerModel> photographerList = new ArrayList<>();
 
@@ -211,7 +217,12 @@ public class MainActivity extends AppCompatActivity implements
     CFAlertDialog.Builder cfBuilder;
     Dialog cfDialogService,cfDialogAddPhotoFab;
 
+
+    //PURPOSE OF USER DIRECT
+
+
     AlbumOptionsBottomSheetFragment optionsBottomSheetFragment;
+    private RippleBackground rippleBackground,rippleBackground2;
 
     public MainActivity() {
     }
@@ -250,7 +261,6 @@ public class MainActivity extends AppCompatActivity implements
 
         //photographers cardview
         expandableCardView = findViewById(R.id.photographers);
-
 
         // navigation view and drawerLayout  (Root)
         RootForMainActivity = findViewById(R.id.root_for_main_activity);
@@ -635,6 +645,10 @@ public class MainActivity extends AppCompatActivity implements
          */
 
 
+
+        rippleBackground = (RippleBackground) findViewById(R.id.content);
+        rippleBackground2 = (RippleBackground) findViewById(R.id.content2);
+
     }
 
 
@@ -856,6 +870,22 @@ public class MainActivity extends AppCompatActivity implements
                     // make the add photo fab visible
                     mainAddPhotosFab.show();
 
+                    try {
+                        String qrIntent=getIntent().getStringExtra("CREATED");
+                        String id=getIntent().getStringExtra("ID");
+                        if((!qrIntent.isEmpty())&&(!id.isEmpty())) {
+                            if (qrIntent.contentEquals("YES")) {
+                                if(displayed==false) {
+
+                                    //PURPOSE OF USER DIRECT
+                                    initialStart();
+
+                                }
+                            }
+                        }
+                    }catch (NullPointerException e){
+                        e.printStackTrace();
+                    }
 
                     // make the start and stop services in navigation drawer visible
 
@@ -962,6 +992,68 @@ public class MainActivity extends AppCompatActivity implements
         });
     }
 
+    private void initialStart() {
+        QRCodeDialog.show();
+        TextView textView=QRCodeDialog.findViewById(R.id.cancelButtonTextView);
+        textView.setText("I WILL DO IT LATER");
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                QRCodeDialog.dismiss();
+                NotificationHelper notificationHelper=new NotificationHelper(getApplicationContext());
+                notificationHelper.displayAlbumStartNotification("Open Gallery");
+
+                CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
+                        .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                        .setTitle("Gallery Notification ?")
+                        .setIcon(R.drawable.ic_notification_)
+                        .setMessage(getString(R.string.initial_start_notification))
+                        .setCancelable(false)
+                        .addButton("YES , NEXT STEP", getResources().getColor(R.color.colorPrimaryDark), getResources().getColor(R.color.white), CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+
+                                        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
+                                                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                                                .setTitle("Take and Tap ")
+                                                .setIcon(R.drawable.ic_touch_)
+                                                .setMessage(R.string.initial_start_take_photos)
+                                                .setCancelable(false)
+                                                .addButton("TAKE PHOTOS", getResources().getColor(R.color.colorPrimaryDark), getResources().getColor(R.color.white), CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                                                        new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                dialog.dismiss();
+                                                                Intent cameraIntent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
+                                                                startActivity(cameraIntent);
+
+                                                                //PURPOSE OF USER DIRECT
+                                                                MainActivity.this.getIntent().putExtra("CREATED","NO");
+                                                                MainActivity.this.getIntent().putExtra("ID","NULL");
+
+                                                                finishAffinity();
+
+
+                                                            }
+                                                        });
+                                        builder.show();
+
+                                    }
+                                });
+                builder.show();
+            }
+        });
+
+
+
+        displayed=true;
+
+    }
+
 
     private void getCloudAlbumData(ArrayList<String> userCommunityIdList) {
 
@@ -1012,7 +1104,7 @@ public class MainActivity extends AppCompatActivity implements
                     {
                         findViewById(R.id.photoText).setVisibility(View.VISIBLE);
                         findViewById(R.id.photographers).setVisibility(View.VISIBLE);
-                        findViewById(R.id.linePhotographer).setVisibility(View.VISIBLE);
+                      //  findViewById(R.id.linePhotographer).setVisibility(View.VISIBLE);
 
                         for (String communityId : userCommunityIdList) {
                             String admin = AppConstants.NOT_AVALABLE, coverimage = AppConstants.NOT_AVALABLE, description = AppConstants.NOT_AVALABLE, endtime = AppConstants.NOT_AVALABLE, starttime = AppConstants.NOT_AVALABLE, status = AppConstants.NOT_AVALABLE, title = AppConstants.NOT_AVALABLE, type = AppConstants.NOT_AVALABLE;
@@ -1153,10 +1245,10 @@ public class MainActivity extends AppCompatActivity implements
 
 
     public void QRCodeInit(final String CommunityID) {
-
+        Dialog tempDialogue;
         QRCodeDialog = new Dialog(MainActivity.this, android.R.style.Theme_Light_NoTitleBar);
-        QRCodeDialog.setCanceledOnTouchOutside(true);
-        QRCodeDialog.setCancelable(true);
+        QRCodeDialog.setCanceledOnTouchOutside(false);
+        QRCodeDialog.setCancelable(false);
         QRCodeDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         QRCodeDialog.setContentView(R.layout.qrcode_generator_layout);
         QRCodeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
@@ -1169,14 +1261,16 @@ public class MainActivity extends AppCompatActivity implements
         QRCodewindow.setDimAmount(0.75f);
         QRCodewindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         Button InviteLinkButton = QRCodeDialog.findViewById(R.id.InviteLinkButton);
-        ImageButton QRCodeCloseBtn = QRCodeDialog.findViewById(R.id.QR_dialog_closebtn);
+        TextView QRCodeCloseBtn = QRCodeDialog.findViewById(R.id.cancelButtonTextView);
 
         final TextView textView = QRCodeDialog.findViewById(R.id.textViewAlbumQR);
         final ImageView QRCodeImageView = QRCodeDialog.findViewById(R.id.QR_Display);
 
+        tempDialogue=QRCodeDialog;
         QRCodeCloseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
               QRCodeDialog.cancel();
               QRCodeDialog.dismiss();
             }
@@ -1209,6 +1303,8 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         InviteLinkButton.setOnClickListener(new View.OnClickListener() {
+
+
             @Override
             public void onClick(View v) {
 
@@ -1218,6 +1314,17 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
+
+        QRCodeDialog.findViewById(R.id.cancelButtonTextView).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tempDialogue.cancel();
+                tempDialogue.dismiss();
+
+                Log.i(AppConstants.MAINACTIVITY,tempDialogue.toString());
+                Log.i(AppConstants.MAINACTIVITY,QRCodeDialog.toString());
+            }
+        });
         //FIXME dialog hidden by elson
         //QRCodeDialog.show();
 
@@ -1419,6 +1526,9 @@ public class MainActivity extends AppCompatActivity implements
                                     notificationStr+=" "+(int)min+" minutes left";
                                 }
                                 helper.displayAlbumStartNotification(notificationStr);
+
+                                 MainActivity.this.getIntent().putExtra("CREATED","YES");
+                                 MainActivity.this.getIntent().putExtra("ID",communityId);
                             }
 
                             @Override
@@ -1468,7 +1578,7 @@ public class MainActivity extends AppCompatActivity implements
                             Color.RED,
                             Color.WHITE,
                             CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                            CFAlertDialog.CFAlertActionAlignment.CENTER,
+                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -1481,7 +1591,7 @@ public class MainActivity extends AppCompatActivity implements
                             Color.parseColor("#3d3e63"),
                             Color.WHITE,
                             CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                            CFAlertDialog.CFAlertActionAlignment.CENTER,
+                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -1737,6 +1847,7 @@ public class MainActivity extends AppCompatActivity implements
                         }
 
                         showDialogMessage("Cloud-Album Quit", "Successfully left from the Cloud-Album");
+
                         if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
                             photographerList.remove(0);
                             participantsAdapter.notifyItemRemoved(0);
@@ -1775,7 +1886,8 @@ public class MainActivity extends AppCompatActivity implements
                 .setIcon(R.drawable.ic_cancel_black_24dp)
                 .setMessage(message)
                 .setCancelable(false)
-                .addButton(negativeButtonMessage, -1, getResources().getColor(R.color.quantum_googred300), CFAlertDialog.CFAlertActionStyle.NEGATIVE,
+                .addButton(negativeButtonMessage, Color.RED, getResources().getColor(R.color.white)
+                        , CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -1842,6 +1954,7 @@ public class MainActivity extends AppCompatActivity implements
                                                         SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
                                                         String scanWorkId = CurrentActiveCommunity.getString("scanWorkerId",AppConstants.NOT_AVALABLE);
                                                         String albumEndWorkId = CurrentActiveCommunity.getString("albumendWorkerId",AppConstants.NOT_AVALABLE);
+
                                                         if(scanWorkId.equals(AppConstants.NOT_AVALABLE))
                                                         {
                                                             WorkManager.getInstance().cancelUniqueWork(AppConstants.PHOTO_SCAN_WORK);
@@ -1888,7 +2001,7 @@ public class MainActivity extends AppCompatActivity implements
 
                             }
                         })
-                .addButton(postiveButtonMessage, -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                        .addButton(postiveButtonMessage, getResources().getColor(R.color.colorAccent), getResources().getColor(R.color.white), CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -2160,7 +2273,7 @@ public class MainActivity extends AppCompatActivity implements
         String url = "https://inlens.page.link/?link=https://inlens.com=" + CommunityID + "&apn=com.integrals.inlens";
         final Intent SharingIntent = new Intent(Intent.ACTION_SEND);
         SharingIntent.setType("text/plain");
-        SharingIntent.putExtra(Intent.EXTRA_TEXT, "Inlens Community Invite Link \n" + url);
+        SharingIntent.putExtra(Intent.EXTRA_TEXT, "InLens Community Invite Link \n" + url);
         startActivity(SharingIntent);
 
     }
@@ -2245,6 +2358,10 @@ public class MainActivity extends AppCompatActivity implements
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                //For the purpose of Quit and cancelling notification
+                                NotificationManager notificationManager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+                                notificationManager.cancelAll();
+
                                 dialog.dismiss();
 
                             }
@@ -2355,7 +2472,9 @@ public class MainActivity extends AppCompatActivity implements
                     holder.itemView.setAnimation(AnimationUtils.loadAnimation(activity, android.R.anim.fade_in));
                     holder.itemView.getAnimation().start();
 
-                    RequestOptions requestOptions = new RequestOptions().placeholder(R.drawable.ic_photo_camera);
+                    RequestOptions requestOptions = new RequestOptions()
+                            .format(DecodeFormat.PREFER_RGB_565)
+                            .placeholder(R.drawable.ic_photo_camera);
 
                     viewHolder.postRefresButton.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -2549,6 +2668,24 @@ public class MainActivity extends AppCompatActivity implements
                             }
                         }).into(viewHolder.AlbumCoverButton);
                     }
+                    else if(communityDetails.get(position).getType().contentEquals("Others")) {
+                        Glide.with(activity)
+                                .load(communityDetails.get(position)
+                                        .getCoverImage()).addListener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                return false;
+                            }
+                        }).into(viewHolder.AlbumCoverButton);
+
+
+                    }
                     else if(communityDetails.get(position).getType().contentEquals("Party")){
                         Glide.with(activity)
                                 .load(communityDetails.get(position)
@@ -2615,6 +2752,8 @@ public class MainActivity extends AppCompatActivity implements
                             else
                             {
                                 mainAddPhotosFab.hide();
+                                rippleBackground.stopRippleAnimation();
+                                rippleBackground2.stopRippleAnimation();
 
                             }
 

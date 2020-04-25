@@ -38,7 +38,18 @@
         <item name="mrl_rippleHover">true</item>
         <item name="mrl_rippleOverlay">true</item>
     </style>
-
+    <style name="RippleStyleWhite2">
+        <item name="mrl_rippleAlpha">1.5</item>
+        <item name="mrl_rippleColor">@color/colorSecondaryDark</item>
+        <item name="mrl_rippleHover">true</item>
+        <item name="mrl_rippleOverlay">true</item>
+    </style>
+    <style name="RippleStyleRed">
+        <item name="mrl_rippleAlpha">1.5</item>
+        <item name="mrl_rippleColor">@color/red_500</item>
+        <item name="mrl_rippleHover">true</item>
+        <item name="mrl_rippleOverlay">true</item>
+    </style>
     <style name="CalenderTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>

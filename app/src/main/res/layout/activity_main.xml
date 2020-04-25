@@ -64,21 +64,13 @@
                             android:id="@+id/photographers"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:visibility="gone"
                             app:animationDuration="50"
                             app:expandOnClick="true"
-                            app:inner_view="@layout/photographers_layout"
-                            app:startExpanded="false"
-                            app:title="@string/photographer"
-                            android:visibility="gone"
-                            >
-                        </com.integrals.inlens.Helper.ExpandableCardView>
 
-                        <View
-                            android:id="@+id/linePhotographer"
-                            android:layout_width="match_parent"
-                            android:layout_height="0.3dp"
-                            android:visibility="gone"
-                            android:background="@android:color/darker_gray" />
+                            app:inner_view="@layout/photographers_layout"
+                            app:title="@string/photographer"></com.integrals.inlens.Helper.ExpandableCardView>
+
 
                         <TextView
                             android:id="@+id/photoText"
@@ -142,10 +134,9 @@
                                     android:layout_centerVertical="true"
                                     android:layout_marginLeft="16dp"
                                     android:layout_marginRight="5dp"
-                                    android:layout_marginTop="5dp"
+                                     android:layout_marginTop="5dp"
                                     android:layout_marginBottom="5dp"
-                                    android:foreground="?attr/selectableItemBackgroundBorderless"
-                                    android:background="@android:color/transparent"
+                                     android:background="?attr/selectableItemBackgroundBorderless"
                                     android:src="@drawable/ic_account_circle" />
 
                                 <ImageButton
@@ -234,19 +225,31 @@
             android:indeterminateTint="@color/colorAccent"
             android:progressTint="@color/colorAccent"
             android:visibility="invisible" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <com.skyfishjy.library.RippleBackground
+            android:id="@+id/content"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:src="@drawable/ic_add_a_photo_24dp"
-            android:backgroundTint="@color/colorSecondary"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:layout_margin="16dp"
-            android:id="@+id/fabadd"
-            android:visibility="gone"/>
+            app:rb_color="@color/colorPrimary"
+            app:rb_duration="2500"
+            app:rb_radius="12dp"
+            app:rb_rippleAmount="4"
+            app:rb_scale="4"
+            app:rb_strokeWidth="8dp"
+            app:rb_type="fillRipple">
 
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fabadd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:backgroundTint="@color/colorSecondary"
+                android:src="@drawable/ic_add_a_photo_24dp"
+                android:visibility="gone"
+                app:fabSize="normal" />
+        </com.skyfishjy.library.RippleBackground>
         <RelativeLayout
             android:id="@+id/main_no_internet_relativelayout"
             android:layout_width="match_parent"

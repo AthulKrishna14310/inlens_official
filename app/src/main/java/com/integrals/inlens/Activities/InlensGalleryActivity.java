@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
@@ -54,8 +55,11 @@ import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.Helper.PreOperationCheck;
 import com.integrals.inlens.Helper.ReadFirebaseData;
 import com.integrals.inlens.Interface.FirebaseRead;
+import com.integrals.inlens.MainActivity;
 import com.integrals.inlens.Models.GalleryImageModel;
+import com.integrals.inlens.Notification.NotificationHelper;
 import com.integrals.inlens.R;
+import com.shashank.sony.fancytoastlib.FancyToast;
 import com.skyfishjy.library.RippleBackground;
 
 import java.io.ByteArrayOutputStream;
@@ -98,13 +102,14 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
     SwipeRefreshLayout gallerySwipeRefresh;
     ImageButton dirSelectionButton;
     DirectoryFragment directoryFragment;
-
+    private RelativeLayout RootForMainActivity;
+    private boolean snack=false;
 
     @SuppressLint("CutPasteId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
         setContentView(R.layout.activity_inlens_gallery);
 
 
@@ -261,7 +266,8 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
     public void onBackPressed() {
         if (isUploading) {
             Snackbar.make(rootGalleryRelativeLayout,"Wait until upload is complete.",Snackbar.LENGTH_SHORT).show();
-        } else {
+        }
+        else{
             super.onBackPressed();
         }
     }
@@ -287,6 +293,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                 }
 
                 allCommunityImages = getAllShownImagesPath(Long.parseLong(communityStartTime));
+
                 if (allCommunityImages.size() == 0) {
                     final RippleBackground rippleBackground=(RippleBackground)findViewById(R.id.content);
                     rippleBackground.startRippleAnimation();
@@ -306,6 +313,12 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                     imageAdapter = new ImageAdapter(getApplicationContext(), allCommunityImages);
                     galleryGridRecyclerView.removeAllViews();
                     galleryGridRecyclerView.setAdapter(imageAdapter);
+
+                    if(!snack) {
+                         snack=true;
+                    }
+
+
                 }
 
                 new Handler().postDelayed(new Runnable() {
@@ -499,6 +512,19 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
             else if(viewType==VIEW_TYPE_EMPTY)
             {
                 View view = LayoutInflater.from(context).inflate(R.layout.empty_layout, parent, false);
+                view.findViewById(R.id.CloseButtonTextView).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        NotificationHelper notificationHelper=new NotificationHelper(getApplicationContext());
+                        notificationHelper.displayAlbumStartNotification("Go to Gallery.");
+                        Intent cameraIntent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
+                        startActivity(cameraIntent);
+                        finishAffinity();
+
+
+
+                    }
+                });
                 return new EmptyGridViewHolder(view);
             }
 

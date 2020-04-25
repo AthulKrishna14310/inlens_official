@@ -80,13 +80,14 @@ public class CreateCloudAlbum extends AppCompatActivity {
     private String checkTimeTaken = "";
     private ImageButton createCloudAlbumBackButton;
     private Boolean eventTypeSet = false, albumDateSet = false;
-
+    private String createdIntent="NO";
 
     FirebaseAuth firebaseAuth;
     DatabaseReference photographerRef, currentUserRef, communityRef;
     List<String> userCommunityIdList;
     String currentUserId;
     LinearLayout rootCreateCloudAlbum;
+    private String globalID="";
 
     public CreateCloudAlbum() {
     }
@@ -159,8 +160,8 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         dateofCompletionCheckbox.setText(albumTime);
                         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(CreateCloudAlbum.this)
                                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                                .setTitle("Album expiry on " + albumTime)
-                                .setIcon(R.drawable.ic_warning_black_24dp)
+                                .setTitle("Expiry :" + albumTime)
+                                .setIcon(R.drawable.ic_access_time_black_24dp)
                                 .setMessage("You can only upload images and add participants to this album till " + albumTime)
                                 .setCancelable(false)
                                 .addButton("    OK    ", -1, Color.parseColor("#3e3d63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
@@ -477,6 +478,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
             submitButton.setEnabled(false);
             uploadProgressbar.setVisibility(View.VISIBLE);
             final String newCommunityId = communityRef.push().getKey();
+            globalID=newCommunityId;
 
             Map communitymap =  new HashMap();
             communitymap.put(FirebaseConstants.COMMUNITYTITLE,titleValue);
@@ -642,8 +644,11 @@ public class CreateCloudAlbum extends AppCompatActivity {
         if (uploadProgressbar.isShown()) {
             Snackbar.make(rootCreateCloudAlbum,"Creating your cloud  album. Please wait.",Snackbar.LENGTH_SHORT).show();
         } else {
+
             Intent mainIntent = new Intent(CreateCloudAlbum.this, MainActivity.class);
             mainIntent.putStringArrayListExtra(AppConstants.USER_ID_LIST, (ArrayList<String>) userCommunityIdList);
+            mainIntent.putExtra("CREATED",createdIntent);
+            mainIntent.putExtra("ID",globalID);
             startActivity(mainIntent);
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             finish();
@@ -692,6 +697,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();
+                                    createdIntent="YES";
                                     onBackPressed();
                                 }
                             });

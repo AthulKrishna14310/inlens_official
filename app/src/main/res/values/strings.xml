@@ -7,8 +7,13 @@
     <string name="restart_notification">Restart Notification</string>
     <string name="background_service">Background Service</string>
     <string name="my_uploads">My Uploads</string>
-    <string name="change_profile_picture">Change Profile-Picture</string>
+    <string name="change_profile_picture">PROFILE PICTURE</string>
     <string name="photographer">Photographers</string>
     <string name="quit_cloud_album">Quit Cloud-Album</string>
-
+    <string name="intruction">No photos.\n Take photos and tap on Gallery notification.</string>
+    <string name="qr_message"> Scan this QR CODE with InLens to add <b>other users as photographers</b> to this Cloud-Album </string>
+    <string name="add_photographers"><u><b>ADD PHOTOGRAPHERS</b></u></string>
+    <string name="initial_start_notification">Have you received Gallery notification ? \n \nInLens Gallery will store all photos taken after you joined the album to upload into it.</string >
+    <string name="initial_start_take_photos">Now , take photos and then tap on notification to open gallery. \n\nNotification will remain until album ends to open gallery easily</string>
+    <string name="note_text_recent_image_notification">Notification exists till album expires. After each photo session just tap on it. You do not have to navigate through InLens all the time.</string>
 </resources>

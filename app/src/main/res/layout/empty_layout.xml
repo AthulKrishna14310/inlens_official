@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
@@ -11,16 +12,40 @@
         android:src="@drawable/ic_note"
         android:layout_centerInParent="true"
         />
-    <!--
-    <div>Icons made by <a href="https://www.flaticon.com/authors/darius-dan" title="Darius Dan">Darius Dan</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
-    -->
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/yxt"
         android:layout_height="wrap_content"
         android:layout_below="@id/vertical_recyclerview_empty_layout_imageview"
-        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:textAlignment="center"
         android:fontFamily="@font/base_font"
-        android:text="No photos yet..." />
+        android:textColor="@color/colorSecondaryDark"
+        android:textSize="16sp"
+        android:text="@string/intruction" />
+    <com.balysv.materialripple.MaterialRippleLayout
+        style="@style/RippleStyleWhite2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:layout_below="@id/yxt"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/close_app_btn_bg">
 
+        <TextView
+            android:id="@+id/CloseButtonTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="OPEN CAMERA"
+            android:textSize="16sp"
+            android:maxLines="1"
+            android:fontFamily="@font/base_font"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
+            android:textColor="@color/white" />
+    </com.balysv.materialripple.MaterialRippleLayout>
 </RelativeLayout>

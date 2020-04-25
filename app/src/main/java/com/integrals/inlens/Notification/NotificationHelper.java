@@ -29,6 +29,7 @@ public class NotificationHelper {
 
 
         Intent intent = new Intent(context, InlensGalleryActivity.class);
+        intent.putExtra("direct","Notification");
         PendingIntent contentIntent = PendingIntent.getActivity(context, (int) (Math.random() * 100),
                 intent, 0);
 
@@ -37,11 +38,12 @@ public class NotificationHelper {
 
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) {
             String channelID = "ID_503";
-            NotificationChannel notificationChannel = new NotificationChannel(channelID,"Cloud Album Photos", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel notificationChannel = new NotificationChannel(channelID,"Cloud Album Photos", NotificationManager.IMPORTANCE_LOW);
             if(notiCount<2)
             {
                 Uri path= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                notificationChannel.enableVibration(true);
+                notificationChannel.enableVibration(false);
+
                 notificationChannel.setVibrationPattern(new long[]{400,200,400});
                 AudioAttributes audioAttributes = new AudioAttributes.Builder()
                         .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -53,10 +55,11 @@ public class NotificationHelper {
             notificationManager.createNotificationChannel(notificationChannel);
 
             Notification.Builder notificationBuilder = new Notification.Builder(context, channelID)
-                    .setContentTitle("InLens Recent Image")
+                    .setContentTitle("Open Gallery")
                     .setContentText("You have "+count+" new photos to upload to your album.")
                     .setSmallIcon(R.drawable.inlens_logo)
                     .setAutoCancel(true)
+
                     .setContentIntent(contentIntent);
 
 
@@ -128,7 +131,8 @@ public class NotificationHelper {
     public void displayAlbumStartNotification(String title){
 
 
-        Intent intent = new Intent(context, MainActivity.class);
+        Intent intent = new Intent(context, InlensGalleryActivity.class);
+        intent.putExtra("direct","Notification");
         PendingIntent contentIntent = PendingIntent.getActivity(context, (int) (Math.random() * 100),
                 intent, 0);
 
@@ -139,13 +143,15 @@ public class NotificationHelper {
 
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) {
             String channelID = "ID_505";
-            NotificationChannel notificationChannel = new NotificationChannel(channelID,"Cloud Album Ended", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel notificationChannel = new NotificationChannel(channelID,"Cloud Album Ended", NotificationManager.IMPORTANCE_HIGH);
             notificationManager.createNotificationChannel(notificationChannel);
 
             Notification.Builder notificationBuilder = new Notification.Builder(context, channelID)
                     .setContentTitle(title)
                     .setOngoing(true)
-                    .setContentText("You have 0 new photos to upload to your album.")
+                    .setContentText("After taking your photos, tap here to upload.")
+                    .setTicker(title)
+                    .setContentIntent(contentIntent)
                     .setSmallIcon(R.drawable.inlens_logo)
                     .setAutoCancel(false);
             Uri path= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -165,11 +171,13 @@ public class NotificationHelper {
             builder.setSmallIcon(R.drawable.inlens_logo)
                     .setContentTitle(title)
                     .setContentText("You have 0 new photos to upload to your album.")
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setAutoCancel(false)
                     .setOngoing(true)
                     .setContentIntent(contentIntent);
             Uri path= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             builder.setSound(path);
+
             builder.setVibrate(new long[]{400,200,400});
             notificationManager.notify(notificationIdAlbumStart,builder.build());
         }

@@ -48,6 +48,10 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
     List<String> userCommunityIdList;
     static final int MY_PERMISSIONS_REQUEST_CAMERA=459;
 
+
+    private String createIntent="NO";
+    private String ID="";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -172,13 +176,8 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
-                                Intent mainIntent = new Intent(QRCodeReader.this, MainActivity.class);
-                                mainIntent.putStringArrayListExtra(AppConstants.USER_ID_LIST, (ArrayList<String>) userCommunityIdList);
-                                startActivity(mainIntent);
-                                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                                finish();
                                 dialog.dismiss();
+                                onBackPressed();
                             }
                         });
         builder.show();
@@ -280,6 +279,9 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
                         }
                         helper.displayAlbumStartNotification(notificationStr);
 
+                        createIntent="YES";
+                        ID=communityId;
+
                     } else {
 
                         showDialogInfo("Album Inactive", "The album has expired or admin has made the album inactive.");
@@ -312,11 +314,20 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
 
     @Override
     public void onBackPressed() {
-        Intent mainIntent = new Intent(QRCodeReader.this, MainActivity.class);
-        mainIntent.putStringArrayListExtra(AppConstants.USER_ID_LIST, (ArrayList<String>) userCommunityIdList);
-        startActivity(mainIntent);
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        finish();
+        if(createIntent.contentEquals("YES")) {
+            Intent mainIntent = new Intent(QRCodeReader.this, MainActivity.class);
+            mainIntent.putStringArrayListExtra(AppConstants.USER_ID_LIST, (ArrayList<String>) userCommunityIdList);
+
+            //PURPOSE OF USER DIRECT
+            mainIntent.putExtra("CREATED", createIntent);
+            mainIntent.putExtra("ID", ID);
+
+            startActivity(mainIntent);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            finish();
+        }else{
+            super.onBackPressed();
+        }
     }
 }
 
