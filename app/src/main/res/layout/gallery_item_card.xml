@@ -29,59 +29,15 @@
 
     <ImageButton
         android:id="@+id/gallery_item_selected_imagebutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_done"
+        android:layout_width="24sp"
+        android:layout_height="24sp"
+        android:src="@drawable/ic_bookmarked"
         android:background="@drawable/circle_primary"
-        android:padding="5dp"
-        android:layout_centerInParent="true"
-        android:backgroundTint="@color/colorGreen"
-        android:visibility="gone"/>
-
-    <RelativeLayout
-        android:id="@+id/gallery_item_progress_wrapper"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        >
-
-        <ProgressBar
-            android:id="@+id/gallery_item_progressbar"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:progressTint="@color/colorAccent"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:indeterminate="false"
-            android:max="100"
-            android:progressDrawable="@drawable/progress_circle"
-            android:secondaryProgress="100"
-            android:visibility="gone"
-            />
-
-        <RelativeLayout
-            android:id="@+id/gallery_item_textview_wrapper"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:background="@drawable/circle"
-            android:backgroundTint="@color/white"
-            android:layout_centerInParent="true"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/gallery_item_progress_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="100%"
-                android:textSize="12sp"
-                android:textColor="@color/colorPrimaryDark"
-                />
-
-        </RelativeLayout>
-
-
-
-    </RelativeLayout>
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="6dp"
+        android:visibility="visible"
+        android:tint="@color/white"/>
 
 
 </RelativeLayout>

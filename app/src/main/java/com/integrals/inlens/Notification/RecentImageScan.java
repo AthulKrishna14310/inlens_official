@@ -88,6 +88,7 @@ public class RecentImageScan {
         return count;
     }
 
+    /*
     public List<GalleryImageModel> getAllShownImagesPath() {
 
         Uri uri;
@@ -138,4 +139,5 @@ public class RecentImageScan {
 
         return AllImagesList;
     }
+     */
 }

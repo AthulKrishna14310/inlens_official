@@ -6,11 +6,11 @@ public class GalleryImageModel {
     private boolean isSelected,isQueued;
     private String CreatedTime;
 
-    public GalleryImageModel(String imageUri, boolean isSelected, String createdTime) {
+    public GalleryImageModel(String imageUri, boolean isSelected, boolean isQueued, String createdTime) {
         ImageUri = imageUri;
         this.isSelected = isSelected;
+        this.isQueued = isQueued;
         CreatedTime = createdTime;
-        isQueued=false;
     }
 
     public String getImageUri() {
@@ -29,19 +29,18 @@ public class GalleryImageModel {
         isSelected = selected;
     }
 
-    public String getCreatedTime() {
-        return CreatedTime;
-    }
-
-    public void setCreatedTime(String createdTime) {
-        CreatedTime = createdTime;
-    }
-
     public boolean isQueued() {
         return isQueued;
     }
 
     public void setQueued(boolean queued) {
         isQueued = queued;
+    }
+    public String getCreatedTime() {
+        return CreatedTime;
+    }
+
+    public void setCreatedTime(String createdTime) {
+        CreatedTime = createdTime;
     }
 }

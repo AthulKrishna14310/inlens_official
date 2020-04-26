@@ -2,6 +2,7 @@ package com.integrals.inlens.Activities;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,7 +12,9 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -22,12 +25,18 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -104,6 +113,12 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
     DirectoryFragment directoryFragment;
     private RelativeLayout RootForMainActivity;
     private boolean snack=false;
+
+    int imgPosition,imgCount;
+    Dialog uploadDialog;
+    ProgressBar uploadProgressbar;
+    TextView uploadTextView,uploadPorgressTextView;
+    ImageView uploadImageview;
 
     @SuppressLint("CutPasteId")
     @Override
@@ -207,10 +222,149 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                         imageAdapter.notifyItemChanged(i);
                     }
                 }
+
+                if(imagesToUpload >0)
+                {
+                    isUploading = true;
+                    imageAdapter.notifyDataSetChanged();
+                    imgCount=0;
+                    uploadDialog = new Dialog(InlensGalleryActivity.this);
+                    uploadDialog.setContentView(R.layout.gallery_upload_item_dialog);
+                    uploadDialog.setCancelable(false);
+                    uploadDialog.setCanceledOnTouchOutside(false);
+                    uploadDialog.getWindow().getAttributes().windowAnimations = R.style.BottomUpSlideDialogAnimation;
+
+                    Window window = uploadDialog.getWindow();
+                    window.setGravity(Gravity.BOTTOM);
+                    window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+                    window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                    window.setDimAmount(0.75f);
+                    window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+                    uploadProgressbar = uploadDialog.findViewById(R.id.gallery_upload_dialog_progressbar);
+                    uploadTextView = uploadDialog.findViewById(R.id.gallery_upload_dialog_textview);
+                    uploadPorgressTextView = uploadDialog.findViewById(R.id.gallery_upload_dialog_progress_textview);
+                    uploadImageview = uploadDialog.findViewById(R.id.gallery_upload_dialog_imageview);
+
+                    uploadDialog.show();
+                    firebaseUploader(allCommunityImages);
+                }
             }
         });
 
 
+    }
+
+    private synchronized void firebaseUploader(List<GalleryImageModel> allCommunityImages) {
+
+        imgPosition=-1;
+        for(int i=0;i<allCommunityImages.size();i++)
+        {
+            if(allCommunityImages.get(i).isQueued())
+            {
+                imgPosition=i;
+                break;
+            }
+        }
+
+        if( imgPosition >- 1 && imagesToUpload-imgCount > 0)
+        {
+            imgCount++;
+
+            Glide.with(this).load(allCommunityImages.get(imgPosition).getImageUri()).into(uploadImageview);
+            uploadTextView.setText("Starting upload.");
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            Bitmap bitmapAfterCompression = compressUploadFile(new File(allCommunityImages.get(imgPosition).getImageUri()));
+
+            if (bitmapAfterCompression != null) {
+
+                uploadProgressbar.setVisibility(View.VISIBLE);
+                uploadPorgressTextView.setVisibility(View.VISIBLE);
+
+                uploadProgressbar.setIndeterminate(false);
+                uploadProgressbar.setProgress(0);
+                uploadProgressbar.setSecondaryProgress(100);
+                uploadProgressbar.setMax(100);
+                uploadProgressbar.setProgressDrawable(getResources().getDrawable(R.drawable.progress_circle));
+
+                uploadTextView.setText("Uploading file "+imgCount+" of "+imagesToUpload);
+
+                bitmapAfterCompression.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] compressedImage = baos.toByteArray();
+
+
+                storageRef.child(Uri.fromFile(new File(allCommunityImages.get(imgPosition).getImageUri())).getLastPathSegment().toLowerCase() + System.currentTimeMillis()).putBytes(compressedImage).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+
+
+                        if (task.isSuccessful()) {
+                            final String downloadUrl = task.getResult().getDownloadUrl().toString();
+                            String pushid = postRef.child(communityID).push().getKey();
+                            Map uploadmap = new HashMap();
+                            uploadmap.put(FirebaseConstants.POSTURL, downloadUrl);
+                            uploadmap.put(FirebaseConstants.POSTBY, FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            uploadmap.put(FirebaseConstants.POSTTIME, getOffsetDeletedTime(String.valueOf(System.currentTimeMillis())));
+                            postRef.child(communityID).child(pushid).setValue(uploadmap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+
+
+                                        allCommunityImages.get(imgPosition).setQueued(false);
+                                        firebaseUploader(allCommunityImages);
+
+                                    } else {
+                                        allCommunityImages.get(imgPosition).setQueued(false);
+                                        Snackbar.make(rootGalleryRelativeLayout,"Image failed to upload. Please try again later.",Snackbar.LENGTH_SHORT).show();
+                                        imageAdapter.notifyItemChanged(imgPosition);
+                                        firebaseUploader(allCommunityImages);
+                                    }
+                                }
+                            });
+
+                        } else {
+                            allCommunityImages.get(imgPosition).setQueued(false);
+                            Snackbar.make(rootGalleryRelativeLayout,"Image failed to upload. Please try again later.",Snackbar.LENGTH_SHORT).show();
+                            firebaseUploader(allCommunityImages);
+                        }
+                    }
+                }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+
+                        PROGRESS_CURRENT = (int) ((100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount());
+                        uploadProgressbar.setProgress(PROGRESS_CURRENT);
+                        uploadPorgressTextView.setText(PROGRESS_CURRENT + "%");
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                        allCommunityImages.get(imgPosition).setQueued(false);
+                        Snackbar.make(rootGalleryRelativeLayout,"Image failed to upload. Please try again later.",Snackbar.LENGTH_SHORT).show();
+                        firebaseUploader(allCommunityImages);
+                    }
+                });
+
+
+            } else {
+                allCommunityImages.get(imgPosition).setQueued(false);
+                Snackbar.make(rootGalleryRelativeLayout,"Image compression failed. Please try again later.",Snackbar.LENGTH_SHORT).show();
+                firebaseUploader(allCommunityImages);
+            }
+
+        }
+        else
+        {
+
+            uploadDialog.dismiss();
+            gallerySwipeRefresh.setRefreshing(true);
+            displayImagesBasedOnTime(communityID,communityStartTime);
+            isUploading = false;
+        }
     }
 
 
@@ -416,7 +570,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
 
            for (int i = 0; i < listOfAllImages.size(); i++) {
-               AllImagesList.add(new GalleryImageModel(listOfAllImages.get(i), false,lastmodifieddate.get(i)));
+               AllImagesList.add(new GalleryImageModel(listOfAllImages.get(i), false,false,lastmodifieddate.get(i)));
            }
            return AllImagesList;
 
@@ -465,19 +619,13 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
         ImageView galleryImage;
         ImageButton galleryItemSelectedButton;
-        ProgressBar progressBar;
-        TextView progressTextView;
-        RelativeLayout progressWrapper,textviewWrapper;
 
         public ImageViewHolder(View itemView) {
             super(itemView);
 
             galleryImage = itemView.findViewById(R.id.gallery_item_imageview);
             galleryItemSelectedButton = itemView.findViewById(R.id.gallery_item_selected_imagebutton);
-            progressBar = itemView.findViewById(R.id.gallery_item_progressbar);
-            progressTextView  =itemView.findViewById(R.id.gallery_item_progress_textview);
-            progressWrapper = itemView.findViewById(R.id.gallery_item_progress_wrapper);
-            textviewWrapper =itemView.findViewById(R.id.gallery_item_textview_wrapper);
+
         }
     }
 
@@ -486,12 +634,10 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
         private Context context;
         private List<GalleryImageModel> ImageList;
         private int VIEW_TYPE_EMPTY=1,VIEW_TYPE_IMAGE=0;
-        private int uploadCount;
 
         public ImageAdapter(Context context, List<GalleryImageModel> imageList) {
             this.context = context;
             ImageList = imageList;
-            uploadCount=0;
 
         }
 
@@ -531,158 +677,38 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
             return null;
         }
 
+
+
         @Override
         public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
+
+
+
 
             if (holder instanceof ImageViewHolder) {
                 ImageViewHolder viewHolder = (ImageViewHolder) holder;
 
+                Glide.with(context).load(ImageList.get(position).getImageUri()).apply(new RequestOptions().placeholder(R.drawable.ic_photo_camera).centerCrop()).into(viewHolder.galleryImage);
+                if (ImageList.get(position).isSelected()) {
 
-                Glide.with(context).load(ImageList.get(position).getImageUri())
-                        .apply(new RequestOptions().placeholder(R.drawable.ic_photo_camera).centerCrop())
-                        .into(viewHolder.galleryImage);
-
-                if (ImageList.get(position).isSelected() && ImageList.get(position).isQueued()) {
                     viewHolder.galleryImage.setColorFilter(Color.argb(155, 185, 185, 185), PorterDuff.Mode.SRC_ATOP);
                     viewHolder.galleryItemSelectedButton.setVisibility(View.VISIBLE);
-                    isUploading = true;
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    Bitmap bitmapAfterCompression = compressUploadFile(new File(allCommunityImages.get(position).getImageUri()));
-                    if (bitmapAfterCompression != null) {
+                    CheckFabVisibility();
 
-                        viewHolder.progressBar.setVisibility(View.VISIBLE);
-                        viewHolder.textviewWrapper.setVisibility(View.VISIBLE);
+                } else {
+                    viewHolder.galleryImage.clearColorFilter();
+                    viewHolder.galleryItemSelectedButton.setVisibility(View.GONE);
+                    CheckFabVisibility();
 
-                        viewHolder.progressBar.setIndeterminate(false);
-                        viewHolder.progressBar.setProgress(0);
-                        viewHolder.progressBar.setSecondaryProgress(100);
-                        viewHolder.progressBar.setMax(100);
-                        viewHolder.progressBar.setProgressDrawable(getResources().getDrawable(R.drawable.progress_circle));
-
-                        bitmapAfterCompression.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                        byte[] compressedImage = baos.toByteArray();
-
-
-                        storageRef.child(Uri.fromFile(new File(allCommunityImages.get(position).getImageUri())).getLastPathSegment().toLowerCase() + System.currentTimeMillis()).putBytes(compressedImage).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-
-
-                                if (task.isSuccessful()) {
-                                    final String downloadUrl = task.getResult().getDownloadUrl().toString();
-                                    String pushid = postRef.child(communityID).push().getKey();
-                                    Map uploadmap = new HashMap();
-                                    uploadmap.put(FirebaseConstants.POSTURL, downloadUrl);
-                                    uploadmap.put(FirebaseConstants.POSTBY, FirebaseAuth.getInstance().getCurrentUser().getUid());
-                                    uploadmap.put(FirebaseConstants.POSTTIME, getOffsetDeletedTime(String.valueOf(System.currentTimeMillis())));
-                                    postRef.child(communityID).child(pushid).setValue(uploadmap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
-
-                                                gallerySwipeRefresh.setRefreshing(true);
-                                                uploadCount++;
-                                                viewHolder.galleryItemSelectedButton.setVisibility(View.VISIBLE);
-                                                viewHolder.progressBar.setVisibility(View.GONE);
-
-
-                                                if (uploadCount == imagesToUpload || imagesToUpload == 0) {
-                                                    isUploading = false;
-                                                    onResume();
-                                                }
-
-                                            } else {
-                                                uploadCount++;
-                                                if (uploadCount == imagesToUpload) {
-                                                    isUploading = false;
-                                                }
-                                            }
-                                        }
-                                    });
-
-                                } else {
-                                    uploadCount++;
-                                    if (uploadCount == imagesToUpload) {
-                                        isUploading = false;
-                                    }
-                                }
-                            }
-                        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-
-                                PROGRESS_CURRENT = (int) ((100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount());
-                                viewHolder.progressBar.setProgress(PROGRESS_CURRENT);
-                                viewHolder.progressTextView.setText(PROGRESS_CURRENT + "%");
-
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-
-                                uploadCount++;
-                                if (uploadCount == imagesToUpload) {
-                                    isUploading = false;
-                                }
-                                viewHolder.galleryItemSelectedButton.setVisibility(View.VISIBLE);
-                                viewHolder.galleryItemSelectedButton.setBackgroundResource(R.drawable.ic_info);
-                                viewHolder.progressBar.setVisibility(View.GONE);
-
-                            }
-                        });
-
-
-                    } else {
-                        Snackbar.make(rootGalleryRelativeLayout,"Image compression failed. Please try again later.",Snackbar.LENGTH_SHORT).show();
-                    }
                 }
-                else {
 
-                    if (ImageList.get(position).isSelected()) {
-
-                        viewHolder.galleryImage.setColorFilter(Color.argb(155, 185, 185, 185), PorterDuff.Mode.SRC_ATOP);
-                        viewHolder.galleryItemSelectedButton.setVisibility(View.VISIBLE);
-                        CheckFabVisibility();
-
-                    } else {
-                        viewHolder.galleryImage.clearColorFilter();
-                        viewHolder.galleryItemSelectedButton.setVisibility(View.GONE);
-                        CheckFabVisibility();
-
-                    }
-
-                    viewHolder.galleryImage.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
+                viewHolder.galleryImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
 
 
-                            try
-                            {
-                                if (ImageList.get(position).isSelected()) {
-                                    ImageList.get(position).setSelected(false);
-                                    imageAdapter.notifyItemChanged(position);
-                                    CheckFabVisibility();
-
-                                } else {
-                                    ImageList.get(position).setSelected(true);
-                                    imageAdapter.notifyItemChanged(position);
-                                    CheckFabVisibility();
-
-                                }
-                            }
-                            catch (IndexOutOfBoundsException e)
-                            {
-
-                            }
-
-
-                        }
-                    });
-
-                    viewHolder.galleryItemSelectedButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-
+                        try
+                        {
                             if (ImageList.get(position).isSelected()) {
                                 ImageList.get(position).setSelected(false);
                                 imageAdapter.notifyItemChanged(position);
@@ -694,11 +720,34 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                                 CheckFabVisibility();
 
                             }
+                        }
+                        catch (IndexOutOfBoundsException e)
+                        {
 
                         }
-                    });
-                }
 
+
+                    }
+                });
+
+                viewHolder.galleryItemSelectedButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        if (ImageList.get(position).isSelected()) {
+                            ImageList.get(position).setSelected(false);
+                            imageAdapter.notifyItemChanged(position);
+                            CheckFabVisibility();
+
+                        } else {
+                            ImageList.get(position).setSelected(true);
+                            imageAdapter.notifyItemChanged(position);
+                            CheckFabVisibility();
+
+                        }
+
+                    }
+                });
 
             }
         }
