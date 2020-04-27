@@ -29,10 +29,10 @@
 
     <ImageButton
         android:id="@+id/gallery_item_selected_imagebutton"
-        android:layout_width="24sp"
-        android:layout_height="24sp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:src="@drawable/ic_bookmarked"
-        android:background="@drawable/circle_primary"
+        android:background="@drawable/bg_selected"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_margin="6dp"
