@@ -63,7 +63,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.integrals.inlens.Notification.NotificationHelper;
 import com.integrals.inlens.R;
-import com.integrals.inlens.WorkManager.AlbumEndWorker;
 
 
 public class CreateCloudAlbum extends AppCompatActivity {
@@ -500,25 +499,9 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
                         ceditor.putString("stopAt", getOffsetDeletedTime(getTimeStamp(albumTime)));
                         ceditor.putInt("notiCount", 0);
+                        ceditor.remove(AppConstants.IS_NOTIFIED);
                         ceditor.commit();
 
-                        try
-                        {
-                            long time =Long.parseLong(getTimeStamp(albumTime))-System.currentTimeMillis() ;
-                            Log.i("endReq","time "+time);
-                            OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(AlbumEndWorker.class)
-                                    .setInitialDelay(time,TimeUnit.MILLISECONDS)
-                                    .build();
-                            WorkManager.getInstance().enqueueUniqueWork(AppConstants.ALBUM_END_WORK, ExistingWorkPolicy.KEEP,oneTimeWorkRequest);
-                            ceditor.putString("albumendWorkerId", String.valueOf(oneTimeWorkRequest.getId()));
-                            ceditor.commit();
-
-                            Log.i("CreateCloudAlbum","Work enqueued "+time);
-                        }
-                        catch (Exception e)
-                        {
-                            Log.i("CreateCloudAlbum","Error : "+e.toString());
-                        }
 
                         photographerRef.child(newCommunityId).child(currentUserId).setValue(ServerValue.TIMESTAMP);
                         currentUserRef.child(FirebaseConstants.COMMUNITIES).child(newCommunityId).setValue(getOffsetDeletedTime(String.valueOf(System.currentTimeMillis())));

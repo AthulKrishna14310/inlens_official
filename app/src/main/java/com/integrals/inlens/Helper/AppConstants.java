@@ -14,4 +14,5 @@ public class AppConstants {
     public static final String SELECTED_DIRECTORIES = "SelectedDir";
     public static final String AUTH = "Login and Auth" ;
     public static final String MAINACTIVITY = "MainActivity_IN";
+    public static final String IS_NOTIFIED = "isNotified";
 }

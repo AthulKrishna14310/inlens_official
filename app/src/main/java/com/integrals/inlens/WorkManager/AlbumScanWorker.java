@@ -10,11 +10,11 @@ import androidx.work.WorkerParameters;
 import com.integrals.inlens.AsynchTasks.ScannerTask;
 import com.integrals.inlens.Helper.AppConstants;
 
-public class MyWorker extends Worker {
+public class AlbumScanWorker extends Worker {
 
     private ScannerTask scannerTask ;
 
-    public MyWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+    public AlbumScanWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
         scannerTask = new ScannerTask(context);
     }
@@ -25,7 +25,7 @@ public class MyWorker extends Worker {
         if(scannerTask!=null)
         {
             scannerTask.execute();
-            Log.i(AppConstants.PHOTO_SCAN_WORK,"Work Executed");
+            //Log.i(AppConstants.PHOTO_SCAN_WORK,"Work Executed");
             return Result.success();
         }
         else
@@ -38,7 +38,7 @@ public class MyWorker extends Worker {
     @Override
     public void onStopped() {
         super.onStopped();
-        Log.i(AppConstants.PHOTO_SCAN_WORK,"Work Stopped");
+        //Log.i(AppConstants.PHOTO_SCAN_WORK,"Work Stopped");
 
     }
 

@@ -56,6 +56,15 @@ public class ScannerTask extends AsyncTask<Void, Void, Void> {
                     editor.putString("time", String.valueOf(System.currentTimeMillis()));
                     editor.commit();
                 }
+                else if(serverTimeInMillis>endTime)
+                {
+                    if(!LastShownNotificationInfo.contains(AppConstants.IS_NOTIFIED))
+                    {
+                        notificationHelper.displayAlbumEndedNotification();
+                        editor.putBoolean(AppConstants.IS_NOTIFIED,true);
+                        editor.commit();
+                    }
+                }
                 //Log.i("timeScanner","serverTime "+serverTimeInMillis+" EndTime "+endTime+" SysTime "+System.currentTimeMillis()+" offset "+offsetInMillis);
             /*
             if(serverTimeInMillis > endTime)
@@ -94,13 +103,11 @@ public class ScannerTask extends AsyncTask<Void, Void, Void> {
 
             if (!TextUtils.isEmpty(timeStr)) {
 
-
                 RecentImageScan recentImageScan = new RecentImageScan(context, Long.parseLong(timeStr));
 
                 if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+
                     count = recentImageScan.getNotifiedImageCount();
-
-
                 }
 
             }

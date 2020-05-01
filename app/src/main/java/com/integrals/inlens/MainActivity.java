@@ -29,7 +29,6 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -63,7 +62,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
@@ -121,7 +119,7 @@ import com.integrals.inlens.Models.CommunityModel;
 import com.integrals.inlens.Models.PhotographerModel;
 import com.integrals.inlens.Models.PostModel;
 import com.integrals.inlens.Notification.NotificationHelper;
-import com.integrals.inlens.WorkManager.MyWorker;
+import com.integrals.inlens.WorkManager.AlbumScanWorker;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.skyfishjy.library.RippleBackground;
 import com.squareup.picasso.Picasso;
@@ -133,7 +131,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.Format;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -921,7 +918,7 @@ public class MainActivity extends AppCompatActivity implements
                                                     .setRequiredNetworkType(NetworkType.CONNECTED)
                                                     .build();
                                             PeriodicWorkRequest periodicWorkRequest = new PeriodicWorkRequest
-                                                    .Builder(MyWorker.class,15, TimeUnit.MINUTES)
+                                                    .Builder(AlbumScanWorker.class,15, TimeUnit.MINUTES)
                                                     .addTag(AppConstants.PHOTO_SCAN_WORK)
                                                     .setConstraints(constraints)
                                                     .build();
@@ -1412,12 +1409,12 @@ public class MainActivity extends AppCompatActivity implements
         });
     }
 
-    private String getOffsetDeletedTime(String timeStamp) {
+    private String getOffsetAddedTime(String timeStamp) {
         TimeZone timeZone = TimeZone.getDefault();
         long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
         long givenTime = Long.parseLong(timeStamp);
-        long offsetDeletedTime = givenTime-offsetInMillis;
-        return String.valueOf(offsetDeletedTime);
+        long offsetAddedTime = givenTime+offsetInMillis;
+        return String.valueOf(offsetAddedTime);
     }
 
     private String getTimeStamp(long endtime) {
@@ -1495,8 +1492,9 @@ public class MainActivity extends AppCompatActivity implements
                                 SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
                                 ceditor.putString("id", communityId);
                                 ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
-                                ceditor.putString("stopAt", getOffsetDeletedTime(String.valueOf(endtime)));
+                                ceditor.putString("stopAt", getOffsetAddedTime(String.valueOf(endtime)));
                                 ceditor.putInt("notiCount", 0);
+                                ceditor.remove(AppConstants.IS_NOTIFIED);
                                 ceditor.commit();
 
                                 NotificationHelper helper = new NotificationHelper(getApplicationContext());
@@ -2064,7 +2062,7 @@ public class MainActivity extends AppCompatActivity implements
                             .setRequiredNetworkType(NetworkType.CONNECTED)
                             .build();
                     PeriodicWorkRequest periodicWorkRequest = new PeriodicWorkRequest
-                            .Builder(MyWorker.class,15, TimeUnit.MINUTES)
+                            .Builder(AlbumScanWorker.class,15, TimeUnit.MINUTES)
                             .addTag(AppConstants.PHOTO_SCAN_WORK)
                             .setConstraints(constraints)
                             .build();
