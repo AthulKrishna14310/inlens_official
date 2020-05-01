@@ -38,6 +38,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -62,6 +63,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
@@ -444,7 +446,7 @@ public class MainActivity extends AppCompatActivity implements
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
 
-        GridLayoutManager Gridmanager = new GridLayoutManager(getApplicationContext(), (int) Math.floor(dpWidth / 50));
+        GridLayoutManager Gridmanager = new GridLayoutManager(getApplicationContext(), 7);
         ParticipantsRecyclerView.setLayoutManager(Gridmanager);
 
         MainVerticalRecyclerView = findViewById(R.id.main_recyclerview);
@@ -1054,8 +1056,18 @@ public class MainActivity extends AppCompatActivity implements
 
     private void getCloudAlbumData(ArrayList<String> userCommunityIdList) {
 
+
         try
         {
+            if(userCommunityIdList.size()==0)
+            {
+                expandableCardView.setVisibility(View.GONE);
+            }
+            else
+            {
+                expandableCardView.setVisibility(View.VISIBLE);
+            }
+
             if(_communityDataList.size()==0)
             {
                 _communityDataList.add(new CommunityModel(
@@ -1781,8 +1793,48 @@ public class MainActivity extends AppCompatActivity implements
                     });
 
                 }
-                participantsAdapter = new ParticipantsAdapter(photographerList, getApplicationContext(), QRCodeDialog);
-                ParticipantsRecyclerView.setAdapter(participantsAdapter);
+
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        if(!expandableCardView.isExpanded())
+                        {
+                            if (currentActiveCommunityID.equals(communityID))
+                            {
+                                if(photographerList.size()>12)
+                                {
+                                    expandableCardView.setTitle("Photographers : "+ (photographerList.size() - 2));
+                                    photographerList.add(new PhotographerModel("view", "view", "view"));
+                                }
+                                else
+                                {
+                                    expandableCardView.setTitle("Photographers : "+ (photographerList.size() - 1));
+                                }
+                            }
+                            else
+                            {
+                                if(photographerList.size()>13)
+                                {
+                                    photographerList.add(new PhotographerModel("view", "view", "view"));
+                                    expandableCardView.setTitle("Photographers : "+ (photographerList.size() - 1));
+                                }
+                                else
+                                {
+                                    expandableCardView.setTitle("Photographers : "+ (photographerList.size()));
+                                }
+                            }
+
+                            participantsAdapter = new ParticipantsAdapter(photographerList, getApplicationContext(), QRCodeDialog);
+                            ParticipantsRecyclerView.setAdapter(participantsAdapter);
+                            expandableCardView.expand();
+
+                        }
+
+                    }
+                },1000);
+
 
             }
 

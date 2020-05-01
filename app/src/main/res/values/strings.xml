@@ -8,7 +8,7 @@
     <string name="background_service">Background Service</string>
     <string name="my_uploads">My Uploads</string>
     <string name="change_profile_picture">PROFILE PICTURE</string>
-    <string name="photographer">Photographers</string>
+    <string name="photographer">Photographers...</string>
     <string name="quit_cloud_album">Quit Cloud-Album</string>
     <string name="intruction">No photos.\n Take photos and tap on Gallery notification.</string>
     <string name="qr_message"> Scan this QR CODE with InLens to add <b>other users as photographers</b> to this Cloud-Album </string>
