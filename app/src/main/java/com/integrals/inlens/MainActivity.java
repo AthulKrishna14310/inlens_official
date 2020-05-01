@@ -103,6 +103,7 @@ import com.integrals.inlens.Activities.CreateCloudAlbum;
 import com.integrals.inlens.Activities.InlensGalleryActivity;
 import com.integrals.inlens.Activities.PhotoView;
 import com.integrals.inlens.Activities.QRCodeReader;
+import com.integrals.inlens.Activities.WebViewActivity;
 import com.integrals.inlens.Helper.AlbumOptionsBottomSheetFragment;
 import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.BottomSheetFragment;
@@ -323,6 +324,32 @@ public class MainActivity extends AppCompatActivity implements
                     setProfileChange(true);
                     GetStartedWithNewProfileImage();
 
+                    return true;
+
+                }
+                if (item.getItemId() == R.id.terms_and_conditions) {
+
+
+                   startActivity(new Intent(MainActivity.this, WebViewActivity.class)
+                   .putExtra("MESSAGE","TERMS_AND_CONDITIONS"));
+
+                    return true;
+
+                }
+                if (item.getItemId() == R.id.privacy_policy) {
+
+
+                    startActivity(new Intent(MainActivity.this, WebViewActivity.class)
+                            .putExtra("MESSAGE","PRIVACY_POLICY"));
+
+                    return true;
+
+                }
+                if (item.getItemId() == R.id.help) {
+
+
+                    startActivity(new Intent(MainActivity.this, WebViewActivity.class)
+                            .putExtra("MESSAGE","HELP"));
                     return true;
 
                 }

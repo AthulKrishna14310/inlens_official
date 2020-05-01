@@ -1,11 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/profile_preference"
-        android:icon="@drawable/ic_preferences_black_24dp"
-        android:title="@string/change_profile_picture"
-        />
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item android:title="General">
+        <menu>
 
+                <item
+                    android:id="@+id/profile_preference"
+                    android:icon="@drawable/ic_account_circle"
+                    android:title="Profile"
+                    android:iconTint="@color/colorPrimary"/>
+                <item
+                    android:id="@+id/recent_notification"
+
+                    android:icon="@drawable/ic_notification_"
+                    android:title="Gallery Notification"
+                    app:actionViewClass="android.widget.CheckBox"
+                    app:showAsAction="ifRoom|withText"
+                    />
+
+        </menu>
+    </item>
+
+    <item android:title="Theme">
+        <menu xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto">
+            <item
+                android:id="@+id/dark_theme"
+                android:icon="@drawable/ic_theme"
+                android:title="Dark Theme"
+                app:actionViewClass="android.widget.CheckBox"
+                app:showAsAction="ifRoom|withText" />
+
+        </menu>
+    </item>
+    <item android:title="About">
+        <menu>
+
+            <item
+                android:id="@+id/help"
+                android:title="Help"
+                android:icon="@drawable/ic_help"
+                android:iconTint="@color/colorPrimary"
+                />
+
+            <item
+                android:id="@+id/terms_and_conditions"
+                android:title="Terms and Conditions"
+                android:icon="@drawable/ic_terms_conditions"
+                android:iconTint="@color/colorPrimary"
+                />
+            <item
+                android:id="@+id/privacy_policy"
+                android:title="Privacy Policy"
+                android:icon="@drawable/ic_privacy_policy"
+                android:iconTint="@color/colorPrimary"
+                />
+            <item
+                android:id="@+id/contact_us"
+                android:title="Contact us"
+                android:icon="@drawable/ic_contact_us"
+                android:iconTint="@color/colorPrimary"
+                />
+        </menu>
+
+    </item>
+    <item android:title="InLens v1.0.0">
+        <menu>
+            <item
+                android:id="@+id/rate_us"
+                android:title="Rate us"
+                android:icon="@drawable/ic_rate_us"
+                android:iconTint="@color/colorPrimary"
+                />
+            <item
+                android:id="@+id/feedback"
+                android:title="Feedback"
+                android:icon="@drawable/ic_feedback"
+                android:iconTint="@color/colorPrimary"
+                />
+        </menu>
+    </item>
 
 </menu>

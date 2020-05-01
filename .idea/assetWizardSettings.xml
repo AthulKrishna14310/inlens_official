@@ -152,7 +152,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/home/athul/Android/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_touch_app_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/home/athul/Android/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_feedback_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -163,7 +163,7 @@
                         <option name="values">
                           <map>
                             <entry key="color" value="0a0e60" />
-                            <entry key="outputName" value="ic_touch_" />
+                            <entry key="outputName" value="ic_feedback" />
                             <entry key="sourceFile" value="$USER_HOME$/C:\Users\deljo" />
                           </map>
                         </option>
