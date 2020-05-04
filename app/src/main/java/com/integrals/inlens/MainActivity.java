@@ -5,6 +5,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.NotificationManager;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -345,6 +346,18 @@ public class MainActivity extends AppCompatActivity implements
                     return true;
 
                 }
+                if(item.getItemId()==R.id.contact_us){
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_SENDTO);
+                        intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+                        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"inlens.athulkrishna@gmail.com"});
+                        intent.putExtra(Intent.EXTRA_SUBJECT, "Your Response");
+                        startActivity(intent);
+                    } catch (android.content.ActivityNotFoundException ex) {
+                        showInfoMessage("No E-mail App found","Please install an email app");
+                    }
+                    return true;
+                }
                 if (item.getItemId() == R.id.help) {
 
 
@@ -352,6 +365,42 @@ public class MainActivity extends AppCompatActivity implements
                             .putExtra("MESSAGE","HELP"));
                     return true;
 
+                }
+
+                if (item.getItemId() == R.id.rate_us) {
+                    Uri uri = Uri.parse("market://details?id=" + getApplicationContext().getPackageName());
+                    Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+                    // To count with Play market backstack, After pressing back button,
+                    // to taken back to our application, we need to add following flags to intent.
+                    goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                            Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
+                            Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                    try {
+                        startActivity(goToMarket);
+                    } catch (ActivityNotFoundException e) {
+                        startActivity(new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("http://play.google.com/store/apps/details?id=" +getApplicationContext().getPackageName())));
+                    }
+                    return true;
+
+                }
+
+                if (item.getItemId() == R.id.feedback){
+                    Uri uri = Uri.parse("market://details?id=" + getApplicationContext().getPackageName());
+                    Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+                    // To count with Play market backstack, After pressing back button,
+                    // to taken back to our application, we need to add following flags to intent.
+                    goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                            Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
+                            Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                    try {
+                        startActivity(goToMarket);
+                    } catch (ActivityNotFoundException e) {
+                        startActivity(new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("http://play.google.com/store/apps/details?id=" +getApplicationContext().getPackageName())));
+                    }
+
+                    return true;
                 }
                 return true;
             }
@@ -1027,7 +1076,7 @@ public class MainActivity extends AppCompatActivity implements
             public void onClick(View view) {
                 QRCodeDialog.dismiss();
                 NotificationHelper notificationHelper=new NotificationHelper(getApplicationContext());
-                notificationHelper.displayAlbumStartNotification("Open Gallery");
+                notificationHelper.displayAlbumStartNotification("Open your Gallery");
 
                 CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
                         .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
