@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private RecyclerView MainHorizontalRecyclerview, MainVerticalRecyclerView;
 
-    private CircleImageView mainProfileImageview;
+
 
     private BroadcastReceiver br;
     private RelativeLayout NoInternetView;
@@ -225,6 +225,7 @@ public class MainActivity extends AppCompatActivity implements
     AlbumOptionsBottomSheetFragment optionsBottomSheetFragment;
     private RippleBackground rippleBackground,rippleBackground2;
 
+
     public MainActivity() {
     }
 
@@ -254,8 +255,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
         // main actionbar
-        mainProfileImageview = findViewById(R.id.mainactivity_actionbar_profileimageview);
-        mainSearchButton = findViewById(R.id.mainactivity_actionbar_searchbutton);
+       mainSearchButton = findViewById(R.id.mainactivity_actionbar_searchbutton);
 
         // Fab
         mainAddPhotosFab = findViewById(R.id.fabadd);
@@ -406,7 +406,7 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
-        mainProfileImageview.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.nav_open).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 RootForMainActivity.openDrawer(Gravity.START);
@@ -735,7 +735,9 @@ public class MainActivity extends AppCompatActivity implements
                 .setIcon(R.drawable.ic_info)
                 .setMessage("InLens require storage permission to access your photos. Please enable it and try again.")
                 .setCancelable(true)
-                .addButton("OK", -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                .addButton("OK", getResources().getColor(R.color.colorPrimaryDark)
+                        , getResources().getColor(R.color.white),
+                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -747,7 +749,10 @@ public class MainActivity extends AppCompatActivity implements
                                 dialog.dismiss();
                             }
                         })
-                .addButton("CANCEL", -1, getResources().getColor(R.color.quantum_googred300), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                .addButton("CANCEL",
+                        getResources().getColor(R.color.red_900),
+                        getResources().getColor(R.color.white)
+                        , CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -768,7 +773,10 @@ public class MainActivity extends AppCompatActivity implements
                 .setIcon(R.drawable.ic_info)
                 .setMessage("InLens require storage permission to access your photos. Please enable it and try again.")
                 .setCancelable(true)
-                .addButton("OK", -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                .addButton("OK",
+                        getResources().getColor(R.color.colorPrimaryDark),
+                        getResources().getColor(R.color.white),
+                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -780,7 +788,9 @@ public class MainActivity extends AppCompatActivity implements
                                 dialog.dismiss();
                             }
                         })
-                .addButton("CANCEL", -1, getResources().getColor(R.color.quantum_googred300), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                .addButton("CANCEL", getResources().getColor(R.color.red_900),
+                        getResources().getColor(R.color.white),
+                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -924,7 +934,7 @@ public class MainActivity extends AppCompatActivity implements
                 if (snapshot.hasChild("Profile_picture")) {
 
                     String imageUrl = snapshot.child("Profile_picture").getValue().toString();
-                    Glide.with(getApplicationContext()).load(imageUrl).into(mainProfileImageview);
+
                     Glide.with(getApplicationContext()).load(imageUrl).into(navProfileImageView);
 
                 }
@@ -1068,6 +1078,10 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void initialStart() {
+        //PURPOSE OF USER DIRECT
+        MainActivity.this.getIntent().putExtra("CREATED","NO");
+        MainActivity.this.getIntent().putExtra("ID","NULL");
+
         QRCodeDialog.show();
         TextView textView=QRCodeDialog.findViewById(R.id.cancelButtonTextView);
         textView.setText("I WILL DO IT LATER");
@@ -1075,6 +1089,9 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(View view) {
                 QRCodeDialog.dismiss();
+                QRCodeDialog.cancel();
+                QRCodeInit(currentActiveCommunityID);
+
                 NotificationHelper notificationHelper=new NotificationHelper(getApplicationContext());
                 notificationHelper.displayAlbumStartNotification("Open your Gallery");
 
@@ -1090,10 +1107,10 @@ public class MainActivity extends AppCompatActivity implements
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
-
+                                        dialog.cancel();
                                         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
                                                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                                                .setTitle("Take and Tap ")
+                                                .setTitle("Take photos and Tap ")
                                                 .setIcon(R.drawable.ic_touch_)
                                                 .setMessage(R.string.initial_start_take_photos)
                                                 .setCancelable(false)
@@ -1103,15 +1120,26 @@ public class MainActivity extends AppCompatActivity implements
                                                             @Override
                                                             public void onClick(DialogInterface dialog, int which) {
                                                                 dialog.dismiss();
+                                                                dialog.cancel();
+
                                                                 Intent cameraIntent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
                                                                 startActivity(cameraIntent);
 
-                                                                //PURPOSE OF USER DIRECT
-                                                                MainActivity.this.getIntent().putExtra("CREATED","NO");
-                                                                MainActivity.this.getIntent().putExtra("ID","NULL");
 
                                                                 finishAffinity();
 
+
+                                                            }
+                                                        }).addButton("CANCEL",
+                                                        getResources().getColor(R.color.red_900),
+                                                        getResources().getColor(R.color.white),
+                                                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                                                        new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                dialog.dismiss();
+                                                                dialog.cancel();
 
                                                             }
                                                         });
@@ -1403,11 +1431,10 @@ public class MainActivity extends AppCompatActivity implements
         QRCodeDialog.findViewById(R.id.cancelButtonTextView).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                tempDialogue.cancel();
-                tempDialogue.dismiss();
 
-                Log.i(AppConstants.MAINACTIVITY,tempDialogue.toString());
-                Log.i(AppConstants.MAINACTIVITY,QRCodeDialog.toString());
+
+                tempDialogue.dismiss();
+                tempDialogue.cancel();
             }
         });
         //FIXME dialog hidden by elson
@@ -1433,7 +1460,10 @@ public class MainActivity extends AppCompatActivity implements
                                 .setIcon(R.drawable.inlens_logo)
                                 .setCancelable(false)
                                 .setMessage("You are about to join a new community.")
-                                .addButton("Join", -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.NEGATIVE,
+                                .addButton("JOIN",
+                                        getResources().getColor(R.color.colorPrimaryDark),
+                                        getResources().getColor(R.color.white),
+                                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
                                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
@@ -1441,7 +1471,10 @@ public class MainActivity extends AppCompatActivity implements
                                                 dialog.dismiss();
                                             }
                                         })
-                                .addButton("Cancel", -1, getResources().getColor(R.color.quantum_googred300), CFAlertDialog.CFAlertActionStyle.NEGATIVE,
+                                .addButton("CANCEL",
+                                        getResources().getColor(R.color.red_900),
+                                        getResources().getColor(R.color.white),
+                                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
                                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
@@ -1465,7 +1498,10 @@ public class MainActivity extends AppCompatActivity implements
                                     .setMessage("Are you sure you want to join this new community? This means quitting the previous one.")
                                     .setTextGravity(Gravity.START)
                                     .setCancelable(false)
-                                    .addButton("YES", -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                                    .addButton("YES",
+                                            getResources().getColor(R.color.colorPrimaryDark),
+                                            getResources().getColor(R.color.white),
+                                            CFAlertDialog.CFAlertActionStyle.DEFAULT,
                                             CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
@@ -1473,7 +1509,10 @@ public class MainActivity extends AppCompatActivity implements
                                                     dialog.dismiss();
                                                 }
                                             })
-                                    .addButton("NO", -1, getResources().getColor(R.color.quantum_googred300), CFAlertDialog.CFAlertActionStyle.NEGATIVE,
+                                    .addButton("NO",
+                                            getResources().getColor(R.color.red_900),
+                                            getResources().getColor(R.color.white),
+                                            CFAlertDialog.CFAlertActionStyle.DEFAULT,
                                             CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
@@ -1660,9 +1699,9 @@ public class MainActivity extends AppCompatActivity implements
                     .setIcon(R.drawable.ic_info)
                     .setMessage("You have to leave the currently active album before creating a new album.")
                     .setCancelable(true)
-                    .addButton("   Quit Cloud-Album  ",
-                            Color.RED,
-                            Color.WHITE,
+                    .addButton("QUIT CLOUD-ALBUM",
+                            getResources().getColor(R.color.red_900),
+                            getResources().getColor(R.color.white),
                             CFAlertDialog.CFAlertActionStyle.DEFAULT,
                             CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                             new DialogInterface.OnClickListener() {
@@ -1673,9 +1712,9 @@ public class MainActivity extends AppCompatActivity implements
                                 }
                             })
 
-                    .addButton("               Cancel             ",
-                            Color.parseColor("#3d3e63"),
-                            Color.WHITE,
+                    .addButton("CANCEL",
+                            getResources().getColor(R.color.colorPrimaryDark),
+                            getResources().getColor(R.color.white),
                             CFAlertDialog.CFAlertActionStyle.DEFAULT,
                             CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                             new DialogInterface.OnClickListener() {
@@ -1707,11 +1746,11 @@ public class MainActivity extends AppCompatActivity implements
                     .setMessage("You have to leave the currently active album before creating a new album.")
                     .setCancelable(true)
 
-                    .addButton("   Quit Cloud-Album  ",
-                            Color.RED,
-                            Color.WHITE,
+                    .addButton("QUIT CLOUD-ALBUM",
+                            getResources().getColor(R.color.red_900),
+                            getResources().getColor(R.color.white),
                             CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                            CFAlertDialog.CFAlertActionAlignment.CENTER,
+                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -1720,11 +1759,11 @@ public class MainActivity extends AppCompatActivity implements
                                 }
                             })
 
-                    .addButton("               Cancel             ",
-                            Color.parseColor("#3d3e63"),
-                            Color.WHITE,
+                    .addButton("CANCEL",
+                            getResources().getColor(R.color.colorPrimaryDark),
+                            getResources().getColor(R.color.white),
                             CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                            CFAlertDialog.CFAlertActionAlignment.CENTER,
+                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -1881,12 +1920,12 @@ public class MainActivity extends AppCompatActivity implements
                             {
                                 if(photographerList.size()>12)
                                 {
-                                    expandableCardView.setTitle("Photographers : "+ (photographerList.size() - 2));
+                                   // expandableCardView.setTitle( (photographerList.size() - 2) + " photographers");
                                     photographerList.add(new PhotographerModel("view", "view", "view"));
                                 }
                                 else
                                 {
-                                    expandableCardView.setTitle("Photographers : "+ (photographerList.size() - 1));
+                                    //expandableCardView.setTitle("Photographers : "+ (photographerList.size() - 1));
                                 }
                             }
                             else
@@ -1894,11 +1933,11 @@ public class MainActivity extends AppCompatActivity implements
                                 if(photographerList.size()>13)
                                 {
                                     photographerList.add(new PhotographerModel("view", "view", "view"));
-                                    expandableCardView.setTitle("Photographers : "+ (photographerList.size() - 1));
+                             //       expandableCardView.setTitle("Photographers : "+ (photographerList.size() - 1));
                                 }
                                 else
                                 {
-                                    expandableCardView.setTitle("Photographers : "+ (photographerList.size()));
+                              //      expandableCardView.setTitle("Photographers : "+ (photographerList.size()));
                                 }
                             }
 
@@ -1995,14 +2034,19 @@ public class MainActivity extends AppCompatActivity implements
             });
 
         } else {
-            showAlbumQuitPrompt("Leaving Community", "Are you sure you want to quit the current Cloud-Album. You won't able to upload photos to this album again.", "No", "Yes");
+            showAlbumQuitPrompt("Leaving Community", "Are you sure you want to quit the current Cloud-Album. You won't able to upload photos to this album again.",
+                    "NO",
+                    "YES");
 
         }
 
 
     }
 
-    private void showAlbumQuitPrompt(String title, String message, String postiveButtonMessage, String negativeButtonMessage) {
+    private void showAlbumQuitPrompt(String title,
+                                     String message,
+                                     String postiveButtonMessage,
+                                     String negativeButtonMessage) {
 
         //fixme this dialog ui is not good
 
@@ -2012,8 +2056,10 @@ public class MainActivity extends AppCompatActivity implements
                 .setIcon(R.drawable.ic_cancel_black_24dp)
                 .setMessage(message)
                 .setCancelable(false)
-                .addButton(negativeButtonMessage, Color.RED, getResources().getColor(R.color.white)
-                        , CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                .addButton(negativeButtonMessage,
+                        getResources().getColor(R.color.red_900),
+                        getResources().getColor(R.color.white)
+                        ,CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -2127,8 +2173,11 @@ public class MainActivity extends AppCompatActivity implements
 
                             }
                         })
-                        .addButton(postiveButtonMessage, getResources().getColor(R.color.colorAccent), getResources().getColor(R.color.white), CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
+                        .addButton(postiveButtonMessage,
+                                getResources().getColor(R.color.colorPrimaryDark),
+                                getResources().getColor(R.color.white),
+                                CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
@@ -2148,8 +2197,11 @@ public class MainActivity extends AppCompatActivity implements
                 .setIcon(R.drawable.ic_info)
                 .setMessage("Unable to Quit Cloud-Album. Please check your internet connection or whether you are participating in a Cloud-Album")
                 .setCancelable(false)
-                .addButton("    OK    ", -1, -1, CFAlertDialog.CFAlertActionStyle.NEGATIVE,
-                        CFAlertDialog.CFAlertActionAlignment.END, new DialogInterface.OnClickListener() {
+                .addButton("OK",
+                        getResources().getColor(R.color.colorPrimaryDark),
+                        getResources().getColor(R.color.white)
+                        , CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
@@ -2285,7 +2337,6 @@ public class MainActivity extends AppCompatActivity implements
                                     if (task.isSuccessful()) {
                                         {
                                             showSnackbarMessage("Successfully uploaded your profile picture.");
-                                            Glide.with(MainActivity.this).load(downloadUrl).into(mainProfileImageview);
                                             for (int i = 0; i < photographerList.size(); i++) {
                                                 if (photographerList.get(i).getId().equals(currentUserId)) {
                                                     photographerList.get(i).setImgUrl(downloadUrl);
@@ -2479,7 +2530,10 @@ public class MainActivity extends AppCompatActivity implements
                 .setIcon(R.drawable.ic_check_circle_black_24dp)
                 .setMessage(message)
                 .setCancelable(false)
-                .addButton("OK", -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                .addButton("OK",
+                        getResources().getColor(R.color.colorPrimaryDark),
+                        getResources().getColor(R.color.white),
+                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -2502,7 +2556,10 @@ public class MainActivity extends AppCompatActivity implements
                 .setIcon(R.drawable.ic_info)
                 .setMessage(message)
                 .setCancelable(false)
-                .addButton("OK", -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                .addButton("OK",
+                        getResources().getColor(R.color.colorPrimaryDark),
+                        getResources().getColor(R.color.white),
+                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {
                             @Override

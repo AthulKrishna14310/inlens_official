@@ -163,8 +163,11 @@ public class CreateCloudAlbum extends AppCompatActivity {
                                 .setIcon(R.drawable.ic_access_time_black_24dp)
                                 .setMessage("You can only upload images and add participants to this album till " + albumTime)
                                 .setCancelable(false)
-                                .addButton("    OK    ", -1, Color.parseColor("#3e3d63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
-                                        CFAlertDialog.CFAlertActionAlignment.END,
+                                .addButton("OK",
+                                        getResources().getColor(R.color.colorPrimaryDark),
+                                        getResources().getColor(R.color.white),
+                                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                                         new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
@@ -184,11 +187,14 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(CreateCloudAlbum.this)
                                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                                 .setTitle("Album expiry on " + albumTime)
-                                .setIcon(R.drawable.ic_warning_black_24dp)
+                                .setIcon(R.drawable.ic_access_time_black_24dp)
                                 .setMessage("You can only upload images and add participants to this album till " + albumTime)
                                 .setCancelable(false)
-                                .addButton("    OK , I understand   ", -1, Color.parseColor("#3e3d63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
-                                        CFAlertDialog.CFAlertActionAlignment.END,
+                                .addButton("    OK , I understand   ",
+                                        getResources().getColor(R.color.colorPrimaryDark),
+                                        getResources().getColor(R.color.white),
+                                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                                         new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
@@ -674,8 +680,11 @@ public class CreateCloudAlbum extends AppCompatActivity {
                     .setIcon(R.drawable.ic_check_circle_black_24dp)
                     .setMessage(dialogue)
                     .setCancelable(false)
-                    .addButton("    OK    ", -1, Color.parseColor("#3E3D63"), CFAlertDialog.CFAlertActionStyle.POSITIVE,
-                            CFAlertDialog.CFAlertActionAlignment.END,
+                    .addButton("OK",
+                            getResources().getColor(R.color.colorPrimaryDark),
+                            getResources().getColor(R.color.white),
+                            CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -693,8 +702,10 @@ public class CreateCloudAlbum extends AppCompatActivity {
                     .setIcon(R.drawable.ic_info)
                     .setMessage(dialogue)
                     .setCancelable(false)
-                    .addButton("    OK    ", -1, Color.parseColor("#3E3D63"), CFAlertDialog.CFAlertActionStyle.NEGATIVE,
-                            CFAlertDialog.CFAlertActionAlignment.END, new DialogInterface.OnClickListener() {
+                    .addButton("OK", getResources().getColor(R.color.colorPrimaryDark),
+                            getResources().getColor(R.color.white),
+                            CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();

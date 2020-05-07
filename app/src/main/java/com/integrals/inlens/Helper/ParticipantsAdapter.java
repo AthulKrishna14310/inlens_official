@@ -82,7 +82,7 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             }
 
-            RequestOptions rq = new RequestOptions().placeholder(R.drawable.ic_account_circle);
+            RequestOptions rq = new RequestOptions().placeholder(R.drawable.ic_account_circle_24dp);
             Glide.with(context).load(photographersList.get(position).getImgUrl()).apply(rq).into(viewHolder.PImage);
         }
         else if(holder instanceof  AddParticipantsViewHolder)

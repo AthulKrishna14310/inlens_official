@@ -36,15 +36,11 @@ import android.view.WindowManager;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.crowdfire.cfalertdialog.CFAlertDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -64,11 +60,9 @@ import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.Helper.PreOperationCheck;
 import com.integrals.inlens.Helper.ReadFirebaseData;
 import com.integrals.inlens.Interface.FirebaseRead;
-import com.integrals.inlens.MainActivity;
 import com.integrals.inlens.Models.GalleryImageModel;
 import com.integrals.inlens.Notification.NotificationHelper;
 import com.integrals.inlens.R;
-import com.shashank.sony.fancytoastlib.FancyToast;
 import com.skyfishjy.library.RippleBackground;
 
 import java.io.ByteArrayOutputStream;

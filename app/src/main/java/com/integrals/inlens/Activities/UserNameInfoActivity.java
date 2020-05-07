@@ -171,7 +171,9 @@ public class UserNameInfoActivity extends AppCompatActivity {
                 .setIcon(R.drawable.ic_check_circle_black_24dp)
                 .setMessage(message)
                 .setCancelable(false)
-                .addButton("OK", -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                .addButton("OK", getResources().getColor(R.color.colorPrimaryDark),
+                        getResources().getColor(R.color.white),
+                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {
                             @Override

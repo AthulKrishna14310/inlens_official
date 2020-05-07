@@ -13,7 +13,7 @@
         android:src="@drawable/ic_location"
         android:layout_centerVertical="true"
         android:layout_marginStart="20dp"
-        android:background="@drawable/border_accent"
+        android:background="@drawable/border_primary"
         android:text="INDIA"
         android:fontFamily="@font/base_font"
         android:gravity="center"

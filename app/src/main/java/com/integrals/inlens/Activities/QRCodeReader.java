@@ -87,8 +87,12 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
                         .setMessage("Are you sure you want to join this new community? This means quitting the previous one.")
                         .setTextGravity(Gravity.START)
                         .setCancelable(false)
-                        .addButton("YES", -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.POSITIVE,
-                                CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
+                        .addButton("YES",
+                                getResources().getColor(R.color.colorPrimaryDark),
+                                getResources().getColor(R.color.white),
+                                CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                                new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         addPhotographerToCommunity(barcode.displayValue);
@@ -96,8 +100,11 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
                                         dialog.dismiss();
                                     }
                                 })
-                        .addButton("NO", -1, getResources().getColor(R.color.deep_orange_A400), CFAlertDialog.CFAlertActionStyle.NEGATIVE,
-                                CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
+                        .addButton("NO", getResources().getColor(R.color.red_900),
+                                getResources().getColor(R.color.white),
+                                CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                                new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
@@ -133,7 +140,10 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
                 .setIcon(R.drawable.ic_info)
                 .setMessage("InLens require camera permission to scan QR code. Please enable it and try again.")
                 .setCancelable(false)
-                .addButton("OK", -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                .addButton("OK",
+                        getResources().getColor(R.color.colorPrimaryDark),
+                        getResources().getColor(R.color.white),
+                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -144,7 +154,9 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
 
                             }
                         })
-                .addButton("CANCEL", -1, getResources().getColor(R.color.deep_orange_A400), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                .addButton("CANCEL", getResources().getColor(R.color.red_900),
+                        getResources().getColor(R.color.white),
+                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -171,7 +183,10 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
                 .setIcon(R.drawable.ic_check_circle_black_24dp)
                 .setMessage(message)
                 .setCancelable(false)
-                .addButton("OK", -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                .addButton("OK",
+                        getResources().getColor(R.color.colorPrimaryDark),
+                        getResources().getColor(R.color.white),
+                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {
                             @Override
@@ -190,7 +205,10 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
                 .setIcon(R.drawable.ic_info)
                 .setMessage(message)
                 .setCancelable(false)
-                .addButton("OK", -1, getResources().getColor(R.color.colorAccent), CFAlertDialog.CFAlertActionStyle.POSITIVE,
+                .addButton("OK",
+                        getResources().getColor(R.color.colorPrimaryDark),
+                        getResources().getColor(R.color.white),
+                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {
                             @Override
