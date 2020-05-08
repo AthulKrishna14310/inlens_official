@@ -57,7 +57,7 @@ public class NotificationHelper {
             Notification.Builder notificationBuilder = new Notification.Builder(context, channelID)
                     .setContentTitle("Open Gallery")
                     .setContentText("You have "+count+" new photos to upload to your album.")
-                    .setSmallIcon(R.drawable.inlens_logo)
+                    .setSmallIcon(R.mipmap.ic_launcher_foreground)
                     .setAutoCancel(true)
 
                     .setContentIntent(contentIntent);
@@ -69,7 +69,7 @@ public class NotificationHelper {
         else
         {
             NotificationCompat.Builder builder=new NotificationCompat.Builder(context);
-            builder.setSmallIcon(R.drawable.inlens_logo)
+            builder.setSmallIcon(R.mipmap.ic_launcher_foreground)
                     .setContentTitle("InLens Recent Images")
                     .setContentText("You have "+count+" new photos to upload to your album.")
                     .setAutoCancel(true)
@@ -106,7 +106,7 @@ public class NotificationHelper {
             Notification.Builder notificationBuilder = new Notification.Builder(context, channelID)
                     .setContentTitle("Cloud Album Ended.")
                     .setContentText("Your cloud album has ended. Create a new album to upload more.")
-                    .setSmallIcon(R.drawable.inlens_logo)
+                    .setSmallIcon(R.mipmap.ic_launcher_foreground)
                     .setAutoCancel(true);
 
             notificationManager.notify(notificationIdAlbumEnd,notificationBuilder.build());
@@ -114,7 +114,7 @@ public class NotificationHelper {
         else
         {
             NotificationCompat.Builder builder=new NotificationCompat.Builder(context);
-            builder.setSmallIcon(R.drawable.inlens_logo)
+            builder.setSmallIcon(R.mipmap.ic_launcher_foreground)
                     .setContentTitle("Cloud Album Ended.")
                     .setContentText("Your cloud album has ended. Create a new album to upload more.")
                     .setAutoCancel(true)
@@ -152,7 +152,7 @@ public class NotificationHelper {
                     .setContentText("After taking your photos, tap here to upload.")
                     .setTicker(title)
                     .setContentIntent(contentIntent)
-                    .setSmallIcon(R.drawable.inlens_logo)
+                    .setSmallIcon(R.mipmap.ic_launcher_foreground)
                     .setAutoCancel(false);
             Uri path= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             notificationChannel.enableVibration(true);
@@ -168,7 +168,7 @@ public class NotificationHelper {
         else
         {
             NotificationCompat.Builder builder=new NotificationCompat.Builder(context);
-            builder.setSmallIcon(R.drawable.inlens_logo)
+            builder.setSmallIcon(R.mipmap.ic_launcher_foreground)
                     .setContentTitle(title)
                     .setContentText("You have 0 new photos to upload to your album.")
                     .setPriority(NotificationCompat.PRIORITY_HIGH)

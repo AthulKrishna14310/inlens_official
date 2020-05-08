@@ -1457,7 +1457,7 @@ public class MainActivity extends AppCompatActivity implements
                         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
                                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                                 .setTitle("New Community")
-                                .setIcon(R.drawable.inlens_logo)
+                                .setIcon(R.mipmap.ic_launcher_foreground)
                                 .setCancelable(false)
                                 .setMessage("You are about to join a new community.")
                                 .addButton("JOIN",
@@ -1494,7 +1494,7 @@ public class MainActivity extends AppCompatActivity implements
                             CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
                                     .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                                     .setTitle("New Community")
-                                    .setIcon(R.drawable.inlens_logo)
+                                    .setIcon(R.mipmap.ic_launcher_foreground)
                                     .setMessage("Are you sure you want to join this new community? This means quitting the previous one.")
                                     .setTextGravity(Gravity.START)
                                     .setCancelable(false)

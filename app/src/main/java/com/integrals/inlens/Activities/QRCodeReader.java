@@ -83,7 +83,7 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
                 CFAlertDialog.Builder builder = new CFAlertDialog.Builder(QRCodeReader.this)
                         .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                         .setTitle("New Community")
-                        .setIcon(R.drawable.inlens_logo)
+                        .setIcon(R.mipmap.ic_launcher_foreground)
                         .setMessage("Are you sure you want to join this new community? This means quitting the previous one.")
                         .setTextGravity(Gravity.START)
                         .setCancelable(false)

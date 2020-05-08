@@ -63,7 +63,19 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="scalingPercent" value="76" />
+                                                <entry key="scalingPercent" value="99" />
+                                                <entry key="trimmed" value="true" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
+                                      <entry key="foregroundText">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="color" value="000000" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
@@ -75,11 +87,11 @@
                                   <option name="values">
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
-                                      <entry key="backgroundColor" value="6567a0" />
+                                      <entry key="backgroundColor" value="ffffff" />
                                       <entry key="backgroundImage" value="$PROJECT_DIR$/app/src/main/res/drawable/transparent_background.xml" />
-                                      <entry key="foregroundImage" value="/home/athul/Downloads/down-arrow (1).svg" />
+                                      <entry key="foregroundImage" value="/home/athul/Downloads/logo.png" />
                                       <entry key="legacyIconShape" value="CIRCLE" />
-                                      <entry key="outputName" value="ic_expand" />
+                                      <entry key="showGrid" value="true" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -152,7 +164,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/home/athul/Android/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_feedback_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/home/athul/Android/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/maps/ic_directions_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -163,7 +175,7 @@
                         <option name="values">
                           <map>
                             <entry key="color" value="0a0e60" />
-                            <entry key="outputName" value="ic_feedback" />
+                            <entry key="outputName" value="ic_direction" />
                             <entry key="sourceFile" value="$USER_HOME$/C:\Users\deljo" />
                           </map>
                         </option>
