@@ -549,7 +549,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         {
                             notificationStr+=" "+(int)min+" minutes left";
                         }
-                        helper.displayAlbumStartNotification(notificationStr);
+                        helper.displayAlbumStartNotification(notificationStr,"You are active in this Cloud-Album till "+ albumTime);
                     }
                     else
                     {

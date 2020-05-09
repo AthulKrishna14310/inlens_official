@@ -11,6 +11,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
+import android.widget.RemoteViews;
 
 import com.integrals.inlens.Activities.InlensGalleryActivity;
 import com.integrals.inlens.MainActivity;
@@ -18,11 +19,16 @@ import com.integrals.inlens.R;
 
 public class NotificationHelper {
     private Context context;
-    int notificationIdAlbumEnd =7908, notificationIdAlbumPhoto =7907,notificationIdAlbumStart=7906;
+    private RemoteViews notificationLayout;
+
+    int notificationIdAlbumEnd =7908,
+            notificationIdAlbumPhoto =7907,
+            notificationIdAlbumStart=7906;
 
 
     public NotificationHelper(Context context) {
         this.context = context;
+        notificationLayout = new RemoteViews(context.getPackageName(), R.layout.notification_layout);
     }
 
     public void displayRecentImageNotification(int count,int notiCount){
@@ -35,6 +41,8 @@ public class NotificationHelper {
 
         NotificationManager notificationManager= (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancelAll();
+        notificationLayout.setTextViewText(R.id.title,"Open Gallery");
+        notificationLayout.setTextViewText(R.id.description,"You have "+count+" new photos to upload to your album.");
 
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) {
             String channelID = "ID_503";
@@ -55,11 +63,9 @@ public class NotificationHelper {
             notificationManager.createNotificationChannel(notificationChannel);
 
             Notification.Builder notificationBuilder = new Notification.Builder(context, channelID)
-                    .setContentTitle("Open Gallery")
-                    .setContentText("You have "+count+" new photos to upload to your album.")
-                    .setSmallIcon(R.mipmap.ic_launcher_foreground)
+                    .setCustomContentView(notificationLayout)
+                    .setSmallIcon(R.drawable.ic_notification)
                     .setAutoCancel(true)
-
                     .setContentIntent(contentIntent);
 
 
@@ -69,11 +75,9 @@ public class NotificationHelper {
         else
         {
             NotificationCompat.Builder builder=new NotificationCompat.Builder(context);
-            builder.setSmallIcon(R.mipmap.ic_launcher_foreground)
-                    .setContentTitle("InLens Recent Images")
-                    .setContentText("You have "+count+" new photos to upload to your album.")
+            builder.setSmallIcon(R.drawable.ic_notification)
+                    .setContent(notificationLayout)
                     .setAutoCancel(true)
-                    .setOngoing(false)
                     .setContentIntent(contentIntent);
 
             if(notiCount<2)
@@ -98,6 +102,8 @@ public class NotificationHelper {
 
         NotificationManager notificationManager=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancelAll();
+
+
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) {
             String channelID = "ID_504";
             NotificationChannel notificationChannel = new NotificationChannel(channelID,"Cloud Album Ended", NotificationManager.IMPORTANCE_DEFAULT);
@@ -106,7 +112,7 @@ public class NotificationHelper {
             Notification.Builder notificationBuilder = new Notification.Builder(context, channelID)
                     .setContentTitle("Cloud Album Ended.")
                     .setContentText("Your cloud album has ended. Create a new album to upload more.")
-                    .setSmallIcon(R.mipmap.ic_launcher_foreground)
+                    .setSmallIcon(R.drawable.ic_notification)
                     .setAutoCancel(true);
 
             notificationManager.notify(notificationIdAlbumEnd,notificationBuilder.build());
@@ -114,7 +120,7 @@ public class NotificationHelper {
         else
         {
             NotificationCompat.Builder builder=new NotificationCompat.Builder(context);
-            builder.setSmallIcon(R.mipmap.ic_launcher_foreground)
+            builder.setSmallIcon(R.drawable.ic_notification)
                     .setContentTitle("Cloud Album Ended.")
                     .setContentText("Your cloud album has ended. Create a new album to upload more.")
                     .setAutoCancel(true)
@@ -128,7 +134,7 @@ public class NotificationHelper {
 
     }
 
-    public void displayAlbumStartNotification(String title){
+    public void displayAlbumStartNotification(String title,String desc){
 
 
         Intent intent = new Intent(context, InlensGalleryActivity.class);
@@ -141,6 +147,9 @@ public class NotificationHelper {
         NotificationManager notificationManager=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancelAll();
 
+        notificationLayout.setTextViewText(R.id.title,title);
+        notificationLayout.setTextViewText(R.id.description,desc);
+
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) {
             String channelID = "ID_505";
             NotificationChannel notificationChannel = new NotificationChannel(channelID,"Cloud Album Ended", NotificationManager.IMPORTANCE_HIGH);
@@ -149,10 +158,9 @@ public class NotificationHelper {
             Notification.Builder notificationBuilder = new Notification.Builder(context, channelID)
                     .setContentTitle(title)
                     .setOngoing(true)
-                    .setContentText("After taking your photos, tap here to upload.")
-                    .setTicker(title)
+                    .setCustomContentView(notificationLayout)
                     .setContentIntent(contentIntent)
-                    .setSmallIcon(R.mipmap.ic_launcher_foreground)
+                    .setSmallIcon(R.drawable.ic_notification)
                     .setAutoCancel(false);
             Uri path= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             notificationChannel.enableVibration(true);
@@ -168,10 +176,10 @@ public class NotificationHelper {
         else
         {
             NotificationCompat.Builder builder=new NotificationCompat.Builder(context);
-            builder.setSmallIcon(R.mipmap.ic_launcher_foreground)
+            builder.setSmallIcon(R.drawable.ic_notification)
                     .setContentTitle(title)
-                    .setContentText("You have 0 new photos to upload to your album.")
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setContent(notificationLayout)
                     .setAutoCancel(false)
                     .setOngoing(true)
                     .setContentIntent(contentIntent);

@@ -1093,7 +1093,7 @@ public class MainActivity extends AppCompatActivity implements
                 QRCodeInit(currentActiveCommunityID);
 
                 NotificationHelper notificationHelper=new NotificationHelper(getApplicationContext());
-                notificationHelper.displayAlbumStartNotification("Open your Gallery");
+                notificationHelper.displayAlbumStartNotification("Open your Gallery","After taking photos tap here to upload ");
 
                 CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
                         .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
@@ -1637,6 +1637,7 @@ public class MainActivity extends AppCompatActivity implements
                                 if(dy>0)
                                 {
                                     notificationStr+=", "+ (int) dy +" days";
+
                                 }
                                 else
                                 {
@@ -1650,8 +1651,7 @@ public class MainActivity extends AppCompatActivity implements
                                 {
                                     notificationStr+=" "+(int)min+" minutes left";
                                 }
-                                helper.displayAlbumStartNotification(notificationStr);
-
+                                 helper.displayAlbumStartNotification(notificationStr,"You are active in this Cloud-Album till "+ endtime);
                                  MainActivity.this.getIntent().putExtra("CREATED","YES");
                                  MainActivity.this.getIntent().putExtra("ID",communityId);
                             }

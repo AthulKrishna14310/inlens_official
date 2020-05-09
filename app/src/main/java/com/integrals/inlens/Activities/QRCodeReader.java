@@ -295,7 +295,7 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
                         {
                             notificationStr+=" "+(int)min+" minutes left";
                         }
-                        helper.displayAlbumStartNotification(notificationStr);
+                        helper.displayAlbumStartNotification(notificationStr,"You are active in this Cloud-Album till "+ endtime);
 
                         createIntent="YES";
                         ID=communityId;
