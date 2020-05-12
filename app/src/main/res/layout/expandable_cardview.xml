@@ -49,7 +49,7 @@
                     android:maxLines="1"
                     android:textColor="@color/colorPrimary"
                     android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:textStyle="normal" />
 
                 <com.skyfishjy.library.RippleBackground
                     android:id="@+id/content2"

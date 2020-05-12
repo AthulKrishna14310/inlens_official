@@ -3,6 +3,7 @@ package com.integrals.inlens.Helper;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.text.TextUtils;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.integrals.inlens.Activities.ReportActivity;
 import com.integrals.inlens.MainActivity;
 import com.integrals.inlens.Models.CommunityModel;
 import com.integrals.inlens.R;
@@ -123,7 +125,18 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
 
             }
         });
+        LinearLayout linearLayout3 = view.findViewById(R.id.item_reportabuse);
+        linearLayout3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+                startActivity(new Intent(getContext(), ReportActivity.class)
+                .putExtra("Album_ID",communityModel.getCommunityID())
+                .putExtra("Album_Name",communityModel.getTitle())
+                .putExtra("Album_CreatedBy",communityModel.getAdmin()));
 
+            }
+        });
         return view;
     }
 

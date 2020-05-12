@@ -23,7 +23,10 @@
         android:supportsRtl="true"
         android:theme="@style/NoActionBarTheme"
         tools:replace="android:allowBackup">
-        <activity android:name=".Activities.WebViewActivity"></activity>
+        <activity android:name=".Activities.ReportActivity"
+            ></activity>
+
+        <activity android:name=".Activities.WebViewActivity" />
         <activity
             android:name=".Activities.SplashScreenActivity"
             android:screenOrientation="portrait">

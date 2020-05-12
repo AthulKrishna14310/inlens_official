@@ -199,7 +199,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/home/athul/Android/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/maps/ic_directions_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/home/athul/Android/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/content/ic_report_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -209,8 +209,8 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="0a0e60" />
-                            <entry key="outputName" value="ic_direction" />
+                            <entry key="color" value="e53935" />
+                            <entry key="outputName" value="ic_report_red" />
                             <entry key="sourceFile" value="$USER_HOME$/C:\Users\deljo" />
                           </map>
                         </option>

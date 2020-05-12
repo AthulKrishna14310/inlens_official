@@ -3,6 +3,8 @@ package com.integrals.inlens.Helper;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.text.TextUtils;
@@ -11,9 +13,13 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.crowdfire.cfalertdialog.CFAlertDialog;
+import com.integrals.inlens.Activities.ReportActivity;
 import com.integrals.inlens.MainActivity;
 import com.integrals.inlens.Models.CommunityModel;
 import com.integrals.inlens.R;
@@ -92,10 +98,20 @@ public class BottomSheetFragment_Inactive extends BottomSheetDialogFragment {
 
             }
         });
+        LinearLayout linearLayout3 = view.findViewById(R.id.item_reportabuse);
+        linearLayout3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+                startActivity(new Intent(getContext(), ReportActivity.class)
+                        .putExtra("Album_ID",communityModel.getCommunityID())
+                        .putExtra("Album_Name",communityModel.getTitle())
+                        .putExtra("Album_CreatedBy",communityModel.getAdmin()));
 
+            }
+        });
         return view;
     }
-
 
     public String getDate(String timestamp)
     {

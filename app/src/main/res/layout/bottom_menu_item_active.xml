@@ -259,7 +259,39 @@
         </LinearLayout>
 
 
+        <LinearLayout
+            android:id="@+id/item_reportabuse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:clickable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:orientation="horizontal"
+            android:background="@color/white"
+            >
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_report"
+                android:tint="@color/red_600"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="Report Abuse"
+                android:textColor="@color/colorSecondary"
+                android:textSize="14sp"
+                android:background="@color/white"
+                android:fontFamily="@font/base_font"
+                android:textAllCaps="true"
+                android:layout_marginStart="16dp"
+
+
+                />
+
+        </LinearLayout>
 
     </LinearLayout>
 

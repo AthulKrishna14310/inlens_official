@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activities.ReportActivity">
+
+    <TextView
+        android:id="@+id/head"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Report Statement"
+        android:textColor="@color/colorPrimary"
+        android:fontFamily="@font/base_font"
+        android:textSize="20sp"
+        android:padding="16dp"/>
+
+    <Button
+        android:id="@+id/submit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/submit_bg"
+        android:text="Submit"
+        android:visibility="gone"
+        android:fontFamily="@font/base_font"
+        android:textColor="@color/white"
+        android:foreground="?selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:elevation="0dp"
+        android:layout_below="@id/report_layout"
+        android:layout_margin="16dp"
+
+        android:padding="6dp"/>
+
+    <android.support.design.widget.TextInputLayout
+    android:layout_width="match_parent"
+        android:id="@+id/report_layout"
+    android:layout_height="wrap_content"
+        android:layout_below="@id/head"
+    app:hintEnabled="true"
+    app:boxBackgroundMode="outline"
+
+    app:boxCornerRadiusTopEnd="4dp"
+    app:boxCornerRadiusBottomEnd="4dp"
+    app:boxCornerRadiusBottomStart="4dp"
+    app:boxCornerRadiusTopStart="4dp"
+    android:layout_marginTop="16dp"
+    app:boxStrokeColor="@color/colorPrimaryDark"
+        app:boxStrokeWidth="1dp"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
+
+    >
+    <android.support.design.widget.TextInputEditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="normal"
+        android:padding="16dp"
+
+        android:hint="Type your statement"
+        android:fontFamily="@font/base_font"
+        android:textSize="20sp"
+        android:id="@+id/report"
+        >
+
+    </android.support.design.widget.TextInputEditText>
+
+</android.support.design.widget.TextInputLayout>
+</RelativeLayout>

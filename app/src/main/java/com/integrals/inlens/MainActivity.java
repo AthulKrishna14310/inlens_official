@@ -522,7 +522,7 @@ public class MainActivity extends AppCompatActivity implements
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
 
-        GridLayoutManager Gridmanager = new GridLayoutManager(getApplicationContext(), 7);
+        GridLayoutManager Gridmanager = new GridLayoutManager(getApplicationContext(), 6);
         ParticipantsRecyclerView.setLayoutManager(Gridmanager);
 
         MainVerticalRecyclerView = findViewById(R.id.main_recyclerview);
