@@ -1,16 +1,21 @@
 package com.integrals.inlens.Helper;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.integrals.inlens.MainActivity;
 import com.integrals.inlens.Models.PhotographerModel;
 import com.integrals.inlens.R;
 
@@ -24,12 +29,16 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     List<PhotographerModel> photographersList;
     Context context;
     Dialog qrcodeDialog;
+    MainActivity activity;
 
 
-    public ParticipantsAdapter(List<PhotographerModel> photographersList, Context context, Dialog qrcodeDialog) {
+    public ParticipantsAdapter(List<PhotographerModel> photographersList,
+                               Context context,
+                               MainActivity activity,Dialog qrcodeDialog) {
         this.photographersList = photographersList;
         this.context = context;
         this.qrcodeDialog = qrcodeDialog;
+        this.activity=activity;
     }
 
     @Override
@@ -84,6 +93,24 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             RequestOptions rq = new RequestOptions().placeholder(R.drawable.ic_account_circle_24dp);
             Glide.with(context).load(photographersList.get(position).getImgUrl()).apply(rq).into(viewHolder.PImage);
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(photographersList.get(position).getId().contentEquals(activity.getCurrentUserId())){
+                        PhotographerFragementBottomSheetNA photographerFragementBottomSheetNA = new PhotographerFragementBottomSheetNA();
+                        photographerFragementBottomSheetNA.show(((FragmentActivity) activity).getSupportFragmentManager(), photographerFragementBottomSheetNA.getTag());
+
+                    }else {
+                        PhotographerFragementBottomSheetAdmin photographerFragementBottomSheetAdmin = new PhotographerFragementBottomSheetAdmin();
+                        photographerFragementBottomSheetAdmin.show(((FragmentActivity) activity).getSupportFragmentManager(), photographerFragementBottomSheetAdmin.getTag());
+                         }
+                    // IF Admin on PhotographerFragementBottomSheetAdmin
+                    // IF Not Admin photographerFragementBottomSheetNotAdmin
+                    }
+            });
+
+
         }
         else if(holder instanceof  AddParticipantsViewHolder)
         {

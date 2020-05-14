@@ -39,7 +39,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -189,6 +188,9 @@ public class MainActivity extends AppCompatActivity implements
     ReadFirebaseData readFirebaseData;
     ArrayList<String> userCommunityIdList;
     MainHorizontalAdapter mainHorizontalAdapter;
+
+
+
     MainVerticalAdapter mainVerticalAdapter;
 
     // info : underscore tells that the second one is a copy of the first
@@ -1420,12 +1422,51 @@ public class MainActivity extends AppCompatActivity implements
 
             @Override
             public void onClick(View v) {
+                final Boolean[] clicked = {false};
+                final Integer[] x = {100};
 
-                shareInviteLink(CommunityID);
+                CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
+                        .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                        .setTitle("Photographers Count ?")
+                        .setIcon(R.drawable.ic_link)
+                        .setCancelable(false)
+                        .setMessage("Select the Number of Photographers :")
+                        .setMultiChoiceItems(new String[]{"Only 1", "5", "20", "20 or more"}, new boolean[]{false, false, false, false}, new DialogInterface.OnMultiChoiceClickListener() {
+                              @Override
+                                public void onClick(DialogInterface dialogInterface, int index, boolean b) {
+
+                                  if(b){
+                                      if(index==0){
+                                        Toast.makeText(getApplicationContext(),"Sending to 1",Toast.LENGTH_SHORT).show();
+                                        dialogInterface.dismiss();
+                                          tempDialogue.dismiss();
+                                      }else if(index==1){
+                                          Toast.makeText(getApplicationContext(),"Sending to 5",Toast.LENGTH_SHORT).show();
+                                          dialogInterface.dismiss();
+                                          tempDialogue.dismiss();
+
+                                      }else if(index == 2){
+                                          Toast.makeText(getApplicationContext(),"Sending to 20",Toast.LENGTH_SHORT).show();
+                                          dialogInterface.dismiss();
+                                          tempDialogue.dismiss();
+
+                                      }else{
+                                          Toast.makeText(getApplicationContext(),"Sending to 20 or more",Toast.LENGTH_SHORT).show();
+                                          dialogInterface.dismiss();
+                                          tempDialogue.dismiss();
+
+                                      }
+
+                                  }
+                              }
+                         });
+                        builder.show();
+                    }
+                });
 
 
-            }
-        });
+
+
 
 
         QRCodeDialog.findViewById(R.id.cancelButtonTextView).setOnClickListener(new View.OnClickListener() {
@@ -1941,7 +1982,7 @@ public class MainActivity extends AppCompatActivity implements
                                 }
                             }
 
-                            participantsAdapter = new ParticipantsAdapter(photographerList, getApplicationContext(), QRCodeDialog);
+                            participantsAdapter = new ParticipantsAdapter(photographerList, getApplicationContext(),MainActivity.this, QRCodeDialog);
                             ParticipantsRecyclerView.setAdapter(participantsAdapter);
                             expandableCardView.expand();
 
@@ -2011,7 +2052,7 @@ public class MainActivity extends AppCompatActivity implements
                             WorkManager.getInstance().cancelWorkById(UUID.fromString(albumEndWorkId));
                         }
 
-                        showDialogMessage("Cloud-Album Quit", "Successfully left from the Cloud-Album");
+                        showDialogMessage("Exited Participation", "Successfully left from the Cloud-Album");
 
                         if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
                             photographerList.remove(0);
@@ -2034,9 +2075,9 @@ public class MainActivity extends AppCompatActivity implements
             });
 
         } else {
-            showAlbumQuitPrompt("Leaving Community", "Are you sure you want to quit the current Cloud-Album. You won't able to upload photos to this album again.",
-                    "NO",
-                    "YES");
+            showAlbumQuitPrompt("Exit Participation ?", "Are you sure you want to exit the participation in current Cloud-Album. You won't able to upload photos to this album again.",
+                    "NO ",
+                    "YES ");
 
         }
 
@@ -2053,7 +2094,7 @@ public class MainActivity extends AppCompatActivity implements
         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle(title)
-                .setIcon(R.drawable.ic_cancel_black_24dp)
+                .setIcon(R.drawable.ic_info_red)
                 .setMessage(message)
                 .setCancelable(false)
                 .addButton(negativeButtonMessage,
@@ -2096,7 +2137,7 @@ public class MainActivity extends AppCompatActivity implements
                                                         {
                                                             WorkManager.getInstance().cancelWorkById(UUID.fromString(albumEndWorkId));
                                                         }
-                                                        showDialogMessage("Cloud-Album Quit", "Successfully left from the Cloud-Album");
+                                                        showDialogMessage("Exited Participation", "Successfully left from the Cloud-Album");
                                                         if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
                                                             photographerList.remove(0);
                                                             participantsAdapter.notifyItemRemoved(0);
@@ -2143,7 +2184,7 @@ public class MainActivity extends AppCompatActivity implements
                                                         {
                                                             WorkManager.getInstance().cancelWorkById(UUID.fromString(albumEndWorkId));
                                                         }                                                        mainAddPhotosFab.hide();
-                                                        showDialogMessage("Cloud-Album Quit", "Successfully left from the Cloud-Album");
+                                                        showDialogMessage("Exited Participation", "Successfully left from the Cloud-Album");
                                                         //SetDefaultView();
 
 
@@ -2193,7 +2234,7 @@ public class MainActivity extends AppCompatActivity implements
 
         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                .setTitle("Cloud-Album Quit")
+                .setTitle("Unable to Exit")
                 .setIcon(R.drawable.ic_info)
                 .setMessage("Unable to Quit Cloud-Album. Please check your internet connection or whether you are participating in a Cloud-Album")
                 .setCancelable(false)
@@ -2944,8 +2985,12 @@ public class MainActivity extends AppCompatActivity implements
                     }
                 });
 
-                viewHolder.AlbumNameTextView.setText(communityDetails.get(position).getTitle());
-
+                if(communityDetails.get(position).getTitle().contentEquals("Reported Album")) {
+                    viewHolder.AlbumNameTextView.setText(communityDetails.get(position).getTitle());
+                    viewHolder.AlbumNameTextView.setTextColor(Color.RED);
+                }else{
+                    viewHolder.AlbumNameTextView.setText(communityDetails.get(position).getTitle());
+                }
 
 
             } else if (holder instanceof MainHorizontalLoadingViewHolder) {
@@ -2986,5 +3031,11 @@ public class MainActivity extends AppCompatActivity implements
     public static void setProfileChange(boolean profileChange) {
         PROFILE_CHANGE = profileChange;
     }
+
+    public String getCurrentUserId() {
+        return currentUserId;
+    }
+
+
 
 }

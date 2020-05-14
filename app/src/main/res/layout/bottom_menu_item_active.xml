@@ -240,14 +240,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:tint="@color/red_500"
-                android:src="@drawable/ic_quit" />
+                android:src="@drawable/ic_exit" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text="@string/quit_cloud_album"
-                android:textColor="@color/red_900"
+                android:textColor="@color/colorSecondary"
                 android:textSize="14sp"
                 android:background="@color/white"
                 android:fontFamily="@font/base_font"
