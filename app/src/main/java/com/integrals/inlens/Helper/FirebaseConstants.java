@@ -23,8 +23,8 @@ public class FirebaseConstants {
     public static final String POSTTIME ="time";
     public static final String POSTURL ="uri";
     public static final String POSTS ="posts";
+    public static final String INVITE_LINK ="Invites";
 
-    public FirebaseConstants() {
-    }
+
 
 }

@@ -137,7 +137,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -164,10 +166,9 @@ public class MainActivity extends AppCompatActivity implements
     private static boolean COVER_CHANGE = false, PROFILE_CHANGE = false;
     private NavigationView navigationView;
     private DrawerLayout RootForMainActivity;
-    private boolean displayed=false;
+    private boolean displayed = false;
 
     private RecyclerView MainHorizontalRecyclerview, MainVerticalRecyclerView;
-
 
 
     private BroadcastReceiver br;
@@ -181,14 +182,13 @@ public class MainActivity extends AppCompatActivity implements
 
     FloatingActionButton mainAddPhotosFab;
 
-    DatabaseReference currentUserRef, communityRef, participantRef, postRef;
+    DatabaseReference currentUserRef, communityRef, participantRef, postRef, linkRef;
     FirebaseAuth firebaseAuth;
     String currentUserId;
     ValueEventListener userRefListenerForActiveAlbum, communityRefListenerForActiveAlbum, coummunityUserAddListener, communitiesDataListener, postRefListener, participantRefListener;
     ReadFirebaseData readFirebaseData;
     ArrayList<String> userCommunityIdList;
     MainHorizontalAdapter mainHorizontalAdapter;
-
 
 
     MainVerticalAdapter mainVerticalAdapter;
@@ -214,17 +214,17 @@ public class MainActivity extends AppCompatActivity implements
     AppBarLayout appBarLayout;
 
     boolean isAppbarOpen = true;
-    int POST_IMAGE_LOAD_COUNT=9;
+    int POST_IMAGE_LOAD_COUNT = 9;
 
     CFAlertDialog.Builder cfBuilder;
-    Dialog cfDialogService,cfDialogAddPhotoFab;
+    Dialog cfDialogService, cfDialogAddPhotoFab;
 
 
     //PURPOSE OF USER DIRECT
 
 
     AlbumOptionsBottomSheetFragment optionsBottomSheetFragment;
-    private RippleBackground rippleBackground,rippleBackground2;
+    private RippleBackground rippleBackground, rippleBackground2;
 
 
     public MainActivity() {
@@ -232,16 +232,16 @@ public class MainActivity extends AppCompatActivity implements
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)  {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         // to calculate screen width
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        int width =  metrics.widthPixels;
+        int width = metrics.widthPixels;
         int height = metrics.heightPixels;
-        POST_IMAGE_LOAD_COUNT= ((int) Math.ceil((height/(width/3))+3))*3;
+        POST_IMAGE_LOAD_COUNT = ((int) Math.ceil((height / (width / 3)) + 3)) * 3;
 
         // on backpressed
         appBarLayout = findViewById(R.id.main_appbarlayout);
@@ -256,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
         // main actionbar
-       mainSearchButton = findViewById(R.id.mainactivity_actionbar_searchbutton);
+        mainSearchButton = findViewById(R.id.mainactivity_actionbar_searchbutton);
 
         // Fab
         mainAddPhotosFab = findViewById(R.id.fabadd);
@@ -282,7 +282,7 @@ public class MainActivity extends AppCompatActivity implements
         communityRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.COMMUNITIES);
         participantRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.PARTICIPANTS);
         postRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.POSTS);
-
+        linkRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.INVITE_LINK);
         // custom function for waiting until firebase read is complete
         readFirebaseData = new ReadFirebaseData();
 
@@ -333,8 +333,8 @@ public class MainActivity extends AppCompatActivity implements
                 if (item.getItemId() == R.id.terms_and_conditions) {
 
 
-                   startActivity(new Intent(MainActivity.this, WebViewActivity.class)
-                   .putExtra("MESSAGE","TERMS_AND_CONDITIONS"));
+                    startActivity(new Intent(MainActivity.this, WebViewActivity.class)
+                            .putExtra("MESSAGE", "TERMS_AND_CONDITIONS"));
 
                     return true;
 
@@ -343,12 +343,12 @@ public class MainActivity extends AppCompatActivity implements
 
 
                     startActivity(new Intent(MainActivity.this, WebViewActivity.class)
-                            .putExtra("MESSAGE","PRIVACY_POLICY"));
+                            .putExtra("MESSAGE", "PRIVACY_POLICY"));
 
                     return true;
 
                 }
-                if(item.getItemId()==R.id.contact_us){
+                if (item.getItemId() == R.id.contact_us) {
                     try {
                         Intent intent = new Intent(Intent.ACTION_SENDTO);
                         intent.setData(Uri.parse("mailto:")); // only email apps should handle this
@@ -356,7 +356,7 @@ public class MainActivity extends AppCompatActivity implements
                         intent.putExtra(Intent.EXTRA_SUBJECT, "Your Response");
                         startActivity(intent);
                     } catch (android.content.ActivityNotFoundException ex) {
-                        showInfoMessage("No E-mail App found","Please install an email app");
+                        showInfoMessage("No E-mail App found", "Please install an email app");
                     }
                     return true;
                 }
@@ -364,7 +364,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
                     startActivity(new Intent(MainActivity.this, WebViewActivity.class)
-                            .putExtra("MESSAGE","HELP"));
+                            .putExtra("MESSAGE", "HELP"));
                     return true;
 
                 }
@@ -381,13 +381,13 @@ public class MainActivity extends AppCompatActivity implements
                         startActivity(goToMarket);
                     } catch (ActivityNotFoundException e) {
                         startActivity(new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("http://play.google.com/store/apps/details?id=" +getApplicationContext().getPackageName())));
+                                Uri.parse("http://play.google.com/store/apps/details?id=" + getApplicationContext().getPackageName())));
                     }
                     return true;
 
                 }
 
-                if (item.getItemId() == R.id.feedback){
+                if (item.getItemId() == R.id.feedback) {
                     Uri uri = Uri.parse("market://details?id=" + getApplicationContext().getPackageName());
                     Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
                     // To count with Play market backstack, After pressing back button,
@@ -399,7 +399,7 @@ public class MainActivity extends AppCompatActivity implements
                         startActivity(goToMarket);
                     } catch (ActivityNotFoundException e) {
                         startActivity(new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("http://play.google.com/store/apps/details?id=" +getApplicationContext().getPackageName())));
+                                Uri.parse("http://play.google.com/store/apps/details?id=" + getApplicationContext().getPackageName())));
                     }
 
                     return true;
@@ -416,8 +416,6 @@ public class MainActivity extends AppCompatActivity implements
         });
 
 
-
-
         mainAddPhotosFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -429,8 +427,7 @@ public class MainActivity extends AppCompatActivity implements
                     if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
                             Manifest.permission.READ_EXTERNAL_STORAGE)) {
                         Dialog dialog = cfBuilder.create();
-                        if(!cfDialogAddPhotoFab.isShowing())
-                        {
+                        if (!cfDialogAddPhotoFab.isShowing()) {
                             cfDialogAddPhotoFab.show();
                         }
 
@@ -474,15 +471,13 @@ public class MainActivity extends AppCompatActivity implements
 
                     if ((visibleItemCount + lastVisiblesItems) >= totalItemCount) {
                         isLoading = false;
-                        if (communityDataList.size() < _communityDataList.size() || communityDataList.get(communityDataList.size()-1)==null) {
+                        if (communityDataList.size() < _communityDataList.size() || communityDataList.get(communityDataList.size() - 1) == null) {
                             isLoading = true;
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    for(int i=communityDataList.size()-1;i>-1;i--)
-                                    {
-                                        if(communityDataList.get(i)==null)
-                                        {
+                                    for (int i = communityDataList.size() - 1; i > -1; i--) {
+                                        if (communityDataList.get(i) == null) {
                                             communityDataList.remove(i);
                                         }
                                     }
@@ -529,7 +524,7 @@ public class MainActivity extends AppCompatActivity implements
 
         MainVerticalRecyclerView = findViewById(R.id.main_recyclerview);
         MainVerticalRecyclerView.setHasFixedSize(true);
-        GridLayoutManager gridLayoutManager  = new GridLayoutManager(this,3);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
         MainVerticalRecyclerView.setLayoutManager(gridLayoutManager);
         mainVerticalAdapter = new MainVerticalAdapter(MainVerticalRecyclerView, MainActivity.this, postImageList, currentUserId);
         mainVerticalAdapter.setHasStableIds(true);
@@ -720,7 +715,6 @@ public class MainActivity extends AppCompatActivity implements
 
 
          */
-
 
 
         rippleBackground = (RippleBackground) findViewById(R.id.content);
@@ -958,11 +952,11 @@ public class MainActivity extends AppCompatActivity implements
                     mainAddPhotosFab.show();
 
                     try {
-                        String qrIntent=getIntent().getStringExtra("CREATED");
-                        String id=getIntent().getStringExtra("ID");
-                        if((!qrIntent.isEmpty())&&(!id.isEmpty())) {
+                        String qrIntent = getIntent().getStringExtra("CREATED");
+                        String id = getIntent().getStringExtra("ID");
+                        if ((!qrIntent.isEmpty()) && (!id.isEmpty())) {
                             if (qrIntent.contentEquals("YES")) {
-                                if(displayed==false) {
+                                if (displayed == false) {
 
                                     //PURPOSE OF USER DIRECT
                                     initialStart();
@@ -970,7 +964,7 @@ public class MainActivity extends AppCompatActivity implements
                                 }
                             }
                         }
-                    }catch (NullPointerException e){
+                    } catch (NullPointerException e) {
                         e.printStackTrace();
                     }
 
@@ -997,18 +991,17 @@ public class MainActivity extends AppCompatActivity implements
                                     TimeZone timeZone = TimeZone.getDefault();
                                     long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
                                     long serverTimeInMillis = (System.currentTimeMillis() - offsetInMillis);
-                                    Log.i("timeQuit","Server : "+serverTimeInMillis+" End : "+endtime+" Systemmillis : "+System.currentTimeMillis());
+                                    Log.i("timeQuit", "Server : " + serverTimeInMillis + " End : " + endtime + " Systemmillis : " + System.currentTimeMillis());
                                     if (serverTimeInMillis >= endtime) {
                                         quitCloudAlbum(true);
                                     } else {
                                         // start the necessary services
-                                        if(ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED)
-                                        {
+                                        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                                             Constraints constraints = new Constraints.Builder()
                                                     .setRequiredNetworkType(NetworkType.CONNECTED)
                                                     .build();
                                             PeriodicWorkRequest periodicWorkRequest = new PeriodicWorkRequest
-                                                    .Builder(AlbumScanWorker.class,15, TimeUnit.MINUTES)
+                                                    .Builder(AlbumScanWorker.class, 15, TimeUnit.MINUTES)
                                                     .addTag(AppConstants.PHOTO_SCAN_WORK)
                                                     .setConstraints(constraints)
                                                     .build();
@@ -1017,15 +1010,12 @@ public class MainActivity extends AppCompatActivity implements
                                             SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
                                             ceditor.putString("scanWorkerId", String.valueOf(periodicWorkRequest.getId()));
                                             ceditor.commit();
-                                        }
-                                        else
-                                        {
+                                        } else {
 
                                             if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
                                                     Manifest.permission.READ_EXTERNAL_STORAGE)) {
 
-                                                if(!cfDialogService.isShowing())
-                                                {
+                                                if (!cfDialogService.isShowing()) {
                                                     cfDialogService.show();
                                                 }
 
@@ -1058,9 +1048,7 @@ public class MainActivity extends AppCompatActivity implements
 
                         }
                     });
-                }
-                else
-                {
+                } else {
                     currentActiveCommunityID = AppConstants.NOT_AVALABLE;
                 }
                 getCloudAlbumData(userCommunityIdList);
@@ -1081,11 +1069,11 @@ public class MainActivity extends AppCompatActivity implements
 
     private void initialStart() {
         //PURPOSE OF USER DIRECT
-        MainActivity.this.getIntent().putExtra("CREATED","NO");
-        MainActivity.this.getIntent().putExtra("ID","NULL");
+        MainActivity.this.getIntent().putExtra("CREATED", "NO");
+        MainActivity.this.getIntent().putExtra("ID", "NULL");
 
         QRCodeDialog.show();
-        TextView textView=QRCodeDialog.findViewById(R.id.cancelButtonTextView);
+        TextView textView = QRCodeDialog.findViewById(R.id.cancelButtonTextView);
         textView.setText("I WILL DO IT LATER");
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1094,8 +1082,8 @@ public class MainActivity extends AppCompatActivity implements
                 QRCodeDialog.cancel();
                 QRCodeInit(currentActiveCommunityID);
 
-                NotificationHelper notificationHelper=new NotificationHelper(getApplicationContext());
-                notificationHelper.displayAlbumStartNotification("Open your Gallery","After taking photos tap here to upload ");
+                NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
+                notificationHelper.displayAlbumStartNotification("Open your Gallery", "After taking photos tap here to upload ");
 
                 CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
                         .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
@@ -1154,8 +1142,7 @@ public class MainActivity extends AppCompatActivity implements
         });
 
 
-
-        displayed=true;
+        displayed = true;
 
     }
 
@@ -1163,19 +1150,14 @@ public class MainActivity extends AppCompatActivity implements
     private void getCloudAlbumData(ArrayList<String> userCommunityIdList) {
 
 
-        try
-        {
-            if(userCommunityIdList.size()==0)
-            {
+        try {
+            if (userCommunityIdList.size() == 0) {
                 expandableCardView.setVisibility(View.GONE);
-            }
-            else
-            {
+            } else {
                 expandableCardView.setVisibility(View.VISIBLE);
             }
 
-            if(_communityDataList.size()==0)
-            {
+            if (_communityDataList.size() == 0) {
                 _communityDataList.add(new CommunityModel(
                         AppConstants.NOT_AVALABLE,
                         AppConstants.NOT_AVALABLE,
@@ -1187,10 +1169,8 @@ public class MainActivity extends AppCompatActivity implements
                         AppConstants.NOT_AVALABLE,
                         AppConstants.MORE_OPTIONS
                 ));
-            }
-            else if(!_communityDataList.get(0).getCommunityID().equals(AppConstants.MORE_OPTIONS) )
-            {
-                _communityDataList.add(0,new CommunityModel(
+            } else if (!_communityDataList.get(0).getCommunityID().equals(AppConstants.MORE_OPTIONS)) {
+                _communityDataList.add(0, new CommunityModel(
                         AppConstants.NOT_AVALABLE,
                         AppConstants.NOT_AVALABLE,
                         AppConstants.NOT_AVALABLE,
@@ -1203,10 +1183,8 @@ public class MainActivity extends AppCompatActivity implements
                 ));
             }
 
-            for(int i=1;i<_communityDataList.size();i++)
-            {
-                if(_communityDataList.get(i).getCommunityID().equals(AppConstants.MORE_OPTIONS))
-                {
+            for (int i = 1; i < _communityDataList.size(); i++) {
+                if (_communityDataList.get(i).getCommunityID().equals(AppConstants.MORE_OPTIONS)) {
                     userCommunityIdList.remove(i);
                 }
             }
@@ -1215,11 +1193,10 @@ public class MainActivity extends AppCompatActivity implements
                 @Override
                 public void onSuccess(DataSnapshot snapshot) {
 
-                    if(userCommunityIdList.size()>0)
-                    {
+                    if (userCommunityIdList.size() > 0) {
                         findViewById(R.id.photoText).setVisibility(View.VISIBLE);
                         findViewById(R.id.photographers).setVisibility(View.VISIBLE);
-                      //  findViewById(R.id.linePhotographer).setVisibility(View.VISIBLE);
+                        //  findViewById(R.id.linePhotographer).setVisibility(View.VISIBLE);
 
                         for (String communityId : userCommunityIdList) {
                             String admin = AppConstants.NOT_AVALABLE, coverimage = AppConstants.NOT_AVALABLE, description = AppConstants.NOT_AVALABLE, endtime = AppConstants.NOT_AVALABLE, starttime = AppConstants.NOT_AVALABLE, status = AppConstants.NOT_AVALABLE, title = AppConstants.NOT_AVALABLE, type = AppConstants.NOT_AVALABLE;
@@ -1260,26 +1237,21 @@ public class MainActivity extends AppCompatActivity implements
                                 communityDataList.add(_communityDataList.get(i));
                             }
                         }
-                        for(int i=communityDataList.size()-1;i>-1;i--)
-                        {
-                            if(communityDataList.get(i)==null)
-                            {
+                        for (int i = communityDataList.size() - 1; i > -1; i--) {
+                            if (communityDataList.get(i) == null) {
                                 communityDataList.remove(i);
                             }
                         }
-                        if(_communityDataList.size()>5)
-                        {
+                        if (_communityDataList.size() > 5) {
                             communityDataList.add(null);
                         }
 
                         mainHorizontalAdapter.notifyDataSetChanged();
-                    }
-                    else
-                    {
-                        if (communityDataList.size()<1) {
+                    } else {
+                        if (communityDataList.size() < 1) {
                             communityDataList.add(_communityDataList.get(0));
                         }
-                        appBarLayout.setExpanded(true,true);
+                        appBarLayout.setExpanded(true, true);
                         mainHorizontalAdapter.notifyDataSetChanged();
 
                     }
@@ -1297,10 +1269,8 @@ public class MainActivity extends AppCompatActivity implements
 
                 }
             });
-        }
-        catch (NullPointerException e)
-        {
-            Log.i("MainActivity","getCloudAlbumData "+e);
+        } catch (NullPointerException e) {
+            Log.i("MainActivity", "getCloudAlbumData " + e);
         }
     }
 
@@ -1381,13 +1351,13 @@ public class MainActivity extends AppCompatActivity implements
         final TextView textView = QRCodeDialog.findViewById(R.id.textViewAlbumQR);
         final ImageView QRCodeImageView = QRCodeDialog.findViewById(R.id.QR_Display);
 
-        tempDialogue=QRCodeDialog;
+        tempDialogue = QRCodeDialog;
         QRCodeCloseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-              QRCodeDialog.cancel();
-              QRCodeDialog.dismiss();
+                QRCodeDialog.cancel();
+                QRCodeDialog.dismiss();
             }
         });
 
@@ -1422,51 +1392,140 @@ public class MainActivity extends AppCompatActivity implements
 
             @Override
             public void onClick(View v) {
-                final Boolean[] clicked = {false};
-                final Integer[] x = {100};
 
                 CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
                         .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                         .setTitle("Photographers Count ?")
                         .setIcon(R.drawable.ic_link)
                         .setCancelable(false)
-                        .setMessage("Select the Number of Photographers :")
-                        .setMultiChoiceItems(new String[]{"Only 1", "5", "20", "20 or more"}, new boolean[]{false, false, false, false}, new DialogInterface.OnMultiChoiceClickListener() {
-                              @Override
-                                public void onClick(DialogInterface dialogInterface, int index, boolean b) {
+                        .setMessage("Select the Number of Photographers to join via this link.")
+                        .setMultiChoiceItems(new String[]{"Only 1", "5", "20", "20+"}, new boolean[]{false, false, false, false}, new DialogInterface.OnMultiChoiceClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int index, boolean b) {
 
-                                  if(b){
-                                      if(index==0){
-                                        Toast.makeText(getApplicationContext(),"Sending to 1",Toast.LENGTH_SHORT).show();
+                                Map linkMap = new HashMap();
+                                linkMap.put("id", CommunityID);
+
+                                if (b) {
+                                    if (index == 0) {
+                                        Toast.makeText(getApplicationContext(), "Sending to 1", Toast.LENGTH_SHORT).show();
                                         dialogInterface.dismiss();
-                                          tempDialogue.dismiss();
-                                      }else if(index==1){
-                                          Toast.makeText(getApplicationContext(),"Sending to 5",Toast.LENGTH_SHORT).show();
-                                          dialogInterface.dismiss();
-                                          tempDialogue.dismiss();
+                                        tempDialogue.dismiss();
+                                        linkMap.put("count", 1);
+                                        String link_id = linkRef.push().getKey();
+                                        linkRef.child(link_id).setValue(linkMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if(task.isSuccessful())
+                                                {
+                                                    shareInviteLink(link_id);
+                                                }
+                                                else
+                                                {
+                                                    showSnackbarMessage("Some error occurred. Please try again later.");
+                                                }
 
-                                      }else if(index == 2){
-                                          Toast.makeText(getApplicationContext(),"Sending to 20",Toast.LENGTH_SHORT).show();
-                                          dialogInterface.dismiss();
-                                          tempDialogue.dismiss();
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
 
-                                      }else{
-                                          Toast.makeText(getApplicationContext(),"Sending to 20 or more",Toast.LENGTH_SHORT).show();
-                                          dialogInterface.dismiss();
-                                          tempDialogue.dismiss();
+                                                showSnackbarMessage("Some error occurred. Please try again later.");
 
-                                      }
+                                            }
+                                        });
 
-                                  }
-                              }
-                         });
-                        builder.show();
-                    }
-                });
+                                    } else if (index == 1) {
+                                        Toast.makeText(getApplicationContext(), "Sending to 5", Toast.LENGTH_SHORT).show();
+                                        dialogInterface.dismiss();
+                                        tempDialogue.dismiss();
+                                        linkMap.put("count", 5);
+                                        String link_id = linkRef.push().getKey();
+                                        linkRef.child(link_id).setValue(linkMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if(task.isSuccessful())
+                                                {
+                                                    shareInviteLink(link_id);
+                                                }
+                                                else
+                                                {
+                                                    showSnackbarMessage("Some error occurred. Please try again later.");
+                                                }
 
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
 
+                                                showSnackbarMessage("Some error occurred. Please try again later.");
 
+                                            }
+                                        });
 
+                                    } else if (index == 2) {
+                                        Toast.makeText(getApplicationContext(), "Sending to 20", Toast.LENGTH_SHORT).show();
+                                        dialogInterface.dismiss();
+                                        tempDialogue.dismiss();
+                                        linkMap.put("count", 10);
+                                        String link_id = linkRef.push().getKey();
+                                        linkRef.child(link_id).setValue(linkMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if(task.isSuccessful())
+                                                {
+                                                    shareInviteLink(link_id);
+                                                }
+                                                else
+                                                {
+                                                    showSnackbarMessage("Some error occurred. Please try again later.");
+                                                }
+
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+
+                                                showSnackbarMessage("Some error occurred. Please try again later.");
+
+                                            }
+                                        });
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "Sending to 20 or more", Toast.LENGTH_SHORT).show();
+                                        dialogInterface.dismiss();
+                                        tempDialogue.dismiss();
+                                        linkMap.put("count", "inf");
+                                        String link_id = linkRef.push().getKey();
+                                        linkRef.child(link_id).setValue(linkMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if(task.isSuccessful())
+                                                {
+                                                    shareInviteLink(link_id);
+                                                }
+                                                else
+                                                {
+                                                    showSnackbarMessage("Some error occurred. Please try again later.");
+                                                }
+
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+
+                                                showSnackbarMessage("Some error occurred. Please try again later.");
+
+                                            }
+                                        });
+
+                                    }
+
+                                }
+                            }
+                        });
+                builder.show();
+            }
+        });
 
 
         QRCodeDialog.findViewById(R.id.cancelButtonTextView).setOnClickListener(new View.OnClickListener() {
@@ -1491,79 +1550,102 @@ public class MainActivity extends AppCompatActivity implements
 
                 if (pendingDynamicLinkData != null) {
                     Uri deeplink = pendingDynamicLinkData.getLink();
-                    String communityId = deeplink.toString().replace("https://inlens.com=", "");
-                    if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
+                    String communityRefLinkId = deeplink.toString().replace("https://inlens.com=", "");
 
-                        // fixme add cancel option too
-                        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
-                                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                                .setTitle("New Community")
-                                .setIcon(R.mipmap.ic_launcher_foreground)
-                                .setCancelable(false)
-                                .setMessage("You are about to join a new community.")
-                                .addButton("JOIN",
-                                        getResources().getColor(R.color.colorPrimaryDark),
-                                        getResources().getColor(R.color.white),
-                                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                addCommunityToUserRef(communityId);
-                                                dialog.dismiss();
-                                            }
-                                        })
-                                .addButton("CANCEL",
-                                        getResources().getColor(R.color.red_900),
-                                        getResources().getColor(R.color.white),
-                                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                dialog.dismiss();
-                                            }
-                                        });
+                    linkRef.child(communityRefLinkId).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        builder.show();
+                            if(dataSnapshot.hasChild("id") && dataSnapshot.hasChild("count"))
+                            {
+                                String communityId = dataSnapshot.child("id").getValue().toString();
+                                String count = dataSnapshot.child("count").getValue().toString();
+                                if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
+
+                                    CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
+                                            .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                                            .setTitle("New Community")
+                                            .setIcon(R.mipmap.ic_launcher_foreground)
+                                            .setCancelable(false)
+                                            .setMessage("You are about to join a new community.")
+                                            .addButton("JOIN",
+                                                    getResources().getColor(R.color.colorPrimaryDark),
+                                                    getResources().getColor(R.color.white),
+                                                    CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                                    CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                            addCommunityToUserRef(communityId,count,communityRefLinkId);
+                                                            dialog.dismiss();
+                                                        }
+                                                    })
+                                            .addButton("CANCEL",
+                                                    getResources().getColor(R.color.red_900),
+                                                    getResources().getColor(R.color.white),
+                                                    CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                                    CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                            dialog.dismiss();
+                                                        }
+                                                    });
+
+                                    builder.show();
 
 
-                    } else {
+                                } else {
 
-                        if (currentActiveCommunityID.equals(communityId)) {
+                                    if (currentActiveCommunityID.equals(communityId)) {
 
-                            showInfoMessage("Your Community", "You are currently part of this community.");
-                        } else {
-                            CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
-                                    .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                                    .setTitle("New Community")
-                                    .setIcon(R.mipmap.ic_launcher_foreground)
-                                    .setMessage("Are you sure you want to join this new community? This means quitting the previous one.")
-                                    .setTextGravity(Gravity.START)
-                                    .setCancelable(false)
-                                    .addButton("YES",
-                                            getResources().getColor(R.color.colorPrimaryDark),
-                                            getResources().getColor(R.color.white),
-                                            CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    addCommunityToUserRef(communityId);
-                                                    dialog.dismiss();
-                                                }
-                                            })
-                                    .addButton("NO",
-                                            getResources().getColor(R.color.red_900),
-                                            getResources().getColor(R.color.white),
-                                            CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    dialog.dismiss();
-                                                }
-                                            });
-                            builder.show();
+                                        showInfoMessage("Your Community", "You are currently part of this community.");
+                                    } else {
+                                        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
+                                                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                                                .setTitle("New Community")
+                                                .setIcon(R.mipmap.ic_launcher_foreground)
+                                                .setMessage("Are you sure you want to join this new community? This means quitting the previous one.")
+                                                .setTextGravity(Gravity.START)
+                                                .setCancelable(false)
+                                                .addButton("YES",
+                                                        getResources().getColor(R.color.colorPrimaryDark),
+                                                        getResources().getColor(R.color.white),
+                                                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                addCommunityToUserRef(communityId,count,communityRefLinkId);
+                                                                dialog.dismiss();
+                                                            }
+                                                        })
+                                                .addButton("NO",
+                                                        getResources().getColor(R.color.red_900),
+                                                        getResources().getColor(R.color.white),
+                                                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                dialog.dismiss();
+                                                            }
+                                                        });
+                                        builder.show();
+                                    }
+
+                                }
+
+                            }
+                            else
+                            {
+                                showSnackbarMessage("Invite-Link is corrupted. Get a new Invite-Link.");
+                            }
+
                         }
 
-                    }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
                 }
 
             }
@@ -1581,7 +1663,7 @@ public class MainActivity extends AppCompatActivity implements
         TimeZone timeZone = TimeZone.getDefault();
         long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
         long givenTime = Long.parseLong(timeStamp);
-        long offsetAddedTime = givenTime+offsetInMillis;
+        long offsetAddedTime = givenTime + offsetInMillis;
         return String.valueOf(offsetAddedTime);
     }
 
@@ -1589,12 +1671,12 @@ public class MainActivity extends AppCompatActivity implements
 
         TimeZone timeZone = TimeZone.getDefault();
         long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
-        long notificationTime  = endtime+offsetInMillis;
+        long notificationTime = endtime + offsetInMillis;
         return String.valueOf(notificationTime);
 
     }
 
-    private void addCommunityToUserRef(final String communityId) {
+    private void addCommunityToUserRef(final String communityId, String remainingCount, String communityRefLinkId) {
 
         communityRef.child(communityId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -1607,109 +1689,202 @@ public class MainActivity extends AppCompatActivity implements
                     long serverTimeInMillis = (System.currentTimeMillis() - offsetInMillis);
 
                     String titleValue = dataSnapshot.child(FirebaseConstants.COMMUNITYTITLE).getValue().toString();
-                    final long dy = TimeUnit.MILLISECONDS.toDays(Long.parseLong(getTimeStamp(endtime))-System.currentTimeMillis());
-                    final long hr = TimeUnit.MILLISECONDS.toHours(Long.parseLong(getTimeStamp(endtime))-System.currentTimeMillis())
-                            - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(Long.parseLong(getTimeStamp(endtime))-System.currentTimeMillis()));
-                    final long min = TimeUnit.MILLISECONDS.toMinutes(Long.parseLong(getTimeStamp(endtime))-System.currentTimeMillis())
-                            - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(Long.parseLong(getTimeStamp(endtime))-System.currentTimeMillis()));
+                    final long dy = TimeUnit.MILLISECONDS.toDays(Long.parseLong(getTimeStamp(endtime)) - System.currentTimeMillis());
+                    final long hr = TimeUnit.MILLISECONDS.toHours(Long.parseLong(getTimeStamp(endtime)) - System.currentTimeMillis())
+                            - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(Long.parseLong(getTimeStamp(endtime)) - System.currentTimeMillis()));
+                    final long min = TimeUnit.MILLISECONDS.toMinutes(Long.parseLong(getTimeStamp(endtime)) - System.currentTimeMillis())
+                            - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(Long.parseLong(getTimeStamp(endtime)) - System.currentTimeMillis()));
 
                     if (serverTimeInMillis < endtime) {
 
-                        currentActiveCommunityID = communityId;
-                        currentUserRef.child(FirebaseConstants.COMMUNITIES).child(communityId).setValue(ServerValue.TIMESTAMP);
-                        currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).setValue(communityId);
-                        participantRef.child(communityId).child(currentUserId).setValue(ServerValue.TIMESTAMP);
 
-                        userCommunityIdList.add(0, communityId);
-                        communityRef.child(communityId).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot snapshot) {
+                        try
+                        {
+                            int remainingCountInt  =  Integer.parseInt(remainingCount);
+                            if(remainingCountInt>0)
+                            {
+                                remainingCountInt-=1;
+                                linkRef.child(communityRefLinkId).child("count").setValue(remainingCountInt);
+                                currentActiveCommunityID = communityId;
+                                currentUserRef.child(FirebaseConstants.COMMUNITIES).child(communityId).setValue(ServerValue.TIMESTAMP);
+                                currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).setValue(communityId);
+                                participantRef.child(communityId).child(currentUserId).setValue(ServerValue.TIMESTAMP);
+                                userCommunityIdList.add(0, communityId);
+                                communityRef.child(communityId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot snapshot) {
 
-                                String admin = AppConstants.NOT_AVALABLE, coverimage = AppConstants.NOT_AVALABLE, description = AppConstants.NOT_AVALABLE, endtime = AppConstants.NOT_AVALABLE, starttime = AppConstants.NOT_AVALABLE, status = AppConstants.NOT_AVALABLE, title = AppConstants.NOT_AVALABLE, type = AppConstants.NOT_AVALABLE;
-                                if (snapshot.hasChild(FirebaseConstants.COMMUNITYADMIN)) {
-                                    admin = snapshot.child(FirebaseConstants.COMMUNITYADMIN).getValue().toString();
-                                }
-                                if (snapshot.hasChild(FirebaseConstants.COMMUNITYCOVERIMAGE)) {
-                                    coverimage = snapshot.child(FirebaseConstants.COMMUNITYCOVERIMAGE).getValue().toString();
-                                }
-                                if (snapshot.hasChild(FirebaseConstants.COMMUNITYDESC)) {
-                                    description = snapshot.child(FirebaseConstants.COMMUNITYDESC).getValue().toString();
-                                }
-                                if (snapshot.hasChild(FirebaseConstants.COMMUNITYENDTIME)) {
-                                    endtime = snapshot.child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString();
-                                }
-                                if (snapshot.hasChild(FirebaseConstants.COMMUNITYSTARTTIME)) {
-                                    starttime = snapshot.child(FirebaseConstants.COMMUNITYSTARTTIME).getValue().toString();
-                                }
-                                if (snapshot.hasChild(FirebaseConstants.COMMUNITYSTATUS)) {
-                                    status = snapshot.child(FirebaseConstants.COMMUNITYSTATUS).getValue().toString();
-                                }
-                                if (snapshot.hasChild(FirebaseConstants.COMMUNITYTITLE)) {
-                                    title = snapshot.child(FirebaseConstants.COMMUNITYTITLE).getValue().toString();
-                                }
-                                if (snapshot.hasChild(FirebaseConstants.COMMUNITYTYPE)) {
-                                    type = snapshot.child(FirebaseConstants.COMMUNITYTYPE).getValue().toString();
-                                }
 
-                                CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId);
-                                communityDataList.add(0, model);
-                                mainHorizontalAdapter.notifyItemInserted(1);
-                                showSnackbarMessage("You have been added to " + title);
+                                        String admin = AppConstants.NOT_AVALABLE, coverimage = AppConstants.NOT_AVALABLE, description = AppConstants.NOT_AVALABLE, endtime = AppConstants.NOT_AVALABLE, starttime = AppConstants.NOT_AVALABLE, status = AppConstants.NOT_AVALABLE, title = AppConstants.NOT_AVALABLE, type = AppConstants.NOT_AVALABLE;
+                                        if (snapshot.hasChild(FirebaseConstants.COMMUNITYADMIN)) {
+                                            admin = snapshot.child(FirebaseConstants.COMMUNITYADMIN).getValue().toString();
+                                        }
+                                        if (snapshot.hasChild(FirebaseConstants.COMMUNITYCOVERIMAGE)) {
+                                            coverimage = snapshot.child(FirebaseConstants.COMMUNITYCOVERIMAGE).getValue().toString();
+                                        }
+                                        if (snapshot.hasChild(FirebaseConstants.COMMUNITYDESC)) {
+                                            description = snapshot.child(FirebaseConstants.COMMUNITYDESC).getValue().toString();
+                                        }
+                                        if (snapshot.hasChild(FirebaseConstants.COMMUNITYENDTIME)) {
+                                            endtime = snapshot.child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString();
+                                        }
+                                        if (snapshot.hasChild(FirebaseConstants.COMMUNITYSTARTTIME)) {
+                                            starttime = snapshot.child(FirebaseConstants.COMMUNITYSTARTTIME).getValue().toString();
+                                        }
+                                        if (snapshot.hasChild(FirebaseConstants.COMMUNITYSTATUS)) {
+                                            status = snapshot.child(FirebaseConstants.COMMUNITYSTATUS).getValue().toString();
+                                        }
+                                        if (snapshot.hasChild(FirebaseConstants.COMMUNITYTITLE)) {
+                                            title = snapshot.child(FirebaseConstants.COMMUNITYTITLE).getValue().toString();
+                                        }
+                                        if (snapshot.hasChild(FirebaseConstants.COMMUNITYTYPE)) {
+                                            type = snapshot.child(FirebaseConstants.COMMUNITYTYPE).getValue().toString();
+                                        }
 
-                                SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
-                                SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
-                                ceditor.putString("id", communityId);
-                                ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
-                                ceditor.putString("stopAt", getOffsetAddedTime(String.valueOf(endtime)));
-                                ceditor.putInt("notiCount", 0);
-                                ceditor.remove(AppConstants.IS_NOTIFIED);
-                                ceditor.commit();
+                                        CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId);
+                                        communityDataList.add(0, model);
+                                        mainHorizontalAdapter.notifyItemInserted(1);
+                                        showSnackbarMessage("You have been added to " + title);
 
-                                NotificationHelper helper = new NotificationHelper(getApplicationContext());
-                                String notificationStr = "";
-                                if (titleValue.length() >15)
-                                {
-                                    notificationStr+=titleValue.substring(0,15)+"...";
-                                }
-                                else
-                                {
-                                    notificationStr+=titleValue;
-                                }
-                                if(dy>0)
-                                {
-                                    notificationStr+=", "+ (int) dy +" days";
+                                        SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
+                                        SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
+                                        ceditor.putString("id", communityId);
+                                        ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
+                                        ceditor.putString("stopAt", getOffsetAddedTime(String.valueOf(endtime)));
+                                        ceditor.putInt("notiCount", 0);
+                                        ceditor.remove(AppConstants.IS_NOTIFIED);
+                                        ceditor.commit();
 
-                                }
-                                else
-                                {
-                                    notificationStr+=",";
-                                }
-                                if(hr>0)
-                                {
-                                    notificationStr+=" "+(int)hr+" hrs left";
-                                }
-                                 if(hr<1 && dy<1)
-                                {
-                                    notificationStr+=" "+(int)min+" minutes left";
-                                }
-                                 helper.displayAlbumStartNotification(notificationStr,"You are active in this Cloud-Album till "+ endtime);
-                                 MainActivity.this.getIntent().putExtra("CREATED","YES");
-                                 MainActivity.this.getIntent().putExtra("ID",communityId);
+                                        NotificationHelper helper = new NotificationHelper(getApplicationContext());
+                                        String notificationStr = "";
+                                        if (titleValue.length() > 15) {
+                                            notificationStr += titleValue.substring(0, 15) + "...";
+                                        } else {
+                                            notificationStr += titleValue;
+                                        }
+                                        if (dy > 0) {
+                                            notificationStr += ", " + (int) dy + " days";
+
+                                        } else {
+                                            notificationStr += ",";
+                                        }
+                                        if (hr > 0) {
+                                            notificationStr += " " + (int) hr + " hrs left";
+                                        }
+                                        if (hr < 1 && dy < 1) {
+                                            notificationStr += " " + (int) min + " minutes left";
+                                        }
+                                        helper.displayAlbumStartNotification(notificationStr, "You are active in this Cloud-Album till " + endtime);
+                                        MainActivity.this.getIntent().putExtra("CREATED", "YES");
+                                        MainActivity.this.getIntent().putExtra("ID", communityId);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
                             }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
+                            else
+                            {
+                                showSnackbarMessage("Invite-Link expired. Get a new Invite-Link.");
                             }
-                        });
+                        }
+                        catch (NumberFormatException e)
+                        {
+                            if(remainingCount.equals("inf"))
+                            {
+                                currentActiveCommunityID = communityId;
+                                currentUserRef.child(FirebaseConstants.COMMUNITIES).child(communityId).setValue(ServerValue.TIMESTAMP);
+                                currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).setValue(communityId);
+                                participantRef.child(communityId).child(currentUserId).setValue(ServerValue.TIMESTAMP);
+                                userCommunityIdList.add(0, communityId);
+                                communityRef.child(communityId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot snapshot) {
+
+
+                                        String admin = AppConstants.NOT_AVALABLE, coverimage = AppConstants.NOT_AVALABLE, description = AppConstants.NOT_AVALABLE, endtime = AppConstants.NOT_AVALABLE, starttime = AppConstants.NOT_AVALABLE, status = AppConstants.NOT_AVALABLE, title = AppConstants.NOT_AVALABLE, type = AppConstants.NOT_AVALABLE;
+                                        if (snapshot.hasChild(FirebaseConstants.COMMUNITYADMIN)) {
+                                            admin = snapshot.child(FirebaseConstants.COMMUNITYADMIN).getValue().toString();
+                                        }
+                                        if (snapshot.hasChild(FirebaseConstants.COMMUNITYCOVERIMAGE)) {
+                                            coverimage = snapshot.child(FirebaseConstants.COMMUNITYCOVERIMAGE).getValue().toString();
+                                        }
+                                        if (snapshot.hasChild(FirebaseConstants.COMMUNITYDESC)) {
+                                            description = snapshot.child(FirebaseConstants.COMMUNITYDESC).getValue().toString();
+                                        }
+                                        if (snapshot.hasChild(FirebaseConstants.COMMUNITYENDTIME)) {
+                                            endtime = snapshot.child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString();
+                                        }
+                                        if (snapshot.hasChild(FirebaseConstants.COMMUNITYSTARTTIME)) {
+                                            starttime = snapshot.child(FirebaseConstants.COMMUNITYSTARTTIME).getValue().toString();
+                                        }
+                                        if (snapshot.hasChild(FirebaseConstants.COMMUNITYSTATUS)) {
+                                            status = snapshot.child(FirebaseConstants.COMMUNITYSTATUS).getValue().toString();
+                                        }
+                                        if (snapshot.hasChild(FirebaseConstants.COMMUNITYTITLE)) {
+                                            title = snapshot.child(FirebaseConstants.COMMUNITYTITLE).getValue().toString();
+                                        }
+                                        if (snapshot.hasChild(FirebaseConstants.COMMUNITYTYPE)) {
+                                            type = snapshot.child(FirebaseConstants.COMMUNITYTYPE).getValue().toString();
+                                        }
+
+                                        CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId);
+                                        communityDataList.add(0, model);
+                                        mainHorizontalAdapter.notifyItemInserted(1);
+                                        showSnackbarMessage("You have been added to " + title);
+
+                                        SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
+                                        SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
+                                        ceditor.putString("id", communityId);
+                                        ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
+                                        ceditor.putString("stopAt", getOffsetAddedTime(String.valueOf(endtime)));
+                                        ceditor.putInt("notiCount", 0);
+                                        ceditor.remove(AppConstants.IS_NOTIFIED);
+                                        ceditor.commit();
+
+                                        NotificationHelper helper = new NotificationHelper(getApplicationContext());
+                                        String notificationStr = "";
+                                        if (titleValue.length() > 15) {
+                                            notificationStr += titleValue.substring(0, 15) + "...";
+                                        } else {
+                                            notificationStr += titleValue;
+                                        }
+                                        if (dy > 0) {
+                                            notificationStr += ", " + (int) dy + " days";
+
+                                        } else {
+                                            notificationStr += ",";
+                                        }
+                                        if (hr > 0) {
+                                            notificationStr += " " + (int) hr + " hrs left";
+                                        }
+                                        if (hr < 1 && dy < 1) {
+                                            notificationStr += " " + (int) min + " minutes left";
+                                        }
+                                        helper.displayAlbumStartNotification(notificationStr, "You are active in this Cloud-Album till " + endtime);
+                                        MainActivity.this.getIntent().putExtra("CREATED", "YES");
+                                        MainActivity.this.getIntent().putExtra("ID", communityId);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+                            }
+                        }
+
 
                     } else {
                         //Log.i("ClickTime","S : "+serverTimeInMillis+" E : "+endtime);
                         showDialogMessage("Album Inactive", "The album has expired or admin has made the album inactive.");
-
+                        linkRef.child(communityRefLinkId).removeValue();
                     }
 
                 } else {
+                    linkRef.child(communityRefLinkId).removeValue();
                     showDialogMessage("Album Inactive", "The album has expired or admin has made the album inactive.");
                 }
             }
@@ -1869,13 +2044,13 @@ public class MainActivity extends AppCompatActivity implements
 
                     }
                     if (postImageList.size() > 0) {
-                        GridLayoutManager gridLayoutManager  = new GridLayoutManager(MainActivity.this,3);
+                        GridLayoutManager gridLayoutManager = new GridLayoutManager(MainActivity.this, 3);
                         MainVerticalRecyclerView.setLayoutManager(gridLayoutManager);
                         mainVerticalAdapter.notifyDataSetChanged();
 
                     } else {
                         postImageList.add(new PostModel(AppConstants.NOT_AVALABLE, AppConstants.NOT_AVALABLE, AppConstants.NOT_AVALABLE, AppConstants.NOT_AVALABLE));
-                        GridLayoutManager gridLayoutManager  = new GridLayoutManager(MainActivity.this,1);
+                        GridLayoutManager gridLayoutManager = new GridLayoutManager(MainActivity.this, 1);
                         MainVerticalRecyclerView.setLayoutManager(gridLayoutManager);
                         mainVerticalAdapter.notifyDataSetChanged();
                     }
@@ -1957,41 +2132,31 @@ public class MainActivity extends AppCompatActivity implements
                     @Override
                     public void run() {
 
-                        if(!expandableCardView.isExpanded())
-                        {
-                            if (currentActiveCommunityID.equals(communityID))
-                            {
-                                if(photographerList.size()>12)
-                                {
-                                   // expandableCardView.setTitle( (photographerList.size() - 2) + " photographers");
+                        if (!expandableCardView.isExpanded()) {
+                            if (currentActiveCommunityID.equals(communityID)) {
+                                if (photographerList.size() > 12) {
+                                    // expandableCardView.setTitle( (photographerList.size() - 2) + " photographers");
                                     photographerList.add(new PhotographerModel("view", "view", "view"));
-                                }
-                                else
-                                {
+                                } else {
                                     //expandableCardView.setTitle("Photographers : "+ (photographerList.size() - 1));
                                 }
-                            }
-                            else
-                            {
-                                if(photographerList.size()>13)
-                                {
+                            } else {
+                                if (photographerList.size() > 13) {
                                     photographerList.add(new PhotographerModel("view", "view", "view"));
-                             //       expandableCardView.setTitle("Photographers : "+ (photographerList.size() - 1));
-                                }
-                                else
-                                {
-                              //      expandableCardView.setTitle("Photographers : "+ (photographerList.size()));
+                                    //       expandableCardView.setTitle("Photographers : "+ (photographerList.size() - 1));
+                                } else {
+                                    //      expandableCardView.setTitle("Photographers : "+ (photographerList.size()));
                                 }
                             }
 
-                            participantsAdapter = new ParticipantsAdapter(photographerList, getApplicationContext(),MainActivity.this, QRCodeDialog);
+                            participantsAdapter = new ParticipantsAdapter(photographerList, getApplicationContext(), MainActivity.this, QRCodeDialog);
                             ParticipantsRecyclerView.setAdapter(participantsAdapter);
                             expandableCardView.expand();
 
                         }
 
                     }
-                },1000);
+                }, 1000);
 
 
             }
@@ -2035,22 +2200,16 @@ public class MainActivity extends AppCompatActivity implements
                         currentActiveCommunityID = AppConstants.NOT_AVALABLE;
                         mainAddPhotosFab.hide();
                         SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
-                        String scanWorkId = CurrentActiveCommunity.getString("scanWorkerId",AppConstants.NOT_AVALABLE);
-                        String albumEndWorkId = CurrentActiveCommunity.getString("albumendWorkerId",AppConstants.NOT_AVALABLE);
-                        if(scanWorkId.equals(AppConstants.NOT_AVALABLE))
-                        {
+                        String scanWorkId = CurrentActiveCommunity.getString("scanWorkerId", AppConstants.NOT_AVALABLE);
+                        String albumEndWorkId = CurrentActiveCommunity.getString("albumendWorkerId", AppConstants.NOT_AVALABLE);
+                        if (scanWorkId.equals(AppConstants.NOT_AVALABLE)) {
                             WorkManager.getInstance().cancelUniqueWork(AppConstants.PHOTO_SCAN_WORK);
-                        }
-                        else
-                        {
+                        } else {
                             WorkManager.getInstance().cancelWorkById(UUID.fromString(scanWorkId));
                         }
-                        if(albumEndWorkId.equals(AppConstants.NOT_AVALABLE))
-                        {
+                        if (albumEndWorkId.equals(AppConstants.NOT_AVALABLE)) {
                             WorkManager.getInstance().cancelAllWork();
-                        }
-                        else
-                        {
+                        } else {
                             WorkManager.getInstance().cancelWorkById(UUID.fromString(albumEndWorkId));
                         }
 
@@ -2102,7 +2261,7 @@ public class MainActivity extends AppCompatActivity implements
                 .addButton(negativeButtonMessage,
                         getResources().getColor(R.color.red_900),
                         getResources().getColor(R.color.white)
-                        ,CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                        , CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -2121,22 +2280,16 @@ public class MainActivity extends AppCompatActivity implements
                                                         currentActiveCommunityID = AppConstants.NOT_AVALABLE;
                                                         mainAddPhotosFab.hide();
                                                         SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
-                                                        String scanWorkId = CurrentActiveCommunity.getString("scanWorkerId",AppConstants.NOT_AVALABLE);
-                                                        String albumEndWorkId = CurrentActiveCommunity.getString("albumendWorkerId",AppConstants.NOT_AVALABLE);
-                                                        if(scanWorkId.equals(AppConstants.NOT_AVALABLE))
-                                                        {
+                                                        String scanWorkId = CurrentActiveCommunity.getString("scanWorkerId", AppConstants.NOT_AVALABLE);
+                                                        String albumEndWorkId = CurrentActiveCommunity.getString("albumendWorkerId", AppConstants.NOT_AVALABLE);
+                                                        if (scanWorkId.equals(AppConstants.NOT_AVALABLE)) {
                                                             WorkManager.getInstance().cancelUniqueWork(AppConstants.PHOTO_SCAN_WORK);
-                                                        }
-                                                        else
-                                                        {
+                                                        } else {
                                                             WorkManager.getInstance().cancelWorkById(UUID.fromString(scanWorkId));
                                                         }
-                                                        if(albumEndWorkId.equals(AppConstants.NOT_AVALABLE))
-                                                        {
+                                                        if (albumEndWorkId.equals(AppConstants.NOT_AVALABLE)) {
                                                             WorkManager.getInstance().cancelAllWork();
-                                                        }
-                                                        else
-                                                        {
+                                                        } else {
                                                             WorkManager.getInstance().cancelWorkById(UUID.fromString(albumEndWorkId));
                                                         }
                                                         showDialogMessage("Exited Participation", "Successfully left from the Cloud-Album");
@@ -2167,25 +2320,20 @@ public class MainActivity extends AppCompatActivity implements
                                                     if (task.isSuccessful()) {
                                                         currentActiveCommunityID = AppConstants.NOT_AVALABLE;
                                                         SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
-                                                        String scanWorkId = CurrentActiveCommunity.getString("scanWorkerId",AppConstants.NOT_AVALABLE);
-                                                        String albumEndWorkId = CurrentActiveCommunity.getString("albumendWorkerId",AppConstants.NOT_AVALABLE);
+                                                        String scanWorkId = CurrentActiveCommunity.getString("scanWorkerId", AppConstants.NOT_AVALABLE);
+                                                        String albumEndWorkId = CurrentActiveCommunity.getString("albumendWorkerId", AppConstants.NOT_AVALABLE);
 
-                                                        if(scanWorkId.equals(AppConstants.NOT_AVALABLE))
-                                                        {
+                                                        if (scanWorkId.equals(AppConstants.NOT_AVALABLE)) {
                                                             WorkManager.getInstance().cancelUniqueWork(AppConstants.PHOTO_SCAN_WORK);
-                                                        }
-                                                        else
-                                                        {
+                                                        } else {
                                                             WorkManager.getInstance().cancelWorkById(UUID.fromString(scanWorkId));
                                                         }
-                                                        if(albumEndWorkId.equals(AppConstants.NOT_AVALABLE))
-                                                        {
+                                                        if (albumEndWorkId.equals(AppConstants.NOT_AVALABLE)) {
                                                             WorkManager.getInstance().cancelAllWork();
-                                                        }
-                                                        else
-                                                        {
+                                                        } else {
                                                             WorkManager.getInstance().cancelWorkById(UUID.fromString(albumEndWorkId));
-                                                        }                                                        mainAddPhotosFab.hide();
+                                                        }
+                                                        mainAddPhotosFab.hide();
                                                         showDialogMessage("Exited Participation", "Successfully left from the Cloud-Album");
                                                         //SetDefaultView();
 
@@ -2216,11 +2364,11 @@ public class MainActivity extends AppCompatActivity implements
 
                             }
                         })
-                        .addButton(postiveButtonMessage,
-                                getResources().getColor(R.color.colorPrimaryDark),
-                                getResources().getColor(R.color.white),
-                                CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                                CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
+                .addButton(postiveButtonMessage,
+                        getResources().getColor(R.color.colorPrimaryDark),
+                        getResources().getColor(R.color.white),
+                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
@@ -2271,21 +2419,19 @@ public class MainActivity extends AppCompatActivity implements
                     startActivity(intent);
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 } else {
-                    if(!cfDialogAddPhotoFab.isShowing())
-                    {
+                    if (!cfDialogAddPhotoFab.isShowing()) {
                         cfDialogAddPhotoFab.show();
                     }
                 }
             }
             break;
-            case MY_PERMISSIONS_REQUEST_START_WORKMANAGER:{
-                if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED)
-                {
+            case MY_PERMISSIONS_REQUEST_START_WORKMANAGER: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Constraints constraints = new Constraints.Builder()
                             .setRequiredNetworkType(NetworkType.CONNECTED)
                             .build();
                     PeriodicWorkRequest periodicWorkRequest = new PeriodicWorkRequest
-                            .Builder(AlbumScanWorker.class,15, TimeUnit.MINUTES)
+                            .Builder(AlbumScanWorker.class, 15, TimeUnit.MINUTES)
                             .addTag(AppConstants.PHOTO_SCAN_WORK)
                             .setConstraints(constraints)
                             .build();
@@ -2582,7 +2728,7 @@ public class MainActivity extends AppCompatActivity implements
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //For the purpose of Quit and cancelling notification
-                                NotificationManager notificationManager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+                                NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                                 notificationManager.cancelAll();
 
                                 dialog.dismiss();
@@ -2707,7 +2853,7 @@ public class MainActivity extends AppCompatActivity implements
                         public void onClick(View view) {
 
                             viewHolder.postRefresButton.clearAnimation();
-                            viewHolder.postRefresButton.setAnimation(AnimationUtils.loadAnimation(activity,R.anim.rotate));
+                            viewHolder.postRefresButton.setAnimation(AnimationUtils.loadAnimation(activity, R.anim.rotate));
                             viewHolder.postRefresButton.getAnimation().start();
                             Glide.with(activity)
                                     .load(PostList.get(position).getUri())
@@ -2780,7 +2926,7 @@ public class MainActivity extends AppCompatActivity implements
     public class MainHorizontalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         List<CommunityModel> communityDetails;
-        private final int VIEW_TYPE_ALBUM = 0, VIEW_TYPE_LOADING = 1,VIEW_TYPE_OPTIONS = -1;
+        private final int VIEW_TYPE_ALBUM = 0, VIEW_TYPE_LOADING = 1, VIEW_TYPE_OPTIONS = -1;
         Activity activity;
         int selectedAlbumPosition = 1;
         String selectedAlbumKey;
@@ -2793,12 +2939,9 @@ public class MainActivity extends AppCompatActivity implements
 
         @Override
         public int getItemViewType(int position) {
-            if(communityDetails.get(position) == null)
-            {
+            if (communityDetails.get(position) == null) {
                 return VIEW_TYPE_LOADING;
-            }
-            else
-            {
+            } else {
                 return communityDetails.get(position).getCommunityID().equals(AppConstants.MORE_OPTIONS) ? VIEW_TYPE_OPTIONS : VIEW_TYPE_ALBUM;
 
             }
@@ -2813,9 +2956,7 @@ public class MainActivity extends AppCompatActivity implements
             } else if (viewType == VIEW_TYPE_LOADING) {
                 View view = LayoutInflater.from(activity).inflate(R.layout.item_loading_horizontal, parent, false);
                 return new MainHorizontalLoadingViewHolder(view);
-            }
-            else if(viewType ==VIEW_TYPE_OPTIONS)
-            {
+            } else if (viewType == VIEW_TYPE_OPTIONS) {
                 View view = LayoutInflater.from(activity).inflate(R.layout.album_options_card, parent, false);
                 return new MainHorizontalOptionsViewHolder(view);
             }
@@ -2843,58 +2984,55 @@ public class MainActivity extends AppCompatActivity implements
                 }
 
                 if (!communityDetails.get(position).equals(AppConstants.NOT_AVALABLE)) {
-                    if(communityDetails.get(position).getType().contentEquals("Ceremony")||communityDetails.get(position).getType().contentEquals("Wedding")){
+                    if (communityDetails.get(position).getType().contentEquals("Ceremony") || communityDetails.get(position).getType().contentEquals("Wedding")) {
                         Glide.with(activity)
                                 .load(communityDetails.get(position)
                                         .getCoverImage()).placeholder(R.drawable.ic_ceremony_foreground)
                                 .addListener(new RequestListener<Drawable>() {
-                            @Override
-                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                    @Override
+                                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
 
-                                return false;
-                            }
+                                        return false;
+                                    }
 
-                            @Override
-                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                                return false;
-                            }
-                        }).into(viewHolder.AlbumCoverButton);
-                    }
-                    else if(communityDetails.get(position).getType().contentEquals("Hangouts")){
+                                    @Override
+                                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                        return false;
+                                    }
+                                }).into(viewHolder.AlbumCoverButton);
+                    } else if (communityDetails.get(position).getType().contentEquals("Hangouts")) {
                         Glide.with(activity)
                                 .load(communityDetails.get(position)
                                         .getCoverImage()).placeholder(R.drawable.ic_hangout_foreground)
                                 .addListener(new RequestListener<Drawable>() {
-                            @Override
-                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                    @Override
+                                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
 
-                                return false;
-                            }
+                                        return false;
+                                    }
 
-                            @Override
-                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                                return false;
-                            }
-                        }).into(viewHolder.AlbumCoverButton);
-                    }
-                    else if(communityDetails.get(position).getType().contentEquals("Travel")){
+                                    @Override
+                                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                        return false;
+                                    }
+                                }).into(viewHolder.AlbumCoverButton);
+                    } else if (communityDetails.get(position).getType().contentEquals("Travel")) {
                         Glide.with(activity)
                                 .load(communityDetails.get(position)
                                         .getCoverImage()).placeholder(R.drawable.ic_travel_foreground)
                                 .addListener(new RequestListener<Drawable>() {
-                            @Override
-                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                    @Override
+                                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
 
-                                return false;
-                            }
+                                        return false;
+                                    }
 
-                            @Override
-                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                                return false;
-                            }
-                        }).into(viewHolder.AlbumCoverButton);
-                    }
-                    else if(communityDetails.get(position).getType().contentEquals("Others")) {
+                                    @Override
+                                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                        return false;
+                                    }
+                                }).into(viewHolder.AlbumCoverButton);
+                    } else if (communityDetails.get(position).getType().contentEquals("Others")) {
                         Glide.with(activity)
                                 .load(communityDetails.get(position)
                                         .getCoverImage()).addListener(new RequestListener<Drawable>() {
@@ -2911,8 +3049,7 @@ public class MainActivity extends AppCompatActivity implements
                         }).into(viewHolder.AlbumCoverButton);
 
 
-                    }
-                    else if(communityDetails.get(position).getType().contentEquals("Party")){
+                    } else if (communityDetails.get(position).getType().contentEquals("Party")) {
                         Glide.with(activity)
                                 .load(communityDetails.get(position)
                                         .getCoverImage()).placeholder(R.drawable.ic_party_foreground).addListener(new RequestListener<Drawable>() {
@@ -2928,7 +3065,6 @@ public class MainActivity extends AppCompatActivity implements
                             }
                         }).into(viewHolder.AlbumCoverButton);
                     }
-
 
 
                 }
@@ -2971,12 +3107,9 @@ public class MainActivity extends AppCompatActivity implements
                             notifyItemChanged(viewHolder.getAdapterPosition());
                             selectedAlbumPosition = viewHolder.getAdapterPosition();
                             setVerticalRecyclerView(communityDetails.get(position).getCommunityID());
-                            if(currentActiveCommunityID.equals(communityDetails.get(position).getCommunityID()))
-                            {
+                            if (currentActiveCommunityID.equals(communityDetails.get(position).getCommunityID())) {
                                 mainAddPhotosFab.show();
-                            }
-                            else
-                            {
+                            } else {
                                 mainAddPhotosFab.hide();
                                 rippleBackground.stopRippleAnimation();
                                 rippleBackground2.stopRippleAnimation();
@@ -2987,10 +3120,10 @@ public class MainActivity extends AppCompatActivity implements
                     }
                 });
 
-                if(communityDetails.get(position).getTitle().contentEquals("Reported Album")) {
+                if (communityDetails.get(position).getTitle().contentEquals("Reported Album")) {
                     viewHolder.AlbumNameTextView.setText(communityDetails.get(position).getTitle());
                     viewHolder.AlbumNameTextView.setTextColor(Color.RED);
-                }else{
+                } else {
                     viewHolder.AlbumNameTextView.setText(communityDetails.get(position).getTitle());
                 }
 
@@ -2998,9 +3131,7 @@ public class MainActivity extends AppCompatActivity implements
             } else if (holder instanceof MainHorizontalLoadingViewHolder) {
                 MainHorizontalLoadingViewHolder viewHolder = (MainHorizontalLoadingViewHolder) holder;
                 viewHolder.progressBar.setIndeterminate(true);
-            }
-            else if(holder instanceof MainHorizontalOptionsViewHolder)
-            {
+            } else if (holder instanceof MainHorizontalOptionsViewHolder) {
                 MainHorizontalOptionsViewHolder viewHolder = (MainHorizontalOptionsViewHolder) holder;
                 viewHolder.imageview.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -3037,7 +3168,6 @@ public class MainActivity extends AppCompatActivity implements
     public String getCurrentUserId() {
         return currentUserId;
     }
-
 
 
 }
