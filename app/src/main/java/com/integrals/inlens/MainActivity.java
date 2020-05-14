@@ -1416,12 +1416,9 @@ public class MainActivity extends AppCompatActivity implements
                                         linkRef.child(link_id).setValue(linkMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-                                                if(task.isSuccessful())
-                                                {
+                                                if (task.isSuccessful()) {
                                                     shareInviteLink(link_id);
-                                                }
-                                                else
-                                                {
+                                                } else {
                                                     showSnackbarMessage("Some error occurred. Please try again later.");
                                                 }
 
@@ -1444,12 +1441,9 @@ public class MainActivity extends AppCompatActivity implements
                                         linkRef.child(link_id).setValue(linkMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-                                                if(task.isSuccessful())
-                                                {
+                                                if (task.isSuccessful()) {
                                                     shareInviteLink(link_id);
-                                                }
-                                                else
-                                                {
+                                                } else {
                                                     showSnackbarMessage("Some error occurred. Please try again later.");
                                                 }
 
@@ -1472,12 +1466,9 @@ public class MainActivity extends AppCompatActivity implements
                                         linkRef.child(link_id).setValue(linkMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-                                                if(task.isSuccessful())
-                                                {
+                                                if (task.isSuccessful()) {
                                                     shareInviteLink(link_id);
-                                                }
-                                                else
-                                                {
+                                                } else {
                                                     showSnackbarMessage("Some error occurred. Please try again later.");
                                                 }
 
@@ -1499,12 +1490,9 @@ public class MainActivity extends AppCompatActivity implements
                                         linkRef.child(link_id).setValue(linkMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-                                                if(task.isSuccessful())
-                                                {
+                                                if (task.isSuccessful()) {
                                                     shareInviteLink(link_id);
-                                                }
-                                                else
-                                                {
+                                                } else {
                                                     showSnackbarMessage("Some error occurred. Please try again later.");
                                                 }
 
@@ -1556,8 +1544,7 @@ public class MainActivity extends AppCompatActivity implements
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
 
-                            if(dataSnapshot.hasChild("id") && dataSnapshot.hasChild("count"))
-                            {
+                            if (dataSnapshot.hasChild("id") && dataSnapshot.hasChild("count")) {
                                 String communityId = dataSnapshot.child("id").getValue().toString();
                                 String count = dataSnapshot.child("count").getValue().toString();
                                 if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
@@ -1575,7 +1562,7 @@ public class MainActivity extends AppCompatActivity implements
                                                     CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                                                         @Override
                                                         public void onClick(DialogInterface dialog, int which) {
-                                                            addCommunityToUserRef(communityId,count,communityRefLinkId);
+                                                            addCommunityToUserRef(communityId, count, communityRefLinkId);
                                                             dialog.dismiss();
                                                         }
                                                     })
@@ -1613,7 +1600,7 @@ public class MainActivity extends AppCompatActivity implements
                                                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                                                             @Override
                                                             public void onClick(DialogInterface dialog, int which) {
-                                                                addCommunityToUserRef(communityId,count,communityRefLinkId);
+                                                                addCommunityToUserRef(communityId, count, communityRefLinkId);
                                                                 dialog.dismiss();
                                                             }
                                                         })
@@ -1632,9 +1619,7 @@ public class MainActivity extends AppCompatActivity implements
 
                                 }
 
-                            }
-                            else
-                            {
+                            } else {
                                 showSnackbarMessage("Invite-Link is corrupted. Get a new Invite-Link.");
                             }
 
@@ -1698,12 +1683,10 @@ public class MainActivity extends AppCompatActivity implements
                     if (serverTimeInMillis < endtime) {
 
 
-                        try
-                        {
-                            int remainingCountInt  =  Integer.parseInt(remainingCount);
-                            if(remainingCountInt>0)
-                            {
-                                remainingCountInt-=1;
+                        try {
+                            int remainingCountInt = Integer.parseInt(remainingCount);
+                            if (remainingCountInt > 0) {
+                                remainingCountInt -= 1;
                                 linkRef.child(communityRefLinkId).child("count").setValue(remainingCountInt);
                                 currentActiveCommunityID = communityId;
                                 currentUserRef.child(FirebaseConstants.COMMUNITIES).child(communityId).setValue(ServerValue.TIMESTAMP);
@@ -1784,16 +1767,12 @@ public class MainActivity extends AppCompatActivity implements
 
                                     }
                                 });
-                            }
-                            else
-                            {
+                            } else {
+                                linkRef.child(communityRefLinkId).removeValue();
                                 showSnackbarMessage("Invite-Link expired. Get a new Invite-Link.");
                             }
-                        }
-                        catch (NumberFormatException e)
-                        {
-                            if(remainingCount.equals("inf"))
-                            {
+                        } catch (NumberFormatException e) {
+                            if (remainingCount.equals("inf")) {
                                 currentActiveCommunityID = communityId;
                                 currentUserRef.child(FirebaseConstants.COMMUNITIES).child(communityId).setValue(ServerValue.TIMESTAMP);
                                 currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).setValue(communityId);
