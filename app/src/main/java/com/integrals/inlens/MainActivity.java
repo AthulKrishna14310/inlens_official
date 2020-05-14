@@ -201,7 +201,6 @@ public class MainActivity extends AppCompatActivity implements
 
     // info : for vertical recyclerviewScrolling
     int lastVisiblesItems, visibleItemCount, totalItemCount;
-    boolean loading = true;
     boolean isLoading = true;
 
 
@@ -261,6 +260,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // Fab
         mainAddPhotosFab = findViewById(R.id.fabadd);
+        mainAddPhotosFab.hide();
 
         //photographers cardview
         expandableCardView = findViewById(R.id.photographers);
@@ -474,7 +474,7 @@ public class MainActivity extends AppCompatActivity implements
 
                     if ((visibleItemCount + lastVisiblesItems) >= totalItemCount) {
                         isLoading = false;
-                        if (communityDataList.size() < _communityDataList.size()) {
+                        if (communityDataList.size() < _communityDataList.size() || communityDataList.get(communityDataList.size()-1)==null) {
                             isLoading = true;
                             new Handler().postDelayed(new Runnable() {
                                 @Override
@@ -1903,13 +1903,15 @@ public class MainActivity extends AppCompatActivity implements
 
     private void setParticipants(String communityID) {
 
+        SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
+
 
         participantRefListener = readFirebaseData.readData(participantRef.child(communityID), new FirebaseRead() {
             @Override
             public void onSuccess(DataSnapshot dataSnapshot) {
                 photographerList.clear();
 
-                if (currentActiveCommunityID.equals(communityID)) {
+                if (currentActiveCommunityID.equals(communityID) && !CurrentActiveCommunity.contains(AppConstants.IS_NOTIFIED)) {
                     photographerList.add(new PhotographerModel("add", "add", "add"));
                 }
 
