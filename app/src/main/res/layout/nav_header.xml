@@ -50,7 +50,7 @@
                     android:layout_width="@dimen/spacing_mlarge"
                     android:layout_height="@dimen/spacing_mlarge"
                     android:layout_marginRight="@dimen/spacing_medium"
-                    android:tint="@color/colorPrimaryDark"
+                    android:tint="@color/white"
                     android:src="@drawable/ic_email_black_24dp"/>
 
                 <TextView
