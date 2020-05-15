@@ -1725,7 +1725,7 @@ public class MainActivity extends AppCompatActivity implements
                                         }
 
                                         CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId);
-                                        communityDataList.add(0, model);
+                                        communityDataList.add(1, model);
                                         mainHorizontalAdapter.notifyItemInserted(1);
                                         showSnackbarMessage("You have been added to " + title);
 
@@ -1810,7 +1810,7 @@ public class MainActivity extends AppCompatActivity implements
                                         }
 
                                         CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId);
-                                        communityDataList.add(0, model);
+                                        communityDataList.add(1, model);
                                         mainHorizontalAdapter.notifyItemInserted(1);
                                         showSnackbarMessage("You have been added to " + title);
 
