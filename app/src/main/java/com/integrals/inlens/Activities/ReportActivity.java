@@ -17,8 +17,16 @@ import android.widget.Toast;
 import com.crowdfire.cfalertdialog.CFAlertDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.R;
+
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimeZone;
 
 import static android.view.View.VISIBLE;
 
@@ -29,6 +37,8 @@ public class ReportActivity extends AppCompatActivity {
     private String albumName;
     private String albumId;
     private String albumCreatedBy;
+    DatabaseReference reportRef;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +51,8 @@ public class ReportActivity extends AppCompatActivity {
         albumId=getIntent().getStringExtra("Album_ID");
         albumCreatedBy=getIntent().getStringExtra("Album_CreatedBy");
         albumName=getIntent().getStringExtra("Album_Name");
+
+        reportRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.REPORTED).child(albumId);
 
 
         textInputEditText.addTextChangedListener(new TextWatcher() {
@@ -74,12 +86,21 @@ public class ReportActivity extends AppCompatActivity {
             }
         });
     }
+
+    private String getOffsetDeletedTime(String timeStamp) {
+        TimeZone timeZone = TimeZone.getDefault();
+        long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
+        long givenTime = Long.parseLong(timeStamp);
+        long offsetDeletedTime = givenTime-offsetInMillis;
+        return String.valueOf(offsetDeletedTime);
+    }
+
     public void displayAlert(){
         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(ReportActivity.this)
                 .setDialogStyle(CFAlertDialog.CFAlertStyle.ALERT)
                 .setTitle("Album will be deleted")
                 .setIcon(R.drawable.ic_report_red)
-                .setMessage("If you report this Cloud-Album it will be deleted permanently. This action cannot be reverted and it may take 7 working days to complete the action.")
+                .setMessage("If you report this Cloud-Album it will be deleted permanently if found unfit. This action cannot be reverted and it may take 7 working days to complete the action.")
                 .setCancelable(false)
                 .addButton("OK , Report",
                         getResources().getColor(R.color.red_600),
@@ -91,10 +112,14 @@ public class ReportActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 pDialog.setMessage("Reporting.....");
                                 pDialog.show();
-                                FirebaseDatabase.getInstance().getReference().child("Abuse_Reports")
-                                        .child(System.currentTimeMillis()+"")
-                                        .child("Abuse")
-                                        .setValue("on Album "+albumName+" ID " +albumId +" createdby "+ albumCreatedBy +" with message "+textInputEditText.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                Map reportMap = new HashMap();
+                                reportMap.put("admin",albumCreatedBy);
+                                reportMap.put("title",albumName);
+                                reportMap.put("time",getOffsetDeletedTime(String.valueOf(System.currentTimeMillis())));
+                                reportMap.put("statement",textInputEditText.getText().toString());
+
+                                String reporterId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                reportRef.child(reporterId).setValue(reportMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if(task.isSuccessful()){

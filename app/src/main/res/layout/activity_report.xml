@@ -34,11 +34,25 @@
 
         android:padding="6dp"/>
 
+    <TextView
+        android:id="@+id/report_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:fontFamily="@font/base_font"
+        android:text="Help us understand why you found this album unfit or the reason for reporting it."
+        android:textColor="@color/colorPrimary"
+        android:textSize="16sp"
+        android:textStyle="normal"
+        android:layout_below="@id/head"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"/>
+
     <android.support.design.widget.TextInputLayout
     android:layout_width="match_parent"
         android:id="@+id/report_layout"
     android:layout_height="wrap_content"
-        android:layout_below="@id/head"
+        android:layout_below="@id/report_info"
     app:hintEnabled="true"
     app:boxBackgroundMode="outline"
 
@@ -58,7 +72,6 @@
         android:layout_height="wrap_content"
         android:textStyle="normal"
         android:padding="16dp"
-
         android:hint="Type your statement"
         android:fontFamily="@font/base_font"
         android:textSize="20sp"

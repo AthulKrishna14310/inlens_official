@@ -26,5 +26,6 @@ public class FirebaseConstants {
     public static final String INVITE_LINK ="Invites";
     public static final String COMMUNITIES_STORAGE ="Albums";
 
+    public static final String REPORTED ="Reported";
 
 }
