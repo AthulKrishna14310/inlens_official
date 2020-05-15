@@ -24,7 +24,7 @@ public class FirebaseConstants {
     public static final String POSTURL ="uri";
     public static final String POSTS ="posts";
     public static final String INVITE_LINK ="Invites";
-
+    public static final String COMMUNITIES_STORAGE ="Albums";
 
 
 }

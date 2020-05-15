@@ -136,7 +136,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
         postRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.POSTS);
         currentUserRef =FirebaseDatabase.getInstance().getReference();
-        storageRef = FirebaseStorage.getInstance().getReference().child("situations");
+        storageRef = FirebaseStorage.getInstance().getReference().child(FirebaseConstants.COMMUNITIES_STORAGE).child(communityID);
 
         galleryBackButton = findViewById(R.id.gallery_toolbar).findViewById(R.id.mytoolbar_back_button);
         galleyHeaderTextView = findViewById(R.id.gallery_toolbar).findViewById(R.id.mytoolbar_textview);
