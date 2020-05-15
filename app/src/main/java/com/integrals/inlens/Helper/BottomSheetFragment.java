@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
@@ -14,8 +15,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 import com.integrals.inlens.Activities.ReportActivity;
+import com.integrals.inlens.Activities.SplashScreenActivity;
 import com.integrals.inlens.MainActivity;
 import com.integrals.inlens.Models.CommunityModel;
 import com.integrals.inlens.R;
@@ -35,12 +47,19 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
     MainActivity activity;
     CommunityModel communityModel;
     int pos;
+    DatabaseReference reportRef,communityReportRef;
+    String currentUserId;
 
-    public BottomSheetFragment(Context applicationContext, CommunityModel communityModel, int position) {
+    public BottomSheetFragment(Context applicationContext, CommunityModel communityModel, int position,String currentUserId,DatabaseReference ref) {
 
         context = applicationContext;
         this.communityModel = communityModel;
         pos=position;
+        this.currentUserId = currentUserId;
+        DatabaseReference rootRef = ref;
+        reportRef = rootRef.child(FirebaseConstants.REPORTED).child(communityModel.getCommunityID());
+        communityReportRef = rootRef.child(FirebaseConstants.COMMUNITIES).child(communityModel.getCommunityID()).child(FirebaseConstants.COMMUNITY_REPORTED);
+
     }
 
 
@@ -127,18 +146,109 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
             }
         });
         LinearLayout linearLayout3 = view.findViewById(R.id.item_reportabuse);
-        linearLayout3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-                startActivity(new Intent(getContext(), ReportActivity.class)
-                .putExtra("Album_ID",communityModel.getCommunityID())
-                .putExtra("Album_Name",communityModel.getTitle())
-                .putExtra("Album_CreatedBy",communityModel.getAdmin()));
-                ((Activity)context).overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
-                ((Activity)context).finish();
-            }
-        });
+        TextView reportedTextView = view.findViewById(R.id.item_report_textview);
+        if(communityModel.isReported())
+        {
+            reportedTextView.setText("REMOVE MY REPORT");
+            reportRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    long reporterCount =  dataSnapshot.getChildrenCount();
+                    linearLayout3.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dismiss();
+                            if(reporterCount==1)
+                            {
+                                reportRef.child(currentUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+
+                                        if(task.isSuccessful())
+                                        {
+                                            communityReportRef.removeValue();
+                                            Toast.makeText(activity, "Removed report.", Toast.LENGTH_SHORT).show();
+                                            context.startActivity(new Intent(context, SplashScreenActivity.class));
+                                            ((Activity)context).overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                                            ((Activity)context).finish();
+                                        }
+                                        else
+                                        {
+                                            Toast.makeText(activity, "Failed to removed report.", Toast.LENGTH_SHORT).show();
+
+                                        }
+
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+
+                                        Toast.makeText(activity, "Failed to removed report.", Toast.LENGTH_SHORT).show();
+
+
+                                    }
+                                });
+
+                            }
+                            else
+                            {
+                                reportRef.child(currentUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+
+                                        if(task.isSuccessful())
+                                        {
+                                            Toast.makeText(activity, "Removed report.", Toast.LENGTH_SHORT).show();
+                                        }
+                                        else
+                                        {
+                                            Toast.makeText(activity, "Failed to removed report.", Toast.LENGTH_SHORT).show();
+
+                                        }
+
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+
+                                        Toast.makeText(activity, "Failed to removed report.", Toast.LENGTH_SHORT).show();
+
+
+                                    }
+                                });
+                            }
+
+
+                        }
+                    });
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+
+        }
+        else
+        {
+            linearLayout3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                    startActivity(new Intent(getContext(), ReportActivity.class)
+                            .putExtra("Album_ID",communityModel.getCommunityID())
+                            .putExtra("Album_Name",communityModel.getTitle())
+                            .putExtra("Album_CreatedBy",communityModel.getAdmin()));
+                    ((Activity)context).overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                    ((Activity)context).finish();
+
+                }
+            });
+        }
         return view;
     }
 

@@ -3075,10 +3075,10 @@ public class MainActivity extends AppCompatActivity implements
                     @Override
                     public boolean onLongClick(View view) {
                         if (communityDetails.get(position).getCommunityID().equals(currentActiveCommunityID)) {
-                            BottomSheetFragment bottomSheetFragment = new BottomSheetFragment(activity, communityDetails.get(position), position);
+                            BottomSheetFragment bottomSheetFragment = new BottomSheetFragment(activity, communityDetails.get(position), position,FirebaseAuth.getInstance().getCurrentUser().getUid(),FirebaseDatabase.getInstance().getReference());
                             bottomSheetFragment.show(((FragmentActivity) activity).getSupportFragmentManager(), bottomSheetFragment.getTag());
                         } else {
-                            BottomSheetFragment_Inactive bottomSheetFragment_inactive = new BottomSheetFragment_Inactive(activity, communityDetails.get(position), position);
+                            BottomSheetFragment_Inactive bottomSheetFragment_inactive = new BottomSheetFragment_Inactive(activity, communityDetails.get(position), position,FirebaseAuth.getInstance().getCurrentUser().getUid(),FirebaseDatabase.getInstance().getReference());
                             bottomSheetFragment_inactive.show(((FragmentActivity) activity).getSupportFragmentManager(), bottomSheetFragment_inactive.getTag());
                         }
                         return false;
@@ -3089,10 +3089,10 @@ public class MainActivity extends AppCompatActivity implements
                     @Override
                     public void onClick(View v) {
                         if (communityDetails.get(position).getCommunityID().equals(currentActiveCommunityID)) {
-                            BottomSheetFragment bottomSheetFragment = new BottomSheetFragment(activity, communityDetails.get(position), position);
+                            BottomSheetFragment bottomSheetFragment = new BottomSheetFragment(activity, communityDetails.get(position), position,FirebaseAuth.getInstance().getCurrentUser().getUid(),FirebaseDatabase.getInstance().getReference());
                             bottomSheetFragment.show(((FragmentActivity) activity).getSupportFragmentManager(), bottomSheetFragment.getTag());
                         } else {
-                            BottomSheetFragment_Inactive bottomSheetFragment_inactive = new BottomSheetFragment_Inactive(activity, communityDetails.get(position), position);
+                            BottomSheetFragment_Inactive bottomSheetFragment_inactive = new BottomSheetFragment_Inactive(activity, communityDetails.get(position), position,FirebaseAuth.getInstance().getCurrentUser().getUid(),FirebaseDatabase.getInstance().getReference());
                             bottomSheetFragment_inactive.show(((FragmentActivity) activity).getSupportFragmentManager(), bottomSheetFragment_inactive.getTag());
                         }
 

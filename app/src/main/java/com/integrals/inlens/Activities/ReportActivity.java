@@ -156,4 +156,11 @@ public class ReportActivity extends AppCompatActivity {
 
         builder.show();
     }
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(ReportActivity.this,SplashScreenActivity.class));
+        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+        finish();
+    }
 }

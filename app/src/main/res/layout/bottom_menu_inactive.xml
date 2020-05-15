@@ -246,6 +246,7 @@
                 android:tint="@color/red_600"/>
 
             <TextView
+                android:id="@+id/item_report_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
