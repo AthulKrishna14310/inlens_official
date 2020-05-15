@@ -2,6 +2,7 @@ package com.integrals.inlens.Helper;
 
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -107,6 +108,8 @@ public class BottomSheetFragment_Inactive extends BottomSheetDialogFragment {
                         .putExtra("Album_ID",communityModel.getCommunityID())
                         .putExtra("Album_Name",communityModel.getTitle())
                         .putExtra("Album_CreatedBy",communityModel.getAdmin()));
+                ((Activity)context).overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                ((Activity)context).finish();
 
             }
         });

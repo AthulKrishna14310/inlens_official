@@ -466,7 +466,6 @@ public class MainActivity extends AppCompatActivity implements
                 int totalItemCount = manager.getItemCount();
                 int lastVisiblesItems = manager.findLastVisibleItemPosition();
 
-
                 if (isLoading) {
 
                     if ((visibleItemCount + lastVisiblesItems) >= totalItemCount) {
@@ -508,6 +507,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
                     }
+
 
 
                 }
@@ -1167,7 +1167,9 @@ public class MainActivity extends AppCompatActivity implements
                         AppConstants.NOT_AVALABLE,
                         AppConstants.NOT_AVALABLE,
                         AppConstants.NOT_AVALABLE,
-                        AppConstants.MORE_OPTIONS
+                        AppConstants.MORE_OPTIONS,
+                        false
+
                 ));
             } else if (!_communityDataList.get(0).getCommunityID().equals(AppConstants.MORE_OPTIONS)) {
                 _communityDataList.add(0, new CommunityModel(
@@ -1179,7 +1181,8 @@ public class MainActivity extends AppCompatActivity implements
                         AppConstants.NOT_AVALABLE,
                         AppConstants.NOT_AVALABLE,
                         AppConstants.NOT_AVALABLE,
-                        AppConstants.MORE_OPTIONS
+                        AppConstants.MORE_OPTIONS,
+                        false
                 ));
             }
 
@@ -1200,6 +1203,8 @@ public class MainActivity extends AppCompatActivity implements
 
                         for (String communityId : userCommunityIdList) {
                             String admin = AppConstants.NOT_AVALABLE, coverimage = AppConstants.NOT_AVALABLE, description = AppConstants.NOT_AVALABLE, endtime = AppConstants.NOT_AVALABLE, starttime = AppConstants.NOT_AVALABLE, status = AppConstants.NOT_AVALABLE, title = AppConstants.NOT_AVALABLE, type = AppConstants.NOT_AVALABLE;
+                            boolean isReported = false;
+
                             if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYADMIN)) {
                                 admin = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYADMIN).getValue().toString();
                             }
@@ -1216,7 +1221,9 @@ public class MainActivity extends AppCompatActivity implements
                                 starttime = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYSTARTTIME).getValue().toString();
                             }
                             if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYSTATUS)) {
+
                                 status = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYSTATUS).getValue().toString();
+
                             }
                             if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYTITLE)) {
                                 title = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYTITLE).getValue().toString();
@@ -1224,8 +1231,12 @@ public class MainActivity extends AppCompatActivity implements
                             if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYTYPE)) {
                                 type = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYTYPE).getValue().toString();
                             }
+                            if(snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITY_REPORTED))
+                            {
+                                isReported = true;
+                            }
 
-                            CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId);
+                            CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId,isReported);
                             if (!getCommunityKeys(_communityDataList).contains(communityId)) {
                                 _communityDataList.add(model);
                             }
@@ -1242,7 +1253,7 @@ public class MainActivity extends AppCompatActivity implements
                                 communityDataList.remove(i);
                             }
                         }
-                        if (_communityDataList.size() > 5) {
+                        if (_communityDataList.size() > 5 && _communityDataList.size() != communityDataList.size()) {
                             communityDataList.add(null);
                         }
 
@@ -1682,7 +1693,6 @@ public class MainActivity extends AppCompatActivity implements
 
                     if (serverTimeInMillis < endtime) {
 
-
                         try {
                             int remainingCountInt = Integer.parseInt(remainingCount);
                             if (remainingCountInt > 0) {
@@ -1699,6 +1709,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
                                         String admin = AppConstants.NOT_AVALABLE, coverimage = AppConstants.NOT_AVALABLE, description = AppConstants.NOT_AVALABLE, endtime = AppConstants.NOT_AVALABLE, starttime = AppConstants.NOT_AVALABLE, status = AppConstants.NOT_AVALABLE, title = AppConstants.NOT_AVALABLE, type = AppConstants.NOT_AVALABLE;
+                                        boolean isReported=false;
                                         if (snapshot.hasChild(FirebaseConstants.COMMUNITYADMIN)) {
                                             admin = snapshot.child(FirebaseConstants.COMMUNITYADMIN).getValue().toString();
                                         }
@@ -1723,8 +1734,12 @@ public class MainActivity extends AppCompatActivity implements
                                         if (snapshot.hasChild(FirebaseConstants.COMMUNITYTYPE)) {
                                             type = snapshot.child(FirebaseConstants.COMMUNITYTYPE).getValue().toString();
                                         }
+                                        if(snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITY_REPORTED))
+                                        {
+                                           isReported=true;
+                                        }
 
-                                        CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId);
+                                        CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId,isReported);
                                         communityDataList.add(1, model);
                                         mainHorizontalAdapter.notifyItemInserted(1);
                                         showSnackbarMessage("You have been added to " + title);
@@ -1784,6 +1799,8 @@ public class MainActivity extends AppCompatActivity implements
 
 
                                         String admin = AppConstants.NOT_AVALABLE, coverimage = AppConstants.NOT_AVALABLE, description = AppConstants.NOT_AVALABLE, endtime = AppConstants.NOT_AVALABLE, starttime = AppConstants.NOT_AVALABLE, status = AppConstants.NOT_AVALABLE, title = AppConstants.NOT_AVALABLE, type = AppConstants.NOT_AVALABLE;
+                                        boolean isReported=false;
+
                                         if (snapshot.hasChild(FirebaseConstants.COMMUNITYADMIN)) {
                                             admin = snapshot.child(FirebaseConstants.COMMUNITYADMIN).getValue().toString();
                                         }
@@ -1808,8 +1825,12 @@ public class MainActivity extends AppCompatActivity implements
                                         if (snapshot.hasChild(FirebaseConstants.COMMUNITYTYPE)) {
                                             type = snapshot.child(FirebaseConstants.COMMUNITYTYPE).getValue().toString();
                                         }
+                                        if(snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITY_REPORTED))
+                                        {
+                                            isReported=true;
+                                        }
 
-                                        CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId);
+                                        CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId,isReported);
                                         communityDataList.add(1, model);
                                         mainHorizontalAdapter.notifyItemInserted(1);
                                         showSnackbarMessage("You have been added to " + title);
@@ -2397,6 +2418,7 @@ public class MainActivity extends AppCompatActivity implements
                     intent.putExtra("CommunityEndTime", model.getEndTime());
                     startActivity(intent);
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                    finish();
                 } else {
                     if (!cfDialogAddPhotoFab.isShowing()) {
                         cfDialogAddPhotoFab.show();
@@ -3099,11 +3121,12 @@ public class MainActivity extends AppCompatActivity implements
                     }
                 });
 
-                if (communityDetails.get(position).getTitle().contentEquals("Reported Album")) {
+                if (communityDetails.get(position).isReported()) {
                     viewHolder.AlbumNameTextView.setText(communityDetails.get(position).getTitle());
                     viewHolder.AlbumNameTextView.setTextColor(Color.RED);
                 } else {
                     viewHolder.AlbumNameTextView.setText(communityDetails.get(position).getTitle());
+                    viewHolder.AlbumNameTextView.setTextColor(getResources().getColor(R.color.colorSecondary));
                 }
 
 

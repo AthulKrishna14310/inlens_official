@@ -1,6 +1,7 @@
 package com.integrals.inlens.Activities;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -417,7 +418,9 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
             Snackbar.make(rootGalleryRelativeLayout,"Wait until upload is complete.",Snackbar.LENGTH_SHORT).show();
         }
         else{
-            super.onBackPressed();
+            startActivity(new Intent(InlensGalleryActivity.this,SplashScreenActivity.class));
+            overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+            finish();
         }
     }
 

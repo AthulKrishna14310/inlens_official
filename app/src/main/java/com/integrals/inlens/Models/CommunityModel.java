@@ -15,13 +15,16 @@ public class CommunityModel implements Comparable<CommunityModel> {
     private String CoverImage;
     private String Admin;
     private String CommunityID;
+    private boolean isReported;
+
+
 
 
 
     public CommunityModel() {
     }
 
-    public CommunityModel(String title, String description, String status, String startTime, String endTime, String type, String coverImage, String admin, String communityID) {
+    public CommunityModel(String title, String description, String status, String startTime, String endTime, String type, String coverImage, String admin, String communityID, boolean isReported) {
         Title = title;
         Description = description;
         Status = status;
@@ -31,14 +34,7 @@ public class CommunityModel implements Comparable<CommunityModel> {
         CoverImage = coverImage;
         Admin = admin;
         CommunityID = communityID;
-    }
-
-    public String getCommunityID() {
-        return CommunityID;
-    }
-
-    public void setCommunityID(String communityID) {
-        CommunityID = communityID;
+        this.isReported = isReported;
     }
 
     public String getTitle() {
@@ -81,7 +77,6 @@ public class CommunityModel implements Comparable<CommunityModel> {
         EndTime = endTime;
     }
 
-
     public String getType() {
         return Type;
     }
@@ -104,6 +99,22 @@ public class CommunityModel implements Comparable<CommunityModel> {
 
     public void setAdmin(String admin) {
         Admin = admin;
+    }
+
+    public String getCommunityID() {
+        return CommunityID;
+    }
+
+    public void setCommunityID(String communityID) {
+        CommunityID = communityID;
+    }
+
+    public boolean isReported() {
+        return isReported;
+    }
+
+    public void setReported(boolean reported) {
+        isReported = reported;
     }
 
     @Override

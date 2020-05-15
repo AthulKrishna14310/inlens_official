@@ -2,7 +2,9 @@ package com.integrals.inlens.Activities;
 
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +12,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -37,23 +40,23 @@ public class ReportActivity extends AppCompatActivity {
     private String albumName;
     private String albumId;
     private String albumCreatedBy;
-    DatabaseReference reportRef;
+    DatabaseReference reportRef, communityReportRef;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
-        textInputEditText=findViewById(R.id.report);
-        submitButton=findViewById(R.id.submit);
+        textInputEditText = findViewById(R.id.report);
+        submitButton = findViewById(R.id.submit);
         pDialog = new ProgressDialog(ReportActivity.this);
 
-        albumId=getIntent().getStringExtra("Album_ID");
-        albumCreatedBy=getIntent().getStringExtra("Album_CreatedBy");
-        albumName=getIntent().getStringExtra("Album_Name");
+        albumId = getIntent().getStringExtra("Album_ID");
+        albumCreatedBy = getIntent().getStringExtra("Album_CreatedBy");
+        albumName = getIntent().getStringExtra("Album_Name");
 
         reportRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.REPORTED).child(albumId);
-
+        communityReportRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.COMMUNITIES).child(albumId).child(FirebaseConstants.COMMUNITY_REPORTED);
 
         textInputEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -64,12 +67,12 @@ public class ReportActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                if(charSequence.toString().isEmpty()){
-                       submitButton.setVisibility(View.INVISIBLE);
-                    }else{
+                if (charSequence.toString().isEmpty()) {
+                    submitButton.setVisibility(View.INVISIBLE);
+                } else {
 
-                       submitButton.setVisibility(VISIBLE);
-                    }
+                    submitButton.setVisibility(VISIBLE);
+                }
             }
 
             @Override
@@ -78,11 +81,14 @@ public class ReportActivity extends AppCompatActivity {
             }
         });
 
-
+        InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    displayAlert();
+
+                // to hide softkeyboard
+                manager.hideSoftInputFromWindow(textInputEditText.getWindowToken(), 0);
+                displayAlert();
             }
         });
     }
@@ -91,11 +97,11 @@ public class ReportActivity extends AppCompatActivity {
         TimeZone timeZone = TimeZone.getDefault();
         long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
         long givenTime = Long.parseLong(timeStamp);
-        long offsetDeletedTime = givenTime-offsetInMillis;
+        long offsetDeletedTime = givenTime - offsetInMillis;
         return String.valueOf(offsetDeletedTime);
     }
 
-    public void displayAlert(){
+    public void displayAlert() {
         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(ReportActivity.this)
                 .setDialogStyle(CFAlertDialog.CFAlertStyle.ALERT)
                 .setTitle("Album will be deleted")
@@ -113,38 +119,40 @@ public class ReportActivity extends AppCompatActivity {
                                 pDialog.setMessage("Reporting.....");
                                 pDialog.show();
                                 Map reportMap = new HashMap();
-                                reportMap.put("admin",albumCreatedBy);
-                                reportMap.put("title",albumName);
-                                reportMap.put("time",getOffsetDeletedTime(String.valueOf(System.currentTimeMillis())));
-                                reportMap.put("statement",textInputEditText.getText().toString());
+                                reportMap.put("admin", albumCreatedBy);
+                                reportMap.put("title", albumName);
+                                reportMap.put("time", getOffsetDeletedTime(String.valueOf(System.currentTimeMillis())));
+                                reportMap.put("statement", textInputEditText.getText().toString());
 
                                 String reporterId = FirebaseAuth.getInstance().getCurrentUser().getUid();
                                 reportRef.child(reporterId).setValue(reportMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        if(task.isSuccessful()){
+                                        if (task.isSuccessful()) {
+                                            communityReportRef.setValue("T");
                                             pDialog.dismiss();
+                                            startActivity(new Intent(ReportActivity.this,SplashScreenActivity.class));
+                                            overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                                             finish();
-                                        }else{
+                                        } else {
                                             pDialog.dismiss();
-                                            Toast.makeText(getApplicationContext(),"Attempt failed , please try again",Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getApplicationContext(), "Attempt failed , please try again", Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 });
                             }
                         }).addButton("CANCEL",
-                getResources().getColor(R.color.colorPrimary),
-                getResources().getColor(R.color.white),
-                CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                        getResources().getColor(R.color.colorPrimary),
+                        getResources().getColor(R.color.white),
+                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
 
-                        dialog.dismiss();
-                        finish();
-                    }
-                });
+                                dialog.dismiss();
+                            }
+                        });
 
         builder.show();
     }

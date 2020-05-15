@@ -18,6 +18,7 @@ public class FirebaseConstants {
     public static final String COMMUNITYSTATUS ="status";
     public static final String COMMUNITYTITLE ="title";
     public static final String COMMUNITYTYPE ="type";
+    public static final String COMMUNITY_REPORTED ="reported";
     public static final String PARTICIPANTS ="Participants";
     public static final String POSTBY ="by";
     public static final String POSTTIME ="time";
