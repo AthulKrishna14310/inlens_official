@@ -25,31 +25,29 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    int VIEW_TYPE_PHOTOGRAPHER=0,VIEW_TYPE_ADD_BUTTON=1;
+    int VIEW_TYPE_PHOTOGRAPHER = 0, VIEW_TYPE_ADD_BUTTON = 1;
     List<PhotographerModel> photographersList;
     Context context;
     Dialog qrcodeDialog;
     MainActivity activity;
-
+    String adminId;
 
     public ParticipantsAdapter(List<PhotographerModel> photographersList,
                                Context context,
-                               MainActivity activity,Dialog qrcodeDialog) {
+                               MainActivity activity, Dialog qrcodeDialog, String adminId) {
         this.photographersList = photographersList;
         this.context = context;
         this.qrcodeDialog = qrcodeDialog;
-        this.activity=activity;
+        this.activity = activity;
+        this.adminId = adminId;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if(photographersList.get(position).getName().equals("add") &&photographersList.get(position).getId().equals("add") &&photographersList.get(position).getImgUrl().equals("add") )
-        {
+        if (photographersList.get(position).getName().equals("add") && photographersList.get(position).getId().equals("add") && photographersList.get(position).getImgUrl().equals("add")) {
             return VIEW_TYPE_ADD_BUTTON;
 
-        }
-        else
-        {
+        } else {
             return VIEW_TYPE_PHOTOGRAPHER;
         }
     }
@@ -58,35 +56,26 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        if(viewType==VIEW_TYPE_PHOTOGRAPHER)
-        {
-            View view = LayoutInflater.from(context).inflate(R.layout.member_card,parent,false);
+        if (viewType == VIEW_TYPE_PHOTOGRAPHER) {
+            View view = LayoutInflater.from(context).inflate(R.layout.member_card, parent, false);
             return new ParticipantsViewHolder(view);
-        }
-        else if(viewType ==VIEW_TYPE_ADD_BUTTON)
-        {
-            View view = LayoutInflater.from(context).inflate(R.layout.member_add_card,parent,false);
+        } else if (viewType == VIEW_TYPE_ADD_BUTTON) {
+            View view = LayoutInflater.from(context).inflate(R.layout.member_add_card, parent, false);
             return new AddParticipantsViewHolder(view);
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if(holder instanceof ParticipantsViewHolder)
-        {
+        if (holder instanceof ParticipantsViewHolder) {
             ParticipantsViewHolder viewHolder = (ParticipantsViewHolder) holder;
-            if(photographersList.get(position).getName().length() > 6)
-            {
-                String name =photographersList.get(position).getName().substring(0,5)+"...";
+            if (photographersList.get(position).getName().length() > 6) {
+                String name = photographersList.get(position).getName().substring(0, 5) + "...";
                 viewHolder.PName.setText(name);
 
-            }
-            else
-            {
+            } else {
                 viewHolder.PName.setText(photographersList.get(position).getName());
 
             }
@@ -97,23 +86,37 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(photographersList.get(position).getId().contentEquals(activity.getCurrentUserId())){
-                        PhotographerFragementBottomSheetNA photographerFragementBottomSheetNA = new PhotographerFragementBottomSheetNA();
-                        photographerFragementBottomSheetNA.show(((FragmentActivity) activity).getSupportFragmentManager(), photographerFragementBottomSheetNA.getTag());
 
-                    }else {
-                        PhotographerFragementBottomSheetAdmin photographerFragementBottomSheetAdmin = new PhotographerFragementBottomSheetAdmin();
-                        photographerFragementBottomSheetAdmin.show(((FragmentActivity) activity).getSupportFragmentManager(), photographerFragementBottomSheetAdmin.getTag());
-                         }
-                    // IF Admin on PhotographerFragementBottomSheetAdmin
-                    // IF Not Admin photographerFragementBottomSheetNotAdmin
+                    if (activity.getCurrentUserId().equals(adminId)) {
+
+                        if (photographersList.get(position).getId().equals(adminId)) {
+                            PhotographerFragementBottomSheetAdmin photographerFragementBottomSheetAdmin = new PhotographerFragementBottomSheetAdmin(context, photographersList.get(position),true);
+                            photographerFragementBottomSheetAdmin.show(((FragmentActivity) activity).getSupportFragmentManager(), photographerFragementBottomSheetAdmin.getTag());
+
+                        } else {
+                            PhotographerFragementBottomSheetNA photographerFragementBottomSheetNA = new PhotographerFragementBottomSheetNA(context, photographersList.get(position),true);
+                            photographerFragementBottomSheetNA.show(((FragmentActivity) activity).getSupportFragmentManager(), photographerFragementBottomSheetNA.getTag());
+
+                        }
                     }
+                    else
+                    {
+                        if (photographersList.get(position).getId().equals(adminId)) {
+                            PhotographerFragementBottomSheetAdmin photographerFragementBottomSheetAdmin = new PhotographerFragementBottomSheetAdmin(context, photographersList.get(position),false);
+                            photographerFragementBottomSheetAdmin.show(((FragmentActivity) activity).getSupportFragmentManager(), photographerFragementBottomSheetAdmin.getTag());
+
+                        } else {
+                            PhotographerFragementBottomSheetNA photographerFragementBottomSheetNA = new PhotographerFragementBottomSheetNA(context, photographersList.get(position),false);
+                            photographerFragementBottomSheetNA.show(((FragmentActivity) activity).getSupportFragmentManager(), photographerFragementBottomSheetNA.getTag());
+
+                        }
+                    }
+
+                }
             });
 
 
-        }
-        else if(holder instanceof  AddParticipantsViewHolder)
-        {
+        } else if (holder instanceof AddParticipantsViewHolder) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

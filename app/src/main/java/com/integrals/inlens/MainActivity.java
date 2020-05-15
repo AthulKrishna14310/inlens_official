@@ -978,6 +978,7 @@ public class MainActivity extends AppCompatActivity implements
                             // so first check the album  has status status;
                             if (snapshot.hasChild(FirebaseConstants.COMMUNITYSTATUS)) {
 
+
                                 String status = snapshot.child(FirebaseConstants.COMMUNITYSTATUS).getValue().toString();
                                 if (status.equals("T")) {
                                     long endtime = Long.parseLong(snapshot.child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString());
@@ -991,9 +992,10 @@ public class MainActivity extends AppCompatActivity implements
                                     TimeZone timeZone = TimeZone.getDefault();
                                     long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
                                     long serverTimeInMillis = (System.currentTimeMillis() - offsetInMillis);
-                                    Log.i("timeQuit", "Server : " + serverTimeInMillis + " End : " + endtime + " Systemmillis : " + System.currentTimeMillis());
+                                    //Log.i("timeQuit", "Server : " + serverTimeInMillis + " End : " + endtime + " Systemmillis : " + System.currentTimeMillis());
                                     if (serverTimeInMillis >= endtime) {
                                         quitCloudAlbum(true);
+
                                     } else {
                                         // start the necessary services
                                         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
@@ -1994,8 +1996,9 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
-    public void setVerticalRecyclerView(String communityID) {
+    public void setVerticalRecyclerView(CommunityModel communityModel) {
 
+        String communityID = communityModel.getCommunityID();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -2010,7 +2013,7 @@ public class MainActivity extends AppCompatActivity implements
 
         try {
 
-            setParticipants(communityID);
+            setParticipants(communityModel);
 
             postRefListener = readFirebaseData.readData(postRef.child(communityID), new FirebaseRead() {
                 @Override
@@ -2076,8 +2079,9 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
-    private void setParticipants(String communityID) {
+    private void setParticipants(CommunityModel communityModel) {
 
+        String communityID = communityModel.getCommunityID();
         SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
 
 
@@ -2087,7 +2091,7 @@ public class MainActivity extends AppCompatActivity implements
                 photographerList.clear();
 
                 if (currentActiveCommunityID.equals(communityID) && !CurrentActiveCommunity.contains(AppConstants.IS_NOTIFIED)) {
-                    photographerList.add(new PhotographerModel("add", "add", "add"));
+                    photographerList.add(new PhotographerModel("add", "add", "add","add"));
                 }
 
                 DatabaseReference photographerRef = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -2096,7 +2100,7 @@ public class MainActivity extends AppCompatActivity implements
                         @Override
                         public void onDataChange(DataSnapshot userSnapshot) {
 
-                            String name = AppConstants.NOT_AVALABLE, imgurl = AppConstants.NOT_AVALABLE;
+                            String name = AppConstants.NOT_AVALABLE, imgurl = AppConstants.NOT_AVALABLE,email = AppConstants.NOT_AVALABLE;
                             if (userSnapshot.hasChild("Name")) {
                                 if (currentUserId.equals(snapshot.getKey())) {
                                     name = "You";
@@ -2109,10 +2113,13 @@ public class MainActivity extends AppCompatActivity implements
                             if (userSnapshot.hasChild("Profile_picture")) {
                                 imgurl = userSnapshot.child("Profile_picture").getValue().toString();
                             }
+                            if (userSnapshot.hasChild("Email")) {
+                                email = userSnapshot.child("Email").getValue().toString();
+                            }
 
                             if (!getPhotographerKeys(photographerList).contains(snapshot.getKey())) {
 
-                                photographerList.add(new PhotographerModel(name, snapshot.getKey(), imgurl));
+                                photographerList.add(new PhotographerModel(name, snapshot.getKey(), imgurl,email));
 
                             }
 
@@ -2136,27 +2143,27 @@ public class MainActivity extends AppCompatActivity implements
                             if (currentActiveCommunityID.equals(communityID)) {
                                 if (photographerList.size() > 12) {
                                     // expandableCardView.setTitle( (photographerList.size() - 2) + " photographers");
-                                    photographerList.add(new PhotographerModel("view", "view", "view"));
+                                    photographerList.add(new PhotographerModel("view", "view", "view", "view"));
                                 } else {
                                     //expandableCardView.setTitle("Photographers : "+ (photographerList.size() - 1));
                                 }
                             } else {
                                 if (photographerList.size() > 13) {
-                                    photographerList.add(new PhotographerModel("view", "view", "view"));
+                                    photographerList.add(new PhotographerModel("view", "view", "view","view"));
                                     //       expandableCardView.setTitle("Photographers : "+ (photographerList.size() - 1));
                                 } else {
                                     //      expandableCardView.setTitle("Photographers : "+ (photographerList.size()));
                                 }
                             }
 
-                            participantsAdapter = new ParticipantsAdapter(photographerList, getApplicationContext(), MainActivity.this, QRCodeDialog);
+                            participantsAdapter = new ParticipantsAdapter(photographerList, getApplicationContext(), MainActivity.this, QRCodeDialog,communityModel.getAdmin());
                             ParticipantsRecyclerView.setAdapter(participantsAdapter);
                             expandableCardView.expand();
 
                         }
 
                     }
-                }, 1000);
+                }, 500);
 
 
             }
@@ -2974,7 +2981,7 @@ public class MainActivity extends AppCompatActivity implements
                     viewHolder.Indicator.setVisibility(View.VISIBLE);
                     viewHolder.itemView.setAlpha((float) 1);
                     if (!selectedAlbumKey.equals(communityDetails.get(selectedAlbumPosition).getCommunityID())) {
-                        setVerticalRecyclerView(communityDetails.get(selectedAlbumPosition).getCommunityID());
+                        setVerticalRecyclerView(communityDetails.get(selectedAlbumPosition));
 
                     }
                     selectedAlbumKey = communityDetails.get(selectedAlbumPosition).getCommunityID();
@@ -3107,7 +3114,7 @@ public class MainActivity extends AppCompatActivity implements
                             notifyItemChanged(selectedAlbumPosition);
                             notifyItemChanged(viewHolder.getAdapterPosition());
                             selectedAlbumPosition = viewHolder.getAdapterPosition();
-                            setVerticalRecyclerView(communityDetails.get(position).getCommunityID());
+                            setVerticalRecyclerView(communityDetails.get(position));
                             if (currentActiveCommunityID.equals(communityDetails.get(position).getCommunityID())) {
                                 mainAddPhotosFab.show();
                             } else {
