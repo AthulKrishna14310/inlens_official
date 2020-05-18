@@ -89,9 +89,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="20dp"
+
                 android:text="Timeout : 60 s"
                 android:fontFamily="@font/base_font"
-                android:textColor="@color/brightdark"/>
+                android:textColor="@color/grey_5"/>
 
             <Button
                 android:id="@+id/verification_manual_verify_button"

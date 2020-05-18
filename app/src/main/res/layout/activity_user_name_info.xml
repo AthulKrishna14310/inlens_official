@@ -32,7 +32,7 @@
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
         android:fontFamily="@font/base_font"
-        android:text="Select an email and a unique username for your account."
+        android:text="Type your name and an email for your account."
         android:textColor="@color/colorPrimary"
         android:gravity="center"/>
 
