@@ -1,13 +1,5 @@
 <resources>
     <string name="app_name">InLens</string>
-    <string name="caption_hint">Type your caption</string>
-    <string name="Open">Open</string>
-    <string name="Close">Close</string>
-    <string name="stop_notification">Stop Notification</string>
-    <string name="restart_notification">Restart Notification</string>
-    <string name="background_service">Background Service</string>
-    <string name="my_uploads">My Uploads</string>
-    <string name="change_profile_picture">PROFILE PICTURE</string>
     <string name="photographer">Photographers</string>
     <string name="quit_cloud_album">Exit Participation</string>
     <string name="intruction">No photos.\n Take photos and tap on Gallery notification.</string>
@@ -15,5 +7,4 @@
     <string name="add_photographers"><u><b>ADD PHOTOGRAPHERS</b></u></string>
     <string name="initial_start_notification">Have you received Gallery notification ?</string>
     <string name="initial_start_take_photos">Now , \n \n 1. Take  photos  \n 2. Tap on notification \n 3. Select photos and upload it to your \t \t Cloud-Album</string>
-    <string name="note_text_recent_image_notification">Notification exists till album expires. After each photo session just tap on it. You do not have to navigate through InLens all the time.</string>
 </resources>

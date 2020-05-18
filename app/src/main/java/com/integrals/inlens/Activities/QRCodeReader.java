@@ -31,7 +31,6 @@ import com.integrals.inlens.R;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
@@ -84,12 +83,15 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
                         .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                         .setTitle("New Community")
                         .setIcon(R.mipmap.ic_launcher_foreground)
+                        .setDialogBackgroundColor(getResources().getColor(R.color.cf_bg_color))
+                        .setTextColor(getResources().getColor(R.color.colorPrimary))
+
                         .setMessage("Are you sure you want to join this new community? This means quitting the previous one.")
                         .setTextGravity(Gravity.START)
                         .setCancelable(false)
                         .addButton("YES",
-                                getResources().getColor(R.color.colorPrimaryDark),
-                                getResources().getColor(R.color.white),
+                                getResources().getColor(R.color.colorPrimary),
+                                getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
                                 CFAlertDialog.CFAlertActionStyle.DEFAULT,
                                 CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                                 new DialogInterface.OnClickListener() {
@@ -100,8 +102,8 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
                                         dialog.dismiss();
                                     }
                                 })
-                        .addButton("NO", getResources().getColor(R.color.red_900),
-                                getResources().getColor(R.color.white),
+                        .addButton("NO", getResources().getColor(R.color.red_inlens),
+                                getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
                                 CFAlertDialog.CFAlertActionStyle.DEFAULT,
                                 CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                                 new DialogInterface.OnClickListener() {
@@ -138,11 +140,13 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle("Camera Permission")
                 .setIcon(R.drawable.ic_info)
+                .setDialogBackgroundColor(getResources().getColor(R.color.cf_bg_color))
+                .setTextColor(getResources().getColor(R.color.colorPrimary))
                 .setMessage("InLens require camera permission to scan QR code. Please enable it and try again.")
                 .setCancelable(false)
                 .addButton("OK",
-                        getResources().getColor(R.color.colorPrimaryDark),
-                        getResources().getColor(R.color.white),
+                        getResources().getColor(R.color.colorPrimary),
+                        getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
                         CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {
@@ -154,8 +158,8 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
 
                             }
                         })
-                .addButton("CANCEL", getResources().getColor(R.color.red_900),
-                        getResources().getColor(R.color.white),
+                .addButton("CANCEL", getResources().getColor(R.color.red_inlens),
+                        getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
                         CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {
@@ -180,12 +184,15 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle(title)
+                .setDialogBackgroundColor(getResources().getColor(R.color.cf_bg_color))
+                .setTextColor(getResources().getColor(R.color.colorPrimary))
                 .setIcon(R.drawable.ic_check_circle_black_24dp)
                 .setMessage(message)
+
                 .setCancelable(false)
                 .addButton("OK",
-                        getResources().getColor(R.color.colorPrimaryDark),
-                        getResources().getColor(R.color.white),
+                        getResources().getColor(R.color.colorPrimary),
+                        getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
                         CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {
@@ -202,12 +209,14 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle(title)
+                .setDialogBackgroundColor(getResources().getColor(R.color.cf_bg_color))
+                .setTextColor(getResources().getColor(R.color.colorPrimary))
                 .setIcon(R.drawable.ic_info)
                 .setMessage(message)
                 .setCancelable(false)
                 .addButton("OK",
-                        getResources().getColor(R.color.colorPrimaryDark),
-                        getResources().getColor(R.color.white),
+                        getResources().getColor(R.color.colorPrimary),
+                        getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
                         CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {

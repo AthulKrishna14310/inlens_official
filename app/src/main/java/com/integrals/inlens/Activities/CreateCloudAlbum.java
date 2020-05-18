@@ -12,7 +12,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -29,10 +28,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import androidx.work.ExistingWorkPolicy;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkManager;
 
 import com.crowdfire.cfalertdialog.CFAlertDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -160,12 +155,14 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(CreateCloudAlbum.this)
                                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                                 .setTitle("Expiry :" + albumTime)
+                                .setDialogBackgroundColor(getResources().getColor(R.color.cf_bg_color))
+                                .setTextColor(getResources().getColor(R.color.colorPrimary))
                                 .setIcon(R.drawable.ic_access_time_black_24dp)
                                 .setMessage("You can only upload images and add participants to this album till " + albumTime)
                                 .setCancelable(false)
                                 .addButton("OK",
-                                        getResources().getColor(R.color.colorPrimaryDark),
-                                        getResources().getColor(R.color.white),
+                                        getResources().getColor(R.color.colorPrimary),
+                                        getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
                                         CFAlertDialog.CFAlertActionStyle.DEFAULT,
                                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                                         new DialogInterface.OnClickListener() {
@@ -187,12 +184,14 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(CreateCloudAlbum.this)
                                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                                 .setTitle("Album expiry on " + albumTime)
+                                .setDialogBackgroundColor(getResources().getColor(R.color.cf_bg_color))
+                                .setTextColor(getResources().getColor(R.color.colorPrimary))
                                 .setIcon(R.drawable.ic_access_time_black_24dp)
                                 .setMessage("You can only upload images and add participants to this album till " + albumTime)
                                 .setCancelable(false)
                                 .addButton("    OK , I understand   ",
-                                        getResources().getColor(R.color.colorPrimaryDark),
-                                        getResources().getColor(R.color.white),
+                                        getResources().getColor(R.color.colorPrimary),
+                                        getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
                                         CFAlertDialog.CFAlertActionStyle.DEFAULT,
                                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                                         new DialogInterface.OnClickListener() {
@@ -678,11 +677,13 @@ public class CreateCloudAlbum extends AppCompatActivity {
                     .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                     .setTitle("Cloud-Album creation")
                     .setIcon(R.drawable.ic_check_circle_black_24dp)
+                    .setDialogBackgroundColor(getResources().getColor(R.color.cf_bg_color))
+                    .setTextColor(getResources().getColor(R.color.colorPrimary))
                     .setMessage(dialogue)
                     .setCancelable(false)
                     .addButton("OK",
-                            getResources().getColor(R.color.colorPrimaryDark),
-                            getResources().getColor(R.color.white),
+                            getResources().getColor(R.color.colorPrimary),
+                            getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
                             CFAlertDialog.CFAlertActionStyle.DEFAULT,
                             CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                             new DialogInterface.OnClickListener() {
@@ -700,10 +701,12 @@ public class CreateCloudAlbum extends AppCompatActivity {
                     .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                     .setTitle("Community creation")
                     .setIcon(R.drawable.ic_info)
+                    .setDialogBackgroundColor(getResources().getColor(R.color.cf_bg_color))
+                    .setTextColor(getResources().getColor(R.color.colorPrimary))
                     .setMessage(dialogue)
                     .setCancelable(false)
-                    .addButton("OK", getResources().getColor(R.color.colorPrimaryDark),
-                            getResources().getColor(R.color.white),
+                    .addButton("OK", getResources().getColor(R.color.colorPrimary),
+                            getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
                             CFAlertDialog.CFAlertActionStyle.DEFAULT,
                             CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                                 @Override

@@ -105,12 +105,14 @@ public class ReportActivity extends AppCompatActivity {
         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(ReportActivity.this)
                 .setDialogStyle(CFAlertDialog.CFAlertStyle.ALERT)
                 .setTitle("Album will be deleted")
+                .setDialogBackgroundColor(getResources().getColor(R.color.cf_bg_color))
+                .setTextColor(getResources().getColor(R.color.colorPrimary))
                 .setIcon(R.drawable.ic_report_red)
                 .setMessage("If you report this Cloud-Album it will be deleted permanently if found unfit. This action cannot be reverted and it may take 7 working days to complete the action.")
                 .setCancelable(false)
                 .addButton("OK , Report",
-                        getResources().getColor(R.color.red_600),
-                        getResources().getColor(R.color.white),
+                        getResources().getColor(R.color.red_inlens),
+                        getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
                         CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {
@@ -143,7 +145,7 @@ public class ReportActivity extends AppCompatActivity {
                             }
                         }).addButton("CANCEL",
                         getResources().getColor(R.color.colorPrimary),
-                        getResources().getColor(R.color.white),
+                        getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
                         CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {

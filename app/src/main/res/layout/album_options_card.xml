@@ -7,13 +7,14 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginLeft="16dp"
+
     android:layout_marginTop="4dp"
     android:layout_marginRight="6dp"
     android:layout_marginBottom="4dp"
     android:alpha="0.9"
-    android:background="@drawable/card_bg"
+    app:cardBackgroundColor="@color/default_bg_color"
     android:clickable="true"
-    android:padding="0.2dp"
+    android:padding="4dp"
     app:cardCornerRadius="4dp"
     app:cardElevation="0dp">
 
@@ -38,8 +39,8 @@
             android:layout_height="100dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
+            android:tint="@color/colorSecondary"
             android:scaleType="center"
-
             app:srcCompat="@drawable/ic_add_black_24dp"
             tools:ignore="VectorDrawableCompat" />
 
@@ -55,8 +56,9 @@
         android:fontFamily="@font/base_font"
         android:maxLines="1"
         android:singleLine="true"
-
+        android:background="@color/default_bg_color"
         android:text="New Album"
+
         android:textColor="@color/colorSecondary"
         android:textSize="14sp"
         android:textStyle="normal" />

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/default_bg_color"
     tools:context=".Activities.UserNameInfoActivity">
 
     <include
@@ -19,15 +19,15 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@id/user_name_toolbar"
         android:layout_marginTop="50dp"
-        android:indeterminateTint="@color/colorPrimaryDark"
+        android:indeterminateTint="@color/colorPrimary"
         android:indeterminate="true"/>
     <TextView
         android:id="@+id/user_name_activity_textview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/user_email_activity_progressbar"
-        android:layout_marginTop="50dp"
-        android:background="@color/white"
+        android:layout_marginTop="16dp"
+        android:background="@color/default_bg_color"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
@@ -36,50 +36,80 @@
         android:textColor="@color/colorPrimary"
         android:gravity="center"/>
 
-    <EditText
-        android:id="@+id/user_name_activity_edittext"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_margin="20dp"
-        android:padding="5dp"
-        android:fontFamily="@font/base_font"
-        android:layout_below="@id/user_name_activity_textview"
-        android:background="@drawable/curved_corners"
-        android:hint="User Name"
-        android:backgroundTint="@color/colorPrimary"
-        android:textColorHint="@color/white"
-        android:gravity="center"
-        android:inputType="text"
-        android:textColor="@color/white"/>
 
-    <EditText
-        android:id="@+id/user_email_activity_edittext"
+
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:padding="5dp"
-        android:layout_below="@id/user_name_activity_edittext"
-        android:background="@drawable/curved_corners"
-        android:hint="User Email"
+        android:id="@+id/user_name_activity_edittext_layout"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/user_name_activity_textview"
+        app:hintEnabled="true"
+        app:boxBackgroundMode="outline"
+        app:boxCornerRadiusTopEnd="4dp"
+        app:boxCornerRadiusBottomEnd="4dp"
+        app:boxCornerRadiusBottomStart="4dp"
+        app:boxCornerRadiusTopStart="4dp"
+        android:layout_marginTop="24dp"
+        app:boxStrokeColor="@color/colorPrimary"
+        app:boxStrokeWidth="1dp"
+        
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        >
+    <android.support.design.widget.TextInputEditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="normal"
+        android:padding="16dp"
+        android:theme="@style/Theme.AppCompat.DayNight"
+        android:hint="Type your name"
         android:fontFamily="@font/base_font"
-        android:cursorVisible="true"
-        android:backgroundTint="@color/colorPrimary"
-        android:textColorHint="@color/white"
-        android:gravity="center"
-        android:inputType="textEmailAddress"
-        android:textColor="@color/white"/>
+        android:textSize="16sp"
+        android:id="@+id/user_name_activity_edittext"
+        />
+    </android.support.design.widget.TextInputLayout>
+
+
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:id="@+id/user_email_activity_edittext_layout"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/user_name_activity_edittext_layout"
+        app:hintEnabled="true"
+        app:boxBackgroundMode="outline"
+        app:boxCornerRadiusTopEnd="4dp"
+        app:boxCornerRadiusBottomEnd="4dp"
+        app:boxCornerRadiusBottomStart="4dp"
+        app:boxCornerRadiusTopStart="4dp"
+        android:layout_marginTop="24dp"
+        app:boxStrokeColor="@color/colorPrimary"
+        app:boxStrokeWidth="1dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        >
+        <android.support.design.widget.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="normal"
+            android:padding="16dp"
+            android:hint="Type your Email"
+            android:fontFamily="@font/base_font"
+            android:textSize="16sp"
+            android:id="@+id/user_email_activity_edittext"
+            />
+    </android.support.design.widget.TextInputLayout>
 
     <ImageButton
         android:id="@+id/user_name_activity_done_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:src="@drawable/ic_done_all"
-        android:tint="@color/white"
+        android:tint="@color/default_bg_color"
         android:background="@drawable/circle_primary"
         android:padding="10dp"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/user_email_activity_edittext"
-        android:layout_marginTop="50dp"/>
+        android:layout_below="@id/user_email_activity_edittext_layout"
+        android:layout_marginTop="24dp"/>
 
 </RelativeLayout>

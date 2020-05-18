@@ -728,11 +728,13 @@ public class MainActivity extends AppCompatActivity implements
         return builder
                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle("Storage Permission")
+                .setDialogBackgroundColor(getResources().getColor(R.color.cf_bg_color))
+                .setTextColor(getResources().getColor(R.color.colorPrimary))
                 .setIcon(R.drawable.ic_info)
                 .setMessage("InLens require storage permission to access your photos. Please enable it and try again.")
                 .setCancelable(true)
-                .addButton("OK", getResources().getColor(R.color.colorPrimaryDark)
-                        , getResources().getColor(R.color.white),
+                .addButton("OK", getResources().getColor(R.color.colorPrimary)
+                        , getResources().getColor(R.color.cf_bg_color),
                         CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {
@@ -746,8 +748,8 @@ public class MainActivity extends AppCompatActivity implements
                             }
                         })
                 .addButton("CANCEL",
-                        getResources().getColor(R.color.red_900),
-                        getResources().getColor(R.color.white)
+                        getResources().getColor(R.color.red_inlens),
+                        getResources().getColor(R.color.cf_bg_color)
                         , CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {
@@ -767,11 +769,13 @@ public class MainActivity extends AppCompatActivity implements
                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle("Storage Permission")
                 .setIcon(R.drawable.ic_info)
+                .setDialogBackgroundColor(getResources().getColor(R.color.cf_bg_color))
+                .setTextColor(getResources().getColor(R.color.colorPrimary))
                 .setMessage("InLens require storage permission to access your photos. Please enable it and try again.")
                 .setCancelable(true)
                 .addButton("OK",
-                        getResources().getColor(R.color.colorPrimaryDark),
-                        getResources().getColor(R.color.white),
+                        getResources().getColor(R.color.colorPrimary),
+                        getResources().getColor(R.color.cf_bg_color),
                         CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {
@@ -784,8 +788,8 @@ public class MainActivity extends AppCompatActivity implements
                                 dialog.dismiss();
                             }
                         })
-                .addButton("CANCEL", getResources().getColor(R.color.red_900),
-                        getResources().getColor(R.color.white),
+                .addButton("CANCEL", getResources().getColor(R.color.red_inlens),
+                        getResources().getColor(R.color.cf_bg_color),
                         CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {
@@ -1090,10 +1094,13 @@ public class MainActivity extends AppCompatActivity implements
                 CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
                         .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                         .setTitle("Gallery Notification ?")
+                        .setDialogBackgroundColor(getResources().getColor(R.color.cf_bg_color))
+                        .setTextColor(getResources().getColor(R.color.colorPrimary))
                         .setIcon(R.drawable.ic_notification_)
                         .setMessage(getString(R.string.initial_start_notification))
                         .setCancelable(false)
-                        .addButton("YES , NEXT STEP", getResources().getColor(R.color.colorPrimaryDark), getResources().getColor(R.color.white), CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                        .addButton("YES , NEXT STEP", getResources().getColor(R.color.colorPrimary),
+                                getResources().getColor(R.color.cf_alert_dialogue_dim_bg), CFAlertDialog.CFAlertActionStyle.DEFAULT,
                                 CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                                 new DialogInterface.OnClickListener() {
                                     @Override
@@ -1103,10 +1110,14 @@ public class MainActivity extends AppCompatActivity implements
                                         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
                                                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                                                 .setTitle("Take photos and Tap ")
+                                                .setDialogBackgroundColor(getResources().getColor(R.color.cf_bg_color))
+                                                .setTextColor(getResources().getColor(R.color.colorPrimary))
                                                 .setIcon(R.drawable.ic_touch_)
                                                 .setMessage(R.string.initial_start_take_photos)
                                                 .setCancelable(false)
-                                                .addButton("TAKE PHOTOS", getResources().getColor(R.color.colorPrimaryDark), getResources().getColor(R.color.white), CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                                .addButton("TAKE PHOTOS", getResources().getColor(R.color.colorPrimary),
+                                                        getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
+                                                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
                                                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                                                         new DialogInterface.OnClickListener() {
                                                             @Override
@@ -1123,8 +1134,8 @@ public class MainActivity extends AppCompatActivity implements
 
                                                             }
                                                         }).addButton("CANCEL",
-                                                        getResources().getColor(R.color.red_900),
-                                                        getResources().getColor(R.color.white),
+                                                        getResources().getColor(R.color.red_inlens),
+                                                        getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
                                                         CFAlertDialog.CFAlertActionStyle.DEFAULT,
                                                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                                                         new DialogInterface.OnClickListener() {
@@ -1410,6 +1421,8 @@ public class MainActivity extends AppCompatActivity implements
                         .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                         .setTitle("Photographers Count ?")
                         .setIcon(R.drawable.ic_link)
+                        .setDialogBackgroundColor(getResources().getColor(R.color.cf_bg_color))
+                        .setTextColor(getResources().getColor(R.color.colorPrimary))
                         .setCancelable(false)
                         .setMessage("Select the Number of Photographers to join via this link.")
                         .setMultiChoiceItems(new String[]{"Only 1", "5", "20", "20+"}, new boolean[]{false, false, false, false}, new DialogInterface.OnMultiChoiceClickListener() {
@@ -1523,7 +1536,18 @@ public class MainActivity extends AppCompatActivity implements
 
                                 }
                             }
-                        });
+                        }).addButton("CANCEL",
+                                getResources().getColor(R.color.colorPrimary),
+                                getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
+                                CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.dismiss();
+                                    }
+                                }
+
+                        );
                 builder.show();
             }
         });
@@ -1566,11 +1590,13 @@ public class MainActivity extends AppCompatActivity implements
                                             .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                                             .setTitle("New Community")
                                             .setIcon(R.mipmap.ic_launcher_foreground)
+                                            .setDialogBackgroundColor(getResources().getColor(R.color.cf_bg_color))
+                                            .setTextColor(getResources().getColor(R.color.colorPrimary))
                                             .setCancelable(false)
                                             .setMessage("You are about to join a new community.")
                                             .addButton("JOIN",
-                                                    getResources().getColor(R.color.colorPrimaryDark),
-                                                    getResources().getColor(R.color.white),
+                                                    getResources().getColor(R.color.colorPrimary),
+                                                    getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
                                                     CFAlertDialog.CFAlertActionStyle.DEFAULT,
                                                     CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                                                         @Override
@@ -1580,8 +1606,8 @@ public class MainActivity extends AppCompatActivity implements
                                                         }
                                                     })
                                             .addButton("CANCEL",
-                                                    getResources().getColor(R.color.red_900),
-                                                    getResources().getColor(R.color.white),
+                                                    getResources().getColor(R.color.red_inlens),
+                                                    getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
                                                     CFAlertDialog.CFAlertActionStyle.DEFAULT,
                                                     CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                                                         @Override
@@ -1605,10 +1631,12 @@ public class MainActivity extends AppCompatActivity implements
                                                 .setIcon(R.mipmap.ic_launcher_foreground)
                                                 .setMessage("Are you sure you want to join this new community? This means quitting the previous one.")
                                                 .setTextGravity(Gravity.START)
+                                                .setDialogBackgroundColor(getResources().getColor(R.color.cf_bg_color))
+                                                .setTextColor(getResources().getColor(R.color.colorPrimary))
                                                 .setCancelable(false)
                                                 .addButton("YES",
-                                                        getResources().getColor(R.color.colorPrimaryDark),
-                                                        getResources().getColor(R.color.white),
+                                                        getResources().getColor(R.color.colorPrimary),
+                                                        getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
                                                         CFAlertDialog.CFAlertActionStyle.DEFAULT,
                                                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                                                             @Override
@@ -1618,8 +1646,8 @@ public class MainActivity extends AppCompatActivity implements
                                                             }
                                                         })
                                                 .addButton("NO",
-                                                        getResources().getColor(R.color.red_900),
-                                                        getResources().getColor(R.color.white),
+                                                        getResources().getColor(R.color.red_inlens),
+                                                        getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
                                                         CFAlertDialog.CFAlertActionStyle.DEFAULT,
                                                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                                                             @Override
@@ -1915,11 +1943,13 @@ public class MainActivity extends AppCompatActivity implements
                     .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                     .setTitle("Album Active")
                     .setIcon(R.drawable.ic_info)
+                    .setDialogBackgroundColor(getResources().getColor(R.color.cf_bg_color))
+                    .setTextColor(getResources().getColor(R.color.colorPrimary))
                     .setMessage("You have to leave the currently active album before creating a new album.")
                     .setCancelable(true)
                     .addButton("QUIT CLOUD-ALBUM",
-                            getResources().getColor(R.color.red_900),
-                            getResources().getColor(R.color.white),
+                            getResources().getColor(R.color.red_inlens),
+                            getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
                             CFAlertDialog.CFAlertActionStyle.DEFAULT,
                             CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                             new DialogInterface.OnClickListener() {
@@ -1931,8 +1961,8 @@ public class MainActivity extends AppCompatActivity implements
                             })
 
                     .addButton("CANCEL",
-                            getResources().getColor(R.color.colorPrimaryDark),
-                            getResources().getColor(R.color.white),
+                            getResources().getColor(R.color.colorPrimary),
+                            getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
                             CFAlertDialog.CFAlertActionStyle.DEFAULT,
                             CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                             new DialogInterface.OnClickListener() {
@@ -1960,13 +1990,15 @@ public class MainActivity extends AppCompatActivity implements
             CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
                     .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                     .setTitle("Album Active")
+                    .setDialogBackgroundColor(getResources().getColor(R.color.cf_bg_color))
+                    .setTextColor(getResources().getColor(R.color.colorPrimary))
                     .setIcon(R.drawable.ic_info)
                     .setMessage("You have to leave the currently active album before creating a new album.")
                     .setCancelable(true)
 
                     .addButton("QUIT CLOUD-ALBUM",
-                            getResources().getColor(R.color.red_900),
-                            getResources().getColor(R.color.white),
+                            getResources().getColor(R.color.red_inlens),
+                            getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
                             CFAlertDialog.CFAlertActionStyle.DEFAULT,
                             CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                             new DialogInterface.OnClickListener() {
@@ -1978,8 +2010,8 @@ public class MainActivity extends AppCompatActivity implements
                             })
 
                     .addButton("CANCEL",
-                            getResources().getColor(R.color.colorPrimaryDark),
-                            getResources().getColor(R.color.white),
+                            getResources().getColor(R.color.colorPrimary),
+                            getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
                             CFAlertDialog.CFAlertActionStyle.DEFAULT,
                             CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                             new DialogInterface.OnClickListener() {
@@ -2264,10 +2296,12 @@ public class MainActivity extends AppCompatActivity implements
                 .setTitle(title)
                 .setIcon(R.drawable.ic_info_red)
                 .setMessage(message)
+                .setDialogBackgroundColor(getResources().getColor(R.color.cf_bg_color))
+                .setTextColor(getResources().getColor(R.color.colorPrimary))
                 .setCancelable(false)
                 .addButton(negativeButtonMessage,
-                        getResources().getColor(R.color.red_900),
-                        getResources().getColor(R.color.white)
+                        getResources().getColor(R.color.red_inlens),
+                        getResources().getColor(R.color.cf_alert_dialogue_dim_bg)
                         , CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                             @Override
@@ -2372,8 +2406,8 @@ public class MainActivity extends AppCompatActivity implements
                             }
                         })
                 .addButton(postiveButtonMessage,
-                        getResources().getColor(R.color.colorPrimaryDark),
-                        getResources().getColor(R.color.white),
+                        getResources().getColor(R.color.colorPrimary),
+                        getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
                         CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                             @Override
@@ -2393,11 +2427,13 @@ public class MainActivity extends AppCompatActivity implements
                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle("Unable to Exit")
                 .setIcon(R.drawable.ic_info)
+                .setDialogBackgroundColor(getResources().getColor(R.color.cf_bg_color))
+                .setTextColor(getResources().getColor(R.color.colorPrimary))
                 .setMessage("Unable to Quit Cloud-Album. Please check your internet connection or whether you are participating in a Cloud-Album")
                 .setCancelable(false)
                 .addButton("OK",
-                        getResources().getColor(R.color.colorPrimaryDark),
-                        getResources().getColor(R.color.white)
+                        getResources().getColor(R.color.colorPrimary),
+                        getResources().getColor(R.color.cf_alert_dialogue_dim_bg)
                         , CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                             @Override
@@ -2724,12 +2760,14 @@ public class MainActivity extends AppCompatActivity implements
         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle(title)
+                .setDialogBackgroundColor(getResources().getColor(R.color.cf_bg_color))
+                .setTextColor(getResources().getColor(R.color.colorPrimary))
                 .setIcon(R.drawable.ic_check_circle_black_24dp)
                 .setMessage(message)
                 .setCancelable(false)
                 .addButton("OK",
-                        getResources().getColor(R.color.colorPrimaryDark),
-                        getResources().getColor(R.color.white),
+                        getResources().getColor(R.color.colorPrimary),
+                        getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
                         CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {
@@ -2751,11 +2789,13 @@ public class MainActivity extends AppCompatActivity implements
                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle(title)
                 .setIcon(R.drawable.ic_info)
+                .setDialogBackgroundColor(getResources().getColor(R.color.cf_bg_color))
+                .setTextColor(getResources().getColor(R.color.colorPrimary))
                 .setMessage(message)
                 .setCancelable(false)
                 .addButton("OK",
-                        getResources().getColor(R.color.colorPrimaryDark),
-                        getResources().getColor(R.color.white),
+                        getResources().getColor(R.color.colorPrimary),
+                        getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
                         CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {

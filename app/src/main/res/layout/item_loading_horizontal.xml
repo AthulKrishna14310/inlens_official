@@ -4,7 +4,7 @@
     android:layout_height="145dp"
     android:layout_margin="5dp"
     android:orientation="vertical"
-    android:background="@color/white">
+    android:background="@color/default_bg_color">
 
     <ProgressBar
         android:id="@+id/horiozntal_item_loadingprogressbar"

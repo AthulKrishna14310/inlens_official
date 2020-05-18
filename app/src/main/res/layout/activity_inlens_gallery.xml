@@ -5,7 +5,7 @@
     android:id="@+id/root_for_gallery"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/default_bg_color"
     tools:context=".Activities.InlensGalleryActivity">
 
     <include
@@ -17,13 +17,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
 
-        android:background="@color/white"
+        android:background="@color/default_bg_color"
         android:layout_below="@id/gallery_toolbar">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/gallery_recyclerview"
             android:layout_width="match_parent"
-            android:background="@color/white"
+            android:background="@color/default_bg_color"
             android:layout_height="match_parent">
         </android.support.v7.widget.RecyclerView>
 
@@ -41,7 +41,7 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:backgroundTint="@color/colorSecondary"
         android:src="@drawable/ic_file_upload"
-        android:tint="@color/white"
+        android:tint="@color/default_bg_color"
         android:visibility="gone"
         app:fabSize="normal" />
 

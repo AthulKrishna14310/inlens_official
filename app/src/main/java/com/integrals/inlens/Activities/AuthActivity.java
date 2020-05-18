@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -19,7 +18,6 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +31,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.crowdfire.cfalertdialog.CFAlertDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -52,7 +49,6 @@ import com.integrals.inlens.R;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class AuthActivity extends AppCompatActivity {
@@ -213,12 +209,14 @@ public class AuthActivity extends AppCompatActivity {
         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(AuthActivity.this)
                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle(title)
+                .setDialogBackgroundColor(getResources().getColor(R.color.default_bg_color))
+                .setTextColor(getResources().getColor(R.color.colorPrimary))
                 .setIcon(R.drawable.ic_check_circle_black_24dp)
                 .setMessage(message)
                 .setCancelable(false)
                 .addButton("OK",
-                        getResources().getColor(R.color.colorPrimaryDark),
-                        getResources().getColor(R.color.white),
+                        getResources().getColor(R.color.colorPrimary),
+                        getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
                         CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {
@@ -236,12 +234,13 @@ public class AuthActivity extends AppCompatActivity {
                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle(title)
                 .setIcon(R.drawable.ic_cancel_black_24dp)
-
+                .setDialogBackgroundColor(getResources().getColor(R.color.default_bg_color))
+                .setTextColor(getResources().getColor(R.color.colorPrimary))
                 .setMessage(message)
                 .setCancelable(false)
                 .addButton("OK",
-                        getResources().getColor(R.color.colorPrimaryDark),
-                        getResources().getColor(R.color.white),
+                        getResources().getColor(R.color.colorPrimary),
+                        getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
                         CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {

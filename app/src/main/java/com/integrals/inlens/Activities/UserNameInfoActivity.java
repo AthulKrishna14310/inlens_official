@@ -168,11 +168,13 @@ public class UserNameInfoActivity extends AppCompatActivity {
         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle(title)
+                .setDialogBackgroundColor(getResources().getColor(R.color.cf_bg_color))
+                .setTextColor(getResources().getColor(R.color.colorPrimary))
                 .setIcon(R.drawable.ic_check_circle_black_24dp)
                 .setMessage(message)
                 .setCancelable(false)
-                .addButton("OK", getResources().getColor(R.color.colorPrimaryDark),
-                        getResources().getColor(R.color.white),
+                .addButton("OK", getResources().getColor(R.color.colorPrimary),
+                        getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
                         CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {

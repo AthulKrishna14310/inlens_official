@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white">
+    android:background="@color/default_dim_bg">
 
     <android.support.v7.widget.CardView
         android:id="@+id/imageView_photographer_card"
@@ -12,7 +12,7 @@
         android:layout_marginLeft="16dp"
 
         android:layout_marginTop="16dp"
-        android:layout_marginRight="4dp"
+        android:layout_marginRight="8dp"
         android:layout_marginBottom="16dp"
         app:cardCornerRadius="40dp"
         app:cardElevation="0dp">
@@ -23,7 +23,7 @@
             android:layout_height="80dp"
             android:layout_gravity="center"
             android:src="@drawable/ic_account_circle_24dp"
-            android:tint="@color/colorPrimary" />
+            android:tint="@color/colorSecondary" />
 
         <ProgressBar
             android:id="@+id/photographer_progressbar"
@@ -31,7 +31,7 @@
             android:layout_height="20dp"
             android:layout_gravity="center"
             android:indeterminate="true"
-            android:indeterminateTint="@color/white" />
+            android:indeterminateTint="@color/default_dim_bg" />
 
     </android.support.v7.widget.CardView>
 
@@ -44,7 +44,7 @@
         android:fontFamily="@font/base_font"
         android:maxLines="1"
         android:text="Photographer Name"
-        android:textColor="@color/colorPrimaryDark"
+        android:textColor="@color/colorSecondary"
         android:textSize="20sp" />
 
     <TextView
@@ -72,7 +72,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/divider"
-        android:background="@color/white"
+        android:background="@color/default_dim_bg"
         android:clickable="true"
         android:foreground="?attr/selectableItemBackgroundBorderless"
         android:padding="16dp">
@@ -87,7 +87,7 @@
             android:text="YOU ARE ADMIN"
             android:textAlignment="center"
             android:textAllCaps="true"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/colorSecondary"
             android:textSize="14sp"
 
             >

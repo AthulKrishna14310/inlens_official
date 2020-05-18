@@ -2,9 +2,10 @@
 <LinearLayout
     android:orientation="vertical"
     android:background="@color/grey_5"
+
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:backgroundTint="@color/white"
+    android:backgroundTint="@color/default_bg_color"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/rootCreateCloudAlbum">
@@ -13,7 +14,7 @@
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="@dimen/zero_dimen_create_cloud_album_activity"
-        android:background="@color/white"
+        android:background="@color/default_bg_color"
         android:layout_weight="1.0">
 
         <ImageButton
@@ -21,6 +22,7 @@
             android:layout_width="@dimen/back_button_size_create_cloud_album_activity"
             android:layout_height="@dimen/back_button_size_create_cloud_album_activity"
             android:layout_marginLeft="@dimen/back_button_margin_left_create_cloud_album_activity"
+            android:tint="@color/colorPrimary"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_arrow_back"
             android:layout_marginTop="@dimen/back_button_margin_top_create_cloud_album"
@@ -32,29 +34,27 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:orientation="vertical"
-            android:background="@color/white"
+            android:background="@color/default_bg_color"
             android:padding="@dimen/spacing_smlarge">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/underline_margin_left_create_cloud_album_activity"
-                android:layout_marginBottom="@dimen/spacing_middle"
-                android:text="Create Cloud-Album"
+                android:layout_marginBottom="4dp"
+                android:text="Create  Cloud-Album"
                 android:textAllCaps="true"
                 android:fontFamily="@font/base_font"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                 android:textColor="@color/colorPrimary"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 />
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/underline_height_create_cloud_album_activity"
+                android:layout_height="2dp"
 
-                android:layout_marginLeft="@dimen/underline_margin_left_create_cloud_album_activity"
-                android:layout_marginRight="@dimen/underline_margin_left_create_cloud_album_activity"
-                android:background="@color/colorPrimaryDark"
+               android:background="@color/colorPrimary"
                 />
 
 
@@ -62,8 +62,8 @@
             <android.support.v7.widget.CardView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/card_margin_create_cloud_album_activity"
-                android:layout_marginRight="@dimen/card_margin_create_cloud_album_activity"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
                 android:visibility="visible"
                 app:cardCornerRadius="@dimen/card_corner_radius_create_cloud_album_activity"
                 app:cardElevation="@dimen/card_elevation_create_cloud_album_activity">
@@ -72,59 +72,72 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:background="@color/white"
-                    android:padding="@dimen/spacing_mlarge">
+                    android:background="@color/default_dim_bg"
+                    android:padding="16dp">
 
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:id="@+id/AlbumTitleEdittextLayout"
                         android:layout_height="wrap_content"
-                        android:text="ALBUM NAME"
-                        android:fontFamily="@font/base_font"
-                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
-                        android:textColor="@color/grey_40" />
+                        android:layout_below="@id/user_name_activity_edittext_layout"
+                        app:hintEnabled="true"
+                        app:boxBackgroundMode="outline"
+                        app:boxCornerRadiusTopEnd="4dp"
+                        app:boxCornerRadiusBottomEnd="4dp"
+                        app:boxCornerRadiusBottomStart="4dp"
+                        app:boxCornerRadiusTopStart="4dp"
+                        android:layout_marginTop="24dp"
+                        app:boxStrokeColor="@color/colorSecondary"
+                        app:boxStrokeWidth="1dp"
 
-                    <android.support.design.widget.TextInputEditText
-                        android:id="@+id/AlbumTitleEditText"
-                        android:layout_width="fill_parent"
+                        >
+                         <android.support.design.widget.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:textColor="@color/colorSecondary"
+                            android:padding="16dp"
+                            android:hint="Album Title"
+
+                            android:fontFamily="@font/base_font"
+                            android:textSize="16sp"
+                            android:id="@+id/AlbumTitleEditText"
+                            />
+                    </android.support.design.widget.TextInputLayout>
+
+
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:id="@+id/AlbumDescriptionEdittextLayout"
                         android:layout_height="wrap_content"
-                        android:inputType="text"
-                        android:maxLength="50"
-                        android:fontFamily="@font/base_font"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-                        android:textColor="@color/colorPrimary"
-                        android:textStyle="bold"
-                        android:imeOptions="actionNext"
-                        android:theme="@style/EditText.Grey"
-                        />
+                        app:boxBackgroundColor="@color/default_dim_bg"
+                        android:layout_below="@id/user_name_activity_edittext_layout"
+                        app:hintEnabled="true"
+                        app:boxBackgroundMode="outline"
+                        app:boxCornerRadiusTopEnd="4dp"
+                        app:boxCornerRadiusBottomEnd="4dp"
+                        app:boxCornerRadiusBottomStart="4dp"
+                        app:boxCornerRadiusTopStart="4dp"
+                        android:layout_marginTop="24dp"
+                        app:boxStrokeColor="@color/colorSecondary"
+                        app:boxStrokeWidth="1dp"
 
-                    <View
-                        android:layout_width="@dimen/zero_dimen_create_cloud_album_activity"
-                        android:layout_height="@dimen/spacing_mlarge" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="ALBUM DESCRIPTION"
-                        android:fontFamily="@font/base_font"
-                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
-                        android:textColor="@color/grey_40" />
-
-                    <android.support.design.widget.TextInputEditText
-                        android:id="@+id/AlbumDescriptionEditText"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:maxLength="50"
-                        android:maxLines="1"
-                        android:fontFamily="@font/base_font"
-                        android:inputType="text"
-                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-                        android:textColor="@color/colorPrimary"
-                        android:textStyle="bold"
-                        android:imeOptions="actionDone"
-                        android:theme="@style/EditText.Grey" />
+                        >
+                        <android.support.design.widget.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            android:backgroundTint="@color/default_dim_bg"
+                            android:textColor="@color/colorSecondary"
+                            android:padding="16dp"
+                            android:hint="Album Description"
+                            android:fontFamily="@font/base_font"
+                            android:textSize="16sp"
+                            android:id="@+id/AlbumDescriptionEditText"
+                            />
+                    </android.support.design.widget.TextInputLayout>
 
 
 <RelativeLayout
@@ -153,6 +166,7 @@
                     <ImageButton
                         android:layout_width="@dimen/image_button_create_album_layout_activity"
                         android:layout_height="@dimen/image_button_create_album_layout_activity"
+                        android:tint="@color/colorSecondary"
                         android:id="@+id/date_range_button"
                         android:layout_margin="@dimen/image_button_margin_create_cloud_album"
                         android:src="@drawable/ic_date_range_24dp"
@@ -185,6 +199,7 @@
                             android:layout_width="@dimen/image_button_create_album_layout_activity"
                             android:layout_height="@dimen/image_button_create_album_layout_activity"
                             android:id="@+id/event_type_add"
+                            android:tint="@color/colorSecondary"
                             android:layout_margin="@dimen/image_button_margin_create_cloud_album"
                             android:src="@drawable/ic_event_type_24dp"
                             android:background="?attr/selectableItemBackgroundBorderless"
@@ -216,7 +231,6 @@
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:layout_alignParentBottom="true"
-
         android:background="@drawable/create_cloud_album_done_btn_bg">
 
         <TextView
@@ -228,6 +242,6 @@
             android:text="DONE"
             android:fontFamily="@font/base_font"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
-            android:textColor="@color/colorSecondary" />
+            android:textColor="@color/colorPrimary" />
     </com.balysv.materialripple.MaterialRippleLayout>
 </LinearLayout>

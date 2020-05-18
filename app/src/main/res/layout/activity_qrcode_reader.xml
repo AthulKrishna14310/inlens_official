@@ -33,7 +33,7 @@
         android:layout_gravity="top|center_horizontal"
         android:layout_marginBottom="28dp"
         android:text="Scan the Cloud Album QR"
-        android:textColor="@android:color/white"
+        android:textColor="@color/default_bg_color"
         android:textSize="15sp"
         android:fontFamily="@font/base_font"
         android:visibility="visible" />

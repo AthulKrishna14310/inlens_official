@@ -7,39 +7,39 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    android:background="@color/white"
+    android:background="@color/default_bg_color"
     tools:context=".MainActivity">
 
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white">
+        android:background="@color/default_bg_color">
 
 
         <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white"
+            android:background="@color/default_bg_color"
             android:orientation="vertical">
 
             <android.support.design.widget.AppBarLayout
                 android:id="@+id/main_appbarlayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white">
+                android:background="@color/default_bg_color">
 
                 <android.support.design.widget.CollapsingToolbarLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/white"
+                    android:background="@color/default_bg_color"
                     app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="?attr/actionBarSize"
-                        android:background="@color/white"
+                        android:background="@color/default_bg_color"
                         android:orientation="vertical">
 
                         <LinearLayout
@@ -54,7 +54,7 @@
                                 android:layout_marginTop="10dp"
                                 android:layout_marginRight="10dp"
                                 android:layout_marginBottom="10dp"
-                                android:background="@color/white"
+                                android:background="@color/default_bg_color"
                                 android:fontFamily="@font/base_font"
                                 android:text="Albums"
                                 android:visibility="gone"
@@ -66,7 +66,7 @@
                                 android:id="@+id/main_horizontal_recyclerview"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
-                                android:background="@color/white"
+                                android:background="@color/default_bg_color"
                                 android:orientation="horizontal" />
 
                             <com.integrals.inlens.Helper.ExpandableCardView
@@ -92,7 +92,7 @@
                             android:layout_marginTop="10dp"
                             android:layout_marginRight="10dp"
                             android:layout_marginBottom="10dp"
-                            android:background="@color/white"
+                            android:background="@color/default_bg_color"
                             android:fontFamily="@font/base_font"
                             android:text="Photos"
                             android:textColor="@color/colorPrimary"
@@ -106,7 +106,7 @@
                         android:id="@+id/main_toolbar"
                         android:layout_width="match_parent"
                         android:layout_height="?attr/actionBarSize"
-                        android:background="@color/white"
+                        android:background="@color/default_bg_color"
                         app:contentInsetLeft="0dp"
                         app:contentInsetStart="0dp"
                         app:layout_collapseMode="pin"
@@ -116,19 +116,20 @@
                             android:id="@+id/mainactivity_toolbar"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:background="@color/white">
+                            android:background="@color/default_bg_color">
 
                             <RelativeLayout
                                 android:id="@+id/mainactivity_actionbar_relativelayout"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:background="@color/white">
+
+                                android:background="@color/default_dim_bg">
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_centerInParent="true"
-                                    android:background="@color/white"
+                                    android:background="@color/default_dim_bg"
                                     android:fontFamily="@font/base_font"
                                     android:text="@string/app_name"
                                     android:textColor="@color/colorPrimary"
@@ -142,6 +143,7 @@
                                     android:layout_alignParentStart="true"
                                     android:layout_centerVertical="true"
                                     android:layout_marginLeft="16dp"
+                                    android:tint="@color/colorPrimary"
                                     android:layout_marginTop="5dp"
                                     android:layout_marginRight="5dp"
                                     android:layout_marginBottom="5dp"
@@ -158,6 +160,7 @@
                                     android:layout_marginTop="5dp"
                                     android:layout_marginRight="16dp"
                                     android:layout_marginBottom="5dp"
+                                    android:tint="@color/colorPrimary"
                                     android:background="?selectableItemBackgroundBorderless"
                                     android:src="@drawable/ic_search" />
 
@@ -215,7 +218,7 @@
                 android:id="@+id/main_recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/white"
+                android:background="@color/default_bg_color"
                 app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior"></android.support.v7.widget.RecyclerView>
 
 
@@ -254,6 +257,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:backgroundTint="@color/colorSecondary"
                 android:src="@drawable/ic_add_a_photo_24dp"
+                android:tint="@color/default_bg_color"
                 android:visibility="gone"
                 app:fabSize="normal" />
         </com.skyfishjy.library.RippleBackground>
@@ -264,7 +268,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_gravity="bottom|center"
-            android:background="@color/quantum_googred700"
+            android:background="@color/red_inlens"
             android:visibility="gone">
 
             <TextView
@@ -274,7 +278,7 @@
                 android:gravity="center"
                 android:padding="2dp"
                 android:text=" Internet connection lost."
-                android:textColor="@color/white"
+                android:textColor="@color/default_bg_color"
                 android:textSize="14sp" />
 
         </RelativeLayout>
@@ -287,10 +291,6 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:itemIconTint="@color/grey_700"
-        app:itemTextColor="@color/colorPrimary"
-
-        android:background="@color/white"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/navigation_menu">
 

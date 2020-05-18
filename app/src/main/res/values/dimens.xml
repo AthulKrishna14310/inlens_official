@@ -155,10 +155,7 @@
     <dimen name="spacing_medium">3.0dip</dimen>
     <dimen name="spacing_middle">6.0dip</dimen>
     <dimen name="spacing_mlarge">25.0dip</dimen>
-    <dimen name="spacing_mxlarge">25.0dip</dimen>
-    <dimen name="spacing_small">3.0dip</dimen>
     <dimen name="spacing_smlarge">18.0dip</dimen>
-    <dimen name="spacing_xmedium">7.0dip</dimen>
     <dimen name="tooltip_corner_radius">2.0dip</dimen>
     <dimen name="tooltip_horizontal_padding">16.0dip</dimen>
     <dimen name="tooltip_margin">8.0dip</dimen>
@@ -167,7 +164,6 @@
     <dimen name="tooltip_vertical_padding">6.5dip</dimen>
     <dimen name="tooltip_y_offset_non_touch">0.0dip</dimen>
     <dimen name="tooltip_y_offset_touch">16.0dip</dimen>
-    <dimen name="indicator_height">5.0dip</dimen>
     <dimen name="dim30dp">30dp</dimen>
 
 
@@ -183,7 +179,6 @@
     <dimen name="back_button_size_create_cloud_album_activity">24dp</dimen>
     <dimen name="card_margin_create_cloud_album_activity">4dp</dimen>
     <dimen name="image_button_margin_create_cloud_album">5dp</dimen>
-    <dimen name="view_width_create_cloud_album_activity">0dp</dimen>
     <dimen name="underline_height_create_cloud_album_activity">4dp</dimen>
     <item type ="dimen" name="card_corner_radius_create_cloud_album_activity" >0dp</item>
     <item type="dimen" name="card_elevation_create_cloud_album_activity">2dp</item>

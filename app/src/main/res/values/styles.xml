@@ -1,14 +1,18 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimaryLight</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorPrimaryLight</item>
+
         <item name="android:fontFamily">@font/base_font</item>
 
     </style>
+
+
+
 
     <style name="AppThemeGallery" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
@@ -16,9 +20,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorPrimaryLight</item>
     </style>
-    <style name="RippleStyleBlack">
-        <item name="mrl_rippleColor">#8096989a</item>
-    </style>
+
     <style name="EditText.Grey" parent="@style/AppTheme">
         <item name="colorControlActivated">@color/grey_60</item>
         <item name="colorControlHighlight">@color/grey_60</item>
@@ -34,22 +36,17 @@
     </style>
     <style name="RippleStyleWhite">
         <item name="mrl_rippleAlpha">1.5</item>
-        <item name="mrl_rippleColor">@color/colorSecondary</item>
+        <item name="mrl_rippleColor">@color/colorPrimaryLight</item>
         <item name="mrl_rippleHover">true</item>
         <item name="mrl_rippleOverlay">true</item>
     </style>
     <style name="RippleStyleWhite2">
         <item name="mrl_rippleAlpha">1.5</item>
-        <item name="mrl_rippleColor">@color/colorSecondaryDark</item>
+        <item name="mrl_rippleColor">@color/colorSecondary</item>
         <item name="mrl_rippleHover">true</item>
         <item name="mrl_rippleOverlay">true</item>
     </style>
-    <style name="RippleStyleRed">
-        <item name="mrl_rippleAlpha">1.5</item>
-        <item name="mrl_rippleColor">@color/red_500</item>
-        <item name="mrl_rippleHover">true</item>
-        <item name="mrl_rippleOverlay">true</item>
-    </style>
+
     <style name="CalenderTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
