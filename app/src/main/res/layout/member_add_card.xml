@@ -17,8 +17,10 @@
             android:layout_height="32dp"
             android:layout_gravity="center"
             android:src="@drawable/ic_add_memberdp"
-            android:foregroundTint="@color/colorSecondary"
-            app:civ_border_color="@color/colorSecondary"
+            android:tint="@color/action_secondary"
+
+            android:foregroundTint="@color/action_secondary"
+            app:civ_border_color="@color/action_secondary"
             app:civ_border_width="1dp"
 
             app:civ_fill_color="@color/default_dim_bg" />

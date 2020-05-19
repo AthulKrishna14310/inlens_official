@@ -39,7 +39,7 @@
             android:layout_height="100dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
-            android:tint="@color/colorSecondary"
+            android:tint="@color/action_secondary"
             android:scaleType="center"
             app:srcCompat="@drawable/ic_add_black_24dp"
             tools:ignore="VectorDrawableCompat" />

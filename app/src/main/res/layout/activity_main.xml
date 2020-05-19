@@ -255,7 +255,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:backgroundTint="@color/colorSecondary"
+                android:backgroundTint="@color/action_secondary"
                 android:src="@drawable/ic_add_a_photo_24dp"
                 android:tint="@color/default_bg_color"
                 android:visibility="gone"

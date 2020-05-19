@@ -2,25 +2,28 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Change below -->
-    <color name="colorPrimary">#fafafa</color>
-    <color name="colorPrimaryLight">#E7E7E7</color>
-    <color name="colorPrimaryDark">#000000</color>
-    <color name="colorSecondary">#e8eaf6</color>
-    <color name="colorSecondaryDark">#ffffff</color>
-    <color name="colorSecondaryLight">#b6b8c3</color>
+    <color name="colorPrimary">#0d47a1</color>
+    <color name="colorPrimaryLight">#5472d3</color>
+    <color name="colorPrimaryDark">#002171</color>
+    <color name="colorSecondary">#4a148c</color>
+    <color name="colorSecondaryDark">#12005e</color>
+    <color name="colorSecondaryLight">#7c43bd</color>
     <color name="colorAccent">@color/colorPrimaryLight</color>
-    <color name="default_bg_color">#121212</color>
+    <color name="default_bg_color">#fafafa</color>
     <color name="icon_color">@color/colorPrimary</color>
     <color name="icon_color_red">@color/red_inlens</color>
-    <color name="red_inlens">#ef9a9a</color>
-    <color name="cf_bg_color">@color/default_dim_bg</color>
-    <color name="default_dim_bg">#262F36</color>
+    <color name="red_inlens">#CF6679</color>
+    <color name="cf_bg_color">#eeeeee</color>
+    <color name="default_dim_bg">#f5f5f5</color>
     <color name="red_300">#ffe57373</color>
     <color name="icon_color_secondary">@color/colorSecondary</color>
-    <color name="cf_alert_dialogue_dim_bg" tools:ignore="MissingDefaultResource">#3B4D5D</color>
-
+    <color name="cf_alert_dialogue_dim_bg" tools:ignore="MissingDefaultResource">#ffffff</color>
+    <color name="border">@color/colorSecondary</color>
+    <color name="action_secondary">@color/colorSecondary</color>
+    <color name="check_color">#81c784</color>
+    <color name="red_cancel_icon">#e57373</color>
+    <color name="info_icon_color">#64b5f6</color>
     <!-- Change above -->
-
 
     <color name="dimdark">#3c3c3c</color>
     <color name="brightdark">#1b1b1b</color>
