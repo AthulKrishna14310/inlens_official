@@ -15,4 +15,9 @@ public class AppConstants {
     public static final String AUTH = "Login and Auth" ;
     public static final String MAINACTIVITY = "MainActivity_IN";
     public static final String IS_NOTIFIED = "isNotified";
+
+    public static final String appDataPref="ApplicationData.Pref";
+    public static final String appDataPref_theme="theme";
+    public static final String themeLight="light";
+    public static final String themeDark="dark";
 }

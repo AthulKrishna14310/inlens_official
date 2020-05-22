@@ -1,29 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Change below -->
-    <color name="colorPrimary">#0d47a1</color>
-    <color name="colorPrimaryLight">#5472d3</color>
-    <color name="colorPrimaryDark">#002171</color>
-    <color name="colorSecondary">#4a148c</color>
-    <color name="colorSecondaryDark">#12005e</color>
-    <color name="colorSecondaryLight">#7c43bd</color>
-    <color name="colorAccent">@color/colorPrimaryLight</color>
-    <color name="default_bg_color">#fafafa</color>
-    <color name="icon_color">@color/colorPrimary</color>
-    <color name="icon_color_red">@color/red_inlens</color>
-    <color name="red_inlens">#CF6679</color>
-    <color name="cf_bg_color">#eeeeee</color>
-    <color name="default_dim_bg">#f5f5f5</color>
-    <color name="red_300">#ffe57373</color>
-    <color name="icon_color_secondary">@color/colorSecondary</color>
-    <color name="cf_alert_dialogue_dim_bg" tools:ignore="MissingDefaultResource">#ffffff</color>
-    <color name="border">@color/colorSecondary</color>
-    <color name="action_secondary">@color/colorSecondary</color>
-    <color name="check_color">#81c784</color>
-    <color name="red_cancel_icon">#e57373</color>
-    <color name="info_icon_color">#64b5f6</color>
-    <!-- Change above -->
+    /// Dark theme
+    <color name="colorDarkPrimary">#fafafa</color>
+    <color name="colorDarkPrimaryLight">#E7E7E7</color>
+    <color name="colorDarkPrimaryDark">#000000</color>
+    <color name="colorDarkSecondary">#e8eaf6</color>
+    <color name="colorDarkSecondaryDark">#ffffff</color>
+    <color name="colorDarkSecondaryLight">#b6b8c3</color>
+    <color name="colorDarkAccent">@color/colorDarkPrimaryLight</color>
+    <color name="Dark_default_bg_color">#121212</color>
+    <color name="Dark_icon_color">@color/colorDarkPrimary</color>
+    <color name="Dark_icon_color_red">@color/Dark_red_inlens</color>
+    <color name="Dark_red_inlens">#ef9a9a</color>
+    <color name="Dark_cf_bg_color">@color/Dark_default_dim_bg</color>
+    <color name="Dark_default_dim_bg">#262626</color>
+    <color name="Dark_red_300">#ffe57373</color>
+    <color name="Dark_cf_alert_dialogue_dim_bg" tools:ignore="MissingDefaultResource">#363636</color>
+
+    <color name="Dark_border">@color/Dark_default_dim_bg</color>
+    <color name="Dark_action_secondary">#e1bee7</color>
+    <color name="Dark_check_color">#81c784</color>
+    <color name="Dark_red_cancel_icon">#e57373</color>
+    <color name="Dark_info_icon_color">#64b5f6</color>
+
+
+
+    //// Light Theme
+
+    <color name="colorLightPrimary">#0d47a1</color>
+    <color name="colorLightPrimaryLight">#5472d3</color>
+    <color name="colorLightPrimaryDark">#002171</color>
+    <color name="colorLightSecondary">#4a148c</color>
+    <color name="colorLightSecondaryDark">#12005e</color>
+    <color name="colorLightSecondaryLight">#7c43bd</color>
+    <color name="colorLightAccent">@color/colorLightPrimaryLight</color>
+    <color name="Light_default_bg_color">#fafafa</color>
+    <color name="Light_icon_color">@color/colorLightPrimary</color>
+    <color name="Light_icon_color_red">@color/Light_red_inlens</color>
+    <color name="Light_red_inlens">#CF6679</color>
+    <color name="Light_cf_bg_color">#eeeeee</color>
+    <color name="Light_default_dim_bg">#f5f5f5</color>
+    <color name="Light_red_300">#ffe57373</color>
+    <color name="Light_icon_color_secondary">@color/colorLightSecondary</color>
+    <color name="Light_cf_alert_dialogue_dim_bg" tools:ignore="MissingDefaultResource">#ffffff</color>
+
+    <color name="Light_border">@color/colorLightSecondary</color>
+    <color name="Light_action_secondary">@color/colorLightSecondary</color>
+    <color name="Light_check_color">#81c784</color>
+    <color name="Light_red_cancel_icon">#e57373</color>
+    <color name="Light_info_icon_color">#64b5f6</color>
+
+    /// others
 
     <color name="dimdark">#3c3c3c</color>
     <color name="brightdark">#1b1b1b</color>

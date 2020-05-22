@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:background="@color/default_bg_color"
+    android:background="?attr/default_bg_color"
     android:layout_height="wrap_content">
 
     <TextView
@@ -12,7 +12,7 @@
         android:text="Directory name"
         android:textSize="14sp"
         android:layout_weight="1"
-        android:textColor="@color/colorPrimary"
+        android:textColor="?attr/colorPrimary"
         android:fontFamily="@font/base_font"
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"

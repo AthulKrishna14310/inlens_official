@@ -2,6 +2,7 @@ package com.integrals.inlens.Activities;
 
 import android.content.Context;
 
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
@@ -25,6 +26,7 @@ import com.bumptech.glide.request.target.Target;
 
 import java.util.ArrayList;
 
+import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Models.PostModel;
 import com.integrals.inlens.R;
 import uk.co.senab.photoview.PhotoViewAttacher;
@@ -41,8 +43,35 @@ public class PhotoView extends AppCompatActivity {
     private int TotalPosts;
 
 
+    String appTheme="";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        SharedPreferences appDataPref = getSharedPreferences(AppConstants.appDataPref, Context.MODE_PRIVATE);
+        final SharedPreferences.Editor appDataPrefEditor = appDataPref.edit();
+        if(appDataPref.contains(AppConstants.appDataPref_theme))
+        {
+            appTheme = appDataPref.getString(AppConstants.appDataPref_theme,AppConstants.themeLight);
+            if(appTheme.equals(AppConstants.themeLight))
+            {
+                setTheme(R.style.AppTheme);
+            }
+            else
+            {
+                setTheme(R.style.DarkTheme);
+
+            }
+        }
+        else
+        {
+            appTheme = AppConstants.themeLight;
+            appDataPrefEditor.putString(AppConstants.appDataPref_theme,AppConstants.themeLight);
+            appDataPrefEditor.commit();
+            setTheme(R.style.AppTheme);
+
+        }
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);

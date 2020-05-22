@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/default_bg_color"
+    android:background="?attr/default_bg_color"
     tools:context=".Activities.SplashScreenActivity">
 
     <TextView
@@ -16,7 +16,7 @@
         android:textStyle="bold"
         android:layout_below="@id/appicon"
         android:textSize="20sp"
-        android:textColor="@color/colorPrimary"/>
+        android:textColor="?attr/colorPrimary"/>
 
 
     <ImageView
@@ -25,13 +25,13 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="140dp"
-        android:tint="@color/colorPrimary"
+        android:tint="?attr/colorPrimary"
         android:src="@mipmap/ic_launcher_foreground" />
 
     <ProgressBar
         android:layout_width="@dimen/dim30dp"
         android:layout_height="@dimen/dim30dp"
-        android:indeterminateTint="@color/colorPrimaryLight"
+        android:indeterminateTint="?attr/colorPrimaryLight"
         android:indeterminate="true"
         android:layout_centerHorizontal="true"
         android:layout_above="@id/appabout"
@@ -49,7 +49,7 @@
         android:fontFamily="@font/base_font"
         android:text="By Team InLens."
         android:textAllCaps="true"
-        android:textColor="@color/colorPrimaryLight"
+        android:textColor="?attr/colorPrimaryLight"
         android:textSize="14sp"
         android:visibility="gone" />
 

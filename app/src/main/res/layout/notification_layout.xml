@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="64dp"
-    android:background="@color/default_dim_bg">
+    android:background="?attr/default_dim_bg">
 <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="12dp"
@@ -17,7 +17,7 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
         android:elevation="0dp"
-        android:backgroundTint="@color/colorPrimary"
+        android:backgroundTint="?attr/colorPrimary"
         android:layout_alignParentTop="true"
         android:background="@drawable/ic_notification"
         />
@@ -29,18 +29,18 @@
         android:fontFamily="@font/base_font"
         android:layout_centerVertical="true"
         android:textSize="8sp"
-        android:textColor="@color/colorPrimary"
+        android:textColor="?attr/colorPrimary"
         />
 </RelativeLayout>
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_collections"
-        android:tint="@color/colorPrimary"
+        android:tint="?attr/colorPrimary"
         android:layout_centerVertical="true"
 
         android:layout_marginLeft="16dp"
-        android:background="@color/default_bg_color"
+        android:background="?attr/default_bg_color"
 
         />
 
@@ -52,7 +52,7 @@
 
         android:fontFamily="@font/base_font"
         android:text="Open your Gallery"
-        android:textColor="@color/colorPrimary"
+        android:textColor="?attr/colorPrimary"
         android:layout_below="@id/titleLayout"
         android:textSize="14sp"
         android:textStyle="bold" />
@@ -67,6 +67,6 @@
         android:layout_marginTop="2dp"
         android:fontFamily="@font/base_font"
         android:text="Tap to upload photos to Cloud-Album"
-        android:textColor="@color/colorPrimary"
+        android:textColor="?attr/colorPrimary"
         android:textSize="12sp" />
 </RelativeLayout>

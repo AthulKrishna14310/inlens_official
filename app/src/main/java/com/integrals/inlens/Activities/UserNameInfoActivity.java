@@ -1,7 +1,9 @@
 package com.integrals.inlens.Activities;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -47,9 +49,34 @@ public class UserNameInfoActivity extends AppCompatActivity {
 
     private ProgressBar userInfoProgressbar;
 
+    String appTheme="";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences appDataPref = getSharedPreferences(AppConstants.appDataPref, Context.MODE_PRIVATE);
+        final SharedPreferences.Editor appDataPrefEditor = appDataPref.edit();
+        if(appDataPref.contains(AppConstants.appDataPref_theme))
+        {
+            appTheme = appDataPref.getString(AppConstants.appDataPref_theme,AppConstants.themeLight);
+            if(appTheme.equals(AppConstants.themeLight))
+            {
+                setTheme(R.style.AppTheme);
+            }
+            else
+            {
+                setTheme(R.style.DarkTheme);
+
+            }
+        }
+        else
+        {
+            appTheme = AppConstants.themeLight;
+            appDataPrefEditor.putString(AppConstants.appDataPref_theme,AppConstants.themeLight);
+            appDataPrefEditor.commit();
+            setTheme(R.style.AppTheme);
+
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_name_info);
 
@@ -165,16 +192,34 @@ public class UserNameInfoActivity extends AppCompatActivity {
     }
 
     public void showDialogMessage(String title, String message) {
+
+        int cf_bg_color,colorPrimary,red_inlens,cf_alert_dialogue_dim_bg;
+        if(appTheme.equals(AppConstants.themeLight))
+        {
+            cf_bg_color = getResources().getColor(R.color.Light_cf_bg_color);
+            colorPrimary = getResources().getColor(R.color.colorLightPrimary);
+            red_inlens =  getResources().getColor(R.color.Light_red_inlens);
+            cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Light_cf_alert_dialogue_dim_bg);
+        }
+        else
+        {
+            cf_bg_color = getResources().getColor(R.color.Dark_cf_bg_color);
+            colorPrimary = getResources().getColor(R.color.colorDarkPrimary);
+            red_inlens =  getResources().getColor(R.color.Dark_red_inlens);
+            cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Dark_cf_alert_dialogue_dim_bg);
+
+        }
+
         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                 .setTitle(title)
-                .setDialogBackgroundColor(getResources().getColor(R.color.cf_bg_color))
-                .setTextColor(getResources().getColor(R.color.colorPrimary))
+                .setDialogBackgroundColor(cf_bg_color)
+                .setTextColor(colorPrimary)
                 .setIcon(R.drawable.ic_check_circle_black_24dp)
                 .setMessage(message)
                 .setCancelable(false)
-                .addButton("OK", getResources().getColor(R.color.colorPrimary),
-                        getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
+                .addButton("OK", colorPrimary,
+                        cf_alert_dialogue_dim_bg,
                         CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {

@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="32dp"
     android:layout_height="32dp"
-    app:cardBackgroundColor="@color/default_bg_color"
+    app:cardBackgroundColor="?attr/default_bg_color"
     app:cardElevation="0dp"
     android:layout_marginRight="16dp"
     android:layout_marginLeft="16dp"
@@ -17,13 +17,13 @@
             android:layout_height="32dp"
             android:layout_gravity="center"
             android:src="@drawable/ic_add_memberdp"
-            android:tint="@color/action_secondary"
+            android:tint="?attr/action_secondary"
 
-            android:foregroundTint="@color/action_secondary"
-            app:civ_border_color="@color/action_secondary"
+            android:foregroundTint="?attr/action_secondary"
+            app:civ_border_color="?attr/action_secondary"
             app:civ_border_width="1dp"
 
-            app:civ_fill_color="@color/default_dim_bg" />
+            app:civ_fill_color="?attr/default_dim_bg" />
 
 
 

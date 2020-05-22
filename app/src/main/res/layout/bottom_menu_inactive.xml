@@ -5,14 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/default_dim_bg">
+    android:background="?attr/default_dim_bg">
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@color/default_dim_bg"
+        android:background="?attr/default_dim_bg"
         >
 
         <TextView
@@ -25,19 +25,19 @@
             android:layout_marginBottom="16dp"
             android:layout_marginEnd="16dp"
             android:textStyle="bold"
-            android:background="@color/default_dim_bg"
+            android:background="?attr/default_dim_bg"
             android:fontFamily="@font/base_font"
             android:text="Album Header"
             android:textSize="24sp"
-            android:textColor="@color/colorSecondary"/>
+            android:textColor="?attr/colorSecondary"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="DETAILS"
-            android:textColor="@color/colorPrimary"
+            android:textColor="?attr/colorPrimary"
             android:layout_margin="1dp"
-            android:background="@color/default_dim_bg"
+            android:background="?attr/default_dim_bg"
             android:textSize="12sp"
             android:alpha="0.6"
             android:textAlignment="center"
@@ -52,7 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@color/default_dim_bg"
+            android:background="?attr/default_dim_bg"
             >
             <TextView
                 android:layout_width="match_parent"
@@ -61,20 +61,20 @@
                 android:text="Album subtitle"
                 android:textStyle="bold"
                 android:layout_marginTop="6dp"
-                android:background="@color/default_dim_bg"
+                android:background="?attr/default_dim_bg"
                 android:layout_marginBottom="6dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:textSize="16sp"
                 android:fontFamily="@font/base_font"
-                android:textColor="@color/colorSecondary"
+                android:textColor="?attr/colorSecondary"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/default_dim_bg"
+                android:background="?attr/default_dim_bg"
                 android:orientation="horizontal"
                 android:padding="4dp">
 
@@ -83,12 +83,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@color/default_dim_bg"
+                    android:background="?attr/default_dim_bg"
                     android:fontFamily="@font/base_font"
                     android:gravity="center"
                     android:inputType="text"
                     android:text=" Type -"
-                    android:textColor="@color/colorSecondary"
+                    android:textColor="?attr/colorSecondary"
                     android:textSize="14sp" />
 
                 <TextView
@@ -96,12 +96,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@color/default_dim_bg"
+                    android:background="?attr/default_dim_bg"
                     android:fontFamily="@font/base_font"
                     android:gravity="center"
                     android:inputType="text"
                     android:text="typw"
-                    android:textColor="@color/colorSecondary"
+                    android:textColor="?attr/colorSecondary"
                     android:textSize="14sp" />
 
             </LinearLayout>
@@ -109,7 +109,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/default_dim_bg"
+                android:background="?attr/default_dim_bg"
                 android:orientation="horizontal"
                 android:padding="4dp">
 
@@ -117,12 +117,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@color/default_dim_bg"
+                    android:background="?attr/default_dim_bg"
                     android:fontFamily="@font/base_font"
                     android:gravity="center"
                     android:inputType="text"
                     android:text="Started at -"
-                    android:textColor="@color/colorSecondary"
+                    android:textColor="?attr/colorSecondary"
                     android:textSize="14sp" />
 
                 <TextView
@@ -130,12 +130,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@color/default_dim_bg"
+                    android:background="?attr/default_dim_bg"
                     android:fontFamily="@font/base_font"
                     android:gravity="center"
                     android:inputType="text"
                     android:text="start"
-                    android:textColor="@color/colorSecondary"
+                    android:textColor="?attr/colorSecondary"
                     android:textSize="14sp" />
 
             </LinearLayout>
@@ -143,7 +143,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/default_dim_bg"
+                android:background="?attr/default_dim_bg"
                 android:orientation="horizontal"
                 android:padding="4dp">
 
@@ -151,12 +151,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@color/default_dim_bg"
+                    android:background="?attr/default_dim_bg"
                     android:fontFamily="@font/base_font"
                     android:gravity="center"
                     android:inputType="text"
                     android:text="End -"
-                    android:textColor="@color/colorSecondary"
+                    android:textColor="?attr/colorSecondary"
                     android:textSize="14sp" />
 
                 <TextView
@@ -164,13 +164,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@color/default_dim_bg"
+                    android:background="?attr/default_dim_bg"
                     android:fontFamily="@font/base_font"
                     android:gravity="center"
                     android:inputType="text"
 
                     android:text="end"
-                    android:textColor="@color/colorSecondary"
+                    android:textColor="?attr/colorSecondary"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -185,8 +185,8 @@
             android:textAlignment="center"
             android:textSize="12sp"
             android:alpha="0.6"
-            android:textColor="@color/colorPrimary"
-            android:background="@color/default_dim_bg"
+            android:textColor="?attr/colorPrimary"
+            android:background="?attr/default_dim_bg"
             android:layout_margin="1dp"
             android:textStyle="bold" />
         <View
@@ -204,13 +204,13 @@
             android:clickable="true"
             android:foreground="?attr/selectableItemBackground"
             android:orientation="horizontal"
-            android:background="@color/default_dim_bg"
+            android:background="?attr/default_dim_bg"
             >
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:tint="@color/colorSecondary"
+                android:tint="?attr/colorSecondary"
                 android:src="@drawable/ic_coverphoto" />
 
             <TextView
@@ -218,9 +218,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text="Change cover PHOTO"
-                android:textColor="@color/colorSecondary"
+                android:textColor="?attr/colorSecondary"
                 android:textSize="14sp"
-                android:background="@color/default_dim_bg"
+                android:background="?attr/default_dim_bg"
                 android:fontFamily="@font/base_font"
                 android:textAllCaps="true"
 
@@ -239,14 +239,14 @@
             android:clickable="true"
             android:foreground="?attr/selectableItemBackground"
             android:orientation="horizontal"
-            android:background="@color/default_dim_bg"
+            android:background="?attr/default_dim_bg"
             >
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_report"
-                android:tint="@color/red_inlens"/>
+                android:tint="?attr/red_inlens"/>
 
             <TextView
                 android:id="@+id/item_report_textview"
@@ -254,9 +254,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text="Report Abuse"
-                android:textColor="@color/colorSecondary"
+                android:textColor="?attr/colorSecondary"
                 android:textSize="14sp"
-                android:background="@color/default_dim_bg"
+                android:background="?attr/default_dim_bg"
                 android:fontFamily="@font/base_font"
                 android:textAllCaps="true"
                 android:layout_marginStart="16dp"
@@ -273,23 +273,23 @@
             android:clickable="true"
             android:foreground="?attr/selectableItemBackground"
             android:orientation="horizontal"
-            android:background="@color/default_dim_bg"
+            android:background="?attr/default_dim_bg"
             >
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_delete"
-                android:tint="@color/red_inlens"/>
+                android:tint="?attr/red_inlens"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text="Delete Album"
-                android:textColor="@color/colorSecondary"
+                android:textColor="?attr/colorSecondary"
                 android:textSize="14sp"
-                android:background="@color/default_dim_bg"
+                android:background="?attr/default_dim_bg"
                 android:fontFamily="@font/base_font"
                 android:textAllCaps="true"
                 android:layout_marginStart="16dp"

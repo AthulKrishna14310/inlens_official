@@ -1,13 +1,53 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorPrimaryLight</item>
+        <item name="colorPrimary">@color/colorLightPrimary</item>
+        <item name="colorPrimaryLight">@color/colorLightPrimaryLight</item>
+        <item name="colorPrimaryDark">@color/colorLightPrimaryDark</item>
+        <item name="colorSecondary">@color/colorLightSecondary</item>
+        <item name="colorSecondaryDark">@color/colorLightSecondaryDark</item>
+        <item name="colorSecondaryLight">@color/colorLightSecondaryLight</item>
+        <item name="colorAccent">@color/colorLightAccent</item>
+        <item name="default_bg_color">@color/Light_default_bg_color</item>
+        <item name="icon_color">@color/Light_icon_color</item>
+        <item name="icon_color_red">@color/Light_icon_color_red</item>
+        <item name="red_inlens">@color/Light_red_inlens</item>
+        <item name="cf_bg_color">@color/Light_cf_bg_color</item>
+        <item name="default_dim_bg">@color/Light_default_dim_bg</item>
+        <item name="red_300">@color/Light_red_300</item>
+        <item name="cf_alert_dialogue_dim_bg" >@color/Light_cf_alert_dialogue_dim_bg</item>
+        <item name="border">@color/Light_border</item>
+        <item name="action_secondary">@color/Light_action_secondary</item>
+        <item name="check_color">@color/Light_check_color</item>
+        <item name="red_cancel_icon">@color/Light_red_cancel_icon</item>
+        <item name="info_icon_color">@color/Light_info_icon_color</item>
 
-        <item name="android:fontFamily">@font/base_font</item>
+    </style>
+
+    <style name="DarkTheme" parent="Theme.AppCompat.Light.NoActionBar">
+
+        <item name="colorPrimary">@color/colorDarkPrimary</item>
+        <item name="colorPrimaryLight">@color/colorDarkPrimaryLight</item>
+        <item name="colorPrimaryDark">@color/colorDarkPrimaryDark</item>
+        <item name="colorSecondary">@color/colorDarkSecondary</item>
+        <item name="colorSecondaryDark">@color/colorDarkSecondaryDark</item>
+        <item name="colorSecondaryLight">@color/colorDarkSecondaryLight</item>
+        <item name="colorAccent">@color/colorDarkAccent</item>
+        <item name="default_bg_color">@color/Dark_default_bg_color</item>
+        <item name="icon_color">@color/Dark_icon_color</item>
+        <item name="icon_color_red">@color/Dark_icon_color_red</item>
+        <item name="red_inlens">@color/Dark_red_inlens</item>
+        <item name="cf_bg_color">@color/Dark_cf_bg_color</item>
+        <item name="default_dim_bg">@color/Dark_default_dim_bg</item>
+        <item name="red_300">@color/Dark_red_300</item>
+        <item name="cf_alert_dialogue_dim_bg" >@color/Dark_cf_alert_dialogue_dim_bg</item>
+        <item name="border">@color/Dark_border</item>
+        <item name="action_secondary">@color/Dark_action_secondary</item>
+        <item name="check_color">@color/Dark_check_color</item>
+        <item name="red_cancel_icon">@color/Dark_red_cancel_icon</item>
+        <item name="info_icon_color">@color/Dark_info_icon_color</item>
 
     </style>
 
@@ -16,10 +56,19 @@
 
     <style name="AppThemeGallery" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimaryLight</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorPrimaryLight</item>
+        <item name="colorPrimary">@color/colorLightPrimaryLight</item>
+        <item name="colorPrimaryDark">@color/colorLightPrimaryDark</item>
+        <item name="colorAccent">@color/colorLightPrimaryLight</item>
     </style>
+
+    <style name="AppThemeGalleryDark" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorDarkPrimaryLight</item>
+        <item name="colorPrimaryDark">@color/colorDarkPrimaryDark</item>
+        <item name="colorAccent">@color/colorDarkPrimaryLight</item>
+    </style>
+
+
 
     <style name="EditText.Grey" parent="@style/AppTheme">
         <item name="colorControlActivated">@color/grey_60</item>
@@ -34,31 +83,47 @@
         <item name="colorPrimary">@color/blue_600</item>
         <item name="fontFamily">@font/base_font</item>
     </style>
+
     <style name="RippleStyleWhite">
         <item name="mrl_rippleAlpha">1.5</item>
-        <item name="mrl_rippleColor">@color/colorPrimaryLight</item>
+        <item name="mrl_rippleColor">@color/colorLightPrimaryLight</item>
         <item name="mrl_rippleHover">true</item>
         <item name="mrl_rippleOverlay">true</item>
     </style>
+
     <style name="RippleStyleWhite2">
         <item name="mrl_rippleAlpha">1.5</item>
-        <item name="mrl_rippleColor">@color/colorSecondary</item>
+        <item name="mrl_rippleColor">@color/colorLightSecondary</item>
         <item name="mrl_rippleHover">true</item>
         <item name="mrl_rippleOverlay">true</item>
     </style>
 
     <style name="CalenderTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorPrimaryLight</item>
+        <item name="colorPrimary">@color/colorLightPrimary</item>
+        <item name="colorPrimaryDark">@color/colorLightPrimaryDark</item>
+        <item name="colorAccent">@color/colorLightPrimaryLight</item>
+    </style>
+
+    <style name="CalenderThemeDark" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorDarkPrimary</item>
+        <item name="colorPrimaryDark">@color/colorDarkPrimaryDark</item>
+        <item name="colorAccent">@color/colorDarkPrimaryLight</item>
     </style>
 
     <style name="NoActionBarTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorPrimaryLight</item>
+        <item name="colorPrimary">@color/colorLightPrimary</item>
+        <item name="colorPrimaryDark">@color/colorLightPrimaryDark</item>
+        <item name="colorAccent">@color/colorLightPrimaryLight</item>
+    </style>
+
+    <style name="NoActionBarThemeDark" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorDarkPrimary</item>
+        <item name="colorPrimaryDark">@color/colorDarkPrimaryDark</item>
+        <item name="colorAccent">@color/colorDarkPrimaryLight</item>
     </style>
 
     <style name="BottomUpSlideDialogAnimation">

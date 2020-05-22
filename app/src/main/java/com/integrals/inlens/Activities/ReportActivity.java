@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +24,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.R;
 
@@ -42,9 +44,34 @@ public class ReportActivity extends AppCompatActivity {
     private String albumCreatedBy;
     DatabaseReference reportRef, communityReportRef;
 
+    String appTheme="";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences appDataPref = getSharedPreferences(AppConstants.appDataPref,Context.MODE_PRIVATE);
+        final SharedPreferences.Editor appDataPrefEditor = appDataPref.edit();
+        if(appDataPref.contains(AppConstants.appDataPref_theme))
+        {
+            appTheme = appDataPref.getString(AppConstants.appDataPref_theme,AppConstants.themeLight);
+            if(appTheme.equals(AppConstants.themeLight))
+            {
+                setTheme(R.style.AppTheme);
+            }
+            else
+            {
+                setTheme(R.style.DarkTheme);
+
+            }
+        }
+        else
+        {
+            appTheme = AppConstants.themeLight;
+            appDataPrefEditor.putString(AppConstants.appDataPref_theme,AppConstants.themeLight);
+            appDataPrefEditor.commit();
+            setTheme(R.style.AppTheme);
+
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
         textInputEditText = findViewById(R.id.report);
@@ -102,17 +129,35 @@ public class ReportActivity extends AppCompatActivity {
     }
 
     public void displayAlert() {
+
+        int cf_bg_color,colorPrimary,red_inlens,cf_alert_dialogue_dim_bg;
+        if(appTheme.equals(AppConstants.themeLight))
+        {
+            cf_bg_color = getResources().getColor(R.color.Light_cf_bg_color);
+            colorPrimary = getResources().getColor(R.color.colorLightPrimary);
+            red_inlens =  getResources().getColor(R.color.Light_red_inlens);
+            cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Light_cf_alert_dialogue_dim_bg);
+        }
+        else
+        {
+            cf_bg_color = getResources().getColor(R.color.Dark_cf_bg_color);
+            colorPrimary = getResources().getColor(R.color.colorDarkPrimary);
+            red_inlens =  getResources().getColor(R.color.Dark_red_inlens);
+            cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Dark_cf_alert_dialogue_dim_bg);
+
+        }
+
         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(ReportActivity.this)
                 .setDialogStyle(CFAlertDialog.CFAlertStyle.ALERT)
                 .setTitle("Album will be deleted")
-                .setDialogBackgroundColor(getResources().getColor(R.color.cf_bg_color))
-                .setTextColor(getResources().getColor(R.color.colorPrimary))
+                .setDialogBackgroundColor(cf_bg_color)
+                .setTextColor(colorPrimary)
                 .setIcon(R.drawable.ic_report_red)
                 .setMessage("If you report this Cloud-Album it will be deleted permanently if found unfit. This action cannot be reverted and it may take 7 working days to complete the action.")
                 .setCancelable(false)
                 .addButton("OK , Report",
-                        getResources().getColor(R.color.red_inlens),
-                        getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
+                        red_inlens,
+                        cf_alert_dialogue_dim_bg,
                         CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {
@@ -144,8 +189,8 @@ public class ReportActivity extends AppCompatActivity {
                                 });
                             }
                         }).addButton("CANCEL",
-                        getResources().getColor(R.color.colorPrimary),
-                        getResources().getColor(R.color.cf_alert_dialogue_dim_bg),
+                        colorPrimary,
+                        cf_alert_dialogue_dim_bg,
                         CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {

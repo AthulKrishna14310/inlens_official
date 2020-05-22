@@ -2,13 +2,13 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/default_dim_bg"
+    android:background="?attr/default_dim_bg"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@color/colorPrimary"
+        android:background="?attr/colorPrimary"
 
         android:gravity="center">
 
@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:text="Directories"
             android:textSize="20sp"
-            android:textColor="@color/default_dim_bg"
+            android:textColor="?attr/default_dim_bg"
             android:fontFamily="@font/base_font"
             android:textStyle="bold"
             />
@@ -32,7 +32,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:fontFamily="@font/base_font"
-        android:textColor="@color/colorPrimary"
+        android:textColor="?attr/colorPrimary"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"/>
 
@@ -40,7 +40,7 @@
         android:id="@+id/dirRecyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/default_dim_bg"
+        android:background="?attr/default_dim_bg"
         android:layout_weight="1"/>
 
     <Button
@@ -48,8 +48,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:backgroundTint="@color/colorPrimary"
+        android:backgroundTint="?attr/colorPrimary"
         android:text="Save"
-        android:textColor="@color/default_dim_bg" />
+        android:textColor="?attr/default_dim_bg" />
 
 </LinearLayout>

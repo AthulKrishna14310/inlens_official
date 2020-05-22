@@ -5,7 +5,7 @@
     xmlns:aapt="http://schemas.android.com/aapt"
     android:orientation="vertical"
     android:id="@+id/lyt_view_profile"
-    android:background="@color/colorPrimaryLight"
+    android:background="?attr/colorPrimaryLight"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <LinearLayout
@@ -20,11 +20,11 @@
             android:id="@+id/headerImageView"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:tint="@color/colorPrimary"
+            android:tint="?attr/colorPrimary"
             android:src="@drawable/ic_account_circle"
-            app:civ_border_color="@color/default_dim_bg"
+            app:civ_border_color="?attr/default_dim_bg"
             app:civ_border_overlay="true"
-            app:civ_fill_color="@color/default_dim_bg"
+            app:civ_fill_color="?attr/default_dim_bg"
             app:civ_border_width="1dp" />
          <LinearLayout android:gravity="center"
              android:orientation="vertical"
@@ -38,7 +38,7 @@
                  android:layout_height="wrap_content"
                  android:text="James Pratterson"
                  android:fontFamily="@font/base_font"
-                 android:textColor="@color/default_dim_bg"
+                 android:textColor="?attr/default_dim_bg"
                  android:textSize="16sp"/>
 
             <LinearLayout android:gravity="center"
@@ -50,7 +50,7 @@
                     android:layout_width="@dimen/spacing_mlarge"
                     android:layout_height="@dimen/spacing_mlarge"
                     android:layout_marginRight="@dimen/spacing_medium"
-                    android:tint="@color/default_dim_bg"
+                    android:tint="?attr/default_dim_bg"
                     android:src="@drawable/ic_email_black_24dp"/>
 
                 <TextView
@@ -61,7 +61,7 @@
 
                     android:text="San Francisco, CA"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    android:textColor="@color/default_dim_bg"
+                    android:textColor="?attr/default_dim_bg"
                     android:textSize="12sp" />
             </LinearLayout>
         </LinearLayout>

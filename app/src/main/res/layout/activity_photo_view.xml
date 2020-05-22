@@ -130,7 +130,7 @@
                 android:layout_toRightOf="@+id/WeatherButton"
                 android:text="Weather"
                 android:textAlignment="center"
-                android:textColor="@color/default_bg_color"
+                android:textColor="?attr/default_bg_color"
                 android:textSize="12sp" />
 
         </RelativeLayout>

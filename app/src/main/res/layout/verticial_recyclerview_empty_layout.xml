@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@color/default_bg_color"
+    android:background="?attr/default_bg_color"
     android:layout_height="200dp">
 
     <ImageView
@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_note"
-        android:tint="@color/colorPrimary"
+        android:tint="?attr/colorPrimary"
         android:layout_centerInParent="true"
         />
 
@@ -19,7 +19,7 @@
         android:layout_below="@id/vertical_recyclerview_empty_layout_imageview"
         android:layout_centerHorizontal="true"
         android:fontFamily="@font/base_font"
-        android:textColor="@color/colorPrimary"
+        android:textColor="?attr/colorPrimary"
         android:text="No photos yet..." />
 
 </RelativeLayout>

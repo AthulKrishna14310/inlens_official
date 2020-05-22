@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/default_bg_color"
+    android:background="?attr/default_bg_color"
     tools:context=".Activities.ReportActivity">
 
     <TextView
@@ -13,10 +13,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Report Statement"
-        android:textColor="@color/colorPrimary"
+        android:textColor="?attr/colorPrimary"
         android:fontFamily="@font/base_font"
         android:textSize="20sp"
-        android:background="@color/default_dim_bg"
+        android:background="?attr/default_dim_bg"
         android:padding="16dp"/>
 
     <Button
@@ -27,7 +27,7 @@
         android:text="Submit"
         android:visibility="gone"
         android:fontFamily="@font/base_font"
-        android:textColor="@color/default_bg_color"
+        android:textColor="?attr/default_bg_color"
         android:foreground="?selectableItemBackgroundBorderless"
         android:clickable="true"
         android:elevation="0dp"
@@ -40,10 +40,10 @@
         android:id="@+id/report_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/default_bg_color"
+        android:background="?attr/default_bg_color"
         android:fontFamily="@font/base_font"
         android:text="Help us understand why you found this album unfit or the reason for reporting it."
-        android:textColor="@color/colorPrimary"
+        android:textColor="?attr/colorPrimary"
         android:textSize="16sp"
         android:textStyle="normal"
         android:layout_below="@id/head"
@@ -63,7 +63,7 @@
     app:boxCornerRadiusBottomStart="4dp"
     app:boxCornerRadiusTopStart="4dp"
     android:layout_marginTop="16dp"
-    app:boxStrokeColor="@color/colorPrimary"
+    app:boxStrokeColor="?attr/colorPrimary"
         app:boxStrokeWidth="1dp"
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"

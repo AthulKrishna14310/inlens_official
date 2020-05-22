@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:background="@color/default_dim_bg"
+    android:background="?attr/default_dim_bg"
     android:layout_height="wrap_content">
 <android.support.v7.widget.CardView
     android:layout_width="80dp"
@@ -22,7 +22,7 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_gravity="center"
-        android:tint="@color/colorSecondary"
+        android:tint="?attr/colorSecondary"
 
         android:src="@drawable/ic_account_circle_24dp" />
     <ProgressBar
@@ -31,7 +31,7 @@
         android:layout_height="20dp"
         android:layout_gravity="center"
         android:indeterminate="true"
-        android:indeterminateTint="@color/default_dim_bg"/>
+        android:indeterminateTint="?attr/default_dim_bg"/>
 </android.support.v7.widget.CardView>
     <TextView
         android:id="@+id/name_photographer"
@@ -41,7 +41,7 @@
         android:layout_toRightOf="@id/imageView_photographer_card"
         android:textSize="20sp"
         android:maxLines="1"
-        android:textColor="@color/colorPrimary"
+        android:textColor="?attr/colorPrimary"
         android:layout_height="wrap_content"
         android:text="Photographer Name" />
 
@@ -53,7 +53,7 @@
         android:layout_toRightOf="@id/imageView_photographer_card"
         android:text="photographers@mail.com"
         android:fontFamily="@font/base_font"
-        android:textColor="@color/colorSecondary"
+        android:textColor="?attr/colorSecondary"
         android:textSize="12sp">
 
     </TextView>
@@ -70,7 +70,7 @@
         android:layout_below="@id/divider"
         android:id="@+id/remove_layout"
         android:padding="16dp"
-        android:background="@color/default_dim_bg"
+        android:background="?attr/default_dim_bg"
         android:clickable="true"
         android:foreground="?attr/selectableItemBackgroundBorderless"
         >
@@ -80,7 +80,7 @@
             android:id="@+id/remove_layout_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/red_inlens"
+            android:textColor="?attr/red_inlens"
             android:text="Remove"
             android:textSize="14sp"
             android:textAlignment="center"

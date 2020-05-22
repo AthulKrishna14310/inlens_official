@@ -4,13 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    app:cardBackgroundColor="@color/default_dim_bg"
+    app:cardBackgroundColor="?attr/default_dim_bg"
     android:layout_height="wrap_content">
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/default_dim_bg"
+        android:background="?attr/default_dim_bg"
         android:layout_margin="10dp">
 
         <TextView
@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:textSize="18sp"
-            android:textColor="@color/colorSecondary"
+            android:textColor="?attr/colorSecondary"
             android:textStyle="bold"
             android:fontFamily="@font/base_font"
             android:text="@string/add_photographers" />
@@ -32,7 +32,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginTop="4dp"
             android:background="@drawable/circle"
-            android:backgroundTint="@color/colorSecondary"
+            android:backgroundTint="?attr/colorSecondary"
             android:src="@drawable/ic_closedialog"
             android:visibility="invisible" />
 
@@ -62,7 +62,7 @@
             android:gravity="center"
             android:text="@string/qr_message"
             android:textSize="16sp"
-            android:textColor="@color/colorSecondary"
+            android:textColor="?attr/colorSecondary"
              />
 
         <Button
@@ -79,7 +79,7 @@
             android:foreground="?attr/selectableItemBackgroundBorderless"
             android:textAllCaps="true"
             android:fontFamily="@font/base_font"
-            android:textColor="@color/default_dim_bg"
+            android:textColor="?attr/default_dim_bg"
             android:textSize="14sp" />
         <com.balysv.materialripple.MaterialRippleLayout
             style="@style/RippleStyleWhite"
@@ -104,7 +104,7 @@
                 android:text="CANCEL"
                 android:fontFamily="@font/base_font"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
-                android:textColor="@color/colorSecondary" />
+                android:textColor="?attr/colorSecondary" />
         </com.balysv.materialripple.MaterialRippleLayout>
     </RelativeLayout>
 

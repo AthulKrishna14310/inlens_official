@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingBottom="20dp"
-    android:background="@color/default_dim_bg"
+    android:background="?attr/default_dim_bg"
     >
 
     <ImageButton
@@ -16,8 +16,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:background="@drawable/circle"
-        android:backgroundTint="@color/colorPrimary"
-        android:tint="@color/default_bg_color"
+        android:backgroundTint="?attr/colorPrimary"
+        android:tint="?attr/default_bg_color"
         android:src="@drawable/ic_closedialog" />
 
     <TextView
@@ -26,7 +26,7 @@
         android:layout_margin="10dp"
         android:text="Select Event Type"
         android:textSize="20sp"
-        android:textColor="@color/colorPrimary"
+        android:textColor="?attr/colorPrimary"
         android:textStyle="bold"
         android:fontFamily="@font/base_font"
         android:layout_marginBottom="10dp"
@@ -48,9 +48,9 @@
             android:background="@drawable/radiobutton_background"
             android:checked="false"
             android:padding="8dp"
-            android:shadowColor="@color/colorPrimary"
+            android:shadowColor="?attr/colorPrimary"
             android:text="#Ceremony"
-            android:textColor="@color/colorPrimary"/>
+            android:textColor="?attr/colorPrimary"/>
 
         <Button
             android:id="@+id/event_type_hangouts_btn"
@@ -63,7 +63,7 @@
             android:background="@drawable/radiobutton_background"
             android:checked="false"
             android:padding="8dp"
-            android:textColor="@color/colorPrimary"
+            android:textColor="?attr/colorPrimary"
             android:text="#Hangouts" />
 
 
@@ -85,7 +85,7 @@
             android:background="@drawable/radiobutton_background"
             android:checked="false"
             android:padding="8dp"
-            android:textColor="@color/colorPrimary"
+            android:textColor="?attr/colorPrimary"
             android:text="#Party" />
 
         <Button
@@ -99,7 +99,7 @@
             android:background="@drawable/radiobutton_background"
             android:checked="false"
             android:padding="8dp"
-            android:textColor="@color/colorPrimary"
+            android:textColor="?attr/colorPrimary"
             android:text="#Travel" />
 
     </LinearLayout>
@@ -120,7 +120,7 @@
             android:background="@drawable/radiobutton_background"
             android:checked="false"
             android:padding="8dp"
-            android:textColor="@color/colorPrimary"
+            android:textColor="?attr/colorPrimary"
             android:fontFamily="@font/base_font"
             android:text="#Wedding" />
 
@@ -133,7 +133,7 @@
             android:layout_weight="1"
             android:background="@drawable/radiobutton_background"
             android:checked="false"
-            android:textColor="@color/colorPrimary"
+            android:textColor="?attr/colorPrimary"
             android:fontFamily="@font/base_font"
             android:padding="8dp"
             android:text="Others" />
@@ -147,7 +147,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:text="Selected Type :"
-        android:textColor="@color/colorPrimary"
+        android:textColor="?attr/colorPrimary"
         android:textSize="18sp"
         android:textStyle="bold"
         android:fontFamily="@font/base_font"

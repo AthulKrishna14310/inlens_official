@@ -15,7 +15,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/default_dim_bg"
+            android:background="?attr/default_dim_bg"
             android:orientation="vertical">
 
             <ImageButton
@@ -27,7 +27,7 @@
                 android:layout_marginStart="10dp"
                 android:background="@drawable/circle_primary"
                 android:src="@drawable/ic_arrow_back"
-                android:tint="@color/default_dim_bg"
+                android:tint="?attr/default_dim_bg"
                 android:padding="5dp"/>
 
             <TextView
@@ -40,7 +40,7 @@
                 android:fontFamily="@font/base_font"
                 android:textSize="20sp"
                 android:layout_margin="20dp"
-                android:textColor="@color/colorPrimary"/>
+                android:textColor="?attr/colorPrimary"/>
 
             <EditText
                 android:id="@+id/verification_edittext"
@@ -55,8 +55,8 @@
                 android:fontFamily="@font/base_font"
                 android:layout_margin="20dp"
                 android:layout_marginTop="20dp"
-                android:textColor="@color/default_dim_bg"
-                android:textColorHint="@color/default_dim_bg"/>
+                android:textColor="?attr/default_dim_bg"
+                android:textColorHint="?attr/default_dim_bg"/>
 
 
             <ImageButton
@@ -68,7 +68,7 @@
                 android:foreground="?attr/selectableItemBackgroundBorderless"
                 android:background="@drawable/circle_primary"
                 android:padding="5dp"
-                android:tint="@color/default_bg_color"
+                android:tint="?attr/default_bg_color"
                 android:layout_margin="20dp"
                 />
 
@@ -79,7 +79,7 @@
                 android:indeterminate="true"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:indeterminateTint="@color/colorAccent"
+                android:indeterminateTint="?attr/colorAccent"
                 style="@style/Base.Widget.AppCompat.ProgressBar"
                 android:visibility="gone"/>
 
@@ -103,13 +103,13 @@
                 android:background="@drawable/circle_primary_small_radius"
                 android:padding="5dp"
                 android:text="Manual Verification"
-                android:textColor="@color/default_dim_bg"
+                android:textColor="?attr/default_dim_bg"
                 android:fontFamily="@font/base_font"
                 android:textSize="12sp"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
                 android:gravity="center"
-                android:backgroundTint="@color/colorAccent"/>
+                android:backgroundTint="?attr/colorAccent"/>
 
             <TextView
                 android:id="@+id/verification_textviewnote"

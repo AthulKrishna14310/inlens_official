@@ -117,8 +117,35 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
     ImageView uploadImageview;
 
     @SuppressLint("CutPasteId")
+    String appTheme="";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        SharedPreferences appDataPref = getSharedPreferences(AppConstants.appDataPref, Context.MODE_PRIVATE);
+        final SharedPreferences.Editor appDataPrefEditor = appDataPref.edit();
+        if(appDataPref.contains(AppConstants.appDataPref_theme))
+        {
+            appTheme = appDataPref.getString(AppConstants.appDataPref_theme,AppConstants.themeLight);
+            if(appTheme.equals(AppConstants.themeLight))
+            {
+                setTheme(R.style.AppTheme);
+            }
+            else
+            {
+                setTheme(R.style.DarkTheme);
+
+            }
+        }
+        else
+        {
+            appTheme = AppConstants.themeLight;
+            appDataPrefEditor.putString(AppConstants.appDataPref_theme,AppConstants.themeLight);
+            appDataPrefEditor.commit();
+            setTheme(R.style.AppTheme);
+
+        }
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_inlens_gallery);

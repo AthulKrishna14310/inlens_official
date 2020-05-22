@@ -5,9 +5,9 @@
     <corners
         android:radius="200dp" />
     <solid
-        android:color="@color/default_bg_color" />
+        android:color="?attr/default_bg_color" />
     <stroke
         android:width="4dp"
-        android:color="@color/colorPrimary" />
+        android:color="?attr/colorPrimary" />
 
 </shape>

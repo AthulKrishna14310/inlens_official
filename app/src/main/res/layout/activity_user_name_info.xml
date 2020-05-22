@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/default_bg_color"
+    android:background="?attr/default_bg_color"
     tools:context=".Activities.UserNameInfoActivity">
 
     <include
@@ -19,7 +19,7 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@id/user_name_toolbar"
         android:layout_marginTop="50dp"
-        android:indeterminateTint="@color/colorPrimary"
+        android:indeterminateTint="?attr/colorPrimary"
         android:indeterminate="true"/>
     <TextView
         android:id="@+id/user_name_activity_textview"
@@ -27,13 +27,13 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/user_email_activity_progressbar"
         android:layout_marginTop="16dp"
-        android:background="@color/default_bg_color"
+        android:background="?attr/default_bg_color"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
         android:fontFamily="@font/base_font"
         android:text="Type your name and an email for your account."
-        android:textColor="@color/colorPrimary"
+        android:textColor="?attr/colorPrimary"
         android:gravity="center"/>
 
 
@@ -50,7 +50,7 @@
         app:boxCornerRadiusBottomStart="4dp"
         app:boxCornerRadiusTopStart="4dp"
         android:layout_marginTop="24dp"
-        app:boxStrokeColor="@color/colorPrimary"
+        app:boxStrokeColor="?attr/colorPrimary"
         app:boxStrokeWidth="1dp"
         
         android:layout_marginLeft="16dp"
@@ -83,7 +83,7 @@
         app:boxCornerRadiusBottomStart="4dp"
         app:boxCornerRadiusTopStart="4dp"
         android:layout_marginTop="24dp"
-        app:boxStrokeColor="@color/colorPrimary"
+        app:boxStrokeColor="?attr/colorPrimary"
         app:boxStrokeWidth="1dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
@@ -105,7 +105,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:src="@drawable/ic_done_all"
-        android:tint="@color/default_bg_color"
+        android:tint="?attr/default_bg_color"
         android:background="@drawable/circle_primary"
         android:padding="10dp"
         android:layout_centerHorizontal="true"

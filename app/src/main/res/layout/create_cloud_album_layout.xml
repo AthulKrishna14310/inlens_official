@@ -5,7 +5,7 @@
 
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:backgroundTint="@color/default_bg_color"
+    android:backgroundTint="?attr/default_bg_color"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/rootCreateCloudAlbum">
@@ -14,7 +14,7 @@
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="@dimen/zero_dimen_create_cloud_album_activity"
-        android:background="@color/default_bg_color"
+        android:background="?attr/default_bg_color"
         android:layout_weight="1.0">
 
         <ImageButton
@@ -22,7 +22,7 @@
             android:layout_width="@dimen/back_button_size_create_cloud_album_activity"
             android:layout_height="@dimen/back_button_size_create_cloud_album_activity"
             android:layout_marginLeft="@dimen/back_button_margin_left_create_cloud_album_activity"
-            android:tint="@color/colorPrimary"
+            android:tint="?attr/colorPrimary"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_arrow_back"
             android:layout_marginTop="@dimen/back_button_margin_top_create_cloud_album"
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:orientation="vertical"
-            android:background="@color/default_bg_color"
+            android:background="?attr/default_bg_color"
             android:padding="@dimen/spacing_smlarge">
 
             <TextView
@@ -46,7 +46,7 @@
                 android:textAllCaps="true"
                 android:fontFamily="@font/base_font"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-                android:textColor="@color/colorPrimary"
+                android:textColor="?attr/colorPrimary"
                 android:textSize="18sp"
                 />
 
@@ -54,7 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
 
-               android:background="@color/colorPrimary"
+               android:background="?attr/colorPrimary"
                 />
 
 
@@ -72,7 +72,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:background="@color/default_dim_bg"
+                    android:background="?attr/default_dim_bg"
                     android:padding="16dp">
 
 
@@ -88,7 +88,7 @@
                         app:boxCornerRadiusBottomStart="4dp"
                         app:boxCornerRadiusTopStart="4dp"
                         android:layout_marginTop="24dp"
-                        app:boxStrokeColor="@color/colorSecondary"
+                        app:boxStrokeColor="?attr/colorSecondary"
                         app:boxStrokeWidth="1dp"
 
                         >
@@ -96,7 +96,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textStyle="bold"
-                            android:textColor="@color/colorSecondary"
+                            android:textColor="?attr/colorSecondary"
                             android:padding="16dp"
                             android:hint="Album Title"
 
@@ -112,7 +112,7 @@
                         android:layout_width="match_parent"
                         android:id="@+id/AlbumDescriptionEdittextLayout"
                         android:layout_height="wrap_content"
-                        app:boxBackgroundColor="@color/default_dim_bg"
+                        app:boxBackgroundColor="?attr/default_dim_bg"
                         android:layout_below="@id/user_name_activity_edittext_layout"
                         app:hintEnabled="true"
                         app:boxBackgroundMode="outline"
@@ -121,7 +121,7 @@
                         app:boxCornerRadiusBottomStart="4dp"
                         app:boxCornerRadiusTopStart="4dp"
                         android:layout_marginTop="24dp"
-                        app:boxStrokeColor="@color/colorSecondary"
+                        app:boxStrokeColor="?attr/colorSecondary"
                         app:boxStrokeWidth="1dp"
 
                         >
@@ -129,8 +129,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textStyle="bold"
-                            android:backgroundTint="@color/default_dim_bg"
-                            android:textColor="@color/colorSecondary"
+                            android:backgroundTint="?attr/default_dim_bg"
+                            android:textColor="?attr/colorSecondary"
                             android:padding="16dp"
                             android:hint="Album Description"
                             android:fontFamily="@font/base_font"
@@ -157,7 +157,7 @@
         android:textAllCaps="true"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="40dp"
-        android:textColor="@color/colorSecondary"
+        android:textColor="?attr/colorSecondary"
 
         android:textSize="12sp"
 
@@ -166,7 +166,7 @@
                     <ImageButton
                         android:layout_width="@dimen/image_button_create_album_layout_activity"
                         android:layout_height="@dimen/image_button_create_album_layout_activity"
-                        android:tint="@color/colorSecondary"
+                        android:tint="?attr/colorSecondary"
                         android:id="@+id/date_range_button"
                         android:layout_margin="@dimen/image_button_margin_create_cloud_album"
                         android:src="@drawable/ic_date_range_24dp"
@@ -189,7 +189,7 @@
                            android:fontFamily="@font/base_font"
                            android:text=" Album-Event type"
                            android:textAllCaps="true"
-                           android:textColor="@color/colorSecondary"
+                           android:textColor="?attr/colorSecondary"
                            android:layout_marginLeft="50dp"
                            android:layout_marginRight="40dp"
                            android:textSize="12sp"
@@ -199,7 +199,7 @@
                             android:layout_width="@dimen/image_button_create_album_layout_activity"
                             android:layout_height="@dimen/image_button_create_album_layout_activity"
                             android:id="@+id/event_type_add"
-                            android:tint="@color/colorSecondary"
+                            android:tint="?attr/colorSecondary"
                             android:layout_margin="@dimen/image_button_margin_create_cloud_album"
                             android:src="@drawable/ic_event_type_24dp"
                             android:background="?attr/selectableItemBackgroundBorderless"
@@ -242,6 +242,6 @@
             android:text="DONE"
             android:fontFamily="@font/base_font"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
-            android:textColor="@color/colorPrimary" />
+            android:textColor="?attr/colorPrimary" />
     </com.balysv.materialripple.MaterialRippleLayout>
 </LinearLayout>

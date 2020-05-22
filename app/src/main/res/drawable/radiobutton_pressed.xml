@@ -6,8 +6,8 @@
         android:radius="200dp" />
 
     <gradient
-        android:startColor="@color/colorSecondaryLight"
+        android:startColor="?attr/colorSecondaryLight"
         android:angle="225"
-        android:endColor="@color/colorSecondaryLight"/>
+        android:endColor="?attr/colorSecondaryLight"/>
 
 </shape>

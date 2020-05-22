@@ -176,6 +176,7 @@ public class ExpandableCardView extends LinearLayout {
         }
 
         card.measure(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        
         int targetHeight = card.getMeasuredHeight();
 
         if(targetHeight - initialHeight != 0) {

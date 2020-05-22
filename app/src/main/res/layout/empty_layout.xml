@@ -3,14 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/default_bg_color">
+    android:background="?attr/default_bg_color">
 
     <ImageView
         android:id="@+id/vertical_recyclerview_empty_layout_imageview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_note"
-        android:tint="@color/colorPrimary"
+        android:tint="?attr/colorPrimary"
         android:layout_centerInParent="true"
         />
 
@@ -23,7 +23,7 @@
         android:layout_marginRight="20dp"
         android:textAlignment="center"
         android:fontFamily="@font/base_font"
-        android:textColor="@color/colorPrimary"
+        android:textColor="?attr/colorPrimary"
         android:textSize="14sp"
         android:text="@string/intruction" />
 
@@ -49,6 +49,6 @@
             android:maxLines="1"
             android:fontFamily="@font/base_font"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
-            android:textColor="@color/colorPrimary" />
+            android:textColor="?attr/colorPrimary" />
     </com.balysv.materialripple.MaterialRippleLayout>
 </RelativeLayout>
