@@ -27,16 +27,13 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     int VIEW_TYPE_PHOTOGRAPHER = 0, VIEW_TYPE_ADD_BUTTON = 1;
     List<PhotographerModel> photographersList;
-    Context context;
     Dialog qrcodeDialog;
     MainActivity activity;
     String adminId;
 
     public ParticipantsAdapter(List<PhotographerModel> photographersList,
-                               Context context,
                                MainActivity activity, Dialog qrcodeDialog, String adminId) {
         this.photographersList = photographersList;
-        this.context = context;
         this.qrcodeDialog = qrcodeDialog;
         this.activity = activity;
         this.adminId = adminId;
@@ -57,10 +54,10 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         if (viewType == VIEW_TYPE_PHOTOGRAPHER) {
-            View view = LayoutInflater.from(context).inflate(R.layout.member_card, parent, false);
+            View view = LayoutInflater.from(activity).inflate(R.layout.member_card, parent, false);
             return new ParticipantsViewHolder(view);
         } else if (viewType == VIEW_TYPE_ADD_BUTTON) {
-            View view = LayoutInflater.from(context).inflate(R.layout.member_add_card, parent, false);
+            View view = LayoutInflater.from(activity).inflate(R.layout.member_add_card, parent, false);
             return new AddParticipantsViewHolder(view);
         } else {
             return null;
@@ -81,7 +78,7 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
 
             RequestOptions rq = new RequestOptions().placeholder(R.drawable.ic_account_circle_24dp);
-            Glide.with(context).load(photographersList.get(position).getImgUrl()).apply(rq).into(viewHolder.PImage);
+            Glide.with(activity).load(photographersList.get(position).getImgUrl()).apply(rq).into(viewHolder.PImage);
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -90,11 +87,11 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     if (activity.getCurrentUserId().equals(adminId)) {
 
                         if (photographersList.get(position).getId().equals(adminId)) {
-                            PhotographerFragementBottomSheetAdmin photographerFragementBottomSheetAdmin = new PhotographerFragementBottomSheetAdmin(context, photographersList.get(position),true);
+                            PhotographerFragementBottomSheetAdmin photographerFragementBottomSheetAdmin = new PhotographerFragementBottomSheetAdmin(activity, photographersList.get(position),true);
                             photographerFragementBottomSheetAdmin.show(((FragmentActivity) activity).getSupportFragmentManager(), photographerFragementBottomSheetAdmin.getTag());
 
                         } else {
-                            PhotographerFragementBottomSheetNA photographerFragementBottomSheetNA = new PhotographerFragementBottomSheetNA(context, photographersList.get(position),true);
+                            PhotographerFragementBottomSheetNA photographerFragementBottomSheetNA = new PhotographerFragementBottomSheetNA(activity, photographersList.get(position),true);
                             photographerFragementBottomSheetNA.show(((FragmentActivity) activity).getSupportFragmentManager(), photographerFragementBottomSheetNA.getTag());
 
                         }
@@ -102,11 +99,11 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     else
                     {
                         if (photographersList.get(position).getId().equals(adminId)) {
-                            PhotographerFragementBottomSheetAdmin photographerFragementBottomSheetAdmin = new PhotographerFragementBottomSheetAdmin(context, photographersList.get(position),false);
+                            PhotographerFragementBottomSheetAdmin photographerFragementBottomSheetAdmin = new PhotographerFragementBottomSheetAdmin(activity, photographersList.get(position),false);
                             photographerFragementBottomSheetAdmin.show(((FragmentActivity) activity).getSupportFragmentManager(), photographerFragementBottomSheetAdmin.getTag());
 
                         } else {
-                            PhotographerFragementBottomSheetNA photographerFragementBottomSheetNA = new PhotographerFragementBottomSheetNA(context, photographersList.get(position),false);
+                            PhotographerFragementBottomSheetNA photographerFragementBottomSheetNA = new PhotographerFragementBottomSheetNA(activity, photographersList.get(position),false);
                             photographerFragementBottomSheetNA.show(((FragmentActivity) activity).getSupportFragmentManager(), photographerFragementBottomSheetNA.getTag());
 
                         }

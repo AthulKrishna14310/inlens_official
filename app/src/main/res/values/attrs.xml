@@ -21,6 +21,7 @@
         <attr name="check_color" format="color" />
         <attr name="red_cancel_icon" format="color" />
         <attr name="info_icon_color" format="color" />
+        <attr name="actionMenuTextColor" format="color" />
 
     </declare-styleable>
 </resources>

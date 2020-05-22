@@ -40,6 +40,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -49,6 +50,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +60,8 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -104,6 +108,7 @@ import com.integrals.inlens.Activities.CreateCloudAlbum;
 import com.integrals.inlens.Activities.InlensGalleryActivity;
 import com.integrals.inlens.Activities.PhotoView;
 import com.integrals.inlens.Activities.QRCodeReader;
+import com.integrals.inlens.Activities.SplashScreenActivity;
 import com.integrals.inlens.Activities.WebViewActivity;
 import com.integrals.inlens.Helper.AlbumOptionsBottomSheetFragment;
 import com.integrals.inlens.Helper.AppConstants;
@@ -293,6 +298,43 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         RootForMainActivity = findViewById(R.id.root_for_main_activity);
         navigationView = (NavigationView) findViewById(R.id.nv);
 
+        // dark theme options
+        Menu menu = navigationView.getMenu();
+        CheckBox checkBox = (CheckBox) menu.findItem(R.id.dark_theme).getActionView();
+        if(appTheme.equals(AppConstants.themeLight))
+        {
+            checkBox.setChecked(false);
+        }
+        else
+        {
+            checkBox.setChecked(true);
+        }
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if(isChecked)
+                {
+                    appDataPrefEditor.putString(AppConstants.appDataPref_theme,AppConstants.themeDark);
+                    appDataPrefEditor.commit();
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    startActivity(new Intent(MainActivity.this,SplashScreenActivity.class));
+                    overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                    finish();
+                }
+                else
+                {
+                    appDataPrefEditor.putString(AppConstants.appDataPref_theme,AppConstants.themeLight);
+                    appDataPrefEditor.commit();
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    startActivity(new Intent(MainActivity.this,SplashScreenActivity.class));
+                    overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                    finish();
+
+                }
+            }
+        });
+
         //no internet views and function
         NoInternetView = findViewById(R.id.main_no_internet_relativelayout);
         NoInternetTextView = findViewById(R.id.main_no_internet_textview);
@@ -410,7 +452,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                     return true;
 
                 }
-
                 if (item.getItemId() == R.id.feedback) {
                     Uri uri = Uri.parse("market://details?id=" + getApplicationContext().getPackageName());
                     Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
@@ -2318,7 +2359,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                 }
                             }
 
-                            participantsAdapter = new ParticipantsAdapter(photographerList, getApplicationContext(), MainActivity.this, QRCodeDialog,communityModel.getAdmin());
+                            participantsAdapter = new ParticipantsAdapter(photographerList, MainActivity.this, QRCodeDialog,communityModel.getAdmin());
                             ParticipantsRecyclerView.setAdapter(participantsAdapter);
                             expandableCardView.expand();
 
