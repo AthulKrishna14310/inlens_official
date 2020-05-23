@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 
+import android.support.v7.app.AppCompatDelegate;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.View;
@@ -66,11 +67,12 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
             if(appTheme.equals(AppConstants.themeLight))
             {
                 setTheme(R.style.AppTheme);
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             }
             else
             {
                 setTheme(R.style.DarkTheme);
-
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             }
         }
         else
@@ -100,7 +102,6 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qrcode_reader);
-        getSupportActionBar().hide();
 
         userCommunityIdList = getIntent().getExtras().getStringArrayList(AppConstants.USER_ID_LIST);
 

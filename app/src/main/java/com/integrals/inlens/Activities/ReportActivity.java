@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatDelegate;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -49,7 +50,7 @@ public class ReportActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        SharedPreferences appDataPref = getSharedPreferences(AppConstants.appDataPref,Context.MODE_PRIVATE);
+        SharedPreferences appDataPref = getSharedPreferences(AppConstants.appDataPref, Context.MODE_PRIVATE);
         final SharedPreferences.Editor appDataPrefEditor = appDataPref.edit();
         if(appDataPref.contains(AppConstants.appDataPref_theme))
         {
@@ -57,11 +58,12 @@ public class ReportActivity extends AppCompatActivity {
             if(appTheme.equals(AppConstants.themeLight))
             {
                 setTheme(R.style.AppTheme);
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             }
             else
             {
                 setTheme(R.style.DarkTheme);
-
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             }
         }
         else

@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.CardView;
 import android.view.View;
 import android.view.Window;
@@ -57,11 +58,12 @@ public class PhotoView extends AppCompatActivity {
             if(appTheme.equals(AppConstants.themeLight))
             {
                 setTheme(R.style.AppTheme);
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             }
             else
             {
                 setTheme(R.style.DarkTheme);
-
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             }
         }
         else

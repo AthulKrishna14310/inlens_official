@@ -247,17 +247,19 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             if(appTheme.equals(AppConstants.themeLight))
             {
                 setTheme(R.style.AppTheme);
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             }
             else
             {
                 setTheme(R.style.DarkTheme);
-
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             }
         }
         else
         {
             appTheme = AppConstants.themeLight;
             appDataPrefEditor.putString(AppConstants.appDataPref_theme,AppConstants.themeLight);
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             appDataPrefEditor.commit();
             setTheme(R.style.AppTheme);
 

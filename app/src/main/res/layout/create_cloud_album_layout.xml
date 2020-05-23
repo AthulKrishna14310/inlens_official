@@ -1,40 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:orientation="vertical"
-    android:background="@color/grey_5"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
 
+    android:id="@+id/rootCreateCloudAlbum"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="@color/grey_5"
     android:backgroundTint="?attr/default_bg_color"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/rootCreateCloudAlbum">
+    android:orientation="vertical">
 
 
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="@dimen/zero_dimen_create_cloud_album_activity"
-        android:background="?attr/default_bg_color"
-        android:layout_weight="1.0">
+        android:layout_weight="1.0"
+        android:background="?attr/default_bg_color">
 
         <ImageButton
             android:id="@+id/create_cloud_album_backbutton"
             android:layout_width="@dimen/back_button_size_create_cloud_album_activity"
             android:layout_height="@dimen/back_button_size_create_cloud_album_activity"
             android:layout_marginLeft="@dimen/back_button_margin_left_create_cloud_album_activity"
-            android:tint="?attr/colorPrimary"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_arrow_back"
             android:layout_marginTop="@dimen/back_button_margin_top_create_cloud_album"
             android:layout_marginBottom="@dimen/back_button_margin_bottom_create_cloud_album"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_arrow_back"
+            android:tint="?attr/colorPrimary"
             android:visibility="visible" />
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:orientation="vertical"
             android:background="?attr/default_bg_color"
+            android:orientation="vertical"
             android:padding="@dimen/spacing_smlarge">
 
             <TextView
@@ -42,21 +41,18 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/underline_margin_left_create_cloud_album_activity"
                 android:layout_marginBottom="4dp"
+                android:fontFamily="@font/base_font"
                 android:text="Create  Cloud-Album"
                 android:textAllCaps="true"
-                android:fontFamily="@font/base_font"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                 android:textColor="?attr/colorPrimary"
-                android:textSize="18sp"
-                />
+                android:textSize="18sp" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
 
-               android:background="?attr/colorPrimary"
-                />
-
+                android:background="?attr/colorPrimary" />
 
 
             <android.support.v7.widget.CardView
@@ -71,138 +67,135 @@
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
                     android:background="?attr/default_dim_bg"
+                    android:orientation="vertical"
                     android:padding="16dp">
 
 
                     <android.support.design.widget.TextInputLayout
-                        android:layout_width="match_parent"
                         android:id="@+id/AlbumTitleEdittextLayout"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/user_name_activity_edittext_layout"
-                        app:hintEnabled="true"
+                        android:layout_marginTop="24dp"
                         app:boxBackgroundMode="outline"
-                        app:boxCornerRadiusTopEnd="4dp"
                         app:boxCornerRadiusBottomEnd="4dp"
                         app:boxCornerRadiusBottomStart="4dp"
+                        app:boxCornerRadiusTopEnd="4dp"
                         app:boxCornerRadiusTopStart="4dp"
-                        android:layout_marginTop="24dp"
                         app:boxStrokeColor="?attr/colorSecondary"
                         app:boxStrokeWidth="1dp"
-
+                        app:hintEnabled="true"
                         >
-                         <android.support.design.widget.TextInputEditText
+                        <android.support.design.widget.TextInputEditText
+                            android:id="@+id/AlbumTitleEditText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textStyle="bold"
-                            android:textColor="?attr/colorSecondary"
-                            android:padding="16dp"
-                            android:hint="Album Title"
-
                             android:fontFamily="@font/base_font"
+                            android:hint="Album Title"
+                            android:inputType="text"
+                            android:padding="16dp"
+                            android:textColor="?attr/colorSecondary"
                             android:textSize="16sp"
-                            android:id="@+id/AlbumTitleEditText"
-                            />
+                            android:textStyle="bold" />
                     </android.support.design.widget.TextInputLayout>
-
 
 
                     <android.support.design.widget.TextInputLayout
-                        android:layout_width="match_parent"
                         android:id="@+id/AlbumDescriptionEdittextLayout"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:boxBackgroundColor="?attr/default_dim_bg"
                         android:layout_below="@id/user_name_activity_edittext_layout"
-                        app:hintEnabled="true"
+                        android:layout_marginTop="24dp"
+                        app:boxBackgroundColor="?attr/default_dim_bg"
                         app:boxBackgroundMode="outline"
-                        app:boxCornerRadiusTopEnd="4dp"
                         app:boxCornerRadiusBottomEnd="4dp"
                         app:boxCornerRadiusBottomStart="4dp"
+                        app:boxCornerRadiusTopEnd="4dp"
                         app:boxCornerRadiusTopStart="4dp"
-                        android:layout_marginTop="24dp"
                         app:boxStrokeColor="?attr/colorSecondary"
                         app:boxStrokeWidth="1dp"
-
+                        app:hintEnabled="true"
                         >
+
                         <android.support.design.widget.TextInputEditText
+                            android:id="@+id/AlbumDescriptionEditText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textStyle="bold"
                             android:backgroundTint="?attr/default_dim_bg"
-                            android:textColor="?attr/colorSecondary"
-                            android:padding="16dp"
-                            android:hint="Album Description"
                             android:fontFamily="@font/base_font"
+                            android:hint="Album Description"
+                            android:padding="16dp"
+                            android:textColor="?attr/colorSecondary"
+                            android:textColorHint="#cdcdcd"
                             android:textSize="16sp"
-                            android:id="@+id/AlbumDescriptionEditText"
-                            />
+                            android:textStyle="bold"
+                            android:inputType="text"/>
                     </android.support.design.widget.TextInputLayout>
 
 
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginTop="@dimen/spacing_large"
-    android:layout_gravity="center_horizontal"
-    >
-
-    <android.support.v7.widget.AppCompatCheckBox
-        android:id="@+id/TimeEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:fontFamily="@font/base_font"
-        android:text=" Album-Expiry date"
-        android:textAllCaps="true"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="40dp"
-        android:textColor="?attr/colorSecondary"
-
-        android:textSize="12sp"
-
-        android:theme="@style/Checkbox.Blue" />
-
-                    <ImageButton
-                        android:layout_width="@dimen/image_button_create_album_layout_activity"
-                        android:layout_height="@dimen/image_button_create_album_layout_activity"
-                        android:tint="?attr/colorSecondary"
-                        android:id="@+id/date_range_button"
-                        android:layout_margin="@dimen/image_button_margin_create_cloud_album"
-                        android:src="@drawable/ic_date_range_24dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-
-                        />
-                        </RelativeLayout>
-                   <RelativeLayout
+                    <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginTop="@dimen/spacing_large"
                         android:layout_gravity="center_horizontal"
-                        >
+                        android:layout_marginTop="@dimen/spacing_large">
 
-                       <android.support.v7.widget.AppCompatCheckBox
-                           android:id="@+id/EventTypeText"
-                           android:layout_width="match_parent"
-                           android:layout_height="wrap_content"
-                           android:layout_centerInParent="true"
-                           android:fontFamily="@font/base_font"
-                           android:text=" Album-Event type"
-                           android:textAllCaps="true"
-                           android:textColor="?attr/colorSecondary"
-                           android:layout_marginLeft="50dp"
-                           android:layout_marginRight="40dp"
-                           android:textSize="12sp"
-                           android:theme="@style/Checkbox.Blue" />
+                        <android.support.v7.widget.AppCompatCheckBox
+                            android:id="@+id/TimeEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:layout_marginLeft="50dp"
+                            android:layout_marginRight="40dp"
+                            android:fontFamily="@font/base_font"
+                            android:text=" Album-Expiry date"
+                            android:textAllCaps="true"
+                            android:textColor="?attr/colorSecondary"
+
+                            android:textSize="12sp"
+
+                            android:theme="@style/Checkbox.Blue" />
 
                         <ImageButton
+                            android:id="@+id/date_range_button"
                             android:layout_width="@dimen/image_button_create_album_layout_activity"
                             android:layout_height="@dimen/image_button_create_album_layout_activity"
-                            android:id="@+id/event_type_add"
-                            android:tint="?attr/colorSecondary"
                             android:layout_margin="@dimen/image_button_margin_create_cloud_album"
-                            android:src="@drawable/ic_event_type_24dp"
                             android:background="?attr/selectableItemBackgroundBorderless"
+                            android:src="@drawable/ic_date_range_24dp"
+                            android:tint="?attr/colorSecondary"
+
+                            />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/spacing_large">
+
+                        <android.support.v7.widget.AppCompatCheckBox
+                            android:id="@+id/EventTypeText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:layout_marginLeft="50dp"
+                            android:layout_marginRight="40dp"
+                            android:fontFamily="@font/base_font"
+                            android:text=" Album-Event type"
+                            android:textAllCaps="true"
+                            android:textColor="?attr/colorSecondary"
+                            android:textSize="12sp"
+                            android:theme="@style/Checkbox.Blue" />
+
+                        <ImageButton
+                            android:id="@+id/event_type_add"
+                            android:layout_width="@dimen/image_button_create_album_layout_activity"
+                            android:layout_height="@dimen/image_button_create_album_layout_activity"
+                            android:layout_margin="@dimen/image_button_margin_create_cloud_album"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:src="@drawable/ic_event_type_24dp"
+                            android:tint="?attr/colorSecondary"
 
                             />
                     </RelativeLayout>
@@ -226,22 +219,22 @@
 
     <com.balysv.materialripple.MaterialRippleLayout
         style="@style/RippleStyleWhite"
-        android:layout_margin="@dimen/done_button_margin_create_cloud_album_activity"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/create_cloud_album_done_btn_bg">
+        android:layout_margin="@dimen/done_button_margin_create_cloud_album_activity"
+        android:background="@drawable/create_cloud_album_done_btn_bg"
+        android:padding="10dp">
 
         <TextView
             android:id="@+id/DoneButtonTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textSize="18sp"
-            android:text="DONE"
             android:fontFamily="@font/base_font"
+            android:text="DONE"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
-            android:textColor="?attr/colorPrimary" />
+            android:textColor="?attr/colorPrimary"
+            android:textSize="18sp" />
     </com.balysv.materialripple.MaterialRippleLayout>
 </LinearLayout>

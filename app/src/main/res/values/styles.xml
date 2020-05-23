@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorLightPrimary</item>
         <item name="colorPrimaryLight">@color/colorLightPrimaryLight</item>
@@ -26,7 +26,7 @@
 
     </style>
 
-    <style name="DarkTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="DarkTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
 
         <item name="colorPrimary">@color/colorDarkPrimary</item>
         <item name="colorPrimaryLight">@color/colorDarkPrimaryLight</item>
@@ -50,9 +50,6 @@
         <item name="info_icon_color">@color/Dark_info_icon_color</item>
 
     </style>
-
-
-
 
     <style name="AppThemeGallery" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->

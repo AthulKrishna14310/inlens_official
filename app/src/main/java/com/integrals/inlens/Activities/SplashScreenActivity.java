@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -48,11 +49,12 @@ public class SplashScreenActivity extends AppCompatActivity {
             if(appTheme.equals(AppConstants.themeLight))
             {
                 setTheme(R.style.AppTheme);
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             }
             else
             {
                 setTheme(R.style.DarkTheme);
-
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             }
         }
         else
