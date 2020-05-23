@@ -145,7 +145,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
             appTheme = AppConstants.themeLight;
             appDataPrefEditor.putString(AppConstants.appDataPref_theme,AppConstants.themeLight);
             appDataPrefEditor.commit();
-            setTheme(R.style.AppTheme);
+            setTheme(R.style.AppThemeGalleryLight);
 
         }
         super.onCreate(savedInstanceState);
@@ -481,7 +481,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
                     allCommunityImages.add(null);
                     galleryGridRecyclerView.setLayoutManager(new GridLayoutManager(InlensGalleryActivity.this,  1));
-                    imageAdapter = new ImageAdapter(getApplicationContext(), allCommunityImages);
+                    imageAdapter = new ImageAdapter(InlensGalleryActivity.this, allCommunityImages);
                     galleryGridRecyclerView.removeAllViews();
                     galleryGridRecyclerView.setAdapter(imageAdapter);
                     galleryUploadFab.hide();
@@ -491,7 +491,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
                     galleryGridRecyclerView.setLayoutManager(new GridLayoutManager(InlensGalleryActivity.this, 3));
                     Collections.reverse(allCommunityImages);
-                    imageAdapter = new ImageAdapter(getApplicationContext(), allCommunityImages);
+                    imageAdapter = new ImageAdapter(InlensGalleryActivity.this, allCommunityImages);
                     galleryGridRecyclerView.removeAllViews();
                     galleryGridRecyclerView.setAdapter(imageAdapter);
 

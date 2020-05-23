@@ -51,20 +51,12 @@
 
     </style>
 
-    <style name="AppThemeGallery" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppThemeGalleryLight" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorLightPrimaryLight</item>
         <item name="colorPrimaryDark">@color/colorLightPrimaryDark</item>
         <item name="colorAccent">@color/colorLightPrimaryLight</item>
     </style>
-
-    <style name="AppThemeGalleryDark" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorDarkPrimaryLight</item>
-        <item name="colorPrimaryDark">@color/colorDarkPrimaryDark</item>
-        <item name="colorAccent">@color/colorDarkPrimaryLight</item>
-    </style>
-
 
 
     <style name="EditText.Grey" parent="@style/AppTheme">
