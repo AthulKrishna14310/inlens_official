@@ -166,7 +166,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
         postRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.POSTS);
         currentUserRef =FirebaseDatabase.getInstance().getReference();
-        storageRef = FirebaseStorage.getInstance().getReference().child(FirebaseConstants.COMMUNITIES_STORAGE).child(communityID);
+        storageRef = FirebaseStorage.getInstance().getReference().child(FirebaseConstants.COMMUNITIES_STORAGE);
 
         galleryBackButton = findViewById(R.id.gallery_toolbar).findViewById(R.id.mytoolbar_back_button);
         galleyHeaderTextView = findViewById(R.id.gallery_toolbar).findViewById(R.id.mytoolbar_textview);
@@ -319,7 +319,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                 byte[] compressedImage = baos.toByteArray();
 
 
-                storageRef.child(Uri.fromFile(new File(allCommunityImages.get(imgPosition).getImageUri())).getLastPathSegment().toLowerCase() + System.currentTimeMillis()).putBytes(compressedImage).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                storageRef.child(communityID).child(Uri.fromFile(new File(allCommunityImages.get(imgPosition).getImageUri())).getLastPathSegment().toLowerCase() + System.currentTimeMillis()).putBytes(compressedImage).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
 
