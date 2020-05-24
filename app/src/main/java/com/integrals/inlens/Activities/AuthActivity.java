@@ -476,7 +476,7 @@ public class AuthActivity extends AppCompatActivity {
                         }
                     }
 
-                    SearchAdapter = new CountryAdapter(getApplicationContext(), SearchList);
+                    SearchAdapter = new CountryAdapter(AuthActivity.this, SearchList);
                     AllCountryRecyclerView.setAdapter(SearchAdapter);
                 } else {
                     AllCountryRecyclerView.removeAllViews();
