@@ -1,111 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     app:cardBackgroundColor="?attr/default_dim_bg"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:id="@+id/qrcode_bottomsheet_wrapper">
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
+    <android.support.v7.widget.CardView
+        android:id="@+id/qrcode_bottomsheet"
+        android:layout_width="match_parent"
+        app:cardBackgroundColor="?attr/default_dim_bg"
         android:layout_height="wrap_content"
-        android:background="?attr/default_dim_bg"
-        android:layout_margin="10dp">
+        app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
+        >
 
-        <TextView
-            android:id="@+id/textView"
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:textSize="18sp"
-            android:textColor="?attr/colorSecondary"
-            android:textStyle="bold"
-            android:fontFamily="@font/base_font"
-            android:text="@string/add_photographers" />
-
-        <ImageButton
-            android:id="@+id/QR_dialog_closebtn"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="4dp"
-            android:background="@drawable/circle"
-            android:backgroundTint="?attr/colorSecondary"
-            android:src="@drawable/ic_closedialog"
-            android:visibility="invisible" />
-
-
-        <ImageView
-            android:id="@+id/QR_Display"
-            android:layout_width="230dp"
-            android:layout_height="230dp"
-            android:layout_below="@id/textViewAlbumQR"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="5dp"
-            android:layout_marginTop="15dp" />
-
-        <TextView
-            android:id="@+id/textViewAlbumQR"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/QR_dialog_closebtn"
-            android:layout_alignParentStart="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="10dp"
-            android:fontFamily="@font/base_font"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="10dp"
-            android:gravity="center"
-            android:text="@string/qr_message"
-            android:textSize="16sp"
-            android:textColor="?attr/colorSecondary"
-             />
-
-        <Button
-            android:id="@+id/InviteLinkButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:layout_below="@id/QR_Display"
-             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-             android:background="@drawable/rounded_corners"
-            android:text="Send Invite Link"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            android:textAllCaps="true"
-            android:fontFamily="@font/base_font"
-            android:textColor="?attr/default_dim_bg"
-            android:textSize="14sp" />
-        <com.balysv.materialripple.MaterialRippleLayout
-            style="@style/RippleStyleWhite"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:layout_marginRight="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:padding="10dp"
-            android:layout_below="@id/InviteLinkButton"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            android:background="@drawable/skip_bg">
+            android:background="?attr/default_dim_bg"
+            android:layout_margin="10dp">
 
             <TextView
-                android:id="@+id/cancelButtonTextView"
+                android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textSize="14sp"
-                android:text="CANCEL"
+                android:layout_centerHorizontal="true"
+                android:textSize="18sp"
+                android:textColor="?attr/colorSecondary"
+                android:textStyle="bold"
                 android:fontFamily="@font/base_font"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
-                android:textColor="?attr/colorSecondary" />
-        </com.balysv.materialripple.MaterialRippleLayout>
-    </RelativeLayout>
+                android:text="@string/add_photographers" />
 
-</android.support.v7.widget.CardView>
+            <ImageButton
+                android:id="@+id/QR_dialog_closebtn"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/circle"
+                android:backgroundTint="?attr/colorSecondary"
+                android:src="@drawable/ic_closedialog"
+                android:visibility="invisible" />
+
+
+            <ImageView
+                android:id="@+id/QR_Display"
+                android:layout_width="230dp"
+                android:layout_height="230dp"
+                android:layout_below="@id/textViewAlbumQR"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="5dp"
+                android:layout_marginTop="15dp" />
+
+            <TextView
+                android:id="@+id/textViewAlbumQR"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/QR_dialog_closebtn"
+                android:layout_alignParentStart="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="10dp"
+                android:fontFamily="@font/base_font"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center"
+                android:text="@string/qr_message"
+                android:textSize="16sp"
+                android:textColor="?attr/colorSecondary"
+                />
+
+            <Button
+                android:id="@+id/InviteLinkButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:layout_below="@id/QR_Display"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/rounded_corners"
+                android:text="Send Invite Link"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:textAllCaps="true"
+                android:fontFamily="@font/base_font"
+                android:textColor="?attr/default_dim_bg"
+                android:textSize="14sp" />
+            <com.balysv.materialripple.MaterialRippleLayout
+                style="@style/RippleStyleWhite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:padding="10dp"
+                android:layout_below="@id/InviteLinkButton"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:background="@drawable/skip_bg">
+
+                <TextView
+                    android:id="@+id/cancelButtonTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textSize="14sp"
+                    android:text="CANCEL"
+                    android:fontFamily="@font/base_font"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
+                    android:textColor="?attr/colorSecondary" />
+            </com.balysv.materialripple.MaterialRippleLayout>
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+
+</android.support.design.widget.CoordinatorLayout>

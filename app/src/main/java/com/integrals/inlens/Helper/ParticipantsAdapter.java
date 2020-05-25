@@ -27,14 +27,14 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     int VIEW_TYPE_PHOTOGRAPHER = 0, VIEW_TYPE_ADD_BUTTON = 1;
     List<PhotographerModel> photographersList;
-    Dialog qrcodeDialog;
+    QRCodeBottomSheet qrCodeBottomSheet;
     MainActivity activity;
     String adminId;
 
     public ParticipantsAdapter(List<PhotographerModel> photographersList,
-                               MainActivity activity, Dialog qrcodeDialog, String adminId) {
+                               MainActivity activity, QRCodeBottomSheet qrcodeDialog, String adminId) {
         this.photographersList = photographersList;
-        this.qrcodeDialog = qrcodeDialog;
+        this.qrCodeBottomSheet = qrcodeDialog;
         this.activity = activity;
         this.adminId = adminId;
     }
@@ -118,7 +118,7 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 @Override
                 public void onClick(View view) {
 
-                    qrcodeDialog.show();
+                    qrCodeBottomSheet.show(activity.getSupportFragmentManager(),qrCodeBottomSheet.getTag());
 
                 }
             });

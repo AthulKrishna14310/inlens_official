@@ -122,6 +122,7 @@ import com.integrals.inlens.Helper.MainCommunityViewHolder;
 import com.integrals.inlens.Helper.MainHorizontalLoadingViewHolder;
 import com.integrals.inlens.Helper.MainHorizontalOptionsViewHolder;
 import com.integrals.inlens.Helper.ParticipantsAdapter;
+import com.integrals.inlens.Helper.QRCodeBottomSheet;
 import com.integrals.inlens.Helper.ReadFirebaseData;
 import com.integrals.inlens.Interface.FirebaseRead;
 import com.integrals.inlens.Models.CommunityModel;
@@ -161,8 +162,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
 
     private String currentActiveCommunityID = AppConstants.NOT_AVALABLE;
-
-    private Dialog QRCodeDialog;
 
     private String PostKeyForEdit;
     int position;
@@ -230,6 +229,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
     AlbumOptionsBottomSheetFragment optionsBottomSheetFragment;
     private RippleBackground rippleBackground, rippleBackground2;
+
+    QRCodeBottomSheet qrCodeBottomSheet;
 
     String appTheme="";
 
@@ -1043,7 +1044,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                         editor.commit();
                     }
 
-                    QRCodeInit(currentActiveCommunityID);
+                    qrCodeBottomSheet= new QRCodeBottomSheet(MainActivity.this,currentActiveCommunityID,linkRef);
 
                     // make the add photo fab visible
                     mainAddPhotosFab.show();
@@ -1188,15 +1189,15 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
         }
 
-        QRCodeDialog.show();
-        TextView textView = QRCodeDialog.findViewById(R.id.cancelButtonTextView);
+        qrCodeBottomSheet.show(getSupportFragmentManager(),qrCodeBottomSheet.getTag());
+
+        TextView textView = qrCodeBottomSheet.getView().findViewById(R.id.cancelButtonTextView);
         textView.setText("I WILL DO IT LATER");
+
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                QRCodeDialog.dismiss();
-                QRCodeDialog.cancel();
-                QRCodeInit(currentActiveCommunityID);
+                qrCodeBottomSheet.dismiss();
 
                 NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
                 notificationHelper.displayAlbumStartNotification("Open your Gallery", "After taking photos tap here to upload ");
@@ -1459,236 +1460,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     }
 
 
-    public void QRCodeInit(final String CommunityID) {
-        Dialog tempDialogue;
-        QRCodeDialog = new Dialog(MainActivity.this, android.R.style.Theme_Light_NoTitleBar);
-        QRCodeDialog.setCanceledOnTouchOutside(false);
-        QRCodeDialog.setCancelable(false);
-        QRCodeDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        QRCodeDialog.setContentView(R.layout.qrcode_generator_layout);
-        QRCodeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
-        QRCodeDialog.getWindow().getAttributes().windowAnimations = R.style.BottomUpSlideDialogAnimation;
-
-        Window QRCodewindow = QRCodeDialog.getWindow();
-        QRCodewindow.setGravity(Gravity.BOTTOM);
-        QRCodewindow.setLayout(GridLayout.LayoutParams.MATCH_PARENT, GridLayout.LayoutParams.WRAP_CONTENT);
-        QRCodewindow.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        QRCodewindow.setDimAmount(0.75f);
-        QRCodewindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        Button InviteLinkButton = QRCodeDialog.findViewById(R.id.InviteLinkButton);
-        TextView QRCodeCloseBtn = QRCodeDialog.findViewById(R.id.cancelButtonTextView);
-
-        final TextView textView = QRCodeDialog.findViewById(R.id.textViewAlbumQR);
-        final ImageView QRCodeImageView = QRCodeDialog.findViewById(R.id.QR_Display);
-
-        tempDialogue = QRCodeDialog;
-        QRCodeCloseBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                QRCodeDialog.cancel();
-                QRCodeDialog.dismiss();
-            }
-        });
-
-        final MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
-
-
-        if (!CommunityID.equals(AppConstants.NOT_AVALABLE)) {
-            try {
-                BitMatrix bitMatrix = multiFormatWriter.encode(CommunityID, BarcodeFormat.QR_CODE, 200, 200);
-                BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-                Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
-                QRCodeImageView.setImageBitmap(bitmap);
-            } catch (WriterException e) {
-                e.printStackTrace();
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-                QRCodeImageView.setVisibility(View.INVISIBLE);
-                textView.setText("You must be in an album to generate QR code");
-            } catch (NullPointerException e) {
-                QRCodeImageView.setVisibility(View.INVISIBLE);
-                textView.setText("You must be in an album to generate QR code");
-
-            }
-        } else {
-
-            QRCodeImageView.setVisibility(View.INVISIBLE);
-            textView.setText("Some error was encountered. Please try again.");
-        }
-
-        int cf_bg_color,colorPrimary,red_inlens,cf_alert_dialogue_dim_bg;
-        if(appTheme.equals(AppConstants.themeLight))
-        {
-            cf_bg_color = getResources().getColor(R.color.Light_cf_bg_color);
-            colorPrimary = getResources().getColor(R.color.colorLightPrimary);
-            red_inlens =  getResources().getColor(R.color.Light_red_inlens);
-            cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Light_cf_alert_dialogue_dim_bg);
-        }
-        else
-        {
-            cf_bg_color = getResources().getColor(R.color.Dark_cf_bg_color);
-            colorPrimary = getResources().getColor(R.color.colorDarkPrimary);
-            red_inlens =  getResources().getColor(R.color.Dark_red_inlens);
-            cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Dark_cf_alert_dialogue_dim_bg);
-
-        }
-
-        InviteLinkButton.setOnClickListener(new View.OnClickListener() {
-
-
-            @Override
-            public void onClick(View v) {
-
-                CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
-                        .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                        .setTitle("Photographers Count ?")
-                        .setIcon(R.drawable.ic_link)
-                        .setDialogBackgroundColor(cf_bg_color)
-                        .setTextColor(colorPrimary)
-                        .setCancelable(false)
-                        .setMessage("Select the Number of Photographers to join via this link.")
-                        .setMultiChoiceItems(new String[]{"Only 1", "5", "20", "20+"}, new boolean[]{false, false, false, false}, new DialogInterface.OnMultiChoiceClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int index, boolean b) {
-
-                                Map linkMap = new HashMap();
-                                linkMap.put("id", CommunityID);
-
-                                if (b) {
-                                    if (index == 0) {
-                                        Toast.makeText(getApplicationContext(), "Sending to 1", Toast.LENGTH_SHORT).show();
-                                        dialogInterface.dismiss();
-                                        tempDialogue.dismiss();
-                                        linkMap.put("count", 1);
-                                        String link_id = linkRef.push().getKey();
-                                        linkRef.child(link_id).setValue(linkMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful()) {
-                                                    shareInviteLink(link_id);
-                                                } else {
-                                                    showSnackbarMessage("Some error occurred. Please try again later.");
-                                                }
-
-                                            }
-                                        }).addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-
-                                                showSnackbarMessage("Some error occurred. Please try again later.");
-
-                                            }
-                                        });
-
-                                    } else if (index == 1) {
-                                        Toast.makeText(getApplicationContext(), "Sending to 5", Toast.LENGTH_SHORT).show();
-                                        dialogInterface.dismiss();
-                                        tempDialogue.dismiss();
-                                        linkMap.put("count", 5);
-                                        String link_id = linkRef.push().getKey();
-                                        linkRef.child(link_id).setValue(linkMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful()) {
-                                                    shareInviteLink(link_id);
-                                                } else {
-                                                    showSnackbarMessage("Some error occurred. Please try again later.");
-                                                }
-
-                                            }
-                                        }).addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-
-                                                showSnackbarMessage("Some error occurred. Please try again later.");
-
-                                            }
-                                        });
-
-                                    } else if (index == 2) {
-                                        Toast.makeText(getApplicationContext(), "Sending to 20", Toast.LENGTH_SHORT).show();
-                                        dialogInterface.dismiss();
-                                        tempDialogue.dismiss();
-                                        linkMap.put("count", 10);
-                                        String link_id = linkRef.push().getKey();
-                                        linkRef.child(link_id).setValue(linkMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful()) {
-                                                    shareInviteLink(link_id);
-                                                } else {
-                                                    showSnackbarMessage("Some error occurred. Please try again later.");
-                                                }
-
-                                            }
-                                        }).addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-
-                                                showSnackbarMessage("Some error occurred. Please try again later.");
-
-                                            }
-                                        });
-                                    } else {
-                                        Toast.makeText(getApplicationContext(), "Sending to 20 or more", Toast.LENGTH_SHORT).show();
-                                        dialogInterface.dismiss();
-                                        tempDialogue.dismiss();
-                                        linkMap.put("count", "inf");
-                                        String link_id = linkRef.push().getKey();
-                                        linkRef.child(link_id).setValue(linkMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful()) {
-                                                    shareInviteLink(link_id);
-                                                } else {
-                                                    showSnackbarMessage("Some error occurred. Please try again later.");
-                                                }
-
-                                            }
-                                        }).addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-
-                                                showSnackbarMessage("Some error occurred. Please try again later.");
-
-                                            }
-                                        });
-
-                                    }
-
-                                }
-                            }
-                        }).addButton("CANCEL",
-                                colorPrimary,
-                                cf_alert_dialogue_dim_bg,
-                                CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                                CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        dialogInterface.dismiss();
-                                    }
-                                }
-
-                        );
-                builder.show();
-            }
-        });
-
-
-        QRCodeDialog.findViewById(R.id.cancelButtonTextView).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-
-                tempDialogue.dismiss();
-                tempDialogue.cancel();
-            }
-        });
-        //FIXME dialog hidden by elson
-        //QRCodeDialog.show();
-
-    }
 
     private void decryptDeepLink() {
 
@@ -2361,7 +2132,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                 }
                             }
 
-                            participantsAdapter = new ParticipantsAdapter(photographerList, MainActivity.this, QRCodeDialog,communityModel.getAdmin());
+                            participantsAdapter = new ParticipantsAdapter(photographerList, MainActivity.this, qrCodeBottomSheet,communityModel.getAdmin());
                             ParticipantsRecyclerView.setAdapter(participantsAdapter);
                             expandableCardView.expand();
 
@@ -2885,15 +2656,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     }
 
 
-    private void shareInviteLink(String CommunityID) {
-
-        String url = "https://inlens.page.link/?link=https://inlens.com=" + CommunityID + "&apn=com.integrals.inlens";
-        final Intent SharingIntent = new Intent(Intent.ACTION_SEND);
-        SharingIntent.setType("text/plain");
-        SharingIntent.putExtra(Intent.EXTRA_TEXT, "InLens Community Invite Link \n" + url);
-        startActivity(SharingIntent);
-
-    }
 
 
     private void checkInternetConnection() {
