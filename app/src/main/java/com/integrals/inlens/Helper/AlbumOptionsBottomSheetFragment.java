@@ -2,7 +2,10 @@ package com.integrals.inlens.Helper;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,7 +24,7 @@ import com.integrals.inlens.R;
 public class AlbumOptionsBottomSheetFragment extends BottomSheetDialogFragment {
     RelativeLayout scanLayout,createLayout;
     ImageButton scanImageButton,createImageButton;
-
+    Activity activity;
 
     public interface IScanCallback
     {
@@ -43,6 +46,7 @@ public class AlbumOptionsBottomSheetFragment extends BottomSheetDialogFragment {
     IDismissDialog dismissDialog;
 
     public AlbumOptionsBottomSheetFragment(Activity activity) {
+        this.activity = activity;
         scanCallback = (IScanCallback) activity;
         createCallback = (ICreateCallback) activity;
         dismissDialog = (IDismissDialog) activity;
@@ -52,7 +56,33 @@ public class AlbumOptionsBottomSheetFragment extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View  albumOptionsView = inflater.inflate(R.layout.album_options_layout, container, false);
+        View  albumOptionsView;
+        SharedPreferences themePref = activity.getSharedPreferences(AppConstants.appDataPref, Context.MODE_PRIVATE);
+        if(themePref.contains(AppConstants.appDataPref_theme))
+        {
+            if(themePref.getString(AppConstants.appDataPref_theme,AppConstants.themeLight).equals(AppConstants.themeLight))
+            {
+                ContextWrapper contextWrapper = new ContextWrapper(activity);
+                contextWrapper.setTheme(R.style.AppTheme);
+                albumOptionsView = inflater.cloneInContext(contextWrapper).inflate(R.layout.album_options_layout, container, false);
+
+            }
+            else
+            {
+                ContextWrapper contextWrapper = new ContextWrapper(activity);
+                contextWrapper.setTheme(R.style.DarkTheme);
+                albumOptionsView = inflater.cloneInContext(contextWrapper).inflate(R.layout.album_options_layout, container, false);
+
+            }
+        }
+        else
+        {
+            ContextWrapper contextWrapper = new ContextWrapper(activity);
+            contextWrapper.setTheme(R.style.AppTheme);
+            albumOptionsView = inflater.cloneInContext(contextWrapper).inflate(R.layout.album_options_layout, container, false);
+
+        }
+
         scanLayout = albumOptionsView.findViewById(R.id.option_scan_layout);
         createLayout = albumOptionsView.findViewById(R.id.option_create_layout);
         scanImageButton = albumOptionsView.findViewById(R.id.main_horizontal_scan_button);

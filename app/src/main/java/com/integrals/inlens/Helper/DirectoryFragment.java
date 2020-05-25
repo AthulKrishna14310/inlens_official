@@ -3,6 +3,7 @@ package com.integrals.inlens.Helper;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -57,7 +58,33 @@ public class DirectoryFragment extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_directory,container,false);
+        View view;
+
+        SharedPreferences themePref = context.getSharedPreferences(AppConstants.appDataPref, Context.MODE_PRIVATE);
+        if(themePref.contains(AppConstants.appDataPref_theme))
+        {
+            if(themePref.getString(AppConstants.appDataPref_theme,AppConstants.themeLight).equals(AppConstants.themeLight))
+            {
+                ContextWrapper contextWrapper = new ContextWrapper(context);
+                contextWrapper.setTheme(R.style.AppTheme);
+                view = inflater.cloneInContext(contextWrapper).inflate(R.layout.fragment_directory, container, false);
+
+            }
+            else
+            {
+                ContextWrapper contextWrapper = new ContextWrapper(context);
+                contextWrapper.setTheme(R.style.DarkTheme);
+                view = inflater.cloneInContext(contextWrapper).inflate(R.layout.fragment_directory, container, false);
+
+            }
+        }
+        else
+        {
+            ContextWrapper contextWrapper = new ContextWrapper(context);
+            contextWrapper.setTheme(R.style.AppTheme);
+            view = inflater.cloneInContext(contextWrapper).inflate(R.layout.fragment_directory, container, false);
+
+        }
 
         RecyclerView dirRecyclerview = view.findViewById(R.id.dirRecyclerview);
         dirRecyclerview.setHasFixedSize(true);
