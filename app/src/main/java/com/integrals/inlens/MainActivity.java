@@ -45,6 +45,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.text.format.DateFormat;
+import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -144,6 +146,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -372,6 +375,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 userCommunityIdList.removeAll(null);
             }
             Collections.sort(userCommunityIdList, Collections.reverseOrder());
+
         } catch (Exception e) {
             //
         }
@@ -1495,6 +1499,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                             if (dataSnapshot.hasChild("id") && dataSnapshot.hasChild("count")) {
                                 String communityId = dataSnapshot.child("id").getValue().toString();
                                 String count = dataSnapshot.child("count").getValue().toString();
+
                                 if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
 
                                     CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
@@ -1638,93 +1643,242 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                             int remainingCountInt = Integer.parseInt(remainingCount);
                             if (remainingCountInt > 0) {
                                 remainingCountInt -= 1;
+
                                 linkRef.child(communityRefLinkId).child("count").setValue(remainingCountInt);
                                 currentActiveCommunityID = communityId;
                                 currentUserRef.child(FirebaseConstants.COMMUNITIES).child(communityId).setValue(ServerValue.TIMESTAMP);
                                 currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).setValue(communityId);
                                 participantRef.child(communityId).child(currentUserId).setValue(ServerValue.TIMESTAMP);
-                                userCommunityIdList.add(0, communityId);
-                                communityRef.child(communityId).addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot snapshot) {
+                                if(!userCommunityIdList.contains(communityId))
+                                {
+                                    userCommunityIdList.add(0, communityId);
+                                    communityRef.child(communityId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot snapshot) {
 
 
-                                        String admin = AppConstants.NOT_AVALABLE, coverimage = AppConstants.NOT_AVALABLE, description = AppConstants.NOT_AVALABLE, endtime = AppConstants.NOT_AVALABLE, starttime = AppConstants.NOT_AVALABLE, status = AppConstants.NOT_AVALABLE, title = AppConstants.NOT_AVALABLE, type = AppConstants.NOT_AVALABLE;
-                                        boolean isReported=false;
-                                        if (snapshot.hasChild(FirebaseConstants.COMMUNITYADMIN)) {
-                                            admin = snapshot.child(FirebaseConstants.COMMUNITYADMIN).getValue().toString();
-                                        }
-                                        if (snapshot.hasChild(FirebaseConstants.COMMUNITYCOVERIMAGE)) {
-                                            coverimage = snapshot.child(FirebaseConstants.COMMUNITYCOVERIMAGE).getValue().toString();
-                                        }
-                                        if (snapshot.hasChild(FirebaseConstants.COMMUNITYDESC)) {
-                                            description = snapshot.child(FirebaseConstants.COMMUNITYDESC).getValue().toString();
-                                        }
-                                        if (snapshot.hasChild(FirebaseConstants.COMMUNITYENDTIME)) {
-                                            endtime = snapshot.child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString();
-                                        }
-                                        if (snapshot.hasChild(FirebaseConstants.COMMUNITYSTARTTIME)) {
-                                            starttime = snapshot.child(FirebaseConstants.COMMUNITYSTARTTIME).getValue().toString();
-                                        }
-                                        if (snapshot.hasChild(FirebaseConstants.COMMUNITYSTATUS)) {
-                                            status = snapshot.child(FirebaseConstants.COMMUNITYSTATUS).getValue().toString();
-                                        }
-                                        if (snapshot.hasChild(FirebaseConstants.COMMUNITYTITLE)) {
-                                            title = snapshot.child(FirebaseConstants.COMMUNITYTITLE).getValue().toString();
-                                        }
-                                        if (snapshot.hasChild(FirebaseConstants.COMMUNITYTYPE)) {
-                                            type = snapshot.child(FirebaseConstants.COMMUNITYTYPE).getValue().toString();
-                                        }
-                                        if(snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITY_REPORTED))
-                                        {
-                                           isReported=true;
+                                            String admin = AppConstants.NOT_AVALABLE, coverimage = AppConstants.NOT_AVALABLE, description = AppConstants.NOT_AVALABLE, endtime = AppConstants.NOT_AVALABLE, starttime = AppConstants.NOT_AVALABLE, status = AppConstants.NOT_AVALABLE, title = AppConstants.NOT_AVALABLE, type = AppConstants.NOT_AVALABLE;
+                                            boolean isReported=false;
+                                            if (snapshot.hasChild(FirebaseConstants.COMMUNITYADMIN)) {
+                                                admin = snapshot.child(FirebaseConstants.COMMUNITYADMIN).getValue().toString();
+                                            }
+                                            if (snapshot.hasChild(FirebaseConstants.COMMUNITYCOVERIMAGE)) {
+                                                coverimage = snapshot.child(FirebaseConstants.COMMUNITYCOVERIMAGE).getValue().toString();
+                                            }
+                                            if (snapshot.hasChild(FirebaseConstants.COMMUNITYDESC)) {
+                                                description = snapshot.child(FirebaseConstants.COMMUNITYDESC).getValue().toString();
+                                            }
+                                            if (snapshot.hasChild(FirebaseConstants.COMMUNITYENDTIME)) {
+                                                endtime = snapshot.child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString();
+                                            }
+                                            if (snapshot.hasChild(FirebaseConstants.COMMUNITYSTARTTIME)) {
+                                                starttime = snapshot.child(FirebaseConstants.COMMUNITYSTARTTIME).getValue().toString();
+                                            }
+                                            if (snapshot.hasChild(FirebaseConstants.COMMUNITYSTATUS)) {
+                                                status = snapshot.child(FirebaseConstants.COMMUNITYSTATUS).getValue().toString();
+                                            }
+                                            if (snapshot.hasChild(FirebaseConstants.COMMUNITYTITLE)) {
+                                                title = snapshot.child(FirebaseConstants.COMMUNITYTITLE).getValue().toString();
+                                            }
+                                            if (snapshot.hasChild(FirebaseConstants.COMMUNITYTYPE)) {
+                                                type = snapshot.child(FirebaseConstants.COMMUNITYTYPE).getValue().toString();
+                                            }
+                                            if(snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITY_REPORTED))
+                                            {
+                                                isReported=true;
+                                            }
+
+                                            CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId,isReported);
+                                            communityDataList.add(1, model);
+                                            mainHorizontalAdapter.notifyItemInserted(1);
+                                            showSnackbarMessage("You have been added to " + title);
+
+
+
+                                            SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
+                                            SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
+                                            ceditor.putString("id", communityId);
+                                            ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
+                                            ceditor.putString("stopAt", getOffsetAddedTime(String.valueOf(endtime)));
+                                            ceditor.putInt("notiCount", 0);
+                                            ceditor.remove(AppConstants.IS_NOTIFIED);
+                                            ceditor.commit();
+
+                                            setParticipants(model);
+
+
+                                            NotificationHelper helper = new NotificationHelper(getApplicationContext());
+                                            String notificationStr = "";
+                                            if (titleValue.length() > 15) {
+                                                notificationStr += titleValue.substring(0, 15) + "...";
+                                            } else {
+                                                notificationStr += titleValue;
+                                            }
+                                            if (dy > 0) {
+                                                notificationStr += ", " + (int) dy + " days";
+
+                                            } else {
+                                                notificationStr += ",";
+                                            }
+                                            if (hr > 0) {
+                                                if(hr==1)
+                                                {
+                                                    notificationStr += " " + (int) hr + " hr left";
+                                                }
+                                                else
+                                                {
+                                                    notificationStr += " " + (int) hr + " hrs left";
+                                                }
+                                            }
+                                            if (hr < 1 && dy < 1) {
+                                                if(min==1)
+                                                {
+                                                    notificationStr += " " + (int) min + " minute left";
+                                                }
+                                                else
+                                                {
+                                                    notificationStr += " " + (int) min + " minutes left";
+                                                }
+                                            }
+                                            long time = Long.parseLong(getOffsetAddedTime(endtime));
+                                            CharSequence Time = DateUtils.getRelativeDateTimeString(MainActivity.this, time, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
+                                            String timesubstring = Time.toString().substring(Time.length()-8);
+
+                                            Date date = new Date(time);
+                                            String dateformat = DateFormat.format("dd-MM-yyyy",date).toString();
+
+                                            helper.displayAlbumStartNotification(notificationStr, "You are active in this Cloud-Album till " + dateformat+", "+timesubstring);
+                                            MainActivity.this.getIntent().putExtra("CREATED", "YES");
+                                            MainActivity.this.getIntent().putExtra("ID", communityId);
                                         }
 
-                                        CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId,isReported);
-                                        communityDataList.add(1, model);
-                                        mainHorizontalAdapter.notifyItemInserted(1);
-                                        showSnackbarMessage("You have been added to " + title);
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
 
-                                        SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
-                                        SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
-                                        ceditor.putString("id", communityId);
-                                        ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
-                                        ceditor.putString("stopAt", getOffsetAddedTime(String.valueOf(endtime)));
-                                        ceditor.putInt("notiCount", 0);
-                                        ceditor.remove(AppConstants.IS_NOTIFIED);
-                                        ceditor.commit();
-
-                                        NotificationHelper helper = new NotificationHelper(getApplicationContext());
-                                        String notificationStr = "";
-                                        if (titleValue.length() > 15) {
-                                            notificationStr += titleValue.substring(0, 15) + "...";
-                                        } else {
-                                            notificationStr += titleValue;
                                         }
-                                        if (dy > 0) {
-                                            notificationStr += ", " + (int) dy + " days";
+                                    });
+                                }
+                                else
+                                {
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
 
-                                        } else {
-                                            notificationStr += ",";
-                                        }
-                                        if (hr > 0) {
-                                            notificationStr += " " + (int) hr + " hrs left";
-                                        }
-                                        if (hr < 1 && dy < 1) {
-                                            notificationStr += " " + (int) min + " minutes left";
-                                        }
-                                        helper.displayAlbumStartNotification(notificationStr, "You are active in this Cloud-Album till " + endtime);
-                                        MainActivity.this.getIntent().putExtra("CREATED", "YES");
-                                        MainActivity.this.getIntent().putExtra("ID", communityId);
-                                    }
+                                            if (expandableCardView.isExpanded()) {
+                                                expandableCardView.collapse();
+                                            }
 
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
+                                        }
+                                    }, 50);
 
-                                    }
-                                });
+                                    communityRef.child(communityId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot snapshot) {
+
+
+
+                                            String admin = AppConstants.NOT_AVALABLE, coverimage = AppConstants.NOT_AVALABLE, description = AppConstants.NOT_AVALABLE, endtime = AppConstants.NOT_AVALABLE, starttime = AppConstants.NOT_AVALABLE, status = AppConstants.NOT_AVALABLE, title = AppConstants.NOT_AVALABLE, type = AppConstants.NOT_AVALABLE;
+                                            boolean isReported=false;
+                                            if (snapshot.hasChild(FirebaseConstants.COMMUNITYADMIN)) {
+                                                admin = snapshot.child(FirebaseConstants.COMMUNITYADMIN).getValue().toString();
+                                            }
+                                            if (snapshot.hasChild(FirebaseConstants.COMMUNITYCOVERIMAGE)) {
+                                                coverimage = snapshot.child(FirebaseConstants.COMMUNITYCOVERIMAGE).getValue().toString();
+                                            }
+                                            if (snapshot.hasChild(FirebaseConstants.COMMUNITYDESC)) {
+                                                description = snapshot.child(FirebaseConstants.COMMUNITYDESC).getValue().toString();
+                                            }
+                                            if (snapshot.hasChild(FirebaseConstants.COMMUNITYENDTIME)) {
+                                                endtime = snapshot.child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString();
+                                            }
+                                            if (snapshot.hasChild(FirebaseConstants.COMMUNITYSTARTTIME)) {
+                                                starttime = snapshot.child(FirebaseConstants.COMMUNITYSTARTTIME).getValue().toString();
+                                            }
+                                            if (snapshot.hasChild(FirebaseConstants.COMMUNITYSTATUS)) {
+                                                status = snapshot.child(FirebaseConstants.COMMUNITYSTATUS).getValue().toString();
+                                            }
+                                            if (snapshot.hasChild(FirebaseConstants.COMMUNITYTITLE)) {
+                                                title = snapshot.child(FirebaseConstants.COMMUNITYTITLE).getValue().toString();
+                                            }
+                                            if (snapshot.hasChild(FirebaseConstants.COMMUNITYTYPE)) {
+                                                type = snapshot.child(FirebaseConstants.COMMUNITYTYPE).getValue().toString();
+                                            }
+                                            if(snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITY_REPORTED))
+                                            {
+                                                isReported=true;
+                                            }
+
+
+                                            SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
+                                            SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
+                                            ceditor.putString("id", communityId);
+                                            ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
+                                            ceditor.putString("stopAt", getOffsetAddedTime(String.valueOf(endtime)));
+                                            ceditor.putInt("notiCount", 0);
+                                            ceditor.remove(AppConstants.IS_NOTIFIED);
+                                            ceditor.commit();
+
+
+                                            CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId,isReported);
+                                            mainHorizontalAdapter.selectedAlbumKey=snapshot.getKey();
+                                            mainHorizontalAdapter.notifyDataSetChanged();
+
+                                            setParticipants(model);
+                                            showSnackbarMessage("You have rejoined " + title);
+
+
+                                            NotificationHelper helper = new NotificationHelper(getApplicationContext());
+                                            String notificationStr = "";
+                                            if (titleValue.length() > 15) {
+                                                notificationStr += titleValue.substring(0, 15) + "...";
+                                            } else {
+                                                notificationStr += titleValue;
+                                            }
+                                            if (dy > 0) {
+                                                notificationStr += ", " + (int) dy + " days";
+
+                                            } else {
+                                                notificationStr += ",";
+                                            }
+                                            if (hr > 0) {
+                                                if(hr==1)
+                                                {
+                                                    notificationStr += " " + (int) hr + " hr left";
+                                                }
+                                                else
+                                                {
+                                                    notificationStr += " " + (int) hr + " hrs left";
+                                                }
+                                            }
+                                            if (hr < 1 && dy < 1) {
+                                                if(min==1)
+                                                {
+                                                    notificationStr += " " + (int) min + " minute left";
+                                                }
+                                                else
+                                                {
+                                                    notificationStr += " " + (int) min + " minutes left";
+                                                }
+                                            }
+                                            long time = Long.parseLong(getOffsetAddedTime(endtime));                                            CharSequence Time = DateUtils.getRelativeDateTimeString(MainActivity.this, time, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
+                                            String timesubstring = Time.toString().substring(Time.length()-8);
+
+                                            Date date = new Date(time);
+                                            String dateformat = DateFormat.format("dd-MM-yyyy",date).toString();
+
+                                            helper.displayAlbumStartNotification(notificationStr, "You are active in this Cloud-Album till " + dateformat+", "+timesubstring);
+                                            //MainActivity.this.getIntent().putExtra("CREATED", "YES");
+                                            //MainActivity.this.getIntent().putExtra("ID", communityId);
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
+                                }
+
                             } else {
-                                linkRef.child(communityRefLinkId).removeValue();
                                 showSnackbarMessage("Invite-Link expired. Get a new Invite-Link.");
                             }
                         } catch (NumberFormatException e) {
@@ -1776,6 +1930,10 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                         mainHorizontalAdapter.notifyItemInserted(1);
                                         showSnackbarMessage("You have been added to " + title);
 
+                                        photographerList.add(0,new PhotographerModel("add", "add", "add","add"));
+
+
+
                                         SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
                                         SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
                                         ceditor.putString("id", communityId);
@@ -1804,7 +1962,13 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                         if (hr < 1 && dy < 1) {
                                             notificationStr += " " + (int) min + " minutes left";
                                         }
-                                        helper.displayAlbumStartNotification(notificationStr, "You are active in this Cloud-Album till " + endtime);
+                                        long time = Long.parseLong(getOffsetAddedTime(endtime));                                        CharSequence Time = DateUtils.getRelativeDateTimeString(MainActivity.this, time, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
+                                        String timesubstring = Time.toString().substring(Time.length()-8);
+
+                                        Date date = new Date(time);
+                                        String dateformat = DateFormat.format("dd-MM-yyyy",date).toString();
+
+                                        helper.displayAlbumStartNotification(notificationStr, "You are active in this Cloud-Album till " + dateformat+", "+timesubstring);
                                         MainActivity.this.getIntent().putExtra("CREATED", "YES");
                                         MainActivity.this.getIntent().putExtra("ID", communityId);
                                     }
@@ -2175,6 +2339,26 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
 
         if (forceQuit) {
+            linkRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    for(DataSnapshot snapshot:dataSnapshot.getChildren())
+                    {
+                        if(snapshot.hasChild("id") && snapshot.child("id").equals(currentActiveCommunityID))
+                        {
+                            linkRef.child(snapshot.getKey()).removeValue();
+
+                        }
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
             communityRef.child(currentActiveCommunityID).child(FirebaseConstants.COMMUNITYSTATUS).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
@@ -2197,6 +2381,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                         }
 
                         showDialogMessage("Exited Participation", "Successfully left from the Cloud-Album");
+                        Log.i("quit","url"+photographerList.get(0).getImgUrl()+"getId"+photographerList.get(0).getId()+"getName"+photographerList.get(0).getName());
 
                         if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
                             photographerList.remove(0);
@@ -2274,6 +2459,28 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                                         String admin = dataSnapshot.child(FirebaseConstants.COMMUNITYADMIN).getValue().toString();
                                         if (admin.equals(currentUserId)) {
+
+                                            linkRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                                    for(DataSnapshot snapshot:dataSnapshot.getChildren())
+                                                    {
+                                                        if(snapshot.hasChild("id") && snapshot.child("id").equals(currentActiveCommunityID))
+                                                        {
+                                                            linkRef.child(snapshot.getKey()).removeValue();
+
+                                                        }
+                                                    }
+
+                                                }
+
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
+
+                                                }
+                                            });
+
                                             communityRef.child(currentActiveCommunityID).child(FirebaseConstants.COMMUNITYSTATUS).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override
                                                 public void onComplete(@NonNull Task<Void> task) {
@@ -2339,6 +2546,10 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                         showDialogMessage("Exited Participation", "Successfully left from the Cloud-Album");
                                                         //SetDefaultView();
 
+                                                        if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
+                                                            photographerList.remove(0);
+                                                            participantsAdapter.notifyItemRemoved(0);
+                                                        }
 
                                                     } else {
                                                         //SetDefaultView();
@@ -2577,6 +2788,22 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
         }
 
+    }
+
+    public String getDate(String timestamp) {
+        try
+        {
+            long time = Long.parseLong(timestamp);
+            TimeZone timeZone = TimeZone.getDefault();
+            long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
+            time+=offsetInMillis;
+            CharSequence Time = DateUtils.getRelativeDateTimeString(MainActivity.this, time, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
+            return String.valueOf(Time);
+        }
+        catch (NumberFormatException e)
+        {
+            return "Nil";
+        }
     }
 
     private void uploadCoverPhoto(Uri imageUri) {

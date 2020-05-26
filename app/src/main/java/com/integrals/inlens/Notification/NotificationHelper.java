@@ -152,7 +152,7 @@ public class NotificationHelper {
 
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) {
             String channelID = "ID_505";
-            NotificationChannel notificationChannel = new NotificationChannel(channelID,"Cloud Album Ended", NotificationManager.IMPORTANCE_HIGH);
+            NotificationChannel notificationChannel = new NotificationChannel(channelID,"Cloud Album Started", NotificationManager.IMPORTANCE_HIGH);
             notificationManager.createNotificationChannel(notificationChannel);
 
             Notification.Builder notificationBuilder = new Notification.Builder(context, channelID)
