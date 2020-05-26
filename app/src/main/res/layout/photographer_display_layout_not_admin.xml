@@ -24,7 +24,7 @@
         android:layout_gravity="center"
         android:tint="?attr/colorSecondary"
 
-        android:src="@drawable/ic_account_circle_24dp" />
+        android:src="@drawable/ic_member_card" />
     <ProgressBar
         android:id="@+id/photographer_progressbar"
         android:layout_width="20dp"
@@ -41,7 +41,7 @@
         android:layout_toRightOf="@id/imageView_photographer_card"
         android:textSize="20sp"
         android:maxLines="1"
-        android:textColor="?attr/colorPrimary"
+        android:textColor="?attr/colorSecondary"
         android:layout_height="wrap_content"
         android:text="Photographer Name" />
 
@@ -53,7 +53,7 @@
         android:layout_toRightOf="@id/imageView_photographer_card"
         android:text="photographers@mail.com"
         android:fontFamily="@font/base_font"
-        android:textColor="?attr/colorSecondary"
+        android:textColor="?attr/colorSecondaryLight"
         android:textSize="12sp">
 
     </TextView>

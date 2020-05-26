@@ -22,7 +22,7 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_gravity="center"
-            android:src="@drawable/ic_account_circle_24dp"
+            android:src="@drawable/ic_member_card"
             android:tint="?attr/colorSecondary" />
 
         <ProgressBar
@@ -55,7 +55,7 @@
         android:layout_toRightOf="@id/imageView_photographer_card"
         android:fontFamily="@font/base_font"
         android:text="photographers@mail.com"
-        android:textColor="?attr/colorSecondary"
+        android:textColor="?attr/colorSecondaryLight"
         android:textSize="12sp">
 
     </TextView>
@@ -87,7 +87,7 @@
             android:text="YOU ARE ADMIN"
             android:textAlignment="center"
             android:textAllCaps="true"
-            android:textColor="?attr/colorSecondary"
+            android:textColor="?attr/colorPrimary"
             android:textSize="14sp"
 
             >

@@ -199,7 +199,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/home/athul/Android/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/file/ic_folder_open_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/home/athul/Android/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_account_circle_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -210,7 +210,7 @@
                         <option name="values">
                           <map>
                             <entry key="color" value="e53935" />
-                            <entry key="outputName" value="ic_folder" />
+                            <entry key="outputName" value="ic_member_card" />
                             <entry key="sourceFile" value="$USER_HOME$/C:\Users\deljo" />
                           </map>
                         </option>

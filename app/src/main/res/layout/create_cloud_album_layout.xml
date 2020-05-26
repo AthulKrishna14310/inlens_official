@@ -154,7 +154,7 @@
 
                             android:textSize="12sp"
 
-                            android:theme="@style/Checkbox.Blue" />
+                           />
 
                         <ImageButton
                             android:id="@+id/date_range_button"
@@ -186,7 +186,7 @@
                             android:textAllCaps="true"
                             android:textColor="?attr/colorSecondary"
                             android:textSize="12sp"
-                            android:theme="@style/Checkbox.Blue" />
+                            />
 
                         <ImageButton
                             android:id="@+id/event_type_add"

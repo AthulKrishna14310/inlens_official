@@ -2,6 +2,8 @@ package com.integrals.inlens.Helper;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -50,7 +52,35 @@ public class PhotographerFragementBottomSheetNA extends BottomSheetDialogFragmen
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.photographer_display_layout_not_admin, container, false);
+        View view ;
+
+        SharedPreferences themePref =context.getSharedPreferences(AppConstants.appDataPref, Context.MODE_PRIVATE);
+        if(themePref.contains(AppConstants.appDataPref_theme))
+        {
+            if(themePref.getString(AppConstants.appDataPref_theme,AppConstants.themeLight).equals(AppConstants.themeLight))
+            {
+                ContextWrapper contextWrapper = new ContextWrapper(context);
+                contextWrapper.setTheme(R.style.AppTheme);
+                view= inflater.cloneInContext(contextWrapper).inflate(R.layout.photographer_display_layout_not_admin, container, false);
+
+            }
+            else
+            {
+                ContextWrapper contextWrapper = new ContextWrapper(context);
+                contextWrapper.setTheme(R.style.DarkTheme);
+                view = inflater.cloneInContext(contextWrapper).inflate(R.layout.photographer_display_layout_not_admin, container, false);
+
+            }
+        }
+        else
+        {
+            ContextWrapper contextWrapper = new ContextWrapper(context);
+            contextWrapper.setTheme(R.style.AppTheme);
+            view= inflater.cloneInContext(contextWrapper).inflate(R.layout.photographer_display_layout_not_admin, container, false);
+
+        }
+
+
 
         CircleImageView userImageview = view.findViewById(R.id.imageView_photographer);
         ProgressBar progressBar = view.findViewById(R.id.photographer_progressbar);
@@ -71,6 +101,11 @@ public class PhotographerFragementBottomSheetNA extends BottomSheetDialogFragmen
                     return false;
                 }
             }).into(userImageview);
+        }else {
+            progressBar.setVisibility(View.GONE);
+            Glide.with(context)
+                    .load(context.getDrawable(R.drawable.ic_member_card))
+                    .into(userImageview);
         }
         TextView nameTextView,emailTextView,removeLayoutTextView;
         nameTextView = view.findViewById(R.id.name_photographer);
@@ -84,7 +119,7 @@ public class PhotographerFragementBottomSheetNA extends BottomSheetDialogFragmen
         if(!isAdmin)
         {
             view.findViewById(R.id.divider).setVisibility(View.INVISIBLE);
-            removeLayout.setVisibility(View.INVISIBLE);
+            removeLayout.setVisibility(View.GONE);
         }
         else
         {
