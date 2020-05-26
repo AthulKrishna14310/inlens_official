@@ -322,7 +322,7 @@ public class QRCodeBottomSheet extends BottomSheetDialogFragment {
         final Intent SharingIntent = new Intent(Intent.ACTION_SEND);
         SharingIntent.setType("text/plain");
         SharingIntent.putExtra(Intent.EXTRA_TEXT, "InLens Community Invite Link \n" + url);
-        startActivity(SharingIntent);
+        context.startActivity(SharingIntent);
 
     }
 
