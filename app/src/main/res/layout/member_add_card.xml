@@ -6,7 +6,7 @@
     android:layout_height="32dp"
     app:cardBackgroundColor="?attr/default_bg_color"
     app:cardElevation="0dp"
-    android:layout_marginRight="16dp"
+    android:layout_marginRight="8dp"
     android:layout_marginLeft="16dp"
     >
 

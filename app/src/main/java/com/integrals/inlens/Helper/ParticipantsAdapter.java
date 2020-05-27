@@ -77,7 +77,7 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             }
 
-            RequestOptions rq = new RequestOptions().placeholder(R.drawable.ic_account_circle_24dp);
+            RequestOptions rq = new RequestOptions().placeholder(R.drawable.ic_member_card);
             Glide.with(activity).load(photographersList.get(position).getImgUrl()).apply(rq).into(viewHolder.PImage);
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
