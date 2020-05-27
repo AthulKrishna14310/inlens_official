@@ -48,7 +48,7 @@ public class QRCodeBottomSheet extends BottomSheetDialogFragment {
     String currentActiveCommunityId;
     DatabaseReference linkRef;
     View qrCodeView;
-
+    int themeId;
     public QRCodeBottomSheet(Context context, String id, DatabaseReference linkRef) {
         this.context = context;
         currentActiveCommunityId = id;
@@ -60,16 +60,17 @@ public class QRCodeBottomSheet extends BottomSheetDialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         String appTheme;
-
         SharedPreferences themePref = context.getSharedPreferences(AppConstants.appDataPref, Context.MODE_PRIVATE);
         if (themePref.contains(AppConstants.appDataPref_theme)) {
             if (themePref.getString(AppConstants.appDataPref_theme, AppConstants.themeLight).equals(AppConstants.themeLight)) {
+                themeId = R.style.AppTheme;
                 appTheme = AppConstants.themeLight;
                 ContextWrapper contextWrapper = new ContextWrapper(context);
                 contextWrapper.setTheme(R.style.AppTheme);
                 qrCodeView = inflater.cloneInContext(contextWrapper).inflate(R.layout.qrcode_generator_layout, container, false);
 
             } else {
+                themeId = R.style.DarkTheme;
                 appTheme = AppConstants.themeDark;
                 ContextWrapper contextWrapper = new ContextWrapper(context);
                 contextWrapper.setTheme(R.style.DarkTheme);
@@ -77,6 +78,7 @@ public class QRCodeBottomSheet extends BottomSheetDialogFragment {
 
             }
         } else {
+            themeId = R.style.AppTheme;
             appTheme = AppConstants.themeLight;
             ContextWrapper contextWrapper = new ContextWrapper(context);
             contextWrapper.setTheme(R.style.AppTheme);
@@ -123,16 +125,15 @@ public class QRCodeBottomSheet extends BottomSheetDialogFragment {
             textView.setText("Some error was encountered. Please try again.");
         }
 
-        int cf_bg_color, colorPrimary, red_inlens, cf_alert_dialogue_dim_bg;
+        int cf_bg_color, colorPrimary, cf_alert_dialogue_dim_bg;
+
         if (appTheme.equals(AppConstants.themeLight)) {
             cf_bg_color = getResources().getColor(R.color.Light_cf_bg_color);
             colorPrimary = getResources().getColor(R.color.colorLightPrimary);
-            red_inlens = getResources().getColor(R.color.Light_red_inlens);
             cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Light_cf_alert_dialogue_dim_bg);
         } else {
             cf_bg_color = getResources().getColor(R.color.Dark_cf_bg_color);
             colorPrimary = getResources().getColor(R.color.colorDarkPrimary);
-            red_inlens = getResources().getColor(R.color.Dark_red_inlens);
             cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Dark_cf_alert_dialogue_dim_bg);
 
         }
@@ -143,7 +144,7 @@ public class QRCodeBottomSheet extends BottomSheetDialogFragment {
             @Override
             public void onClick(View v) {
 
-                CFAlertDialog.Builder builder = new CFAlertDialog.Builder(context)
+                CFAlertDialog.Builder builder = new CFAlertDialog.Builder(context,themeId)
                         .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                         .setTitle("Photographers Count ?")
                         .setIcon(R.drawable.ic_link)
