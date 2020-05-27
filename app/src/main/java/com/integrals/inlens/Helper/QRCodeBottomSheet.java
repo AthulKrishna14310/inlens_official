@@ -139,8 +139,7 @@ public class QRCodeBottomSheet extends BottomSheetDialogFragment {
         }
 
         InviteLinkButton.setOnClickListener(new View.OnClickListener() {
-
-
+            
             @Override
             public void onClick(View v) {
 
