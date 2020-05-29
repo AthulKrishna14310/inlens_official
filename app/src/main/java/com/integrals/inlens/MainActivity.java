@@ -14,11 +14,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -56,25 +54,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
-import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
@@ -102,10 +93,6 @@ import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
 import com.integrals.inlens.Activities.CreateCloudAlbum;
 import com.integrals.inlens.Activities.InlensGalleryActivity;
 import com.integrals.inlens.Activities.PhotoView;
@@ -132,7 +119,6 @@ import com.integrals.inlens.Models.PhotographerModel;
 import com.integrals.inlens.Models.PostModel;
 import com.integrals.inlens.Notification.NotificationHelper;
 import com.integrals.inlens.WorkManager.AlbumScanWorker;
-import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.skyfishjy.library.RippleBackground;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
@@ -147,9 +133,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -1101,13 +1085,10 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                     } else {
                                         // start the necessary services
                                         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                                            Constraints constraints = new Constraints.Builder()
-                                                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                                                    .build();
+
                                             PeriodicWorkRequest periodicWorkRequest = new PeriodicWorkRequest
                                                     .Builder(AlbumScanWorker.class, 15, TimeUnit.MINUTES)
                                                     .addTag(AppConstants.PHOTO_SCAN_WORK)
-                                                    .setConstraints(constraints)
                                                     .build();
                                             WorkManager.getInstance().enqueueUniquePeriodicWork(AppConstants.PHOTO_SCAN_WORK, ExistingPeriodicWorkPolicy.REPLACE, periodicWorkRequest);
                                             SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
@@ -2660,13 +2641,10 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             break;
             case MY_PERMISSIONS_REQUEST_START_WORKMANAGER: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Constraints constraints = new Constraints.Builder()
-                            .setRequiredNetworkType(NetworkType.CONNECTED)
-                            .build();
+
                     PeriodicWorkRequest periodicWorkRequest = new PeriodicWorkRequest
                             .Builder(AlbumScanWorker.class, 15, TimeUnit.MINUTES)
                             .addTag(AppConstants.PHOTO_SCAN_WORK)
-                            .setConstraints(constraints)
                             .build();
                     WorkManager.getInstance().enqueueUniquePeriodicWork(AppConstants.PHOTO_SCAN_WORK, ExistingPeriodicWorkPolicy.REPLACE, periodicWorkRequest);
 
@@ -3276,7 +3254,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                     viewHolder.itemView.setAlpha((float) 1);
                 }
 
-                if (!communityDetails.get(position).equals(AppConstants.NOT_AVALABLE)) {
+                if (!communityDetails.get(position).getCommunityID().equals(AppConstants.NOT_AVALABLE)) {
                     if (communityDetails.get(position).getType().contentEquals("Ceremony") ||
                             communityDetails.get(position).getType().contentEquals("Wedding")) {
 
@@ -3398,6 +3376,27 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                     }
                 });
 
+                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        if (selectedAlbumPosition != viewHolder.getAdapterPosition()) {
+                            notifyItemChanged(selectedAlbumPosition);
+                            notifyItemChanged(viewHolder.getAdapterPosition());
+                            selectedAlbumPosition = viewHolder.getAdapterPosition();
+                            setVerticalRecyclerView(communityDetails.get(position));
+                            if (currentActiveCommunityID.equals(communityDetails.get(position).getCommunityID())) {
+                                mainAddPhotosFab.show();
+                            } else {
+                                mainAddPhotosFab.hide();
+                                rippleBackground.stopRippleAnimation();
+                                rippleBackground2.stopRippleAnimation();
+
+                            }
+
+                        }
+                    }
+                });
                 viewHolder.AlbumCoverButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -3434,6 +3433,12 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 viewHolder.progressBar.setIndeterminate(true);
             } else if (holder instanceof MainHorizontalOptionsViewHolder) {
                 MainHorizontalOptionsViewHolder viewHolder = (MainHorizontalOptionsViewHolder) holder;
+                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        optionsBottomSheetFragment.show(((FragmentActivity) activity).getSupportFragmentManager(), optionsBottomSheetFragment.getTag());
+                    }
+                });
                 viewHolder.imageview.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

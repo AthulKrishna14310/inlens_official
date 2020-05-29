@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
@@ -48,13 +50,23 @@ public class ScannerTask extends AsyncTask<Void, Void, Void> {
                 //Log.i(AppConstants.PHOTO_SCAN_WORK,count+" Recent Image count");
                 if (count > 0 && serverTimeInMillis < endTime) {
                     //Log.i(AppConstants.PHOTO_SCAN_WORK,"started doing in display notification");
-                    int notiCount = LastShownNotificationInfo.getInt("notiCount", 0);
-                    notificationHelper.displayRecentImageNotification(count, notiCount);
-                    if (notiCount < 2) {
-                        editor.putInt("notiCount", ++notiCount);
+
+                    // check network connectivity
+                    ConnectivityManager cm =
+                            (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                    NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                    boolean isConnected = activeNetwork != null && activeNetwork.isConnected();
+                    if(isConnected)
+                    {
+                        int notiCount = LastShownNotificationInfo.getInt("notiCount", 0);
+                        notificationHelper.displayRecentImageNotification(count, notiCount);
+                        if (notiCount < 2) {
+                            editor.putInt("notiCount", ++notiCount);
+                        }
+                        editor.putString("time", String.valueOf(System.currentTimeMillis()));
+                        editor.commit();
                     }
-                    editor.putString("time", String.valueOf(System.currentTimeMillis()));
-                    editor.commit();
                 }
                 else if(serverTimeInMillis>endTime)
                 {
