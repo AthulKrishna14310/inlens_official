@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 import com.integrals.inlens.MainActivity;
 import com.integrals.inlens.Models.PhotographerModel;
 import com.integrals.inlens.R;
@@ -30,13 +31,19 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     QRCodeBottomSheet qrCodeBottomSheet;
     MainActivity activity;
     String adminId;
+    DatabaseReference participantRef,userRef;
+    String communityId;
+
 
     public ParticipantsAdapter(List<PhotographerModel> photographersList,
-                               MainActivity activity, QRCodeBottomSheet qrcodeDialog, String adminId) {
+                               MainActivity activity, QRCodeBottomSheet qrcodeDialog, String adminId,DatabaseReference ref,String communityId) {
         this.photographersList = photographersList;
         this.qrCodeBottomSheet = qrcodeDialog;
         this.activity = activity;
         this.adminId = adminId;
+        participantRef = ref.child(FirebaseConstants.PARTICIPANTS).child(communityId);
+        userRef = ref.child(FirebaseConstants.USERS);
+        this.communityId=communityId;
     }
 
     @Override
@@ -91,7 +98,7 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             photographerFragementBottomSheetAdmin.show(((FragmentActivity) activity).getSupportFragmentManager(), photographerFragementBottomSheetAdmin.getTag());
 
                         } else {
-                            PhotographerFragementBottomSheetNA photographerFragementBottomSheetNA = new PhotographerFragementBottomSheetNA(activity, photographersList.get(position),true);
+                            PhotographerFragementBottomSheetNA photographerFragementBottomSheetNA = new PhotographerFragementBottomSheetNA(activity, photographersList.get(position),true,userRef,participantRef,communityId);
                             photographerFragementBottomSheetNA.show(((FragmentActivity) activity).getSupportFragmentManager(), photographerFragementBottomSheetNA.getTag());
 
                         }
@@ -103,7 +110,7 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             photographerFragementBottomSheetAdmin.show(((FragmentActivity) activity).getSupportFragmentManager(), photographerFragementBottomSheetAdmin.getTag());
 
                         } else {
-                            PhotographerFragementBottomSheetNA photographerFragementBottomSheetNA = new PhotographerFragementBottomSheetNA(activity, photographersList.get(position),false);
+                            PhotographerFragementBottomSheetNA photographerFragementBottomSheetNA = new PhotographerFragementBottomSheetNA(activity, photographersList.get(position),false,userRef,participantRef,communityId);
                             photographerFragementBottomSheetNA.show(((FragmentActivity) activity).getSupportFragmentManager(), photographerFragementBottomSheetNA.getTag());
 
                         }

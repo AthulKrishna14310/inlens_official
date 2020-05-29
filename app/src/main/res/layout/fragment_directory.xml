@@ -1,55 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?attr/default_dim_bg"
-    android:orientation="vertical">
+    android:id="@+id/directory_bottomsheet_wrapper">
 
     <LinearLayout
+        android:id="@+id/directory_bottomsheet"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="?attr/colorPrimary"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
+        >
 
-        android:gravity="center">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="?attr/colorPrimary"
+
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Directories"
+                android:textSize="20sp"
+                android:textColor="?attr/default_dim_bg"
+                android:fontFamily="@font/base_font"
+                android:textStyle="bold"
+                />
+
+        </LinearLayout>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Directories"
-            android:textSize="20sp"
-            android:textColor="?attr/default_dim_bg"
+            android:textSize="16sp"
+            android:text="Select the folders that you want InLens to avoid scanning."
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:fontFamily="@font/base_font"
-            android:textStyle="bold"
-            />
+            android:textColor="?attr/colorPrimary"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/dirRecyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/default_dim_bg"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/dirSaveButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:backgroundTint="?attr/colorPrimary"
+            android:text="Save"
+            android:textColor="?attr/default_dim_bg" />
 
     </LinearLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:text="Select the folders that you want InLens to avoid scanning."
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:fontFamily="@font/base_font"
-        android:textColor="?attr/colorPrimary"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/dirRecyclerview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?attr/default_dim_bg"
-        android:layout_weight="1"/>
 
-    <Button
-        android:id="@+id/dirSaveButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:backgroundTint="?attr/colorPrimary"
-        android:text="Save"
-        android:textColor="?attr/default_dim_bg" />
-
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

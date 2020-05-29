@@ -8,11 +8,5 @@
     android:layout_marginRight="6dp">
 
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/main_bottomsheet_particpants_bottomsheet_recyclerview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/default_bg_color">
-    </android.support.v7.widget.RecyclerView>
 
 </RelativeLayout>

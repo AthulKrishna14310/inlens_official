@@ -61,9 +61,11 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
@@ -168,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
 
     RecyclerView ParticipantsRecyclerView;
-    ExpandableCardView expandableCardView;
+    LinearLayout expandableCardView;
 
 
     FloatingActionButton mainAddPhotosFab;
@@ -1741,16 +1743,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                 }
                                 else
                                 {
-                                    new Handler().postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-
-                                            if (expandableCardView.isExpanded()) {
-                                                expandableCardView.collapse();
-                                            }
-
-                                        }
-                                    }, 50);
 
                                     communityRef.child(communityId).addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
@@ -2120,25 +2112,15 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     public void setVerticalRecyclerView(CommunityModel communityModel) {
 
         String communityID = communityModel.getCommunityID();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
-                if (expandableCardView.isExpanded()) {
-                    expandableCardView.collapse();
-                }
-
-            }
-        }, 50);
-
 
         try {
 
             setParticipants(communityModel);
 
-            postRefListener = readFirebaseData.readData(postRef.child(communityID), new FirebaseRead() {
+            postRefListener= new ValueEventListener() {
                 @Override
-                public void onSuccess(DataSnapshot dataSnapshot) {
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
                     _postImageList.clear();
                     postImageList.clear();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -2183,14 +2165,12 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 }
 
                 @Override
-                public void onStart() {
-                }
-
-                @Override
-                public void onFailure(DatabaseError databaseError) {
+                public void onCancelled(DatabaseError databaseError) {
 
                 }
-            });
+            };
+            postRef.child(communityID).addValueEventListener(postRefListener);
+
         } catch (NullPointerException e) {
             Log.i("setVerticialRecyclervie", "Null Pointer");
             e.printStackTrace();
@@ -2206,10 +2186,16 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
 
 
-        participantRefListener = readFirebaseData.readData(participantRef.child(communityID), new FirebaseRead() {
+        participantRefListener = new ValueEventListener() {
             @Override
-            public void onSuccess(DataSnapshot dataSnapshot) {
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                Log.i("participant","ref triggered");
+
                 photographerList.clear();
+
+                participantsAdapter = new ParticipantsAdapter(photographerList, MainActivity.this, qrCodeBottomSheet,communityModel.getAdmin(),FirebaseDatabase.getInstance().getReference(),communityID);
+                ParticipantsRecyclerView.setAdapter(participantsAdapter);
 
                 if (currentActiveCommunityID.equals(communityID) && !CurrentActiveCommunity.contains(AppConstants.IS_NOTIFIED)) {
                     photographerList.add(new PhotographerModel("add", "add", "add","add"));
@@ -2217,9 +2203,14 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                 DatabaseReference photographerRef = FirebaseDatabase.getInstance().getReference().child("Users");
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Log.i("participant","userid "+snapshot.getKey());
+
                     photographerRef.child(snapshot.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot userSnapshot) {
+
+                            Log.i("participant","getting user info "+snapshot.getKey());
+
 
                             String name = AppConstants.NOT_AVALABLE, imgurl = AppConstants.NOT_AVALABLE,email = AppConstants.NOT_AVALABLE;
                             if (userSnapshot.hasChild("Name")) {
@@ -2241,8 +2232,9 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                             if (!getPhotographerKeys(photographerList).contains(snapshot.getKey())) {
 
                                 photographerList.add(new PhotographerModel(name, snapshot.getKey(), imgurl,email));
-
+                                participantsAdapter.notifyDataSetChanged();
                             }
+
 
 
                         }
@@ -2256,6 +2248,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 }
 
 
+
+                /*
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -2277,15 +2271,31 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                 }
                             }
 
-                            participantsAdapter = new ParticipantsAdapter(photographerList, MainActivity.this, qrCodeBottomSheet,communityModel.getAdmin());
-                            ParticipantsRecyclerView.setAdapter(participantsAdapter);
-                            expandableCardView.expand();
+
 
                         }
 
                     }
                 }, 500);
+                 */
 
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+
+        participantRef.child(communityID).addValueEventListener(participantRefListener);
+
+
+       /*
+        participantRefListener = readFirebaseData.readData(participantRef.child(communityID), new FirebaseRead() {
+            @Override
+            public void onSuccess(DataSnapshot dataSnapshot) {
 
             }
 
@@ -2299,6 +2309,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
             }
         });
+        */
 
 
     }
@@ -3389,8 +3400,15 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                 mainAddPhotosFab.show();
                             } else {
                                 mainAddPhotosFab.hide();
-                                rippleBackground.stopRippleAnimation();
-                                rippleBackground2.stopRippleAnimation();
+                                try
+                                {
+                                    rippleBackground.stopRippleAnimation();
+                                    rippleBackground2.stopRippleAnimation();
+                                }
+                                catch (NullPointerException e)
+                                {
+                                    e.printStackTrace();
+                                }
 
                             }
 
@@ -3410,8 +3428,15 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                 mainAddPhotosFab.show();
                             } else {
                                 mainAddPhotosFab.hide();
-                                rippleBackground.stopRippleAnimation();
-                                rippleBackground2.stopRippleAnimation();
+                                try
+                                {
+                                    rippleBackground.stopRippleAnimation();
+                                    rippleBackground2.stopRippleAnimation();
+                                }
+                                catch (NullPointerException e)
+                                {
+                                   e.printStackTrace();
+                                }
 
                             }
 

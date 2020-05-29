@@ -69,16 +69,37 @@
                                 android:background="?attr/default_bg_color"
                                 android:orientation="horizontal" />
 
-                            <com.integrals.inlens.Helper.ExpandableCardView
+                            <LinearLayout
                                 android:id="@+id/photographers"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                app:animationDuration="50"
-                                app:expandOnClick="true"
-                                app:inner_view="@layout/photographers_layout"
-                                app:title="@string/photographer">
+                                android:orientation="vertical"
+                                android:layout_marginBottom="6dp"
+                                >
 
-                            </com.integrals.inlens.Helper.ExpandableCardView>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="16dp"
+                                    android:layout_marginTop="10dp"
+                                    android:layout_marginRight="10dp"
+                                    android:layout_marginBottom="10dp"
+                                    android:background="?attr/default_bg_color"
+                                    android:fontFamily="@font/base_font"
+                                    android:text="Photographers"
+                                    android:textColor="?attr/colorPrimary"
+                                    android:textSize="14sp"
+                                    android:textStyle="normal"/>
+
+                                <android.support.v7.widget.RecyclerView
+                                    android:id="@+id/main_bottomsheet_particpants_bottomsheet_recyclerview"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:background="?attr/default_bg_color">
+                                </android.support.v7.widget.RecyclerView>
+
+
+                            </LinearLayout>
 
 
                         </LinearLayout>

@@ -12,7 +12,10 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.BottomSheetDialogFragment;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -178,6 +181,25 @@ public class DirectoryFragment extends BottomSheetDialogFragment {
         return paths;
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        getDialog().setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                BottomSheetDialog d = (BottomSheetDialog) dialog;
+                CoordinatorLayout coordinatorLayout = (CoordinatorLayout) d.findViewById(R.id.directory_bottomsheet_wrapper);
+                View bottomSheetInternal = d.findViewById(R.id.directory_bottomsheet);
+                BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetInternal);
+                //bottomSheetBehavior.setHidable(false);
+                BottomSheetBehavior.from((View)coordinatorLayout.getParent()).setPeekHeight(bottomSheetInternal.getHeight());
+                bottomSheetBehavior.setPeekHeight(bottomSheetInternal.getHeight());
+                coordinatorLayout.getParent().requestLayout();
+
+            }
+        });
+    }
 
     public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.DirectoryViewHolder>
     {
