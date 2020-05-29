@@ -2,5 +2,5 @@
     android:id="@+id/listview_background_shape">
     <stroke android:width="0.5dp" android:color="?attr/border" />
     <corners android:radius="4dp" />
-    <solid android:color="?attr/default_dim_bg" />
+    <solid android:color="?attr/cf_bg_color" />
 </shape>

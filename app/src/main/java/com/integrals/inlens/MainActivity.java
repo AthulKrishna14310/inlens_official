@@ -3273,17 +3273,20 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                 } else {
                     viewHolder.Indicator.setVisibility(View.INVISIBLE);
-                    viewHolder.itemView.setAlpha((float) 0.85);
+                    viewHolder.itemView.setAlpha((float) 1);
                 }
 
                 if (!communityDetails.get(position).equals(AppConstants.NOT_AVALABLE)) {
-                    if (communityDetails.get(position).getType().contentEquals("Ceremony") || communityDetails.get(position).getType().contentEquals("Wedding")) {
+                    if (communityDetails.get(position).getType().contentEquals("Ceremony") ||
+                            communityDetails.get(position).getType().contentEquals("Wedding")) {
+
                         Glide.with(activity)
                                 .load(communityDetails.get(position)
                                         .getCoverImage()).placeholder(R.drawable.ic_ceremony_foreground)
                                 .addListener(new RequestListener<Drawable>() {
                                     @Override
                                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+
 
                                         return false;
                                     }
@@ -3294,6 +3297,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                     }
                                 }).into(viewHolder.AlbumCoverButton);
                     } else if (communityDetails.get(position).getType().contentEquals("Hangouts")) {
+
                         Glide.with(activity)
                                 .load(communityDetails.get(position)
                                         .getCoverImage()).placeholder(R.drawable.ic_hangout_foreground)
@@ -3310,6 +3314,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                     }
                                 }).into(viewHolder.AlbumCoverButton);
                     } else if (communityDetails.get(position).getType().contentEquals("Travel")) {
+
                         Glide.with(activity)
                                 .load(communityDetails.get(position)
                                         .getCoverImage()).placeholder(R.drawable.ic_travel_foreground)
@@ -3326,6 +3331,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                     }
                                 }).into(viewHolder.AlbumCoverButton);
                     } else if (communityDetails.get(position).getType().contentEquals("Others")) {
+
                         Glide.with(activity)
                                 .load(communityDetails.get(position)
                                         .getCoverImage()).addListener(new RequestListener<Drawable>() {
@@ -3348,6 +3354,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                         .getCoverImage()).placeholder(R.drawable.ic_party_foreground).addListener(new RequestListener<Drawable>() {
                             @Override
                             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+
 
                                 return false;
                             }

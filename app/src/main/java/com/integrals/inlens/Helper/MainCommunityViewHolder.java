@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.integrals.inlens.R;
@@ -18,7 +17,7 @@ public class MainCommunityViewHolder extends RecyclerView.ViewHolder {
     public TextView AlbumDescriptionTextView;
     public Button Indicator;
     public Button menuOptionsButton;
-    public CardView covePhotoChangeCard;
+    public CardView coverPhotoChangeCard;
 
     public MainCommunityViewHolder(View itemView) {
         super(itemView);
@@ -26,7 +25,7 @@ public class MainCommunityViewHolder extends RecyclerView.ViewHolder {
         AlbumCoverButton = itemView.findViewById(R.id.albumcard_image_view);
         AlbumNameTextView = itemView.findViewById(R.id.album_card_textview);
         menuOptionsButton = itemView.findViewById(R.id.coverphotochangebutton);
-        covePhotoChangeCard = itemView.findViewById(R.id.cardcoverphotochange);
+        coverPhotoChangeCard = itemView.findViewById(R.id.cardcoverphotochange);
 
         Indicator = itemView.findViewById(R.id.indication_button);
     }

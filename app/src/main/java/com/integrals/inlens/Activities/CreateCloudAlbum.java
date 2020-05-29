@@ -198,27 +198,9 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         albumDateSet = true;
                         dateofCompletionCheckbox.setChecked(true);
                         dateofCompletionCheckbox.setText(albumTime);
-                        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(CreateCloudAlbum.this)
-                                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                                .setTitle("Expiry :" + albumTime)
-                                .setDialogBackgroundColor(cf_bg_color)
-                                .setTextColor(colorPrimary)
-                                .setIcon(R.drawable.ic_access_time_black_24dp)
-                                .setMessage("You can only upload images and add participants to this album till " + albumTime)
-                                .setCancelable(false)
-                                .addButton("OK",
-                                        colorPrimary,
-                                        cf_alert_dialogue_dim_bg,
-                                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                dialog.dismiss();
-
-                                            }
-                                        });
-                        builder.show();
+                        TextView textView=findViewById(R.id.expiry_txt);
+                        textView.setVisibility(View.VISIBLE);
+                        textView.setText("You can only upload images and add participants to this album till " + albumTime);
                     }
 
                 } else {
@@ -227,27 +209,9 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         albumDateSet = true;
                         dateofCompletionCheckbox.setChecked(true);
 
-                        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(CreateCloudAlbum.this)
-                                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                                .setTitle("Album expiry on " + albumTime)
-                                .setDialogBackgroundColor(cf_bg_color)
-                                .setTextColor(colorPrimary)
-                                .setIcon(R.drawable.ic_access_time_black_24dp)
-                                .setMessage("You can only upload images and add participants to this album till " + albumTime)
-                                .setCancelable(false)
-                                .addButton("    OK , I understand   ",
-                                        colorPrimary,
-                                        cf_alert_dialogue_dim_bg,
-                                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                dialog.dismiss();
-
-                                            }
-                                        });
-                        builder.show();
+                        TextView textView=findViewById(R.id.expiry_txt);
+                        textView.setVisibility(View.VISIBLE);
+                        textView.setText("You can only upload images and add participants to this album till " + albumTime);
 
 
                     }

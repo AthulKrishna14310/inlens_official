@@ -4,28 +4,30 @@
     xmlns:aapt="http://schemas.android.com/aapt"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="152dp"
     android:layout_height="wrap_content"
     android:layout_marginLeft="16dp"
-
     android:layout_marginTop="4dp"
+
     android:layout_marginRight="6dp"
-    android:layout_marginBottom="4dp"
-    android:alpha="0.9"
-    app:cardBackgroundColor="?attr/default_bg_color"
+
+    android:alpha="1"
+    app:cardBackgroundColor="?attr/default_dim_bg"
     android:clickable="true"
-    android:padding="4dp"
+
     app:cardCornerRadius="4dp"
-    app:cardElevation="0dp">
+
+    app:cardElevation="1dp">
 
 
     <RelativeLayout
         android:id="@+id/lyt_parent"
-        android:layout_width="130dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="top"
+        android:layout_gravity="center_horizontal"
         android:background="@drawable/add_button_card_bg"
         android:clickable="true"
+        android:layout_margin="4dp"
         android:foreground="?android:attr/selectableItemBackground"
         android:orientation="vertical">
 
@@ -36,9 +38,10 @@
         <ImageView
             android:id="@+id/albumcard_options_image_view"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="88dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
+            android:layout_margin="4dp"
             android:tint="?attr/action_secondary"
             android:scaleType="center"
             app:srcCompat="@drawable/ic_add_black_24dp"
@@ -50,13 +53,15 @@
         android:id="@+id/album_card_textview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginTop="104dp"
 
-        android:layout_marginTop="105dp"
+        android:padding="4dp"
+        android:background="?attr/default_dim_bg"
         android:fontFamily="@font/base_font"
+
         android:maxLines="1"
         android:singleLine="true"
-        android:background="?attr/default_bg_color"
         android:text="New Album"
 
         android:textColor="?attr/colorSecondary"
