@@ -30,9 +30,11 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.integrals.inlens.Models.PhotographerModel;
 import com.integrals.inlens.R;
@@ -153,26 +155,20 @@ public class PhotographerFragementBottomSheetNA extends BottomSheetDialogFragmen
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
 
-
-                    userRef.child(photographerModel.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    userRef.child(photographerModel.getId()).child(FirebaseConstants.LIVECOMMUNITYID).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
 
-                            try
+                            if(dataSnapshot.exists())
                             {
-                                String currentLiveCommunityId = dataSnapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString();
-                                Log.i("comid","live "+currentLiveCommunityId);
-                                Log.i("comid","id "+communityId);
+                                String currentLiveCommunityId = dataSnapshot.getValue().toString();
+                                //Log.i("comid","live "+currentLiveCommunityId);
+                                //Log.i("comid","id "+communityId);
 
                                 if(currentLiveCommunityId.equals(communityId))
                                 {
                                     userRef.child(photographerModel.getId()).child(FirebaseConstants.LIVECOMMUNITYID).removeValue();
                                 }
-                            }
-                            catch (Exception e)
-                            {
-                                Log.i("comid","error  "+e.toString());
-
                             }
 
                             userRef.child(photographerModel.getId()).child(FirebaseConstants.COMMUNITIES).child(communityId).removeValue();
