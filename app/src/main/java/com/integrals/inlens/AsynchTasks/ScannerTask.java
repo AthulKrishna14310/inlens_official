@@ -13,8 +13,11 @@ import android.util.Log;
 
 import androidx.work.WorkManager;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.integrals.inlens.Helper.AppConstants;
 
+import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.Notification.NotificationHelper;
 import com.integrals.inlens.Notification.RecentImageScan;
 
@@ -47,16 +50,17 @@ public class ScannerTask extends AsyncTask<Void, Void, Void> {
 
                 notificationHelper = new NotificationHelper(context);
 
+                ConnectivityManager cm =
+                        (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                boolean isConnected = activeNetwork != null && activeNetwork.isConnected();
+
                 //Log.i(AppConstants.PHOTO_SCAN_WORK,count+" Recent Image count");
                 if (count > 0 && serverTimeInMillis < endTime) {
                     //Log.i(AppConstants.PHOTO_SCAN_WORK,"started doing in display notification");
 
                     // check network connectivity
-                    ConnectivityManager cm =
-                            (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-                    NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-                    boolean isConnected = activeNetwork != null && activeNetwork.isConnected();
                     if(isConnected)
                     {
                         int notiCount = LastShownNotificationInfo.getInt("notiCount", 0);
@@ -75,6 +79,11 @@ public class ScannerTask extends AsyncTask<Void, Void, Void> {
                         notificationHelper.displayAlbumEndedNotification();
                         editor.putBoolean(AppConstants.IS_NOTIFIED,true);
                         editor.commit();
+                    }
+                    if(isConnected)
+                    {
+                        FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USERS).child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                .child(FirebaseConstants.LIVECOMMUNITYID).removeValue();
                     }
                 }
                 //Log.i("timeScanner","serverTime "+serverTimeInMillis+" EndTime "+endTime+" SysTime "+System.currentTimeMillis()+" offset "+offsetInMillis);
