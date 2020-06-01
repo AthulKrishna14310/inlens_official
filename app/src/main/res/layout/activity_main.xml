@@ -184,6 +184,7 @@
                                     android:layout_alignParentEnd="true"
                                     android:layout_centerVertical="true"
                                     android:layout_marginLeft="5dp"
+                                    android:visibility="invisible"
                                     android:layout_marginTop="5dp"
                                     android:layout_marginRight="16dp"
                                     android:layout_marginBottom="5dp"

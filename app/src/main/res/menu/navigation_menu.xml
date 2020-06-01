@@ -13,14 +13,7 @@
                     android:title="Profile"
                     android:iconTint="?attr/colorPrimary"
                     />
-                <item
-                    android:id="@+id/recent_notification"
 
-                    android:icon="@drawable/ic_notification_"
-                    android:title="Gallery Notification"
-                    app:actionViewClass="android.widget.CheckBox"
-                    app:showAsAction="ifRoom|withText"
-                    />
 
         </menu>
     </item>

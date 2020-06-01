@@ -17,7 +17,7 @@
 
     app:cardCornerRadius="4dp"
 
-    app:cardElevation="1dp">
+    app:cardElevation="2dp">
 
 
     <RelativeLayout

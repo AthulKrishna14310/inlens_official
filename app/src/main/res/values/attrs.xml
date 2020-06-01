@@ -22,6 +22,7 @@
         <attr name="red_cancel_icon" format="color" />
         <attr name="info_icon_color" format="color" />
         <attr name="actionMenuTextColor" format="color" />
+        <attr name="image_bg_color" format="color" />
 
     </declare-styleable>
 </resources>

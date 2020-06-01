@@ -55,7 +55,7 @@
         android:layout_toRightOf="@id/imageView_photographer_card"
         android:fontFamily="@font/base_font"
         android:text="photographers@mail.com"
-        android:textColor="?attr/colorSecondaryLight"
+        android:textColor="?attr/colorSecondary"
         android:textSize="12sp">
 
     </TextView>

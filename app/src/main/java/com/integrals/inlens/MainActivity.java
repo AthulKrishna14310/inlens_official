@@ -577,7 +577,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
 
-        GridLayoutManager Gridmanager = new GridLayoutManager(getApplicationContext(), 6);
+        GridLayoutManager Gridmanager = new GridLayoutManager(getApplicationContext(), 5);
         ParticipantsRecyclerView.setLayoutManager(Gridmanager);
 
         MainVerticalRecyclerView = findViewById(R.id.main_recyclerview);
@@ -1034,7 +1034,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                         editor.commit();
                     }
 
-                    qrCodeBottomSheet= new QRCodeBottomSheet(MainActivity.this,currentActiveCommunityID,linkRef);
+                    qrCodeBottomSheet= new QRCodeBottomSheet(MainActivity.this,currentActiveCommunityID,linkRef,false,MainActivity.this);
 
                     // make the add photo fab visible
                     mainAddPhotosFab.show();
@@ -1156,98 +1156,11 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
     private void initialStart() {
         //PURPOSE OF USER DIRECT
+
         MainActivity.this.getIntent().putExtra("CREATED", "NO");
         MainActivity.this.getIntent().putExtra("ID", "NULL");
-
-        int cf_bg_color,colorPrimary,red_inlens,cf_alert_dialogue_dim_bg;
-        if(appTheme.equals(AppConstants.themeLight))
-        {
-            cf_bg_color = getResources().getColor(R.color.Light_cf_bg_color);
-            colorPrimary = getResources().getColor(R.color.colorLightPrimary);
-            red_inlens =  getResources().getColor(R.color.Light_red_inlens);
-            cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Light_cf_alert_dialogue_dim_bg);
-        }
-        else
-        {
-            cf_bg_color = getResources().getColor(R.color.Dark_cf_bg_color);
-            colorPrimary = getResources().getColor(R.color.colorDarkPrimary);
-            red_inlens =  getResources().getColor(R.color.Dark_red_inlens);
-            cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Dark_cf_alert_dialogue_dim_bg);
-
-        }
-
+        qrCodeBottomSheet= new QRCodeBottomSheet(MainActivity.this,currentActiveCommunityID,linkRef,true,MainActivity.this);
         qrCodeBottomSheet.show(getSupportFragmentManager(),qrCodeBottomSheet.getTag());
-
-        TextView textView = qrCodeBottomSheet.getView().findViewById(R.id.cancelButtonTextView);
-        textView.setText("I WILL DO IT LATER");
-
-        textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                qrCodeBottomSheet.dismiss();
-
-                NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
-                notificationHelper.displayAlbumStartNotification("Open your Gallery", "After taking photos tap here to upload ");
-
-                CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
-                        .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                        .setTitle("Gallery Notification ?")
-                        .setDialogBackgroundColor(cf_bg_color)
-                        .setTextColor(colorPrimary)
-                        .setIcon(R.drawable.ic_notification_)
-                        .setMessage(getString(R.string.initial_start_notification))
-                        .setCancelable(false)
-                        .addButton("YES , NEXT STEP",colorPrimary,cf_alert_dialogue_dim_bg, CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                                CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                        dialog.cancel();
-                                        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
-                                                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                                                .setTitle("Take photos and Tap ")
-                                                .setDialogBackgroundColor(cf_bg_color)
-                                                .setTextColor(colorPrimary)
-                                                .setIcon(R.drawable.ic_touch_)
-                                                .setMessage(R.string.initial_start_take_photos)
-                                                .setCancelable(false)
-                                                .addButton("TAKE PHOTOS", colorPrimary,cf_alert_dialogue_dim_bg,
-                                                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                                                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                                                        new DialogInterface.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(DialogInterface dialog, int which) {
-                                                                dialog.dismiss();
-                                                                dialog.cancel();
-
-                                                                Intent cameraIntent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
-                                                                startActivity(cameraIntent);
-
-
-                                                                finishAffinity();
-
-
-                                                            }
-                                                        }).addButton("CANCEL",red_inlens,cf_alert_dialogue_dim_bg,
-                                                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                                                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                                                        new DialogInterface.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(DialogInterface dialog, int which) {
-                                                                dialog.dismiss();
-                                                                dialog.cancel();
-
-                                                            }
-                                                        });
-                                        builder.show();
-
-                                    }
-                                });
-                builder.show();
-            }
-        });
-
 
         displayed = true;
 
@@ -2011,7 +1924,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                     .setTextColor(colorPrimary)
                     .setMessage("You have to leave the currently active album before creating a new album.")
                     .setCancelable(true)
-                    .addButton("QUIT CLOUD-ALBUM",
+                    .addButton("EXIT PARTICIPATION",
                             red_inlens,
                             cf_alert_dialogue_dim_bg,
                             CFAlertDialog.CFAlertActionStyle.DEFAULT,

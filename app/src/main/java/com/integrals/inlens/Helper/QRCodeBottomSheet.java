@@ -1,6 +1,7 @@
 package com.integrals.inlens.Helper;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -9,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
@@ -35,6 +37,7 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.integrals.inlens.MainActivity;
+import com.integrals.inlens.Notification.NotificationHelper;
 import com.integrals.inlens.R;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
@@ -49,10 +52,16 @@ public class QRCodeBottomSheet extends BottomSheetDialogFragment {
     DatabaseReference linkRef;
     View qrCodeView;
     int themeId;
-    public QRCodeBottomSheet(Context context, String id, DatabaseReference linkRef) {
+    boolean initialStart;
+    Activity activity;
+    public TextView cancelButton;
+
+    public QRCodeBottomSheet(Context context, String id, DatabaseReference linkRef , boolean initialStart, Activity activity) {
         this.context = context;
         currentActiveCommunityId = id;
         this.linkRef = linkRef;
+        this.initialStart=initialStart;
+        this.activity=activity;
     }
 
     @Nullable
@@ -279,12 +288,106 @@ public class QRCodeBottomSheet extends BottomSheetDialogFragment {
             }
         });
 
-
-        qrCodeView.findViewById(R.id.cancelButtonTextView).setOnClickListener(new View.OnClickListener() {
+        cancelButton=qrCodeView.findViewById(R.id.cancelButtonTextView);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                dismiss();
+                if(initialStart){
+                    initialStart=false;
+                    dismiss();
+                    int cf_bg_color,colorPrimary,red_inlens,cf_alert_dialogue_dim_bg;
+                    if(appTheme.equals(AppConstants.themeLight))
+                    {
+                        cf_bg_color = getResources().getColor(R.color.Light_cf_bg_color);
+                        colorPrimary = getResources().getColor(R.color.colorLightPrimary);
+                        red_inlens =  getResources().getColor(R.color.Light_red_inlens);
+                        cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Light_cf_alert_dialogue_dim_bg);
+                    }
+                    else
+                    {
+                        cf_bg_color = getResources().getColor(R.color.Dark_cf_bg_color);
+                        colorPrimary = getResources().getColor(R.color.colorDarkPrimary);
+                        red_inlens =  getResources().getColor(R.color.Dark_red_inlens);
+                        cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Dark_cf_alert_dialogue_dim_bg);
+
+                    }
+
+                     CFAlertDialog.Builder builder = new CFAlertDialog.Builder(context)
+                            .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                            .setTitle("Take photos now ?")
+                            .setDialogBackgroundColor(cf_bg_color)
+                            .setTextColor(colorPrimary)
+                            .setIcon(R.drawable.ic_photo_camera)
+                            .setMessage("Now you can proceed to upload photos to your album.")
+                            .setCancelable(false)
+                            .addButton("YES",colorPrimary,cf_alert_dialogue_dim_bg, CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                    CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                            dialog.cancel();
+
+                                            NotificationHelper notificationHelper = new NotificationHelper(context);
+                                            notificationHelper.displayAlbumStartNotification("Open your Gallery", "After taking photos tap here to upload ");
+
+                                            CFAlertDialog.Builder builder = new CFAlertDialog.Builder(activity)
+                                                    .setDialogStyle(CFAlertDialog.CFAlertStyle.ALERT)
+                                                    .setTitle("After taking photos, tap  on notification ")
+                                                    .setDialogBackgroundColor(cf_bg_color)
+                                                    .setTextColor(colorPrimary)
+                                                    .setIcon(R.drawable.ic_touch_)
+                                                    .setMessage("Whenever you take photos, just click the notification to upload it. You can use any camera application for taking photos")
+                                                    .setCancelable(false)
+                                                    .addButton("OK ,I Understand", colorPrimary,cf_alert_dialogue_dim_bg,
+                                                            CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                                                            new DialogInterface.OnClickListener() {
+                                                                @Override
+                                                                public void onClick(DialogInterface dialog, int which) {
+                                                                    dialog.dismiss();
+                                                                    dialog.cancel();
+                                                                    Intent cameraIntent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
+                                                                    activity.startActivity(cameraIntent);
+                                                                    activity.finishAffinity();
+
+                                                                }
+                                                            }).addButton("CANCEL",red_inlens,cf_alert_dialogue_dim_bg,
+                                                            CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                                                            new DialogInterface.OnClickListener() {
+                                                                @Override
+                                                                public void onClick(DialogInterface dialog, int which) {
+                                                                    dialog.dismiss();
+                                                                    dialog.cancel();
+
+                                                                }
+                                                            });
+                                            builder.show();
+
+
+
+                                        }
+                                    }).addButton("NOT NOW",
+                                     red_inlens,
+                                     cf_alert_dialogue_dim_bg,
+                                     CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    dialog.dismiss();
+                                    dialog.cancel();
+
+
+                                }
+                            });;
+                    builder.show();
+                }else{
+                    dismiss();
+                }
             }
         });
 
@@ -325,5 +428,6 @@ public class QRCodeBottomSheet extends BottomSheetDialogFragment {
         context.startActivity(SharingIntent);
 
     }
+
 
 }
