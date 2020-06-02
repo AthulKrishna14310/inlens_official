@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     DatabaseReference currentUserRef, communityRef, participantRef, postRef, linkRef;
     FirebaseAuth firebaseAuth;
     String currentUserId;
-    ValueEventListener userRefListenerForActiveAlbum, communityRefListenerForActiveAlbum, coummunityUserAddListener, communitiesDataListener, postRefListener, participantRefListener;
+    ValueEventListener userRefListenerForActiveAlbum, communityRefListenerForActiveAlbum, coummunityUserAddListener, communitiesDataListener, postRefListener, participantRefListener,communitiesListener;
     ReadFirebaseData readFirebaseData;
     ArrayList<String> userCommunityIdList;
     MainHorizontalAdapter mainHorizontalAdapter;
@@ -342,19 +342,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         cfDialogAddPhotoFab = showAddPhotoFabPermissionDialog(cfBuilder);
         cfDialogService = showServicePermissionDialog(cfBuilder);
 
-        // receiving all the community id under the user and sorting them in reverse order to get the latest first
-        try {
-
-            userCommunityIdList = getIntent().getExtras().getStringArrayList(AppConstants.USER_ID_LIST);
-            //info removing all null values
-            if (userCommunityIdList.contains(null)) {
-                userCommunityIdList.removeAll(null);
-            }
-            Collections.sort(userCommunityIdList, Collections.reverseOrder());
-
-        } catch (Exception e) {
-            //
-        }
 
         mainSearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -639,129 +626,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
 
 
-        /*
 
-
-        MyCommunityDetails = new ArrayList<>();
-        ParticipantIDs = new ArrayList<>();
-
-
-
-
-
-
-
-
-
-
-
-
-        MainSearchButton = findViewById(R.id.mainactivity_actionbar_searchbutton);
-        MainActionbar = findViewById(R.id.mainactivity_actionbar_relativelayout);
-        MainSearchView = findViewById(R.id.mainactivity_searchview_relativelayout);
-        MainBackButton = findViewById(R.id.mainactivity_searchview_backbutton);
-        MainSearchEdittext = findViewById(R.id.mainactivity_searchview_edittext);
-
-
-
-        MainLoadingProgressBar = findViewById(R.id.mainloadingpbar);
-
-        FirebaseVariablesInit();
-        CheckUserAuthentication();
-        checkInternetConnection();
-
-
-
-
-        MainSearchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                SEARCH_IN_PROGRESS = true;
-
-                final List<CommunityModel> CommunitySearchDetails = new ArrayList<>();
-
-                MainActionbar.clearAnimation();
-                MainActionbar.setAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.fade_out));
-                MainActionbar.getAnimation().start();
-                MainActionbar.setVisibility(View.GONE);
-
-                MainSearchView.clearAnimation();
-                MainSearchView.setAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.fade_in));
-                MainSearchView.getAnimation().start();
-                MainSearchView.setVisibility(View.VISIBLE);
-
-                MainSearchEdittext.requestFocus();
-                final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-
-                MainSearchEdittext.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable editable) {
-
-                        MainVerticalRecyclerView.setVisibility(View.VISIBLE);
-
-                        if (!TextUtils.isEmpty(editable.toString())) {
-
-                            CommunitySearchDetails.clear();
-
-                            for (int i = 0; i < MyCommunityDetails.size(); i++) {
-                                if (MyCommunityDetails.get(i).getTitle().toLowerCase().contains(editable.toString().toLowerCase())) {
-                                    CommunitySearchDetails.add(MyCommunityDetails.get(i));
-                                }
-                            }
-
-                            if (CommunitySearchDetails.size() == 0) {
-                                MainVerticalRecyclerView.setVisibility(View.GONE);
-
-                            } else {
-                                MainVerticalRecyclerView.setVisibility(View.VISIBLE);
-
-                            }
-
-                            MainHorizontalAdapter adapter1 = new MainHorizontalAdapter(MainHorizontalRecyclerview, CommunitySearchDetails, MainActivity.this);
-                            MainHorizontalRecyclerview.setAdapter(adapter1);
-
-                        } else {
-                            MainHorizontalRecyclerview.removeAllViews();
-                            ShowAllAlbums();
-                        }
-
-                    }
-                });
-
-            }
-        });
-
-
-        MainBackButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                MainSearchEdittext.setText("");
-                onBackPressed();
-
-
-            }
-        });
-
-
-
-
-        getParticipantDatabaseReference = FirebaseDatabase.getInstance().getReference();
-
-
-         */
 
 
         rippleBackground = (RippleBackground) findViewById(R.id.content);
@@ -882,81 +747,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         return model;
     }
 
-    private void enableBackgroundServices() {
-
-
-        if (Build.BRAND.equalsIgnoreCase("xiaomi")) {
-
-            Intent intent = new Intent();
-            intent.setComponent(new ComponentName("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity"));
-            startActivity(intent);
-
-
-        } else if (Build.BRAND.equalsIgnoreCase("Letv")) {
-
-            Intent intent = new Intent();
-            intent.setComponent(new ComponentName("com.letv.android.letvsafe", "com.letv.android.letvsafe.AutobootManageActivity"));
-            startActivity(intent);
-
-        } else if (Build.BRAND.equalsIgnoreCase("Honor")) {
-
-            Intent intent = new Intent();
-            intent.setComponent(new ComponentName("com.huawei.systemmanager", "com.huawei.systemmanager.optimize.process.ProtectActivity"));
-            startActivity(intent);
-
-        } else if (Build.BRAND.equalsIgnoreCase("vivo")) {
-            try {
-                Intent intent = new Intent();
-                intent.setComponent(new ComponentName("com.iqoo.secure",
-                        "com.iqoo.secure.ui.phoneoptimize.AddWhiteListActivity"));
-                startActivity(intent);
-            } catch (Exception e) {
-                try {
-                    Intent intent = new Intent();
-                    intent.setComponent(new ComponentName("com.vivo.permissionmanager",
-                            "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"));
-                    startActivity(intent);
-                } catch (Exception ex) {
-                    try {
-                        Intent intent = new Intent();
-                        intent.setClassName("com.iqoo.secure",
-                                "com.iqoo.secure.ui.phoneoptimize.BgStartUpManager");
-                        startActivity(intent);
-                    } catch (Exception exx) {
-                        ex.printStackTrace();
-                    }
-                }
-            }
-        } else if (Build.MANUFACTURER.equalsIgnoreCase("oppo")) {
-            try {
-                Intent intent = new Intent();
-                intent.setClassName("com.coloros.safecenter",
-                        "com.coloros.safecenter.permission.startup.StartupAppListActivity");
-                startActivity(intent);
-            } catch (Exception e) {
-                try {
-                    Intent intent = new Intent();
-                    intent.setClassName("com.oppo.safe",
-                            "com.oppo.safe.permission.startup.StartupAppListActivity");
-                    startActivity(intent);
-
-                } catch (Exception ex) {
-                    try {
-                        Intent intent = new Intent();
-                        intent.setClassName("com.coloros.safecenter",
-                                "com.coloros.safecenter.startupapp.StartupAppListActivity");
-                        startActivity(intent);
-                    } catch (Exception exx) {
-
-                    }
-                }
-            }
-        } else {
-            // Set Content for Samsung
-            showSnackbarMessage("Please enable or disable background tasks for your phone  manually");
-        }
-    }
-
     private void showSnackbarMessage(String message) {
         Snackbar.make(RootForMainActivity, message, Snackbar.LENGTH_LONG).show();
     }
@@ -977,6 +767,35 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     protected void onResume() {
         super.onResume();
 
+
+        communitiesListener=currentUserRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                userCommunityIdList=new ArrayList<>();
+                if(dataSnapshot.hasChild(FirebaseConstants.COMMUNITIES))
+                {
+                    for (DataSnapshot snapshot : dataSnapshot.child(FirebaseConstants.COMMUNITIES).getChildren()) {
+                        userCommunityIdList.add(snapshot.getKey());
+                    }
+                    Collections.sort(userCommunityIdList, Collections.reverseOrder());
+                    getCloudAlbumData(userCommunityIdList);
+                }
+                if(dataSnapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID) && isConnectedToNet())
+                {
+                    mainAddPhotosFab.show();
+                }
+                else
+                {
+                    mainAddPhotosFab.hide();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         // FIXME has to update decryption and  encryption.
         decryptDeepLink();
@@ -1113,7 +932,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 } else {
                     currentActiveCommunityID = AppConstants.NOT_AVALABLE;
                 }
-                getCloudAlbumData(userCommunityIdList);
 
             }
 
@@ -2232,7 +2050,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                         if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
                             photographerList.remove(0);
-                            participantsAdapter.notifyItemRemoved(0);
+                            participantsAdapter.notifyDataSetChanged();
                         }
                         //SetDefaultView();
 
@@ -2346,7 +2164,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                         showDialogMessage("Exited Participation", "Successfully left from the Cloud-Album");
                                                         if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
                                                             photographerList.remove(0);
-                                                            participantsAdapter.notifyItemRemoved(0);
+                                                            participantsAdapter.notifyDataSetChanged();
                                                         }
                                                         //SetDefaultView();
 
@@ -2390,7 +2208,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                                                         if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
                                                             photographerList.remove(0);
-                                                            participantsAdapter.notifyItemRemoved(0);
+                                                            participantsAdapter.notifyDataSetChanged();
                                                         }
 
                                                     } else {

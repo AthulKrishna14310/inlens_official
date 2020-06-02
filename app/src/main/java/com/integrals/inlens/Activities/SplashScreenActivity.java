@@ -53,7 +53,6 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     FirebaseAuth firebaseAuth;
     DatabaseReference userRef,communityRef,linkRef;
-    List<String> userCommunityIdList;
     String currentUserId,currentActiveCommunityID=AppConstants.NOT_AVALABLE;
     static final int DELAY_IN_MILLIS=1000;
     ValueEventListener listener,communityRefListenerForActiveAlbum;
@@ -93,7 +92,6 @@ public class SplashScreenActivity extends AppCompatActivity {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_splash_screen);
 
-        userCommunityIdList = new ArrayList<>();
         firebaseAuth = FirebaseAuth.getInstance();
         userRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USERS);
         communityRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.COMMUNITIES);
@@ -114,11 +112,6 @@ public class SplashScreenActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(DataSnapshot datasnapshot) {
 
-                    if (datasnapshot.hasChild(FirebaseConstants.COMMUNITIES)) {
-                        for (DataSnapshot snapshot : datasnapshot.child(FirebaseConstants.COMMUNITIES).getChildren()) {
-                            userCommunityIdList.add(snapshot.getKey());
-                        }
-                    }
                     SharedPreferences LastShownNotificationInfo = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
                     if (datasnapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID)) {
 
@@ -183,7 +176,6 @@ public class SplashScreenActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             Intent mainIntent =  new Intent(SplashScreenActivity.this, MainActivity.class);
-                            mainIntent.putStringArrayListExtra(AppConstants.USER_ID_LIST, (ArrayList<String>) userCommunityIdList);
                             startActivity(mainIntent);
                             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                             finish();
