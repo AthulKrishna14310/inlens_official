@@ -119,6 +119,6 @@ public class CommunityModel implements Comparable<CommunityModel> {
 
     @Override
     public int compareTo(@NonNull CommunityModel communityModel) {
-        return this.getEndTime().compareTo(communityModel.getEndTime());
+        return this.getCommunityID().compareTo(communityModel.getCommunityID());
     }
 }

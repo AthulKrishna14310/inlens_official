@@ -84,7 +84,6 @@ public class HandleQuit extends AsyncTask<Void,Void,Void>
                     } else {
                         WorkManager.getInstance().cancelWorkById(UUID.fromString(albumEndWorkId));
                     }
-
                     isTaskSuccessful=true;
 
                 }
@@ -99,6 +98,7 @@ public class HandleQuit extends AsyncTask<Void,Void,Void>
 
         if(isTaskSuccessful)
         {
+
             Toast.makeText(context, "Successfully left the album.", Toast.LENGTH_SHORT).show();
 
         }

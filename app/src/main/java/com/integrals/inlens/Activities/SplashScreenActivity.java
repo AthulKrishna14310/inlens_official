@@ -129,6 +129,8 @@ public class SplashScreenActivity extends AppCompatActivity {
                             editor.commit();
                         }
 
+
+
                         communityRefListenerForActiveAlbum = readFirebaseData.readData(communityRef.child(currentActiveCommunityID), new FirebaseRead() {
                             @Override
                             public void onSuccess(DataSnapshot snapshot) {
@@ -142,7 +144,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                                     if (status.equals("T")) {
                                         long endtime = Long.parseLong(snapshot.child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString());
 
-                                        if (!LastShownNotificationInfo.contains("stopAt")) {
+                                        if (LastShownNotificationInfo.contains("stopAt")) {
                                             SharedPreferences.Editor editor = LastShownNotificationInfo.edit();
                                             editor.putString("stopAt", String.valueOf(endtime));
                                             editor.commit();

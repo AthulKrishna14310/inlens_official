@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.work.WorkManager;
 
@@ -35,29 +36,57 @@ public class ScannerTask extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+
+        SharedPreferences LastShownNotificationInfo = context.getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
+
+        if (!LastShownNotificationInfo.contains("time")) {
+            SharedPreferences.Editor editor = LastShownNotificationInfo.edit();
+            editor.putString("time", String.valueOf(System.currentTimeMillis()));
+            editor.commit();
+
+        } else {
+
+            String timeStr = LastShownNotificationInfo.getString("time", String.valueOf(System.currentTimeMillis()));
+            //Log.i(AppConstants.PHOTO_SCAN_WORK,"TimeString "+timeStr);
+
+            if (!TextUtils.isEmpty(timeStr)) {
+
+                RecentImageScan recentImageScan = new RecentImageScan(context, Long.parseLong(timeStr));
+
+                if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+
+                    count = recentImageScan.getNotifiedImageCount();
+                }
+
+            }
+
+        }
+
+    }
+
+    @Override
     protected Void doInBackground(Void... voids) {
 
         //Log.i(AppConstants.PHOTO_SCAN_WORK,"started doing in background");
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+
+
+
             try {
                 //Log.i(AppConstants.PHOTO_SCAN_WORK,"get into notified block");
                 SharedPreferences LastShownNotificationInfo = context.getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = LastShownNotificationInfo.edit();
-                TimeZone timeZone = TimeZone.getDefault();
-                long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
-                long serverTimeInMillis = System.currentTimeMillis() - offsetInMillis;
                 long endTime = Long.parseLong(LastShownNotificationInfo.getString("stopAt", String.valueOf(System.currentTimeMillis())));
-
                 notificationHelper = new NotificationHelper(context);
 
-                ConnectivityManager cm =
-                        (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-
+                ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
                 boolean isConnected = activeNetwork != null && activeNetwork.isConnected();
 
                 //Log.i(AppConstants.PHOTO_SCAN_WORK,count+" Recent Image count");
-                if (count > 0 && serverTimeInMillis < endTime) {
+                if (count > 0 && System.currentTimeMillis() < endTime) {
                     //Log.i(AppConstants.PHOTO_SCAN_WORK,"started doing in display notification");
 
                     // check network connectivity
@@ -72,7 +101,7 @@ public class ScannerTask extends AsyncTask<Void, Void, Void> {
                         editor.commit();
                     }
                 }
-                else if(serverTimeInMillis>endTime)
+                else if(System.currentTimeMillis()>=endTime)
                 {
                     if(!LastShownNotificationInfo.contains(AppConstants.IS_NOTIFIED))
                     {
@@ -107,33 +136,8 @@ public class ScannerTask extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-
-        SharedPreferences LastShownNotificationInfo = context.getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
-
-        if (!LastShownNotificationInfo.contains("time")) {
-            SharedPreferences.Editor editor = LastShownNotificationInfo.edit();
-            editor.putString("time", String.valueOf(System.currentTimeMillis()));
-            editor.commit();
-
-        } else {
-
-            String timeStr = LastShownNotificationInfo.getString("time", String.valueOf(System.currentTimeMillis()));
-            //Log.i(AppConstants.PHOTO_SCAN_WORK,"TimeString "+timeStr);
-
-            if (!TextUtils.isEmpty(timeStr)) {
-
-                RecentImageScan recentImageScan = new RecentImageScan(context, Long.parseLong(timeStr));
-
-                if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-
-                    count = recentImageScan.getNotifiedImageCount();
-                }
-
-            }
-
-        }
-
+    protected void onPostExecute(Void aVoid) {
+        super.onPostExecute(aVoid);
+        Toast.makeText(context, "for debugging: service running", Toast.LENGTH_SHORT).show();
     }
 }

@@ -131,6 +131,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -221,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
     QRCodeBottomSheet qrCodeBottomSheet;
 
-    String appTheme="";
+    String appTheme = "", mainSelectedKey = AppConstants.NOT_AVALABLE;
 
     public MainActivity() {
     }
@@ -229,26 +231,20 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        SharedPreferences appDataPref = getSharedPreferences(AppConstants.appDataPref,Context.MODE_PRIVATE);
+        SharedPreferences appDataPref = getSharedPreferences(AppConstants.appDataPref, Context.MODE_PRIVATE);
         final SharedPreferences.Editor appDataPrefEditor = appDataPref.edit();
-        if(appDataPref.contains(AppConstants.appDataPref_theme))
-        {
-            appTheme = appDataPref.getString(AppConstants.appDataPref_theme,AppConstants.themeLight);
-            if(appTheme.equals(AppConstants.themeLight))
-            {
+        if (appDataPref.contains(AppConstants.appDataPref_theme)) {
+            appTheme = appDataPref.getString(AppConstants.appDataPref_theme, AppConstants.themeLight);
+            if (appTheme.equals(AppConstants.themeLight)) {
                 setTheme(R.style.AppTheme);
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            }
-            else
-            {
+            } else {
                 setTheme(R.style.DarkTheme);
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             }
-        }
-        else
-        {
+        } else {
             appTheme = AppConstants.themeLight;
-            appDataPrefEditor.putString(AppConstants.appDataPref_theme,AppConstants.themeLight);
+            appDataPrefEditor.putString(AppConstants.appDataPref_theme, AppConstants.themeLight);
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             appDataPrefEditor.commit();
             setTheme(R.style.AppTheme);
@@ -293,34 +289,28 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         // dark theme options
         Menu menu = navigationView.getMenu();
         CheckBox checkBox = (CheckBox) menu.findItem(R.id.dark_theme).getActionView();
-        if(appTheme.equals(AppConstants.themeLight))
-        {
+        if (appTheme.equals(AppConstants.themeLight)) {
             checkBox.setChecked(false);
-        }
-        else
-        {
+        } else {
             checkBox.setChecked(true);
         }
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if(isChecked)
-                {
-                    appDataPrefEditor.putString(AppConstants.appDataPref_theme,AppConstants.themeDark);
+                if (isChecked) {
+                    appDataPrefEditor.putString(AppConstants.appDataPref_theme, AppConstants.themeDark);
                     appDataPrefEditor.commit();
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                    startActivity(new Intent(MainActivity.this,SplashScreenActivity.class));
-                    overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                    startActivity(new Intent(MainActivity.this, SplashScreenActivity.class));
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                     finish();
-                }
-                else
-                {
-                    appDataPrefEditor.putString(AppConstants.appDataPref_theme,AppConstants.themeLight);
+                } else {
+                    appDataPrefEditor.putString(AppConstants.appDataPref_theme, AppConstants.themeLight);
                     appDataPrefEditor.commit();
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                    startActivity(new Intent(MainActivity.this,SplashScreenActivity.class));
-                    overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                    startActivity(new Intent(MainActivity.this, SplashScreenActivity.class));
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                     finish();
 
                 }
@@ -567,7 +557,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                     }
 
 
-
                 }
             }
         });
@@ -783,18 +772,15 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
     private CFAlertDialog showAddPhotoFabPermissionDialog(CFAlertDialog.Builder builder) {
 
-        int cf_bg_color,colorPrimary,red_inlens;
-        if(appTheme.equals(AppConstants.themeLight))
-        {
+        int cf_bg_color, colorPrimary, red_inlens;
+        if (appTheme.equals(AppConstants.themeLight)) {
             cf_bg_color = getResources().getColor(R.color.Light_cf_bg_color);
             colorPrimary = getResources().getColor(R.color.colorLightPrimary);
-            red_inlens =  getResources().getColor(R.color.Light_red_inlens);
-        }
-        else
-        {
+            red_inlens = getResources().getColor(R.color.Light_red_inlens);
+        } else {
             cf_bg_color = getResources().getColor(R.color.Dark_cf_bg_color);
             colorPrimary = getResources().getColor(R.color.colorDarkPrimary);
-            red_inlens =  getResources().getColor(R.color.Dark_red_inlens);
+            red_inlens = getResources().getColor(R.color.Dark_red_inlens);
 
         }
 
@@ -838,18 +824,15 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
     private CFAlertDialog showServicePermissionDialog(CFAlertDialog.Builder builder) {
 
-        int cf_bg_color,colorPrimary,red_inlens;
-        if(appTheme.equals(AppConstants.themeLight))
-        {
+        int cf_bg_color, colorPrimary, red_inlens;
+        if (appTheme.equals(AppConstants.themeLight)) {
             cf_bg_color = getResources().getColor(R.color.Light_cf_bg_color);
             colorPrimary = getResources().getColor(R.color.colorLightPrimary);
-            red_inlens =  getResources().getColor(R.color.Light_red_inlens);
-        }
-        else
-        {
+            red_inlens = getResources().getColor(R.color.Light_red_inlens);
+        } else {
             cf_bg_color = getResources().getColor(R.color.Dark_cf_bg_color);
             colorPrimary = getResources().getColor(R.color.colorDarkPrimary);
-            red_inlens =  getResources().getColor(R.color.Dark_red_inlens);
+            red_inlens = getResources().getColor(R.color.Dark_red_inlens);
         }
 
         return builder
@@ -860,7 +843,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 .setTextColor(colorPrimary)
                 .setMessage("InLens require storage permission to access your photos. Please enable it and try again.")
                 .setCancelable(true)
-                .addButton("OK",colorPrimary,cf_bg_color,
+                .addButton("OK", colorPrimary, cf_bg_color,
                         CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {
@@ -873,7 +856,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                 dialog.dismiss();
                             }
                         })
-                .addButton("CANCEL",red_inlens,cf_bg_color,
+                .addButton("CANCEL", red_inlens, cf_bg_color,
                         CFAlertDialog.CFAlertActionStyle.DEFAULT,
                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
                         new DialogInterface.OnClickListener() {
@@ -994,6 +977,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     protected void onResume() {
         super.onResume();
 
+
         // FIXME has to update decryption and  encryption.
         decryptDeepLink();
         // get live community id and check if album  is active or the app should quit the user from the album
@@ -1034,10 +1018,13 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                         editor.commit();
                     }
 
-                    qrCodeBottomSheet= new QRCodeBottomSheet(MainActivity.this,currentActiveCommunityID,linkRef,false,MainActivity.this);
+                    qrCodeBottomSheet = new QRCodeBottomSheet(MainActivity.this, currentActiveCommunityID, linkRef, false, MainActivity.this);
 
                     // make the add photo fab visible
-                    mainAddPhotosFab.show();
+                    if (isConnectedToNet()) {
+                        mainAddPhotosFab.show();
+
+                    }
 
                     try {
                         String qrIntent = getIntent().getStringExtra("CREATED");
@@ -1070,18 +1057,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                 String status = snapshot.child(FirebaseConstants.COMMUNITYSTATUS).getValue().toString();
                                 if (status.equals("T")) {
                                     long endtime = Long.parseLong(snapshot.child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString());
-
-                                    if (!LastShownNotificationInfo.contains("stopAt")) {
-                                        SharedPreferences.Editor editor = LastShownNotificationInfo.edit();
-                                        editor.putString("stopAt", String.valueOf(endtime));
-                                        editor.commit();
-                                    }
-
-                                    TimeZone timeZone = TimeZone.getDefault();
-                                    long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
-                                    long serverTimeInMillis = (System.currentTimeMillis() - offsetInMillis);
-                                    //Log.i("timeQuit", "Server : " + serverTimeInMillis + " End : " + endtime + " Systemmillis : " + System.currentTimeMillis());
-                                    if (serverTimeInMillis >= endtime) {
+                                    if (System.currentTimeMillis() >= endtime) {
                                         quitCloudAlbum(true);
 
                                     } else {
@@ -1114,7 +1090,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                             }
                                         }
                                     }
-
                                 } else {
                                     // stop the necessary services
                                     WorkManager.getInstance().cancelAllWorkByTag(AppConstants.PHOTO_SCAN_WORK);
@@ -1159,8 +1134,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
         MainActivity.this.getIntent().putExtra("CREATED", "NO");
         MainActivity.this.getIntent().putExtra("ID", "NULL");
-        qrCodeBottomSheet= new QRCodeBottomSheet(MainActivity.this,currentActiveCommunityID,linkRef,true,MainActivity.this);
-        qrCodeBottomSheet.show(getSupportFragmentManager(),qrCodeBottomSheet.getTag());
+        qrCodeBottomSheet = new QRCodeBottomSheet(MainActivity.this, currentActiveCommunityID, linkRef, true, MainActivity.this);
+        qrCodeBottomSheet.show(getSupportFragmentManager(), qrCodeBottomSheet.getTag());
 
         displayed = true;
 
@@ -1251,12 +1226,11 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                             if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYTYPE)) {
                                 type = snapshot.child(communityId).child(FirebaseConstants.COMMUNITYTYPE).getValue().toString();
                             }
-                            if(snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITY_REPORTED))
-                            {
+                            if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITY_REPORTED)) {
                                 isReported = true;
                             }
 
-                            CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId,isReported);
+                            CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId, isReported);
                             if (!getCommunityKeys(_communityDataList).contains(communityId)) {
                                 _communityDataList.add(model);
                             }
@@ -1360,22 +1334,18 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     }
 
 
-
     private void decryptDeepLink() {
 
-        int cf_bg_color,colorPrimary,red_inlens,cf_alert_dialogue_dim_bg;
-        if(appTheme.equals(AppConstants.themeLight))
-        {
+        int cf_bg_color, colorPrimary, red_inlens, cf_alert_dialogue_dim_bg;
+        if (appTheme.equals(AppConstants.themeLight)) {
             cf_bg_color = getResources().getColor(R.color.Light_cf_bg_color);
             colorPrimary = getResources().getColor(R.color.colorLightPrimary);
-            red_inlens =  getResources().getColor(R.color.Light_red_inlens);
+            red_inlens = getResources().getColor(R.color.Light_red_inlens);
             cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Light_cf_alert_dialogue_dim_bg);
-        }
-        else
-        {
+        } else {
             cf_bg_color = getResources().getColor(R.color.Dark_cf_bg_color);
             colorPrimary = getResources().getColor(R.color.colorDarkPrimary);
-            red_inlens =  getResources().getColor(R.color.Dark_red_inlens);
+            red_inlens = getResources().getColor(R.color.Dark_red_inlens);
             cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Dark_cf_alert_dialogue_dim_bg);
 
         }
@@ -1448,7 +1418,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                 .setCancelable(false)
                                                 .addButton("YES",
                                                         colorPrimary,
-                                                       cf_alert_dialogue_dim_bg,
+                                                        cf_alert_dialogue_dim_bg,
                                                         CFAlertDialog.CFAlertActionStyle.DEFAULT,
                                                         CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
                                                             @Override
@@ -1497,22 +1467,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         });
     }
 
-    private String getOffsetAddedTime(String timeStamp) {
-        TimeZone timeZone = TimeZone.getDefault();
-        long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
-        long givenTime = Long.parseLong(timeStamp);
-        long offsetAddedTime = givenTime + offsetInMillis;
-        return String.valueOf(offsetAddedTime);
-    }
-
-    private String getTimeStamp(long endtime) {
-
-        TimeZone timeZone = TimeZone.getDefault();
-        long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
-        long notificationTime = endtime + offsetInMillis;
-        return String.valueOf(notificationTime);
-
-    }
 
     private void addCommunityToUserRef(final String communityId, String remainingCount, String communityRefLinkId) {
 
@@ -1521,17 +1475,13 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 if (dataSnapshot.hasChild(FirebaseConstants.COMMUNITYSTATUS)) {
-                    long endtime = Long.parseLong(dataSnapshot.child("endtime").getValue().toString());
-                    TimeZone timeZone = TimeZone.getDefault();
-                    long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
-                    long serverTimeInMillis = (System.currentTimeMillis() - offsetInMillis);
 
+                    long endtime = Long.parseLong(dataSnapshot.child("endtime").getValue().toString());
+                    long serverTimeInMillis = System.currentTimeMillis();
                     String titleValue = dataSnapshot.child(FirebaseConstants.COMMUNITYTITLE).getValue().toString();
-                    final long dy = TimeUnit.MILLISECONDS.toDays(Long.parseLong(getTimeStamp(endtime)) - System.currentTimeMillis());
-                    final long hr = TimeUnit.MILLISECONDS.toHours(Long.parseLong(getTimeStamp(endtime)) - System.currentTimeMillis())
-                            - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(Long.parseLong(getTimeStamp(endtime)) - System.currentTimeMillis()));
-                    final long min = TimeUnit.MILLISECONDS.toMinutes(Long.parseLong(getTimeStamp(endtime)) - System.currentTimeMillis())
-                            - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(Long.parseLong(getTimeStamp(endtime)) - System.currentTimeMillis()));
+                    final long dy = (TimeUnit.MILLISECONDS.toDays(endtime) - System.currentTimeMillis());
+                    final long hr = (TimeUnit.MILLISECONDS.toHours(endtime) - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(endtime)));
+                    final long min = TimeUnit.MILLISECONDS.toMinutes(endtime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(endtime));
 
                     if (serverTimeInMillis < endtime) {
 
@@ -1545,6 +1495,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                 currentUserRef.child(FirebaseConstants.COMMUNITIES).child(communityId).setValue(ServerValue.TIMESTAMP);
                                 currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).setValue(communityId);
                                 participantRef.child(communityId).child(currentUserId).setValue(ServerValue.TIMESTAMP);
+
                                 if(!userCommunityIdList.contains(communityId))
                                 {
                                     userCommunityIdList.add(0, communityId);
@@ -1595,7 +1546,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                             SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
                                             ceditor.putString("id", communityId);
                                             ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
-                                            ceditor.putString("stopAt", getOffsetAddedTime(String.valueOf(endtime)));
+                                            ceditor.putString("stopAt", endtime);
                                             ceditor.putInt("notiCount", 0);
                                             ceditor.remove(AppConstants.IS_NOTIFIED);
                                             ceditor.commit();
@@ -1636,11 +1587,10 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                     notificationStr += " " + (int) min + " minutes left";
                                                 }
                                             }
-                                            long time = Long.parseLong(getOffsetAddedTime(endtime));
-                                            CharSequence Time = DateUtils.getRelativeDateTimeString(MainActivity.this, time, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
+                                            CharSequence Time = DateUtils.getRelativeDateTimeString(MainActivity.this, Long.parseLong(endtime), DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
                                             String timesubstring = Time.toString().substring(Time.length()-8);
 
-                                            Date date = new Date(time);
+                                            Date date = new Date(endtime);
                                             String dateformat = DateFormat.format("dd-MM-yyyy",date).toString();
 
                                             helper.displayAlbumStartNotification(notificationStr, "You are active in this Cloud-Album till " + dateformat+", "+timesubstring);
@@ -1699,7 +1649,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                             SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
                                             ceditor.putString("id", communityId);
                                             ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
-                                            ceditor.putString("stopAt", getOffsetAddedTime(String.valueOf(endtime)));
+                                            ceditor.putString("stopAt", endtime);
                                             ceditor.putInt("notiCount", 0);
                                             ceditor.remove(AppConstants.IS_NOTIFIED);
                                             ceditor.commit();
@@ -1746,7 +1696,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                     notificationStr += " " + (int) min + " minutes left";
                                                 }
                                             }
-                                            long time = Long.parseLong(getOffsetAddedTime(endtime));                                            CharSequence Time = DateUtils.getRelativeDateTimeString(MainActivity.this, time, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
+                                            long time = Long.parseLong(endtime);
+                                            CharSequence Time = DateUtils.getRelativeDateTimeString(MainActivity.this, time, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
                                             String timesubstring = Time.toString().substring(Time.length()-8);
 
                                             Date date = new Date(time);
@@ -1824,7 +1775,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                         SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
                                         ceditor.putString("id", communityId);
                                         ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
-                                        ceditor.putString("stopAt", getOffsetAddedTime(String.valueOf(endtime)));
+                                        ceditor.putString("stopAt",endtime);
                                         ceditor.putInt("notiCount", 0);
                                         ceditor.remove(AppConstants.IS_NOTIFIED);
                                         ceditor.commit();
@@ -1848,7 +1799,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                         if (hr < 1 && dy < 1) {
                                             notificationStr += " " + (int) min + " minutes left";
                                         }
-                                        long time = Long.parseLong(getOffsetAddedTime(endtime));                                        CharSequence Time = DateUtils.getRelativeDateTimeString(MainActivity.this, time, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
+                                        long time = Long.parseLong(endtime);
+                                        CharSequence Time = DateUtils.getRelativeDateTimeString(MainActivity.this, time, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
                                         String timesubstring = Time.toString().substring(Time.length()-8);
 
                                         Date date = new Date(time);
@@ -1893,19 +1845,16 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
     public void createAlbum() {
 
-        int cf_bg_color,colorPrimary,red_inlens,cf_alert_dialogue_dim_bg;
-        if(appTheme.equals(AppConstants.themeLight))
-        {
+        int cf_bg_color, colorPrimary, red_inlens, cf_alert_dialogue_dim_bg;
+        if (appTheme.equals(AppConstants.themeLight)) {
             cf_bg_color = getResources().getColor(R.color.Light_cf_bg_color);
             colorPrimary = getResources().getColor(R.color.colorLightPrimary);
-            red_inlens =  getResources().getColor(R.color.Light_red_inlens);
+            red_inlens = getResources().getColor(R.color.Light_red_inlens);
             cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Light_cf_alert_dialogue_dim_bg);
-        }
-        else
-        {
+        } else {
             cf_bg_color = getResources().getColor(R.color.Dark_cf_bg_color);
             colorPrimary = getResources().getColor(R.color.colorDarkPrimary);
-            red_inlens =  getResources().getColor(R.color.Dark_red_inlens);
+            red_inlens = getResources().getColor(R.color.Dark_red_inlens);
             cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Dark_cf_alert_dialogue_dim_bg);
 
         }
@@ -1959,19 +1908,16 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
     public void scanQR() {
 
-        int cf_bg_color,colorPrimary,red_inlens,cf_alert_dialogue_dim_bg;
-        if(appTheme.equals(AppConstants.themeLight))
-        {
+        int cf_bg_color, colorPrimary, red_inlens, cf_alert_dialogue_dim_bg;
+        if (appTheme.equals(AppConstants.themeLight)) {
             cf_bg_color = getResources().getColor(R.color.Light_cf_bg_color);
             colorPrimary = getResources().getColor(R.color.colorLightPrimary);
-            red_inlens =  getResources().getColor(R.color.Light_red_inlens);
+            red_inlens = getResources().getColor(R.color.Light_red_inlens);
             cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Light_cf_alert_dialogue_dim_bg);
-        }
-        else
-        {
+        } else {
             cf_bg_color = getResources().getColor(R.color.Dark_cf_bg_color);
             colorPrimary = getResources().getColor(R.color.colorDarkPrimary);
-            red_inlens =  getResources().getColor(R.color.Dark_red_inlens);
+            red_inlens = getResources().getColor(R.color.Dark_red_inlens);
             cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Dark_cf_alert_dialogue_dim_bg);
 
         }
@@ -2030,7 +1976,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
             setParticipants(communityModel);
 
-            postRefListener= new ValueEventListener() {
+            postRefListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -2103,29 +2049,29 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                Log.i("participant","ref triggered");
+                Log.i("participant", "ref triggered");
 
                 photographerList.clear();
 
-                participantsAdapter = new ParticipantsAdapter(photographerList, MainActivity.this, qrCodeBottomSheet,communityModel.getAdmin(),FirebaseDatabase.getInstance().getReference(),communityID);
+                participantsAdapter = new ParticipantsAdapter(photographerList, MainActivity.this, qrCodeBottomSheet, communityModel.getAdmin(), FirebaseDatabase.getInstance().getReference(), communityID);
                 ParticipantsRecyclerView.setAdapter(participantsAdapter);
 
                 if (currentActiveCommunityID.equals(communityID) && !CurrentActiveCommunity.contains(AppConstants.IS_NOTIFIED)) {
-                    photographerList.add(new PhotographerModel("add", "add", "add","add"));
+                    photographerList.add(new PhotographerModel("add", "add", "add", "add"));
                 }
 
                 DatabaseReference photographerRef = FirebaseDatabase.getInstance().getReference().child("Users");
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Log.i("participant","userid "+snapshot.getKey());
+                    Log.i("participant", "userid " + snapshot.getKey());
 
                     photographerRef.child(snapshot.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot userSnapshot) {
 
-                            Log.i("participant","getting user info "+snapshot.getKey());
+                            Log.i("participant", "getting user info " + snapshot.getKey());
 
 
-                            String name = AppConstants.NOT_AVALABLE, imgurl = AppConstants.NOT_AVALABLE,email = AppConstants.NOT_AVALABLE;
+                            String name = AppConstants.NOT_AVALABLE, imgurl = AppConstants.NOT_AVALABLE, email = AppConstants.NOT_AVALABLE;
                             if (userSnapshot.hasChild("Name")) {
                                 if (currentUserId.equals(snapshot.getKey())) {
                                     name = "You";
@@ -2144,10 +2090,9 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                             if (!getPhotographerKeys(photographerList).contains(snapshot.getKey())) {
 
-                                photographerList.add(new PhotographerModel(name, snapshot.getKey(), imgurl,email));
+                                photographerList.add(new PhotographerModel(name, snapshot.getKey(), imgurl, email));
                                 participantsAdapter.notifyDataSetChanged();
                             }
-
 
 
                         }
@@ -2191,7 +2136,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                     }
                 }, 500);
                  */
-
 
 
             }
@@ -2248,10 +2192,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    for(DataSnapshot snapshot:dataSnapshot.getChildren())
-                    {
-                        if(snapshot.hasChild("id") && snapshot.child("id").equals(currentActiveCommunityID))
-                        {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        if (snapshot.hasChild("id") && snapshot.child("id").equals(currentActiveCommunityID)) {
                             linkRef.child(snapshot.getKey()).removeValue();
 
                         }
@@ -2286,7 +2228,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                         }
 
                         showDialogMessage("Exited Participation", "Successfully left from the Cloud-Album");
-                        Log.i("quit","url"+photographerList.get(0).getImgUrl()+"getId"+photographerList.get(0).getId()+"getName"+photographerList.get(0).getName());
+                        Log.i("quit", "url" + photographerList.get(0).getImgUrl() + "getId" + photographerList.get(0).getId() + "getName" + photographerList.get(0).getName());
 
                         if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
                             photographerList.remove(0);
@@ -2325,19 +2267,16 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
         //fixme this dialog ui is not good
 
-        int cf_bg_color,colorPrimary,red_inlens,cf_alert_dialogue_dim_bg;
-        if(appTheme.equals(AppConstants.themeLight))
-        {
+        int cf_bg_color, colorPrimary, red_inlens, cf_alert_dialogue_dim_bg;
+        if (appTheme.equals(AppConstants.themeLight)) {
             cf_bg_color = getResources().getColor(R.color.Light_cf_bg_color);
             colorPrimary = getResources().getColor(R.color.colorLightPrimary);
-            red_inlens =  getResources().getColor(R.color.Light_red_inlens);
+            red_inlens = getResources().getColor(R.color.Light_red_inlens);
             cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Light_cf_alert_dialogue_dim_bg);
-        }
-        else
-        {
+        } else {
             cf_bg_color = getResources().getColor(R.color.Dark_cf_bg_color);
             colorPrimary = getResources().getColor(R.color.colorDarkPrimary);
-            red_inlens =  getResources().getColor(R.color.Dark_red_inlens);
+            red_inlens = getResources().getColor(R.color.Dark_red_inlens);
             cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Dark_cf_alert_dialogue_dim_bg);
 
         }
@@ -2369,10 +2308,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                 @Override
                                                 public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                                    for(DataSnapshot snapshot:dataSnapshot.getChildren())
-                                                    {
-                                                        if(snapshot.hasChild("id") && snapshot.child("id").equals(currentActiveCommunityID))
-                                                        {
+                                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                                        if (snapshot.hasChild("id") && snapshot.child("id").equals(currentActiveCommunityID)) {
                                                             linkRef.child(snapshot.getKey()).removeValue();
 
                                                         }
@@ -2500,19 +2437,16 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
     private void showDialogQuitUnsuccess() {
 
-        int cf_bg_color,colorPrimary,red_inlens,cf_alert_dialogue_dim_bg;
-        if(appTheme.equals(AppConstants.themeLight))
-        {
+        int cf_bg_color, colorPrimary, red_inlens, cf_alert_dialogue_dim_bg;
+        if (appTheme.equals(AppConstants.themeLight)) {
             cf_bg_color = getResources().getColor(R.color.Light_cf_bg_color);
             colorPrimary = getResources().getColor(R.color.colorLightPrimary);
-            red_inlens =  getResources().getColor(R.color.Light_red_inlens);
+            red_inlens = getResources().getColor(R.color.Light_red_inlens);
             cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Light_cf_alert_dialogue_dim_bg);
-        }
-        else
-        {
+        } else {
             cf_bg_color = getResources().getColor(R.color.Dark_cf_bg_color);
             colorPrimary = getResources().getColor(R.color.colorDarkPrimary);
-            red_inlens =  getResources().getColor(R.color.Dark_red_inlens);
+            red_inlens = getResources().getColor(R.color.Dark_red_inlens);
             cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Dark_cf_alert_dialogue_dim_bg);
 
         }
@@ -2692,22 +2626,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
     }
 
-    public String getDate(String timestamp) {
-        try
-        {
-            long time = Long.parseLong(timestamp);
-            TimeZone timeZone = TimeZone.getDefault();
-            long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
-            time+=offsetInMillis;
-            CharSequence Time = DateUtils.getRelativeDateTimeString(MainActivity.this, time, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
-            return String.valueOf(Time);
-        }
-        catch (NumberFormatException e)
-        {
-            return "Nil";
-        }
-    }
-
     private void uploadCoverPhoto(Uri imageUri) {
 
         // MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.VISIBLE);
@@ -2785,8 +2703,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     }
 
 
-
-
     private void checkInternetConnection() {
 
         if (br == null) {
@@ -2795,12 +2711,12 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 @Override
                 public void onReceive(Context context, Intent intent) {
 
-                    Bundle extras = intent.getExtras();
-                    NetworkInfo info = (NetworkInfo) extras.getParcelable("networkInfo");
+                    ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                    NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                    boolean isConnected = activeNetwork != null && activeNetwork.isConnected();
+                    if (isConnected) {
 
-                    NetworkInfo.State state = info.getState();
-                    if (state == NetworkInfo.State.CONNECTED) {
-
+                        onResume();
 
                         NoInternetTextView.setText("Back online.");
                         NoInternetView.setBackgroundColor(Color.parseColor("#ff0f9d58"));
@@ -2818,7 +2734,9 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                             }
                         }, 1000);
 
-                    } else if (state == NetworkInfo.State.DISCONNECTED) {
+                    } else {
+
+                        mainAddPhotosFab.hide();
 
                         NoInternetTextView.setText("Internet connection lost.");
                         NoInternetView.setBackgroundColor(Color.parseColor("#ffc53929"));
@@ -2827,8 +2745,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                         NoInternetView.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_up));
                         NoInternetView.getAnimation().start();
                         NoInternetView.setVisibility(View.VISIBLE);
-                    } else {
-                        NoInternetView.setVisibility(View.GONE);
                     }
 
                 }
@@ -2856,19 +2772,16 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
     public void showDialogMessage(String title, String message) {
 
-        int cf_bg_color,colorPrimary,red_inlens,cf_alert_dialogue_dim_bg;
-        if(appTheme.equals(AppConstants.themeLight))
-        {
+        int cf_bg_color, colorPrimary, red_inlens, cf_alert_dialogue_dim_bg;
+        if (appTheme.equals(AppConstants.themeLight)) {
             cf_bg_color = getResources().getColor(R.color.Light_cf_bg_color);
             colorPrimary = getResources().getColor(R.color.colorLightPrimary);
-            red_inlens =  getResources().getColor(R.color.Light_red_inlens);
+            red_inlens = getResources().getColor(R.color.Light_red_inlens);
             cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Light_cf_alert_dialogue_dim_bg);
-        }
-        else
-        {
+        } else {
             cf_bg_color = getResources().getColor(R.color.Dark_cf_bg_color);
             colorPrimary = getResources().getColor(R.color.colorDarkPrimary);
-            red_inlens =  getResources().getColor(R.color.Dark_red_inlens);
+            red_inlens = getResources().getColor(R.color.Dark_red_inlens);
             cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Dark_cf_alert_dialogue_dim_bg);
 
         }
@@ -2902,19 +2815,16 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
     public void showInfoMessage(String title, String message) {
 
-        int cf_bg_color,colorPrimary,red_inlens,cf_alert_dialogue_dim_bg;
-        if(appTheme.equals(AppConstants.themeLight))
-        {
+        int cf_bg_color, colorPrimary, red_inlens, cf_alert_dialogue_dim_bg;
+        if (appTheme.equals(AppConstants.themeLight)) {
             cf_bg_color = getResources().getColor(R.color.Light_cf_bg_color);
             colorPrimary = getResources().getColor(R.color.colorLightPrimary);
-            red_inlens =  getResources().getColor(R.color.Light_red_inlens);
+            red_inlens = getResources().getColor(R.color.Light_red_inlens);
             cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Light_cf_alert_dialogue_dim_bg);
-        }
-        else
-        {
+        } else {
             cf_bg_color = getResources().getColor(R.color.Dark_cf_bg_color);
             colorPrimary = getResources().getColor(R.color.colorDarkPrimary);
-            red_inlens =  getResources().getColor(R.color.Dark_red_inlens);
+            red_inlens = getResources().getColor(R.color.Dark_red_inlens);
             cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Dark_cf_alert_dialogue_dim_bg);
 
         }
@@ -3119,13 +3029,10 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             this.communityDetails = communityDetails;
             this.activity = activity;
             selectedAlbumKey = AppConstants.NOT_AVALABLE;
-            if(appTheme.equals(AppConstants.themeLight))
-            {
+            if (appTheme.equals(AppConstants.themeLight)) {
                 colorSecondary = getResources().getColor(R.color.colorLightSecondary);
 
-            }
-            else
-            {
+            } else {
                 colorSecondary = getResources().getColor(R.color.colorDarkSecondary);
 
 
@@ -3169,10 +3076,10 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                     viewHolder.itemView.setAlpha((float) 1);
                     if (!selectedAlbumKey.equals(communityDetails.get(selectedAlbumPosition).getCommunityID())) {
                         setVerticalRecyclerView(communityDetails.get(selectedAlbumPosition));
-
+                        mainSelectedKey = communityDetails.get(selectedAlbumPosition).getCommunityID();
                     }
                     selectedAlbumKey = communityDetails.get(selectedAlbumPosition).getCommunityID();
-
+                    mainSelectedKey = selectedAlbumKey;
                 } else {
                     viewHolder.Indicator.setVisibility(View.INVISIBLE);
                     viewHolder.itemView.setAlpha((float) 1);
@@ -3276,10 +3183,10 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                     @Override
                     public boolean onLongClick(View view) {
                         if (communityDetails.get(position).getCommunityID().equals(currentActiveCommunityID)) {
-                            BottomSheetFragment bottomSheetFragment = new BottomSheetFragment(activity, communityDetails.get(position), position,FirebaseAuth.getInstance().getCurrentUser().getUid(),FirebaseDatabase.getInstance().getReference());
+                            BottomSheetFragment bottomSheetFragment = new BottomSheetFragment(activity, communityDetails.get(position), position, FirebaseAuth.getInstance().getCurrentUser().getUid(), FirebaseDatabase.getInstance().getReference());
                             bottomSheetFragment.show(((FragmentActivity) activity).getSupportFragmentManager(), bottomSheetFragment.getTag());
                         } else {
-                            BottomSheetFragment_Inactive bottomSheetFragment_inactive = new BottomSheetFragment_Inactive(activity, communityDetails.get(position), position,FirebaseAuth.getInstance().getCurrentUser().getUid(),FirebaseDatabase.getInstance().getReference());
+                            BottomSheetFragment_Inactive bottomSheetFragment_inactive = new BottomSheetFragment_Inactive(activity, communityDetails.get(position), position, FirebaseAuth.getInstance().getCurrentUser().getUid(), FirebaseDatabase.getInstance().getReference());
                             bottomSheetFragment_inactive.show(((FragmentActivity) activity).getSupportFragmentManager(), bottomSheetFragment_inactive.getTag());
                         }
                         return false;
@@ -3290,10 +3197,10 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                     @Override
                     public void onClick(View v) {
                         if (communityDetails.get(position).getCommunityID().equals(currentActiveCommunityID)) {
-                            BottomSheetFragment bottomSheetFragment = new BottomSheetFragment(activity, communityDetails.get(position), position,FirebaseAuth.getInstance().getCurrentUser().getUid(),FirebaseDatabase.getInstance().getReference());
+                            BottomSheetFragment bottomSheetFragment = new BottomSheetFragment(activity, communityDetails.get(position), position, FirebaseAuth.getInstance().getCurrentUser().getUid(), FirebaseDatabase.getInstance().getReference());
                             bottomSheetFragment.show(((FragmentActivity) activity).getSupportFragmentManager(), bottomSheetFragment.getTag());
                         } else {
-                            BottomSheetFragment_Inactive bottomSheetFragment_inactive = new BottomSheetFragment_Inactive(activity, communityDetails.get(position), position,FirebaseAuth.getInstance().getCurrentUser().getUid(),FirebaseDatabase.getInstance().getReference());
+                            BottomSheetFragment_Inactive bottomSheetFragment_inactive = new BottomSheetFragment_Inactive(activity, communityDetails.get(position), position, FirebaseAuth.getInstance().getCurrentUser().getUid(), FirebaseDatabase.getInstance().getReference());
                             bottomSheetFragment_inactive.show(((FragmentActivity) activity).getSupportFragmentManager(), bottomSheetFragment_inactive.getTag());
                         }
 
@@ -3309,17 +3216,14 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                             notifyItemChanged(viewHolder.getAdapterPosition());
                             selectedAlbumPosition = viewHolder.getAdapterPosition();
                             setVerticalRecyclerView(communityDetails.get(position));
-                            if (currentActiveCommunityID.equals(communityDetails.get(position).getCommunityID())) {
+                            if (currentActiveCommunityID.equals(communityDetails.get(position).getCommunityID()) && isConnectedToNet()) {
                                 mainAddPhotosFab.show();
                             } else {
                                 mainAddPhotosFab.hide();
-                                try
-                                {
+                                try {
                                     rippleBackground.stopRippleAnimation();
                                     rippleBackground2.stopRippleAnimation();
-                                }
-                                catch (NullPointerException e)
-                                {
+                                } catch (NullPointerException e) {
                                     e.printStackTrace();
                                 }
 
@@ -3337,18 +3241,15 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                             notifyItemChanged(viewHolder.getAdapterPosition());
                             selectedAlbumPosition = viewHolder.getAdapterPosition();
                             setVerticalRecyclerView(communityDetails.get(position));
-                            if (currentActiveCommunityID.equals(communityDetails.get(position).getCommunityID())) {
+                            if (currentActiveCommunityID.equals(communityDetails.get(position).getCommunityID()) && isConnectedToNet()) {
                                 mainAddPhotosFab.show();
                             } else {
                                 mainAddPhotosFab.hide();
-                                try
-                                {
+                                try {
                                     rippleBackground.stopRippleAnimation();
                                     rippleBackground2.stopRippleAnimation();
-                                }
-                                catch (NullPointerException e)
-                                {
-                                   e.printStackTrace();
+                                } catch (NullPointerException e) {
+                                    e.printStackTrace();
                                 }
 
                             }
@@ -3399,6 +3300,12 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     public void setCommunityKeyForEdit(String postKeyForEdit, int pos) {
         PostKeyForEdit = postKeyForEdit;
         position = pos;
+    }
+
+    public boolean isConnectedToNet() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnected();
     }
 
     public static void setCoverChange(boolean coverChange) {

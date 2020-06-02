@@ -4,12 +4,16 @@ package com.integrals.inlens.Helper;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +54,32 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
     DatabaseReference reportRef,communityReportRef;
     String currentUserId;
 
+    Handler customHandler = new Handler();
+    TextView endTimeTextView;
+
+    final Runnable updateTimerThread = new Runnable() {
+        @Override
+        public void run() {
+
+            if (endTimeTextView != null) {
+                if(System.currentTimeMillis()-Long.parseLong(communityModel.getEndTime())<60000)
+                {
+                    CharSequence Time = DateUtils.getRelativeDateTimeString(context, Long.parseLong(communityModel.getEndTime()), DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
+                    String timesubstring = Time.toString().substring(Time.length() - 8);
+                    endTimeTextView.setText(String.format("few seconds left, %s", timesubstring));
+                    customHandler.removeCallbacks(updateTimerThread);
+                }
+                {
+                    endTimeTextView.setText(getDate(communityModel.getEndTime()));
+                }
+                Log.i("timer","run");
+            }
+            customHandler.postDelayed(this, 60*1000);
+
+        }
+    };
+
+
     public BottomSheetFragment(Context applicationContext, CommunityModel communityModel, int position,String currentUserId,DatabaseReference ref) {
 
         context = applicationContext;
@@ -69,6 +99,12 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
     }
 
     @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        customHandler.removeCallbacks(updateTimerThread);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -80,7 +116,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
         TextView AlbumBottomStartDate = view.findViewById(R.id.albumstartdate);
         TextView AlbumBottomEndDate = view.findViewById(R.id.albumenddate);
         TextView AlbumType = view.findViewById(R.id.albumtype);
-
+        endTimeTextView = AlbumBottomEndDate;
 
         AlbumTitle.setText(communityModel.getTitle());
         if (TextUtils.isEmpty(communityModel.getDescription())) {
@@ -89,8 +125,21 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
             AlbumDescription.setText(communityModel.getDescription());
         }
         AlbumBottomStartDate.setText(getDate(communityModel.getStartTime()));
-        AlbumBottomEndDate.setText(getDate(communityModel.getEndTime()));
+        if(System.currentTimeMillis()-Long.parseLong(communityModel.getEndTime())<60000)
+        {
+            CharSequence Time = DateUtils.getRelativeDateTimeString(context, Long.parseLong(communityModel.getEndTime()), DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
+            String timesubstring = Time.toString().substring(Time.length() - 8);
+            AlbumBottomEndDate.setText(String.format("few seconds left, %s", timesubstring));
+
+        }
+        {
+            AlbumBottomEndDate.setText(getDate(communityModel.getEndTime()));
+            customHandler.postDelayed(updateTimerThread, 60*1000);
+
+        }
         AlbumType.setText(communityModel.getType());
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -260,6 +309,8 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
             }
         });
 
+
+
         return view;
     }
 
@@ -267,9 +318,9 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
         try
         {
             long time = Long.parseLong(timestamp);
-            TimeZone timeZone = TimeZone.getDefault();
+            /*TimeZone timeZone = TimeZone.getDefault();
             long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
-            time+=offsetInMillis;
+            time+=offsetInMillis;*/
             CharSequence Time = DateUtils.getRelativeDateTimeString(context, time, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
             return String.valueOf(Time);
         }

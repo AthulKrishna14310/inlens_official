@@ -29,6 +29,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.crowdfire.cfalertdialog.CFAlertDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -499,10 +500,10 @@ public class CreateCloudAlbum extends AppCompatActivity {
             communitymap.put(FirebaseConstants.COMMUNITYDESC,descriptionValue);
             communitymap.put(FirebaseConstants.COMMUNITYSTATUS,"T");
             communitymap.put(FirebaseConstants.COMMUNITYTYPE,eventType);
-            communitymap.put(FirebaseConstants.COMMUNITYENDTIME, getOffsetDeletedTime(getTimeStamp(albumTime)));
-            communitymap.put(FirebaseConstants.COMMUNITYSTARTTIME,getOffsetDeletedTime(String.valueOf(System.currentTimeMillis())));
+            communitymap.put(FirebaseConstants.COMMUNITYENDTIME, getTimeStamp(albumTime));
+            communitymap.put(FirebaseConstants.COMMUNITYSTARTTIME,ServerValue.TIMESTAMP);
             communitymap.put(FirebaseConstants.COMMUNITYADMIN,currentUserId);
-
+            Toast.makeText(this, "servert "+communitymap.get(FirebaseConstants.COMMUNITYSTARTTIME), Toast.LENGTH_SHORT).show();
             communityRef.child(newCommunityId).setValue(communitymap).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
@@ -512,14 +513,14 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
                         ceditor.putString("id", newCommunityId);
                         ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
-                        ceditor.putString("stopAt", getOffsetDeletedTime(getTimeStamp(albumTime)));
+                        ceditor.putString("stopAt", getTimeStamp(albumTime));
                         ceditor.putInt("notiCount", 0);
                         ceditor.remove(AppConstants.IS_NOTIFIED);
                         ceditor.commit();
 
 
                         photographerRef.child(newCommunityId).child(currentUserId).setValue(ServerValue.TIMESTAMP);
-                        currentUserRef.child(FirebaseConstants.COMMUNITIES).child(newCommunityId).setValue(getOffsetDeletedTime(String.valueOf(System.currentTimeMillis())));
+                        currentUserRef.child(FirebaseConstants.COMMUNITIES).child(newCommunityId).setValue(String.valueOf(System.currentTimeMillis()));
                         currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).setValue(newCommunityId);
                         submitButton.setEnabled(false);
                         uploadProgressbar.setVisibility(View.GONE);
@@ -585,13 +586,6 @@ public class CreateCloudAlbum extends AppCompatActivity {
         }
     }
 
-    private String getOffsetDeletedTime(String timeStamp) {
-        TimeZone timeZone = TimeZone.getDefault();
-        long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
-        long givenTime = Long.parseLong(timeStamp);
-        long offsetDeletedTime = givenTime-offsetInMillis;
-        return String.valueOf(offsetDeletedTime);
-    }
 
 
     private String getTimeStamp(String albumTime) {

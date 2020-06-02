@@ -51,6 +51,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
@@ -330,7 +331,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                             Map uploadmap = new HashMap();
                             uploadmap.put(FirebaseConstants.POSTURL, downloadUrl);
                             uploadmap.put(FirebaseConstants.POSTBY, FirebaseAuth.getInstance().getCurrentUser().getUid());
-                            uploadmap.put(FirebaseConstants.POSTTIME, getOffsetDeletedTime(String.valueOf(System.currentTimeMillis())));
+                            uploadmap.put(FirebaseConstants.POSTTIME, ServerValue.TIMESTAMP);
                             postRef.child(communityID).child(pushid).setValue(uploadmap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
@@ -433,13 +434,6 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
         }
     }
 
-    private String getOffsetDeletedTime(String timeStamp) {
-        TimeZone timeZone = TimeZone.getDefault();
-        long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
-        long givenTime = Long.parseLong(timeStamp);
-        long offsetDeletedTime = givenTime-offsetInMillis;
-        return String.valueOf(offsetDeletedTime);
-    }
 
     @Override
     public void onBackPressed() {

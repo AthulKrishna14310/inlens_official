@@ -10,6 +10,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 
 import android.support.v7.app.AppCompatDelegate;
+import android.text.format.DateFormat;
+import android.text.format.DateUtils;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.View;
@@ -32,6 +34,7 @@ import com.integrals.inlens.R;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
@@ -280,13 +283,7 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
         builder.show();
     }
 
-    private String getOffsetDeletedTime(String timeStamp) {
-        TimeZone timeZone = TimeZone.getDefault();
-        long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
-        long givenTime = Long.parseLong(timeStamp);
-        long offsetDeletedTime = givenTime-offsetInMillis;
-        return String.valueOf(offsetDeletedTime);
-    }
+
 
     private void addPhotographerToCommunity(final String communityId) {
 
@@ -296,12 +293,9 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
 
                 if (dataSnapshot.hasChild(FirebaseConstants.COMMUNITYSTATUS)) {
                     long endtime = Long.parseLong(dataSnapshot.child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString());
-                    TimeZone timeZone = TimeZone.getDefault();
-                    long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
-                    long serverTimeInMillis = (System.currentTimeMillis() - offsetInMillis);
-
                     String titleValue = dataSnapshot.child(FirebaseConstants.COMMUNITYTITLE).getValue().toString();
-                    if (serverTimeInMillis < endtime) {
+
+                    if (System.currentTimeMillis() < endtime) {
 
                         userRef.child(FirebaseConstants.COMMUNITIES).child(communityId).setValue(ServerValue.TIMESTAMP);
                         userRef.child(FirebaseConstants.LIVECOMMUNITYID).setValue(communityId);
@@ -314,15 +308,13 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
                         SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
                         ceditor.putString("id", communityId);
                         ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
-                        ceditor.putString("stopAt", getOffsetDeletedTime(String.valueOf(endtime)));
+                        ceditor.putString("stopAt", String.valueOf(endtime));
                         ceditor.putInt("notiCount", 0);
                         ceditor.commit();
 
-                        final long dy = TimeUnit.MILLISECONDS.toDays(Long.parseLong(getTimeStamp(endtime))-System.currentTimeMillis());
-                        final long hr = TimeUnit.MILLISECONDS.toHours(Long.parseLong(getTimeStamp(endtime))-System.currentTimeMillis())
-                                - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(Long.parseLong(getTimeStamp(endtime))-System.currentTimeMillis()));
-                        final long min = TimeUnit.MILLISECONDS.toMinutes(Long.parseLong(getTimeStamp(endtime))-System.currentTimeMillis())
-                                - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(Long.parseLong(getTimeStamp(endtime))-System.currentTimeMillis()));
+                        final long dy = TimeUnit.MILLISECONDS.toDays(endtime)-System.currentTimeMillis();
+                        final long hr = TimeUnit.MILLISECONDS.toHours(endtime) - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(endtime));
+                        final long min = TimeUnit.MILLISECONDS.toMinutes(endtime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(endtime));
 
                         NotificationHelper helper = new NotificationHelper(getApplicationContext());
                         String notificationStr = "";
@@ -350,7 +342,14 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
                         {
                             notificationStr+=" "+(int)min+" minutes left";
                         }
-                        helper.displayAlbumStartNotification(notificationStr,"You are active in this Cloud-Album till "+ endtime);
+                        long time = Long.parseLong(String.valueOf(endtime));
+                        CharSequence Time = DateUtils.getRelativeDateTimeString(QRCodeReader.this, time, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
+                        String timesubstring = Time.toString().substring(Time.length()-8);
+
+                        Date date = new Date(time);
+                        String dateformat = DateFormat.format("dd-MM-yyyy",date).toString();
+
+                        helper.displayAlbumStartNotification(notificationStr, "You are active in this Cloud-Album till " + dateformat+", "+timesubstring);
 
                         createIntent="YES";
                         ID=communityId;
@@ -376,14 +375,6 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
 
     }
 
-    private String getTimeStamp(long endtime) {
-
-        TimeZone timeZone = TimeZone.getDefault();
-        long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
-        long notificationTime  = endtime+offsetInMillis;
-        return String.valueOf(notificationTime);
-
-    }
 
     @Override
     public void onBackPressed() {
