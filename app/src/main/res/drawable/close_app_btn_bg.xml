@@ -6,5 +6,5 @@
         android:right="2dp"
         android:bottom="2dp" />
     <corners android:radius="4dp" />
-    <solid android:color="?attr/default_bg_color" />
+    <solid android:color="?attr/cf_bg_color" />
 </shape>

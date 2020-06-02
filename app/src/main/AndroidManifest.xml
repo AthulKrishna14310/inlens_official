@@ -22,7 +22,6 @@
         android:theme="@style/AppTheme"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
-
         tools:replace="android:allowBackup">
         <activity android:name=".Activities.ReportActivity"
             ></activity>

@@ -29,13 +29,14 @@
 
 
     <com.balysv.materialripple.MaterialRippleLayout
-        style="@style/RippleStyleWhite2"
-        android:layout_width="match_parent"
+        style="@style/RippleStyleWhite"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:layout_below="@id/yxt"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="24dp"
         android:background="@drawable/close_app_btn_bg">
 

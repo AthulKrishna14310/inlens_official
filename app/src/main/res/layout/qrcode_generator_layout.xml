@@ -91,7 +91,7 @@
                 android:textColor="?attr/default_dim_bg"
                 android:textSize="14sp" />
             <com.balysv.materialripple.MaterialRippleLayout
-                style="@style/RippleStyleWhite"
+                style="@style/RippleStyleWhite2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
