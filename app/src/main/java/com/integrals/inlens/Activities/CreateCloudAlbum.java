@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -490,12 +492,13 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
         if (!TextUtils.isEmpty(titleValue) && !(TextUtils.isEmpty(eventType) && eventTypeSet && albumDateSet && (!TextUtils.isEmpty(albumTime)))) {
 
-            submitButton.setEnabled(false);
-            uploadProgressbar.setVisibility(View.VISIBLE);
+
             final String newCommunityId = communityRef.push().getKey();
-            globalID=newCommunityId;
 
             Map communitymap =  new HashMap();
+            submitButton.setEnabled(false);
+            uploadProgressbar.setVisibility(View.VISIBLE);
+            globalID=newCommunityId;
             communitymap.put(FirebaseConstants.COMMUNITYTITLE,titleValue);
             communitymap.put(FirebaseConstants.COMMUNITYDESC,descriptionValue);
             communitymap.put(FirebaseConstants.COMMUNITYSTATUS,"T");
@@ -503,7 +506,6 @@ public class CreateCloudAlbum extends AppCompatActivity {
             communitymap.put(FirebaseConstants.COMMUNITYENDTIME, getTimeStamp(albumTime));
             communitymap.put(FirebaseConstants.COMMUNITYSTARTTIME,ServerValue.TIMESTAMP);
             communitymap.put(FirebaseConstants.COMMUNITYADMIN,currentUserId);
-            Toast.makeText(this, "servert "+communitymap.get(FirebaseConstants.COMMUNITYSTARTTIME), Toast.LENGTH_SHORT).show();
             communityRef.child(newCommunityId).setValue(communitymap).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
@@ -525,7 +527,6 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         submitButton.setEnabled(false);
                         uploadProgressbar.setVisibility(View.GONE);
                         userCommunityIdList.add(newCommunityId);
-                        showDialogue("Successfully created the Cloud-Album", true);
 
                         final long dy = TimeUnit.MILLISECONDS.toDays(Long.parseLong(getTimeStamp(albumTime))-System.currentTimeMillis());
                         final long hr = TimeUnit.MILLISECONDS.toHours(Long.parseLong(getTimeStamp(albumTime))-System.currentTimeMillis())
@@ -560,29 +561,59 @@ public class CreateCloudAlbum extends AppCompatActivity {
                             notificationStr+=" "+(int)min+" minutes left";
                         }
                         helper.displayAlbumStartNotification(notificationStr,"You are active in this Cloud-Album till "+ albumTime);
+                        Snackbar.make(rootCreateCloudAlbum,"Successfully created the Cloud-Album",Snackbar.LENGTH_LONG).setAction("Done", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                onBackPressed();
+                            }
+                        }).show();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                onBackPressed();
+
+                            }
+                        },3000);
                     }
                     else
                     {
-                        showDialogue("Unable to connect and create new album right now. Please try again.", false);
                         uploadProgressbar.setVisibility(View.GONE);
                         submitButton.setEnabled(true);
+                        Snackbar.make(rootCreateCloudAlbum,"Failed to create Cloud-Album",Snackbar.LENGTH_LONG).setAction("Retry", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                uploadNewAlbumData();
+                            }
+                        }).show();
+
+
                     }
+
 
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
 
-                    showDialogue("Unable to connect and create new album right now. Please try again.", false);
                     uploadProgressbar.setVisibility(View.GONE);
                     submitButton.setEnabled(true);
+                    Snackbar.make(rootCreateCloudAlbum,"Failed to create Cloud-Album",Snackbar.LENGTH_LONG).setAction("Retry", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            uploadNewAlbumData();
+                        }
+                    }).show();
+
+
                 }
             });
 
-
-
         } else {
-            showDialogue("Please fill up all the provided fields and continue.",false);
+            uploadProgressbar.setVisibility(View.GONE);
+            submitButton.setEnabled(true);
+            Snackbar.make(rootCreateCloudAlbum,"Please fill up all the provided fields and continue.",Snackbar.LENGTH_LONG).show();
+
         }
     }
 
