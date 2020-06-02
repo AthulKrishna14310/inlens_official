@@ -54,6 +54,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
@@ -2005,7 +2006,12 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     public void quitCloudAlbum(boolean forceQuit) {
 
 
+        ProgressBar progressBar = findViewById(R.id.mainloadingpbar);
+
         if (forceQuit) {
+
+            progressBar.setVisibility(View.VISIBLE);
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             linkRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -2045,6 +2051,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                             WorkManager.getInstance().cancelWorkById(UUID.fromString(albumEndWorkId));
                         }
 
+                        progressBar.setVisibility(View.GONE);
+                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                         showDialogMessage("Exited Participation", "Successfully left from the Cloud-Album");
                         Log.i("quit", "url" + photographerList.get(0).getImgUrl() + "getId" + photographerList.get(0).getId() + "getName" + photographerList.get(0).getName());
 
@@ -2056,13 +2064,16 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                     } else {
                         //SetDefaultView();
+                        progressBar.setVisibility(View.GONE);
+                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                         showDialogQuitUnsuccess();
                     }
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-
+                    progressBar.setVisibility(View.GONE);
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                     showDialogQuitUnsuccess();
 
                 }
@@ -2115,6 +2126,10 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
+                                ProgressBar progressBar = findViewById(R.id.mainloadingpbar);
+                                progressBar.setVisibility(View.VISIBLE);
+                                getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
                                 communityRef.child(currentActiveCommunityID).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -2161,6 +2176,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                         } else {
                                                             WorkManager.getInstance().cancelWorkById(UUID.fromString(albumEndWorkId));
                                                         }
+                                                        progressBar.setVisibility(View.GONE);
+                                                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                                                         showDialogMessage("Exited Participation", "Successfully left from the Cloud-Album");
                                                         if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
                                                             photographerList.remove(0);
@@ -2170,13 +2187,16 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                                                     } else {
                                                         //SetDefaultView();
+                                                        progressBar.setVisibility(View.GONE);
+                                                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                                                         showDialogQuitUnsuccess();
                                                     }
                                                 }
                                             }).addOnFailureListener(new OnFailureListener() {
                                                 @Override
                                                 public void onFailure(@NonNull Exception e) {
-
+                                                    progressBar.setVisibility(View.GONE);
+                                                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                                                     showDialogQuitUnsuccess();
 
                                                 }
@@ -2203,6 +2223,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                             WorkManager.getInstance().cancelWorkById(UUID.fromString(albumEndWorkId));
                                                         }
                                                         mainAddPhotosFab.hide();
+                                                        progressBar.setVisibility(View.GONE);
+                                                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                                                         showDialogMessage("Exited Participation", "Successfully left from the Cloud-Album");
                                                         //SetDefaultView();
 
@@ -2213,6 +2235,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                                                     } else {
                                                         //SetDefaultView();
+                                                        progressBar.setVisibility(View.GONE);
+                                                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                                                         showDialogQuitUnsuccess();
                                                     }
 
@@ -2220,7 +2244,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                             }).addOnFailureListener(new OnFailureListener() {
                                                 @Override
                                                 public void onFailure(@NonNull Exception e) {
-
+                                                    progressBar.setVisibility(View.GONE);
+                                                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                                                     showDialogQuitUnsuccess();
                                                 }
                                             });

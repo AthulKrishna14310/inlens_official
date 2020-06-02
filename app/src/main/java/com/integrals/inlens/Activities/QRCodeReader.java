@@ -283,8 +283,6 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
         builder.show();
     }
 
-
-
     private void addPhotographerToCommunity(final String communityId) {
 
         communityRef.child(communityId).addListenerForSingleValueEvent(new ValueEventListener() {

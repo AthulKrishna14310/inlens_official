@@ -230,8 +230,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
             public void onClick(View v) {
                 if (eventTypeSet && albumDateSet) {
                     if (!new PreOperationCheck().checkInternetConnectivity(getApplicationContext())) {
-                        showDialogue("No Internet. Please check your internet " +
-                                "connection and try again", false);
+                        showDialogue("No Internet. Please check your internet connection and try again", false);
 
                     } else {
                         uploadNewAlbumData();
