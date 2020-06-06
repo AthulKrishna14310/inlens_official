@@ -107,6 +107,7 @@ import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.BottomSheetFragment;
 import com.integrals.inlens.Helper.BottomSheetFragment_Inactive;
 import com.integrals.inlens.Helper.CustomHorizontalRecyclerViewScrollListener;
+import com.integrals.inlens.Helper.CustomToast;
 import com.integrals.inlens.Helper.CustomVerticalRecyclerViewScrollListener;
 import com.integrals.inlens.Helper.ExpandableCardView;
 import com.integrals.inlens.Helper.FirebaseConstants;
@@ -2053,7 +2054,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                         progressBar.setVisibility(View.GONE);
                         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                        showDialogMessage("Exited Participation", "Successfully left from the Cloud-Album");
+                        new CustomToast(MainActivity.this,MainActivity.this)
+                                .showToast("Exited Participation");
                         Log.i("quit", "url" + photographerList.get(0).getImgUrl() + "getId" + photographerList.get(0).getId() + "getName" + photographerList.get(0).getName());
 
                         if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
@@ -2178,7 +2180,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                         }
                                                         progressBar.setVisibility(View.GONE);
                                                         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                                                        showDialogMessage("Exited Participation", "Successfully left from the Cloud-Album");
+                                                        new CustomToast(MainActivity.this,MainActivity.this)
+                                                                .showToast("Exited Participation");
                                                         if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
                                                             photographerList.remove(0);
                                                             participantsAdapter.notifyDataSetChanged();
@@ -2225,8 +2228,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                         mainAddPhotosFab.hide();
                                                         progressBar.setVisibility(View.GONE);
                                                         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                                                        showDialogMessage("Exited Participation", "Successfully left from the Cloud-Album");
-                                                        //SetDefaultView();
+                                                        new CustomToast(MainActivity.this,MainActivity.this)
+                                                                .showToast("Exited Participation");
 
                                                         if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
                                                             photographerList.remove(0);

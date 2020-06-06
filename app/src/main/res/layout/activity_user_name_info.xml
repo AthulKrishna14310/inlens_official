@@ -63,6 +63,7 @@
         android:padding="16dp"
         android:theme="@style/Theme.AppCompat.DayNight"
         android:hint="Type your name"
+        android:inputType="text"
         android:fontFamily="@font/base_font"
         android:textSize="16sp"
         android:id="@+id/user_name_activity_edittext"
@@ -78,6 +79,7 @@
         android:layout_below="@id/user_name_activity_edittext_layout"
         app:hintEnabled="true"
         app:boxBackgroundMode="outline"
+
         app:boxCornerRadiusTopEnd="4dp"
         app:boxCornerRadiusBottomEnd="4dp"
         app:boxCornerRadiusBottomStart="4dp"
@@ -93,6 +95,7 @@
             android:layout_height="wrap_content"
             android:textStyle="normal"
             android:padding="16dp"
+            android:inputType="textEmailAddress"
             android:hint="Type your Email"
             android:fontFamily="@font/base_font"
             android:textSize="16sp"

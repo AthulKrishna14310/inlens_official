@@ -138,6 +138,5 @@ public class ScannerTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        Toast.makeText(context, "for debugging: service running", Toast.LENGTH_SHORT).show();
-    }
+     }
 }

@@ -44,6 +44,7 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.integrals.inlens.Helper.AppConstants;
+import com.integrals.inlens.Helper.CustomToast;
 import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.Helper.PreOperationCheck;
 import com.integrals.inlens.MainActivity;
@@ -560,20 +561,10 @@ public class CreateCloudAlbum extends AppCompatActivity {
                             notificationStr+=" "+(int)min+" minutes left";
                         }
                         helper.displayAlbumStartNotification(notificationStr,"You are active in this Cloud-Album till "+ albumTime);
-                        Snackbar.make(rootCreateCloudAlbum,"Successfully created the Cloud-Album",Snackbar.LENGTH_LONG).setAction("Done", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                onBackPressed();
-                            }
-                        }).show();
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
 
-                                onBackPressed();
-
-                            }
-                        },3000);
+                        new CustomToast(CreateCloudAlbum.this,CreateCloudAlbum.this).showToast("Your Cloud-Album created successfully");
+                        createdIntent="YES";
+                        onBackPressed();
                     }
                     else
                     {

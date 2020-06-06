@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 
+
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -74,6 +75,10 @@ dependencies {
     implementation 'com.journeyapps:zxing-android-embedded:3.2.0@aar'
     implementation 'com.google.zxing:core:3.2.1'
     implementation 'android.arch.work:work-runtime:1.0.0'
+
+
+
+
 
 }
 apply plugin: 'com.google.gms.google-services'
