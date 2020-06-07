@@ -448,6 +448,14 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
     }
 
     private void displayImagesBasedOnTime(String communityID, String communityStartTime) {
+        Log.i(AppConstants.MORE_OPTIONS,communityID);
+        Log.i(AppConstants.MORE_OPTIONS,communityStartTime);
+        Log.i(AppConstants.MORE_OPTIONS,"allImagesInCurrentCommunity-> " +allImagesInCurrentCommunity.size());
+        Log.i(AppConstants.MORE_OPTIONS,"allCommunityImages-> "+ allCommunityImages.size());
+
+
+
+
 
 
         ReadFirebaseData readFirebaseData = new ReadFirebaseData();

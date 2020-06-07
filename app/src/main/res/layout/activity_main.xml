@@ -87,9 +87,10 @@
                                     android:background="?attr/default_bg_color"
                                     android:fontFamily="@font/base_font"
                                     android:text="Photographers"
+
                                     android:textColor="?attr/colorPrimary"
                                     android:textSize="14sp"
-                                    android:textStyle="normal"/>
+                                    android:textStyle="bold"/>
 
                                 <android.support.v7.widget.RecyclerView
                                     android:id="@+id/main_bottomsheet_particpants_bottomsheet_recyclerview"
@@ -118,7 +119,7 @@
                             android:text="Photos"
                             android:textColor="?attr/colorPrimary"
                             android:textSize="14sp"
-                            android:textStyle="normal"
+                            android:textStyle="bold"
                             android:visibility="gone" />
 
                     </LinearLayout>
@@ -161,7 +162,8 @@
                                     android:text="@string/app_name"
                                     android:textColor="?attr/colorPrimary"
                                     android:textSize="20sp"
-                                    android:textStyle="normal" />
+
+                                    android:textStyle="bold" />
 
                                 <ImageButton
                                     android:id="@+id/nav_open"

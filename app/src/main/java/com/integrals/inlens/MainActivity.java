@@ -2877,7 +2877,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             selectedAlbumKey = AppConstants.NOT_AVALABLE;
             if (appTheme.equals(AppConstants.themeLight)) {
                 colorSecondary = getResources().getColor(R.color.colorLightSecondary);
-
             } else {
                 colorSecondary = getResources().getColor(R.color.colorDarkSecondary);
 

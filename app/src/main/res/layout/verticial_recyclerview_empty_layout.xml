@@ -20,6 +20,7 @@
         android:layout_centerHorizontal="true"
         android:fontFamily="@font/base_font"
         android:textColor="?attr/colorPrimary"
+        android:textStyle="normal"
         android:text="No photos yet..." />
 
 </RelativeLayout>
