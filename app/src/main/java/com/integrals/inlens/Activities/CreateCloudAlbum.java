@@ -516,6 +516,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         ceditor.putString("id", newCommunityId);
                         ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
                         ceditor.putString("stopAt", getTimeStamp(albumTime));
+                        ceditor.putString("startAt", String.valueOf(System.currentTimeMillis()));
                         ceditor.putInt("notiCount", 0);
                         ceditor.remove(AppConstants.IS_NOTIFIED);
                         ceditor.commit();

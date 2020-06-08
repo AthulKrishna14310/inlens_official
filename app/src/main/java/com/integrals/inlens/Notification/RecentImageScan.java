@@ -34,12 +34,10 @@ public class RecentImageScan {
     public int getNotifiedImageCount()
     {
         int count=0;
-        String imgUri = "";
-        String createdTime= "";
         Uri uri;
         Cursor cursor;
         int column_index_data;
-        String absolutePathOfImage = null;
+        String absolutePathOfImage;
         uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
         String[] projection = {MediaStore.MediaColumns.DATA,MediaStore.Images.Media.BUCKET_DISPLAY_NAME};

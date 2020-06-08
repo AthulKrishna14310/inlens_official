@@ -1182,6 +1182,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
 
+                            Log.i("linkref", " datasnapshot "+dataSnapshot);
+
                             if (dataSnapshot.hasChild("id") && dataSnapshot.hasChild("count")) {
                                 String communityId = dataSnapshot.child("id").getValue().toString();
                                 String count = dataSnapshot.child("count").getValue().toString();
@@ -1263,6 +1265,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                 }
 
                             } else {
+                                Log.i("linkref",communityRefLinkId);
                                 showSnackbarMessage("Invite-Link is corrupted. Get a new Invite-Link.");
                             }
 
@@ -1367,6 +1370,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                             ceditor.putString("id", communityId);
                                             ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
                                             ceditor.putString("stopAt", endtime);
+                                            ceditor.putString("startAt", String.valueOf(System.currentTimeMillis()));
                                             ceditor.putInt("notiCount", 0);
                                             ceditor.remove(AppConstants.IS_NOTIFIED);
                                             ceditor.commit();
@@ -1407,11 +1411,13 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                     notificationStr += " " + (int) min + " minutes left";
                                                 }
                                             }
-                                            CharSequence Time = DateUtils.getRelativeDateTimeString(MainActivity.this, Long.parseLong(endtime), DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
+                                            long time = Long.parseLong(endtime);
+                                            CharSequence Time = DateUtils.getRelativeDateTimeString(MainActivity.this, time, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
                                             String timesubstring = Time.toString().substring(Time.length()-8);
 
-                                            Date date = new Date(endtime);
+                                            Date date = new Date(Long.parseLong(endtime));
                                             String dateformat = DateFormat.format("dd-MM-yyyy",date).toString();
+
 
                                             helper.displayAlbumStartNotification(notificationStr, "You are active in this Cloud-Album till " + dateformat+", "+timesubstring);
                                             MainActivity.this.getIntent().putExtra("CREATED", "YES");
@@ -1470,6 +1476,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                             ceditor.putString("id", communityId);
                                             ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
                                             ceditor.putString("stopAt", endtime);
+                                            ceditor.putString("startAt", String.valueOf(System.currentTimeMillis()));
                                             ceditor.putInt("notiCount", 0);
                                             ceditor.remove(AppConstants.IS_NOTIFIED);
                                             ceditor.commit();
@@ -1520,7 +1527,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                             CharSequence Time = DateUtils.getRelativeDateTimeString(MainActivity.this, time, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
                                             String timesubstring = Time.toString().substring(Time.length()-8);
 
-                                            Date date = new Date(time);
+                                            Date date = new Date(Long.parseLong(endtime));
                                             String dateformat = DateFormat.format("dd-MM-yyyy",date).toString();
 
                                             helper.displayAlbumStartNotification(notificationStr, "You are active in this Cloud-Album till " + dateformat+", "+timesubstring);
@@ -1536,6 +1543,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                 }
 
                             } else {
+                                //linkRef.child(communityRefLinkId).removeValue();
+                                Log.i("linkref",communityRefLinkId);
                                 showSnackbarMessage("Invite-Link expired. Get a new Invite-Link.");
                             }
                         } catch (NumberFormatException e) {
@@ -1596,6 +1605,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                         ceditor.putString("id", communityId);
                                         ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
                                         ceditor.putString("stopAt",endtime);
+                                        ceditor.putString("startAt", String.valueOf(System.currentTimeMillis()));
                                         ceditor.putInt("notiCount", 0);
                                         ceditor.remove(AppConstants.IS_NOTIFIED);
                                         ceditor.commit();

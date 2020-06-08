@@ -5,12 +5,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.os.ConfigurationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,6 +38,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.crowdfire.cfalertdialog.CFAlertDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -47,10 +53,15 @@ import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.FirebaseDatabase;
 import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.CountryItem;
+import com.integrals.inlens.Helper.HttpHandler;
 import com.integrals.inlens.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class AuthActivity extends AppCompatActivity {
@@ -146,6 +157,8 @@ public class AuthActivity extends AppCompatActivity {
                     AuthContainer.setAnimation(FadeIn);
                     AuthContainer.getAnimation().start();
                     AuthContainer.setVisibility(View.VISIBLE);
+                    getDefaultCountry();
+
 
                 } else if (AuthCodeButton.isShown() && AuthEditText.isShown() && !TextUtils.isEmpty(AuthEditText.getText().toString())) {
                     if (!TextUtils.isEmpty(ChoosenCode)) {
@@ -277,22 +290,81 @@ public class AuthActivity extends AppCompatActivity {
         builder.show();
     }
 
-    private void GetDefaultCountry() {
+
+    private class getConfirmedList extends AsyncTask<Void, Void, Void> {
+
+        String countryCode;
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            HttpHandler sh = new HttpHandler();
+            // Making a request to url and getting response
+            String url = "http://ip-api.com/json";
+            String jsonStr = "";
+            jsonStr = sh.makeServiceCall(url);
+
+            if (jsonStr != null && !jsonStr.equals("")) {
+                try {
+                    JSONObject jsonObj = new JSONObject(jsonStr);
+//                    Log.i("json","data "+jsonObj);
+                    countryCode = jsonObj.getString("countryCode");
+//                    Log.i("json","data "+countryCode);
+
+                } catch (final JSONException e) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), " Failed to detect country.", Toast.LENGTH_LONG).show();
+                        }
+                    });
+
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if(!TextUtils.isEmpty(countryCode))
+            {
+                for (int i = 0; i < CountryList.size(); i++) {
+                    if (CountryList.get(i).getCountryName().toLowerCase().equals(countryCode.toLowerCase())) {
+                        CountryItem countryItem = CountryList.get(i);
+                        AuthCodeButton.setText(countryItem.getCountryName().toUpperCase() + " " + String.format("+ %s", countryItem.getCountryCode()));
+                        ChoosenCode = String.format("+%s", countryItem.getCountryCode());
+//                            Log.i("authTag", " country "+ChoosenCode );
+
+                        break;
+                    }
+
+                }
+            }
+        }
+    }
+
+
+    private void getDefaultCountry() {
 
         try {
 
-            TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+            TelephonyManager tm = (TelephonyManager)this.getSystemService(Context.TELEPHONY_SERVICE);
             String countryCodeValue = tm.getNetworkCountryIso();
+            if(TextUtils.isEmpty(countryCodeValue))
+            {
 
-            //Locale loc = new Locale("",countryCodeValue);
-            //String country = loc.getDisplayCountry();
-            //ShowCustomToast("Country Detected !!","Inlens has detected your country as "+country,false,2000);
+                new getConfirmedList().execute();
+            }
 
             for (int i = 0; i < CountryList.size(); i++) {
                 if (CountryList.get(i).getCountryName().toLowerCase().equals(countryCodeValue)) {
                     CountryItem countryItem = CountryList.get(i);
                     AuthCodeButton.setText(countryItem.getCountryName().toUpperCase() + " " + String.format("+ %s", countryItem.getCountryCode()));
                     ChoosenCode = String.format("+%s", countryItem.getCountryCode());
+                    Log.i("authTag", " country "+ChoosenCode );
+
                     break;
                 }
 
@@ -741,7 +813,6 @@ public class AuthActivity extends AppCompatActivity {
         if (AuthIMM.isAcceptingText()) {
             AuthIMM.hideSoftInputFromWindow(AuthEditText.getWindowToken(), 0);
         }
-        GetDefaultCountry();
 
     }
 

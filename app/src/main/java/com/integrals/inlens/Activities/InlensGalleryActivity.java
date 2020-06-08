@@ -164,6 +164,12 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
         communityID = getIntent().getStringExtra("CommunityID");
         communityStartTime =  getIntent().getStringExtra("CommunityStartTime");
+        if(communityStartTime == null || communityStartTime.equals(AppConstants.NOT_AVALABLE) )
+        {
+            SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
+            communityStartTime = CurrentActiveCommunity.getString("startAt",String.valueOf(System.currentTimeMillis()));
+            communityID =  CurrentActiveCommunity.getString("id",AppConstants.NOT_AVALABLE);
+        }
 
         postRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.POSTS);
         currentUserRef =FirebaseDatabase.getInstance().getReference();
@@ -448,15 +454,11 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
     }
 
     private void displayImagesBasedOnTime(String communityID, String communityStartTime) {
+
         Log.i(AppConstants.MORE_OPTIONS,communityID);
         Log.i(AppConstants.MORE_OPTIONS,communityStartTime);
         Log.i(AppConstants.MORE_OPTIONS,"allImagesInCurrentCommunity-> " +allImagesInCurrentCommunity.size());
         Log.i(AppConstants.MORE_OPTIONS,"allCommunityImages-> "+ allCommunityImages.size());
-
-
-
-
-
 
         ReadFirebaseData readFirebaseData = new ReadFirebaseData();
         readFirebaseData.readData(postRef.child(communityID), new FirebaseRead() {
@@ -540,9 +542,6 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
     private List<GalleryImageModel> getAllShownImagesPath(long starttime) {
 
-        TimeZone timeZone = TimeZone.getDefault();
-        long offsetInMillis = timeZone.getOffset(Calendar.ZONE_OFFSET);
-        starttime+=offsetInMillis;
         Uri uri;
         Cursor cursor;
         int column_index_data;

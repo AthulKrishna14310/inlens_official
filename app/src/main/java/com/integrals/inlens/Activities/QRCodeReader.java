@@ -307,6 +307,7 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
                         ceditor.putString("id", communityId);
                         ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
                         ceditor.putString("stopAt", String.valueOf(endtime));
+                        ceditor.putString("startAt", String.valueOf(System.currentTimeMillis()));
                         ceditor.putInt("notiCount", 0);
                         ceditor.commit();
 
