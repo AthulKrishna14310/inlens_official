@@ -12,7 +12,7 @@
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/zero_dimen_create_cloud_album_activity"
+        android:layout_height="match_parent"
         android:layout_weight="1.0"
         android:background="?attr/default_bg_color">
 
@@ -31,7 +31,7 @@
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="72dp"
+            android:layout_marginTop="64dp"
             android:background="?attr/default_bg_color"
             android:orientation="vertical"
             android:padding="@dimen/spacing_smlarge">
@@ -157,11 +157,11 @@
                             android:layout_marginRight="40dp"
                             android:fontFamily="@font/base_font"
                             android:text="Expiry date"
-
-                            android:textAllCaps="true"
+                            android:alpha="0.8"
+                            android:textStyle="bold"
                             android:textColor="?attr/colorSecondary"
 
-                            android:textSize="14sp"
+                            android:textSize="16sp"
 
                            />
 
@@ -211,9 +211,10 @@
                             android:layout_marginRight="40dp"
                             android:fontFamily="@font/base_font"
                             android:text="Event type"
-                            android:textAllCaps="true"
+                            android:textStyle="bold"
+                            android:alpha="0.8"
                             android:textColor="?attr/colorSecondary"
-                            android:textSize="14sp"
+                            android:textSize="16sp"
                             />
 
                         <ImageButton
