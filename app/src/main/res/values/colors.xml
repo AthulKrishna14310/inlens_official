@@ -39,12 +39,12 @@
     <color name="Light_icon_color">@color/colorLightPrimary</color>
     <color name="Light_icon_color_red">@color/Light_red_inlens</color>
     <color name="Light_red_inlens">#CF6679</color>
-    <color name="Light_cf_bg_color">#eeeeee</color>
+    <color name="Light_cf_bg_color">#fafafa</color>
     <color name="Light_default_dim_bg">#fafafa</color>
     <color name="Light_red_300">#e57373</color>
     <color name="Light_icon_color_secondary">@color/colorLightSecondary</color>
     <color name="Light_cf_alert_dialogue_dim_bg">#ffffff</color>
-    <color name="Light_image_bg_color">@color/Light_cf_bg_color</color>
+    <color name="Light_image_bg_color">#eeeeee</color>
     <color name="Light_border">@color/Light_default_dim_bg</color>
     <color name="Light_action_secondary">@color/colorLightSecondary</color>
     <color name="Light_check_color">#81c784</color>

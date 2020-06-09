@@ -7,7 +7,6 @@
     android:layout_gravity="center"
     android:layout_marginTop="4dp"
     android:layout_marginBottom="4dp"
-
     android:background="?attr/default_bg_color">
 
     <RelativeLayout

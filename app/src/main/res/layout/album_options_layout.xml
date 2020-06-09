@@ -89,7 +89,7 @@
     android:layout_marginLeft="16dp"
     android:layout_toRightOf="@id/main_horizontal_new_album_button"
     android:layout_below="@+id/create_text"
-    android:textSize="14sp"
+    android:textSize="12sp"
     ></TextView>
 
 
@@ -156,7 +156,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_toRightOf="@id/scanlayout"
                 android:layout_below="@+id/scan_text"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 ></TextView>
 
         </RelativeLayout>
