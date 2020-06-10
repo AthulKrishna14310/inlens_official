@@ -397,6 +397,13 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
     protected void onResume() {
         super.onResume();
 
+        SharedPreferences LastShownNotificationInfo = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
+        if (!LastShownNotificationInfo.contains("time")) {
+            SharedPreferences.Editor editor = LastShownNotificationInfo.edit();
+            editor.putString("time", String.valueOf(System.currentTimeMillis()));
+            editor.commit();
+        }
+
         gallerySwipeRefresh.setRefreshing(true);
 
         if(communityID==null && communityStartTime==null)

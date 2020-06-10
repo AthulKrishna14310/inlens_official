@@ -72,7 +72,9 @@ import androidx.work.WorkManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
@@ -754,7 +756,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             editor.putString("time", String.valueOf(System.currentTimeMillis()));
             editor.commit();
         }
-
     }
 
     @Override
@@ -2784,9 +2785,11 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                     holder.itemView.setAnimation(AnimationUtils.loadAnimation(activity, android.R.anim.fade_in));
                     holder.itemView.getAnimation().start();
 
-                    RequestOptions requestOptions = new RequestOptions()
-                            .format(DecodeFormat.PREFER_RGB_565)
-                            .placeholder(R.drawable.ic_photo_camera);
+
+                    RequestOptions reqOpt = new RequestOptions()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL) // It will cache your image after loaded for first time
+                            .override(viewHolder.PostImageView.getWidth(),viewHolder.PostImageView.getHeight());// Overrides size of downloaded image and converts it's bitmaps to your desired image size;
+
 
                     viewHolder.postRefresButton.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -2797,7 +2800,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                             viewHolder.postRefresButton.getAnimation().start();
                             Glide.with(activity)
                                     .load(PostList.get(position).getUri())
-                                    .apply(requestOptions)
+                                    .apply(reqOpt)
                                     .listener(new RequestListener<Drawable>() {
                                         @Override
                                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
@@ -2816,10 +2819,11 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                         }
                     });
+                    viewHolder.PostProgressbar.setVisibility(View.VISIBLE);
 
                     Glide.with(activity)
                             .load(PostList.get(position).getUri())
-                            .apply(requestOptions)
+                            .apply(reqOpt)
                             .listener(new RequestListener<Drawable>() {
                                 @Override
                                 public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
