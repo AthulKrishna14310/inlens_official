@@ -6,10 +6,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.AppCompatActivity;
 
-import android.support.v7.app.AppCompatDelegate;
+import androidx.appcompat.app.AppCompatDelegate;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.util.SparseArray;
@@ -33,10 +33,8 @@ import com.integrals.inlens.Notification.NotificationHelper;
 import com.integrals.inlens.R;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import info.androidhive.barcode.BarcodeReader;

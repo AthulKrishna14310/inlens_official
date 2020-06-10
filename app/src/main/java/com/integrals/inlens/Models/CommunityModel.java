@@ -1,8 +1,6 @@
 package com.integrals.inlens.Models;
 
-import android.support.annotation.NonNull;
-
-import com.google.firebase.database.DatabaseReference;
+import androidx.annotation.NonNull;
 
 public class CommunityModel implements Comparable<CommunityModel> {
 

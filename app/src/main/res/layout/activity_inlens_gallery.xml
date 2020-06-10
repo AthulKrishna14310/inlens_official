@@ -12,7 +12,7 @@
         android:id="@+id/gallery_toolbar"
         layout="@layout/mytoolbar_layout" />
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/gallerySwipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -20,18 +20,18 @@
         android:background="?attr/default_bg_color"
         android:layout_below="@id/gallery_toolbar">
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/gallery_recyclerview"
             android:layout_width="match_parent"
             android:background="?attr/default_bg_color"
             android:layout_height="match_parent">
-        </android.support.v7.widget.RecyclerView>
+        </androidx.recyclerview.widget.RecyclerView>
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/gallery_upload_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

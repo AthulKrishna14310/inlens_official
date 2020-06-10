@@ -7,10 +7,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomSheetDialogFragment;
+import androidx.annotation.NonNull;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -27,8 +26,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.integrals.inlens.Activities.ReportActivity;
 import com.integrals.inlens.Activities.SplashScreenActivity;
@@ -37,9 +34,6 @@ import com.integrals.inlens.Models.CommunityModel;
 import com.integrals.inlens.R;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
-
-import java.util.Calendar;
-import java.util.TimeZone;
 
 //// to do if
 

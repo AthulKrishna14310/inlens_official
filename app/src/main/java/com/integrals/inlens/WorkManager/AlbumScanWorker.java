@@ -1,14 +1,12 @@
 package com.integrals.inlens.WorkManager;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.util.Log;
+import androidx.annotation.NonNull;
 
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.integrals.inlens.AsynchTasks.ScannerTask;
-import com.integrals.inlens.Helper.AppConstants;
 
 public class AlbumScanWorker extends Worker {
 

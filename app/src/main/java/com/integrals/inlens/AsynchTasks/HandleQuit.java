@@ -3,7 +3,7 @@ package com.integrals.inlens.AsynchTasks;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.widget.Toast;
 
 import androidx.work.WorkManager;

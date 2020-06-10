@@ -1,29 +1,21 @@
 package com.integrals.inlens.Activities;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDelegate;
-import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+
 import android.view.Window;
 import android.view.WindowManager;
 
-import androidx.work.ExistingPeriodicWorkPolicy;
-import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -33,21 +25,13 @@ import com.google.firebase.database.ValueEventListener;
 import com.integrals.inlens.AsynchTasks.HandleQuit;
 import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.FirebaseConstants;
-import com.integrals.inlens.Helper.QRCodeBottomSheet;
 import com.integrals.inlens.Helper.ReadFirebaseData;
 import com.integrals.inlens.Interface.FirebaseRead;
 import com.integrals.inlens.MainActivity;
 import com.integrals.inlens.R;
-import com.integrals.inlens.WorkManager.AlbumScanWorker;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.TimeZone;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-
-import static com.integrals.inlens.Helper.AppConstants.MY_PERMISSIONS_REQUEST_START_WORKMANAGER;
 
 public class SplashScreenActivity extends AppCompatActivity {
 

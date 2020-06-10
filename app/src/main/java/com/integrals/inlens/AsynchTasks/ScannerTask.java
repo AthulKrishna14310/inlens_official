@@ -7,12 +7,8 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.text.TextUtils;
-import android.util.Log;
-import android.widget.Toast;
-
-import androidx.work.WorkManager;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
@@ -21,9 +17,6 @@ import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.Notification.NotificationHelper;
 import com.integrals.inlens.Notification.RecentImageScan;
-
-import java.util.Calendar;
-import java.util.TimeZone;
 
 public class ScannerTask extends AsyncTask<Void, Void, Void> {
 

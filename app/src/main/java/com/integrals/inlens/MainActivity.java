@@ -7,7 +7,6 @@ import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,27 +20,26 @@ import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
-import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentActivity;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
@@ -66,7 +64,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
@@ -109,7 +106,6 @@ import com.integrals.inlens.Helper.BottomSheetFragment_Inactive;
 import com.integrals.inlens.Helper.CustomHorizontalRecyclerViewScrollListener;
 import com.integrals.inlens.Helper.CustomToast;
 import com.integrals.inlens.Helper.CustomVerticalRecyclerViewScrollListener;
-import com.integrals.inlens.Helper.ExpandableCardView;
 import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.Helper.MainCommunityViewHolder;
 import com.integrals.inlens.Helper.MainHorizontalLoadingViewHolder;
@@ -133,14 +129,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -2442,7 +2434,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                         if (task.isSuccessful()) {
 
-                            final String downloadUrl = task.getResult().getDownloadUrl().toString();
+                            final String downloadUrl = task.getResult().getMetadata().getReference().getDownloadUrl().toString();
 
 
                             currentUserRef.child("Profile_picture").setValue(downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -2498,7 +2490,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
 
                     if (task.isSuccessful()) {
-                        final String downloadUrl = task.getResult().getDownloadUrl().toString();
+                        final String downloadUrl = task.getResult().getMetadata().getReference().getDownloadUrl().toString();
                         FirebaseDatabase.getInstance().getReference()
                                 .child("Communities")
                                 .child(PostKeyForEdit)
