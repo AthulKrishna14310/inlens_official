@@ -13,10 +13,8 @@
         android:layout_centerVertical="true"
         android:layout_margin=".5dp"
         android:adjustViewBounds="true"
-        android:background="?attr/default_bg_color"
+        android:background="?attr/colorPrimaryLight"
         android:scaleType="center"
-
-        android:src="@drawable/ic_cover_alt_black_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
