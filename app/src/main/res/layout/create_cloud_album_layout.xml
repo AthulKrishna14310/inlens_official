@@ -84,15 +84,8 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/user_name_activity_edittext_layout"
                         android:layout_marginTop="24dp"
-                        app:boxBackgroundMode="outline"
-                        app:boxCornerRadiusBottomEnd="4dp"
-                        app:boxCornerRadiusBottomStart="4dp"
-                        app:boxBackgroundColor="?attr/default_dim_bg"
-                        app:boxCornerRadiusTopEnd="4dp"
-                        app:boxCornerRadiusTopStart="4dp"
-                        app:boxStrokeColor="?attr/colorSecondary"
-                        app:boxStrokeWidth="1dp"
                         app:hintEnabled="true"
+                        app:boxBackgroundMode="filled"
                         >
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/AlbumTitleEditText"
@@ -115,14 +108,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/user_name_activity_edittext_layout"
                         android:layout_marginTop="24dp"
-                        app:boxBackgroundColor="?attr/default_dim_bg"
-                        app:boxBackgroundMode="outline"
-                        app:boxCornerRadiusBottomEnd="4dp"
-                        app:boxCornerRadiusBottomStart="4dp"
-                        app:boxCornerRadiusTopEnd="4dp"
-                        app:boxCornerRadiusTopStart="4dp"
-                        app:boxStrokeColor="?attr/colorSecondary"
-                        app:boxStrokeWidth="1dp"
+                        app:boxBackgroundMode="filled"
                         app:hintEnabled="true"
                         >
 
