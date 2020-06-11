@@ -61,7 +61,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/card_bg"
         android:clickable="true"
-        android:layout_margin="4dp"
+        android:layout_margin="2dp"
         android:orientation="vertical">
 
         <ImageView
@@ -75,7 +75,7 @@
         <ImageView
             android:id="@+id/albumcard_image_view"
             android:layout_width="match_parent"
-            android:layout_height="104dp"
+            android:layout_height="98dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:scaleType="centerCrop"
@@ -93,7 +93,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_marginTop="106dp"
+        android:layout_marginTop="100dp"
         android:background="?attr/default_dim_bg"
         android:fontFamily="@font/base_font"
         android:maxLines="1"
@@ -102,5 +102,6 @@
         android:text="Two Line"
         android:textColor="?attr/colorSecondary"
         android:textSize="14sp"
+
         android:textStyle="bold" />
 </androidx.cardview.widget.CardView>
