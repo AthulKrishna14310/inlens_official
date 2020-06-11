@@ -16,6 +16,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -319,41 +321,45 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                 byte[] compressedImage = baos.toByteArray();
 
 
-                storageRef.child(communityID).child(Uri.fromFile(new File(allCommunityImages.get(imgPosition).getImageUri())).getLastPathSegment().toLowerCase() + System.currentTimeMillis()).putBytes(compressedImage).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                StorageReference filePath = storageRef.child(communityID).child(Uri.fromFile(new File(allCommunityImages.get(imgPosition).getImageUri())).getLastPathSegment().toLowerCase() + System.currentTimeMillis());
+
+                filePath.putBytes(compressedImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
 
-                        if (task.isSuccessful()) {
-                            final String downloadUrl = task.getResult().getMetadata().getReference().getDownloadUrl().toString();
-                            String pushid = postRef.child(communityID).push().getKey();
-                            Map uploadmap = new HashMap();
-                            uploadmap.put(FirebaseConstants.POSTURL, downloadUrl);
-                            uploadmap.put(FirebaseConstants.POSTBY, FirebaseAuth.getInstance().getCurrentUser().getUid());
-                            uploadmap.put(FirebaseConstants.POSTTIME, ServerValue.TIMESTAMP);
-                            postRef.child(communityID).child(pushid).setValue(uploadmap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
+                        filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+
+                                final String downloadUrl = String.valueOf(uri);
+                                Log.i("uploading","url "+downloadUrl);
+                                String pushid = postRef.child(communityID).push().getKey();
+                                Map uploadmap = new HashMap();
+                                uploadmap.put(FirebaseConstants.POSTURL, downloadUrl);
+                                uploadmap.put(FirebaseConstants.POSTBY, FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                uploadmap.put(FirebaseConstants.POSTTIME, ServerValue.TIMESTAMP);
+                                postRef.child(communityID).child(pushid).setValue(uploadmap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
 
 
-                                        allCommunityImages.get(imgPosition).setQueued(false);
-                                        firebaseUploader(allCommunityImages);
+                                            allCommunityImages.get(imgPosition).setQueued(false);
+                                            firebaseUploader(allCommunityImages);
 
-                                    } else {
-                                        allCommunityImages.get(imgPosition).setQueued(false);
-                                        Snackbar.make(rootGalleryRelativeLayout,"Image failed to upload. Please try again later.",Snackbar.LENGTH_SHORT).show();
-                                        imageAdapter.notifyItemChanged(imgPosition);
-                                        firebaseUploader(allCommunityImages);
+                                        } else {
+                                            allCommunityImages.get(imgPosition).setQueued(false);
+                                            Snackbar.make(rootGalleryRelativeLayout,"Image failed to upload. Please try again later.",Snackbar.LENGTH_SHORT).show();
+                                            imageAdapter.notifyItemChanged(imgPosition);
+                                            firebaseUploader(allCommunityImages);
+                                        }
                                     }
-                                }
-                            });
+                                });
 
-                        } else {
-                            allCommunityImages.get(imgPosition).setQueued(false);
-                            Snackbar.make(rootGalleryRelativeLayout,"Image failed to upload. Please try again later.",Snackbar.LENGTH_SHORT).show();
-                            firebaseUploader(allCommunityImages);
-                        }
+                            }
+                        });
+
                     }
                 }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                     @Override

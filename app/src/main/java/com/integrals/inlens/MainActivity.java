@@ -2790,7 +2790,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                             .diskCacheStrategy(DiskCacheStrategy.ALL) // It will cache your image after loaded for first time
                             .override(viewHolder.PostImageView.getWidth(),viewHolder.PostImageView.getHeight());// Overrides size of downloaded image and converts it's bitmaps to your desired image size;
 
-
+//                    Log.i("Verticaladapter","resource "+PostList.get(position).getUri());
                     viewHolder.postRefresButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -2805,6 +2805,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                         @Override
                                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                                             viewHolder.postRefresButton.setVisibility(View.VISIBLE);
+//                                            Log.i("Verticaladapter","exception "+e);
+//                                            Log.i("Verticaladapter","resource "+PostList.get(position).getUri());
                                             return false;
                                         }
 
@@ -2819,8 +2821,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                         }
                     });
-                    viewHolder.PostProgressbar.setVisibility(View.VISIBLE);
 
+                    viewHolder.PostProgressbar.setVisibility(View.VISIBLE);
                     Glide.with(activity)
                             .load(PostList.get(position).getUri())
                             .apply(reqOpt)
