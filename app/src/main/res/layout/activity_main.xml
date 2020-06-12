@@ -75,6 +75,7 @@
                                 android:layout_height="wrap_content"
                                 android:orientation="vertical"
                                 android:layout_marginBottom="6dp"
+                                android:visibility="gone"
                                 >
 
                                 <TextView
@@ -87,7 +88,6 @@
                                     android:background="?attr/default_bg_color"
                                     android:fontFamily="@font/base_font"
                                     android:text="Photographers"
-
                                     android:textColor="?attr/colorPrimary"
                                     android:textSize="14sp"
                                     android:textStyle="bold"/>
@@ -140,11 +140,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             app:cardBackgroundColor="?attr/default_dim_bg"
-                            android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
                             android:layout_marginTop="4dp"
-                            app:cardElevation="4dp"
-                            app:cardCornerRadius="4dp"
+                            app:cardElevation="0dp"
                             android:layout_marginBottom="4dp">
 
                             <RelativeLayout
@@ -159,11 +156,11 @@
                                     android:layout_centerInParent="true"
                                     android:background="?attr/default_dim_bg"
                                     android:fontFamily="@font/base_font"
-                                    android:text="@string/app_name"
+                                    android:text="Shared Albums"
                                     android:textColor="?attr/colorPrimary"
                                     android:textSize="20sp"
 
-                                    android:textStyle="bold" />
+                                    android:textStyle="normal" />
 
                                 <ImageButton
                                     android:id="@+id/nav_open"
@@ -180,19 +177,18 @@
                                     android:src="@drawable/ic_menu_icon" />
 
                                 <ImageButton
-                                    android:id="@+id/mainactivity_actionbar_searchbutton"
-                                    android:layout_width="40dp"
-                                    android:layout_height="40dp"
+                                    android:id="@+id/plus_button"
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
                                     android:layout_alignParentEnd="true"
                                     android:layout_centerVertical="true"
                                     android:layout_marginLeft="5dp"
-                                    android:visibility="invisible"
                                     android:layout_marginTop="5dp"
                                     android:layout_marginRight="16dp"
                                     android:layout_marginBottom="5dp"
                                     android:tint="?attr/colorPrimary"
                                     android:background="?selectableItemBackgroundBorderless"
-                                    android:src="@drawable/ic_search" />
+                                    android:src="@drawable/ic_add_album" />
 
                             </RelativeLayout>
 

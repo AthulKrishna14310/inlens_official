@@ -268,8 +268,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         });
 
 
-        // main actionbar
-        mainSearchButton = findViewById(R.id.mainactivity_actionbar_searchbutton);
+
 
         // Fab
         mainAddPhotosFab = findViewById(R.id.fabadd);
@@ -339,14 +338,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         cfDialogService = showServicePermissionDialog(cfBuilder);
 
 
-        mainSearchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                Snackbar.make(RootForMainActivity, "Search is being done and will be completed soon. Thank you for your cooperation.", Snackbar.LENGTH_SHORT).show();
-
-            }
-        });
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -628,6 +620,15 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         rippleBackground = (RippleBackground) findViewById(R.id.content);
         rippleBackground2 = (RippleBackground) findViewById(R.id.content2);
 
+
+
+        findViewById(R.id.plus_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                optionsBottomSheetFragment.show(((FragmentActivity) MainActivity.this).getSupportFragmentManager(), optionsBottomSheetFragment.getTag());
+
+            }
+        });
     }
 
 

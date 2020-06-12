@@ -85,7 +85,8 @@
                         android:layout_below="@id/user_name_activity_edittext_layout"
                         android:layout_marginTop="24dp"
                         app:hintEnabled="true"
-                        app:boxBackgroundMode="filled"
+                        android:padding="8dp"
+                        app:boxBackgroundMode="outline"
                         >
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/AlbumTitleEditText"
@@ -95,9 +96,8 @@
                             android:backgroundTint="?attr/default_dim_bg"
                             android:hint="Title"
                             android:inputType="text"
-                            android:padding="16dp"
                             android:textColor="?attr/colorSecondary"
-                            android:textSize="20sp"
+                            android:textSize="22sp"
                             android:textStyle="bold" />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -108,8 +108,9 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/user_name_activity_edittext_layout"
                         android:layout_marginTop="24dp"
-                        app:boxBackgroundMode="filled"
+                        app:boxBackgroundMode="outline"
                         app:hintEnabled="true"
+                        android:padding="8dp"
                         >
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -119,10 +120,9 @@
                             android:backgroundTint="?attr/default_dim_bg"
                             android:fontFamily="@font/base_font"
                             android:hint="Description"
-                            android:padding="16dp"
                             android:textColor="?attr/colorSecondary"
                             android:textColorHint="#cdcdcd"
-                            android:textSize="20sp"
+                            android:textSize="22sp"
                             android:textStyle="bold"
                             android:inputType="text"/>
                     </com.google.android.material.textfield.TextInputLayout>
@@ -153,8 +153,8 @@
 
                         <ImageButton
                             android:id="@+id/date_range_button"
-                            android:layout_width="wrap_content"
-                            android:layout_height="44dp"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
                             android:layout_centerVertical="true"
                             android:layout_marginStart="@dimen/image_button_margin_create_cloud_album"
                             android:layout_marginTop="@dimen/image_button_margin_create_cloud_album"
@@ -207,7 +207,11 @@
                             android:id="@+id/event_type_add"
                             android:layout_width="@dimen/image_button_create_album_layout_activity"
                             android:layout_height="@dimen/image_button_create_album_layout_activity"
-                            android:layout_margin="@dimen/image_button_margin_create_cloud_album"
+                            android:layout_marginStart="@dimen/image_button_margin_create_cloud_album"
+                            android:layout_marginTop="@dimen/image_button_margin_create_cloud_album"
+                            android:layout_marginEnd="@dimen/image_button_margin_create_cloud_album"
+
+                            android:layout_marginBottom="@dimen/image_button_margin_create_cloud_album"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:src="@drawable/ic_event_type_24dp"
                             android:tint="?attr/colorSecondary"
