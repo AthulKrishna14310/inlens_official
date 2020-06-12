@@ -2430,43 +2430,43 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
 
                 final StorageReference filepath = FirebaseStorage.getInstance().getReference().child("profile_images").child(current_u_i_d + ".jpg");
-                filepath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                filepath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
-                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-
-                        if (task.isSuccessful()) {
-
-                            final String downloadUrl = task.getResult().getMetadata().getReference().getDownloadUrl().toString();
-
-
-                            currentUserRef.child("Profile_picture").setValue(downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        {
-                                            showSnackbarMessage("Successfully uploaded your profile picture.");
-                                            for (int i = 0; i < photographerList.size(); i++) {
-                                                if (photographerList.get(i).getId().equals(currentUserId)) {
-                                                    photographerList.get(i).setImgUrl(downloadUrl);
-                                                    participantsAdapter.notifyItemChanged(i);
+                    public void onSuccess(Uri uri) {
+                        currentUserRef.child("Profile_picture").setValue(uri.toString())
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            {
+                                                showSnackbarMessage("Successfully uploaded your profile picture.");
+                                                for (int i = 0; i < photographerList.size(); i++) {
+                                                    if (photographerList.get(i).getId().equals(currentUserId)) {
+                                                        photographerList.get(i).setImgUrl(uri.toString());
+                                                        participantsAdapter.notifyItemChanged(i);
+                                                    }
                                                 }
+
                                             }
-
+                                        } else {
+                                            showSnackbarMessage("Failed to upload picture. Please try again.");
                                         }
-                                    } else {
-                                        showSnackbarMessage("Failed to upload picture. Please try again.");
+
                                     }
+                                });
 
-                                }
-                            });
-                        } else {
-                            showSnackbarMessage("Failed to upload picture. Please try again.");
-
-                        }
+//
+//
+//
                     }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        showSnackbarMessage("Failed to upload picture. Please try again.");
 
-
+                    }
                 });
+            }
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 showSnackbarMessage("Image cropping error. Please try again.");
@@ -2474,7 +2474,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
         }
 
-    }
+
 
     private void uploadCoverPhoto(Uri imageUri) {
 
@@ -2492,26 +2492,38 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
 
                     if (task.isSuccessful()) {
-                        final String downloadUrl = task.getResult().getMetadata().getReference().getDownloadUrl().toString();
-                        FirebaseDatabase.getInstance().getReference()
-                                .child("Communities")
-                                .child(PostKeyForEdit)
-                                .child("coverimage")
-                                .setValue(downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    //MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-                                    showSnackbarMessage("Successfully uploaded the cover photo.");
-                                    communityDataList.get(position).setCoverImage(downloadUrl);
-                                    mainHorizontalAdapter.notifyItemChanged(position);
-                                } else {
-                                    // MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-                                    showSnackbarMessage("Failed to uploaded the cover photo. Please try again.");
+                       FilePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                           @Override
+                           public void onSuccess(Uri uri) {
+                               FirebaseDatabase.getInstance().getReference()
+                                       .child("Communities")
+                                       .child(PostKeyForEdit)
+                                       .child("coverimage")
+                                       .setValue(uri.toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                   @Override
+                                   public void onComplete(@NonNull Task<Void> task) {
+                                       if (task.isSuccessful()) {
+                                           //MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
+                                           showSnackbarMessage("Successfully uploaded the cover photo.");
+                                           communityDataList.get(position).setCoverImage(uri.toString());
+                                           mainHorizontalAdapter.notifyItemChanged(position);
+                                       } else {
+                                           // MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
+                                           showSnackbarMessage("Failed to uploaded the cover photo. Please try again.");
 
-                                }
-                            }
-                        });
+                                       }
+                                   }
+                               });
+
+                           }
+                       }).addOnFailureListener(new OnFailureListener() {
+                           @Override
+                           public void onFailure(@NonNull Exception e) {
+                               showSnackbarMessage("Failed to uploaded the cover photo. Please try again.");
+
+                           }
+                       });
+
                     } else {
                         //MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
                         showSnackbarMessage("Failed to uploaded the cover photo. Please try again.");
