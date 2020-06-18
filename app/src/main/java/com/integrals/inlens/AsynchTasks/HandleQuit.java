@@ -72,6 +72,15 @@ public class HandleQuit extends AsyncTask<Void,Void,Void>
                 if (task.isSuccessful()) {
 
                     currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).removeValue();
+
+                    SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
+                    ceditor.remove("id");
+                    ceditor.remove("time");
+                    ceditor.remove("stopAt");
+                    ceditor.remove("startAt");
+                    ceditor.remove("notiCount");
+                    ceditor.commit();
+
                     String scanWorkId = CurrentActiveCommunity.getString("scanWorkerId", AppConstants.NOT_AVALABLE);
                     String albumEndWorkId = CurrentActiveCommunity.getString("albumendWorkerId", AppConstants.NOT_AVALABLE);
                     if (scanWorkId.equals(AppConstants.NOT_AVALABLE)) {

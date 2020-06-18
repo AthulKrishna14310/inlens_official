@@ -2041,8 +2041,17 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                     if (task.isSuccessful()) {
                         currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).removeValue();
                         currentActiveCommunityID = AppConstants.NOT_AVALABLE;
-                        mainAddPhotosFab.hide();
+
                         SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
+                        SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
+                        ceditor.remove("id");
+                        ceditor.remove("time");
+                        ceditor.remove("stopAt");
+                        ceditor.remove("startAt");
+                        ceditor.remove("notiCount");
+                        ceditor.commit();
+
+                        mainAddPhotosFab.hide();
                         String scanWorkId = CurrentActiveCommunity.getString("scanWorkerId", AppConstants.NOT_AVALABLE);
                         String albumEndWorkId = CurrentActiveCommunity.getString("albumendWorkerId", AppConstants.NOT_AVALABLE);
                         if (scanWorkId.equals(AppConstants.NOT_AVALABLE)) {
@@ -2170,6 +2179,14 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                         currentActiveCommunityID = AppConstants.NOT_AVALABLE;
                                                         mainAddPhotosFab.hide();
                                                         SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
+                                                        SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
+                                                        ceditor.remove("id");
+                                                        ceditor.remove("time");
+                                                        ceditor.remove("stopAt");
+                                                        ceditor.remove("startAt");
+                                                        ceditor.remove("notiCount");
+                                                        ceditor.commit();
+
                                                         String scanWorkId = CurrentActiveCommunity.getString("scanWorkerId", AppConstants.NOT_AVALABLE);
                                                         String albumEndWorkId = CurrentActiveCommunity.getString("albumendWorkerId", AppConstants.NOT_AVALABLE);
                                                         if (scanWorkId.equals(AppConstants.NOT_AVALABLE)) {

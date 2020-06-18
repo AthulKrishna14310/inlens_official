@@ -39,9 +39,18 @@
         <activity
             android:name=".Activities.PhotoView"
             android:configChanges="orientation|screenSize" />
-        <activity
-            android:name=".Activities.InlensGalleryActivity"
-            />
+
+        <activity android:name=".Activities.InlensGalleryActivity"
+            android:label="Upload to Album">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <action android:name="android.intent.action.SEND_MULTIPLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="image/*"/>
+            </intent-filter>
+
+
+        </activity>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTask"
