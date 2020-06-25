@@ -121,6 +121,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
     @SuppressLint("CutPasteId")
     String appTheme="";
     int queuedImageCount=0;
+    List<GalleryImageModel> imagesQueue = new ArrayList<>();
 
 
     @Override
@@ -154,7 +155,10 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
         setContentView(R.layout.activity_inlens_gallery);
 
-
+        queuedImageCount=0;
+        imagesToUpload=0;
+        imgCount=0;
+        
         rootGalleryRelativeLayout = findViewById(R.id.root_for_gallery);
         gallerySwipeRefresh = findViewById(R.id.gallerySwipeRefreshLayout);
 
@@ -320,7 +324,6 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                    allImagesInCurrentCommunity.clear();
                     for (DataSnapshot snapshot:dataSnapshot.getChildren())
                     {
                         if(snapshot.hasChild(FirebaseConstants.POSTURL))
@@ -336,29 +339,32 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                     if(imgFile.lastModified()>Long.parseLong(communityStartTime) && ImageNotAlreadyUploaded(Uri.fromFile(imgFile).getLastPathSegment()))
                     {
                         // queue this image for upload
-                        uploadDialog = new Dialog(InlensGalleryActivity.this);
-                        uploadDialog.setContentView(R.layout.gallery_upload_item_dialog);
-                        uploadDialog.setCancelable(false);
-                        uploadDialog.setCanceledOnTouchOutside(false);
-                        uploadDialog.getWindow().getAttributes().windowAnimations = R.style.BottomUpSlideDialogAnimation;
+                        if(uploadDialog==null)
+                        {
+                            uploadDialog = new Dialog(InlensGalleryActivity.this);
+                            uploadDialog.setContentView(R.layout.gallery_upload_item_dialog);
+                            uploadDialog.setCancelable(false);
+                            uploadDialog.setCanceledOnTouchOutside(false);
+                            uploadDialog.getWindow().getAttributes().windowAnimations = R.style.BottomUpSlideDialogAnimation;
 
-                        Window window = uploadDialog.getWindow();
-                        window.setGravity(Gravity.BOTTOM);
-                        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
-                        window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-                        window.setDimAmount(0.75f);
-                        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+                            Window window = uploadDialog.getWindow();
+                            window.setGravity(Gravity.BOTTOM);
+                            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+                            window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                            window.setDimAmount(0.75f);
+                            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-                        uploadProgressbar = uploadDialog.findViewById(R.id.gallery_upload_dialog_progressbar);
-                        uploadTextView = uploadDialog.findViewById(R.id.gallery_upload_dialog_textview);
-                        uploadPorgressTextView = uploadDialog.findViewById(R.id.gallery_upload_dialog_progress_textview);
-                        uploadImageview = uploadDialog.findViewById(R.id.gallery_upload_dialog_imageview);
+                            uploadProgressbar = uploadDialog.findViewById(R.id.gallery_upload_dialog_progressbar);
+                            uploadTextView = uploadDialog.findViewById(R.id.gallery_upload_dialog_textview);
+                            uploadPorgressTextView = uploadDialog.findViewById(R.id.gallery_upload_dialog_progress_textview);
+                            uploadImageview = uploadDialog.findViewById(R.id.gallery_upload_dialog_imageview);
 
-                        uploadDialog.show();
-                        List<GalleryImageModel> imagesQueue = new ArrayList<>();
+                            uploadDialog.show();
+                        }
+                        allImagesInCurrentCommunity.add(Uri.fromFile(imgFile).getLastPathSegment());
                         imagesQueue.add(new GalleryImageModel(imgFile.toString(),true,true,String.valueOf(imgFile.lastModified())));
-                        imagesToUpload=imagesQueue.size();
-                        imgCount=0;
+                        imagesToUpload+=imagesQueue.size();
+                        
                         firebaseUploader(imagesQueue);
 
                     }
@@ -410,13 +416,11 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
         ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
         String[] projection = {MediaStore.Images.Media.DATA};
-        List<GalleryImageModel> imageQueue = new ArrayList<>();
 
         if (imageUris != null) {
             SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
             if(CurrentActiveCommunity.contains("startAt") && CurrentActiveCommunity.contains("id"))
             {
-                queuedImageCount=0;
                 communityStartTime = CurrentActiveCommunity.getString("startAt",String.valueOf(System.currentTimeMillis()));
                 communityID =  CurrentActiveCommunity.getString("id",AppConstants.NOT_AVALABLE);
 
@@ -424,7 +428,6 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                        allImagesInCurrentCommunity.clear();
                         for (DataSnapshot snapshot:dataSnapshot.getChildren())
                         {
                             if(snapshot.hasChild(FirebaseConstants.POSTURL))
@@ -443,44 +446,52 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                             File imgFile = new File(getFilePathFromUri(projection, imageUri));
                             if(imgFile.lastModified()>Long.parseLong(communityStartTime) && ImageNotAlreadyUploaded(Uri.fromFile(imgFile).getLastPathSegment()))
                             {
-                                imageQueue.add(new GalleryImageModel(imgFile.toString(),true,true,String.valueOf(imgFile.lastModified())));
+                                allImagesInCurrentCommunity.add(Uri.fromFile(imgFile).getLastPathSegment());
+                                imagesQueue.add(new GalleryImageModel(imgFile.toString(),true,true,String.valueOf(imgFile.lastModified())));
 //                                Log.i("gallerySend","uri "+Uri.fromFile(imgFile).getLastPathSegment());
 //                                Log.i("gallerySend","ImageNotAlreadyUploaded(Uri.fromFile(imgFile).getLastPathSegment()) "+ImageNotAlreadyUploaded(Uri.fromFile(imgFile).getLastPathSegment()));
 
                             }
                         }
 
-                        imagesToUpload=imageQueue.size();
-
+                        imagesToUpload+=imagesQueue.size();
+//                        Log.i("gallerySend","size "+imagesToUpload);
                         if(imagesToUpload>0)
                         {
-                            imgCount=0;
 
-                            uploadDialog = new Dialog(InlensGalleryActivity.this);
-                            uploadDialog.setContentView(R.layout.gallery_upload_item_dialog);
-                            uploadDialog.setCancelable(false);
-                            uploadDialog.setCanceledOnTouchOutside(false);
-                            uploadDialog.getWindow().getAttributes().windowAnimations = R.style.BottomUpSlideDialogAnimation;
+                            if(uploadDialog==null)
+                            {
+                                uploadDialog = new Dialog(InlensGalleryActivity.this);
+                                uploadDialog.setContentView(R.layout.gallery_upload_item_dialog);
+                                uploadDialog.setCancelable(false);
+                                uploadDialog.setCanceledOnTouchOutside(false);
+                                uploadDialog.getWindow().getAttributes().windowAnimations = R.style.BottomUpSlideDialogAnimation;
 
-                            Window window = uploadDialog.getWindow();
-                            window.setGravity(Gravity.BOTTOM);
-                            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
-                            window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-                            window.setDimAmount(0.75f);
-                            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+                                Window window = uploadDialog.getWindow();
+                                window.setGravity(Gravity.BOTTOM);
+                                window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+                                window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                                window.setDimAmount(0.75f);
+                                window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-                            uploadProgressbar = uploadDialog.findViewById(R.id.gallery_upload_dialog_progressbar);
-                            uploadTextView = uploadDialog.findViewById(R.id.gallery_upload_dialog_textview);
-                            uploadPorgressTextView = uploadDialog.findViewById(R.id.gallery_upload_dialog_progress_textview);
-                            uploadImageview = uploadDialog.findViewById(R.id.gallery_upload_dialog_imageview);
+                                uploadProgressbar = uploadDialog.findViewById(R.id.gallery_upload_dialog_progressbar);
+                                uploadTextView = uploadDialog.findViewById(R.id.gallery_upload_dialog_textview);
+                                uploadPorgressTextView = uploadDialog.findViewById(R.id.gallery_upload_dialog_progress_textview);
+                                uploadImageview = uploadDialog.findViewById(R.id.gallery_upload_dialog_imageview);
 
-                            uploadDialog.show();
-                            firebaseUploader(imageQueue);
+                                uploadDialog.show();
+                            }
+                            firebaseUploader(imagesQueue);
                         }
                         else if(queuedImageCount > 0)
                         {
-                            Snackbar.make(rootGalleryRelativeLayout,queuedImageCount-imagesToUpload+" upload(s) were skipped to avoid copies",BaseTransientBottomBar.LENGTH_LONG).show();
-                        }
+                            Snackbar.make(rootGalleryRelativeLayout,queuedImageCount-imagesToUpload+" photo(s) were skipped.",BaseTransientBottomBar.LENGTH_LONG).setAction("Learn more", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                    Toast.makeText(InlensGalleryActivity.this, "1. avoid copies\n2. photos where taken prior to this album", Toast.LENGTH_SHORT).show();
+                                }
+                            }).show();                        }
 
 
                     }
@@ -533,7 +544,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
             }
         }
 
-        if( imgPosition >- 1 && imagesToUpload-imgCount > 0)
+        if( imgPosition >- 1 && imagesToUpload-imgCount > 0 && ImageNotAlreadyUploaded(Uri.fromFile(new File(allCommunityImages.get(imgPosition).getImageUri())).getLastPathSegment()))
         {
             imgCount++;
 
@@ -586,7 +597,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
 
-
+                                            allImagesInCurrentCommunity.add(downloadUrl);
                                             allCommunityImages.get(imgPosition).setQueued(false);
                                             firebaseUploader(allCommunityImages);
 
@@ -639,7 +650,19 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
             isUploading = false;
             if(queuedImageCount>0 && imagesToUpload != queuedImageCount)
             {
-                Snackbar.make(rootGalleryRelativeLayout,"Some photos were skipped to avoid copies",BaseTransientBottomBar.LENGTH_LONG).show();
+                Snackbar.make(rootGalleryRelativeLayout,queuedImageCount-imagesToUpload+" photo(s) were skipped.",BaseTransientBottomBar.LENGTH_LONG).setAction("Learn more", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        Toast.makeText(InlensGalleryActivity.this, "Avoid copies.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(InlensGalleryActivity.this, "Photos where taken prior to this album.", Toast.LENGTH_SHORT).show();
+                    }
+                }).show();
+            }
+            else
+            {
+                Snackbar.make(rootGalleryRelativeLayout,"Upload complete.",Snackbar.LENGTH_SHORT).show();
+
             }
         }
     }
