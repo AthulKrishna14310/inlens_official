@@ -20,4 +20,12 @@ public class AppConstants {
     public static final String appDataPref_theme="theme";
     public static final String themeLight="light";
     public static final String themeDark="dark";
+
+
+    // SQLite Database public constants
+    public static final String SQLITE_DB_NAME="userImages.db";
+    public static final String SQLITE_TABLE_NAME="userImagesTable";
+    public static final String SQLITE_COLUMN_FIELD_ID="name";
+    public static final String SQLITE_COLUMN_FIELD_URI="uri";
+    public static final String SQLITE_COLUMN_FIELD_QUEUED_TIME ="queuedAt";
 }

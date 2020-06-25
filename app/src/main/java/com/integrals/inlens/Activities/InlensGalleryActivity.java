@@ -16,12 +16,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
+
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -59,6 +61,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.integrals.inlens.Database.UploadQueueDB;
 import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.DirectoryFragment;
 import com.integrals.inlens.Helper.FirebaseConstants;
@@ -103,50 +106,45 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
     String currentUserId;
     ImageAdapter imageAdapter;
-    int imagesToUpload=0;
-    boolean isUploading=false;
+    int imagesToUpload = 0;
+    boolean isUploading = false;
     RelativeLayout rootGalleryRelativeLayout;
     SwipeRefreshLayout gallerySwipeRefresh;
     ImageButton dirSelectionButton;
     DirectoryFragment directoryFragment;
     private RelativeLayout RootForMainActivity;
-    private boolean snack=false;
+    private boolean snack = false;
 
-    int imgPosition,imgCount;
+    int imgPosition, imgCount;
     Dialog uploadDialog;
     ProgressBar uploadProgressbar;
-    TextView uploadTextView,uploadPorgressTextView;
+    TextView uploadTextView, uploadPorgressTextView;
     ImageView uploadImageview;
 
     @SuppressLint("CutPasteId")
-    String appTheme="";
-    int queuedImageCount=0;
+    String appTheme = "";
     List<GalleryImageModel> imagesQueue = new ArrayList<>();
 
+    UploadQueueDB uploadQueueDB;
+    int queuedCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         SharedPreferences appDataPref = getSharedPreferences(AppConstants.appDataPref, Context.MODE_PRIVATE);
         final SharedPreferences.Editor appDataPrefEditor = appDataPref.edit();
-        if(appDataPref.contains(AppConstants.appDataPref_theme))
-        {
-            appTheme = appDataPref.getString(AppConstants.appDataPref_theme,AppConstants.themeLight);
-            if(appTheme.equals(AppConstants.themeLight))
-            {
+        if (appDataPref.contains(AppConstants.appDataPref_theme)) {
+            appTheme = appDataPref.getString(AppConstants.appDataPref_theme, AppConstants.themeLight);
+            if (appTheme.equals(AppConstants.themeLight)) {
                 setTheme(R.style.AppTheme);
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            }
-            else
-            {
+            } else {
                 setTheme(R.style.DarkTheme);
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             }
-        }
-        else
-        {
+        } else {
             appTheme = AppConstants.themeLight;
-            appDataPrefEditor.putString(AppConstants.appDataPref_theme,AppConstants.themeLight);
+            appDataPrefEditor.putString(AppConstants.appDataPref_theme, AppConstants.themeLight);
             appDataPrefEditor.commit();
             setTheme(R.style.AppThemeGalleryLight);
 
@@ -155,10 +153,23 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
         setContentView(R.layout.activity_inlens_gallery);
 
-        queuedImageCount=0;
-        imagesToUpload=0;
-        imgCount=0;
-        
+        imagesToUpload = 0;
+        imgCount = 0;
+
+        uploadQueueDB = new UploadQueueDB(this);
+        findViewById(R.id.log_gallery).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Cursor cursor = uploadQueueDB.getQueuedData();
+
+
+                while (cursor.moveToNext()) {
+                    Log.i("dbUpload", "row " + cursor.getString(0) + " " + cursor.getString(1) + " " + cursor.getString(1));
+                }
+
+            }
+        });
+
         rootGalleryRelativeLayout = findViewById(R.id.root_for_gallery);
         gallerySwipeRefresh = findViewById(R.id.gallerySwipeRefreshLayout);
 
@@ -169,7 +180,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
 
         postRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.POSTS);
-        currentUserRef =FirebaseDatabase.getInstance().getReference();
+        currentUserRef = FirebaseDatabase.getInstance().getReference();
         storageRef = FirebaseStorage.getInstance().getReference().child(FirebaseConstants.COMMUNITIES_STORAGE);
 
         galleryBackButton = findViewById(R.id.gallery_toolbar).findViewById(R.id.mytoolbar_back_button);
@@ -187,12 +198,12 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
             }
         });
 
-        directoryFragment =  new DirectoryFragment(InlensGalleryActivity.this);
+        directoryFragment = new DirectoryFragment(InlensGalleryActivity.this);
         dirSelectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                directoryFragment.show(getSupportFragmentManager(),directoryFragment.getTag());
+                directoryFragment.show(getSupportFragmentManager(), directoryFragment.getTag());
 
             }
         });
@@ -205,7 +216,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
             public void onRefresh() {
 
                 gallerySwipeRefresh.setRefreshing(true);
-                displayImagesBasedOnTime(communityID,communityStartTime);
+                displayImagesBasedOnTime(communityID, communityStartTime);
 
             }
         });
@@ -242,21 +253,18 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
                 galleryUploadFab.hide();
                 imagesToUpload = 0;
-                for(int i=0;i<allCommunityImages.size();i++)
-                {
-                    if(allCommunityImages.get(i).isSelected())
-                    {
+                for (int i = 0; i < allCommunityImages.size(); i++) {
+                    if (allCommunityImages.get(i).isSelected()) {
                         imagesToUpload++;
                         allCommunityImages.get(i).setQueued(true);
                         imageAdapter.notifyItemChanged(i);
                     }
                 }
 
-                if(imagesToUpload >0)
-                {
+                if (imagesToUpload > 0) {
                     isUploading = true;
                     imageAdapter.notifyDataSetChanged();
-                    imgCount=0;
+                    imgCount = 0;
                     uploadDialog = new Dialog(InlensGalleryActivity.this);
                     uploadDialog.setContentView(R.layout.gallery_upload_item_dialog);
                     uploadDialog.setCancelable(false);
@@ -285,24 +293,18 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
         String action = intent.getAction();
         String type = intent.getType();
 
-        if (Intent.ACTION_SEND.equals(action) && type != null && type.startsWith("image/"))
-        {
+        if (Intent.ACTION_SEND.equals(action) && type != null && type.startsWith("image/")) {
             handleSingleImage(intent);
-        }
-        else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null && type.startsWith("image/"))
-        {
+        } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null && type.startsWith("image/")) {
             handleMultipleImages(intent);
-        }
-        else
-        {
+        } else {
             communityID = intent.getStringExtra("CommunityID");
-            communityStartTime =  intent.getStringExtra("CommunityStartTime");
+            communityStartTime = intent.getStringExtra("CommunityStartTime");
 
-            if(communityStartTime == null || communityStartTime.equals(AppConstants.NOT_AVALABLE) )
-            {
+            if (communityStartTime == null || communityStartTime.equals(AppConstants.NOT_AVALABLE)) {
                 SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
-                communityStartTime = CurrentActiveCommunity.getString("startAt",String.valueOf(System.currentTimeMillis()));
-                communityID =  CurrentActiveCommunity.getString("id",AppConstants.NOT_AVALABLE);
+                communityStartTime = CurrentActiveCommunity.getString("startAt", String.valueOf(System.currentTimeMillis()));
+                communityID = CurrentActiveCommunity.getString("id", AppConstants.NOT_AVALABLE);
             }
         }
 
@@ -311,220 +313,96 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
     private void handleSingleImage(Intent intent) {
 
+        queuedCount = 0;
         Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
         String[] projection = {MediaStore.Images.Media.DATA};
         File imgFile = new File(getFilePathFromUri(projection, imageUri));
 
         SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
-        if(CurrentActiveCommunity.contains("startAt") && CurrentActiveCommunity.contains("id"))
-        {
-            communityStartTime = CurrentActiveCommunity.getString("startAt",String.valueOf(System.currentTimeMillis()));
-            communityID =  CurrentActiveCommunity.getString("id",AppConstants.NOT_AVALABLE);
-            postRef.child(communityID).addListenerForSingleValueEvent(new ValueEventListener() {
+        if (CurrentActiveCommunity.contains("startAt") && CurrentActiveCommunity.contains("id")) {
+            communityStartTime = CurrentActiveCommunity.getString("startAt", String.valueOf(System.currentTimeMillis()));
+            communityID = CurrentActiveCommunity.getString("id", AppConstants.NOT_AVALABLE);
+            if (imgFile.lastModified() > Long.parseLong(communityStartTime) && ImageNotAlreadyUploaded(Uri.fromFile(imgFile).getLastPathSegment())) {
+                if (uploadQueueDB.insertData(Uri.fromFile(imgFile).getLastPathSegment(), getFilePathFromUri(projection, imageUri).toString(), String.valueOf(System.currentTimeMillis()))) {
+                    queuedCount++;
+                }
+            }
+
+            Snackbar.make(rootGalleryRelativeLayout, "Queued " + queuedCount + " image.", BaseTransientBottomBar.LENGTH_SHORT).setAction("Upload now", new View.OnClickListener() {
                 @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                public void onClick(View view) {
 
-                    for (DataSnapshot snapshot:dataSnapshot.getChildren())
-                    {
-                        if(snapshot.hasChild(FirebaseConstants.POSTURL))
-                        {
-                            String uri=snapshot.child(FirebaseConstants.POSTURL).getValue().toString();
-                            String by = snapshot.child(FirebaseConstants.POSTBY).getValue().toString();
-                            if(!allImagesInCurrentCommunity.contains(uri) && by.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
-                            {
-                                allImagesInCurrentCommunity.add(uri);
-                            }
-                        }
-                    }
-                    if(imgFile.lastModified()>Long.parseLong(communityStartTime) && ImageNotAlreadyUploaded(Uri.fromFile(imgFile).getLastPathSegment()))
-                    {
-                        // queue this image for upload
-                        if(uploadDialog==null)
-                        {
-                            uploadDialog = new Dialog(InlensGalleryActivity.this);
-                            uploadDialog.setContentView(R.layout.gallery_upload_item_dialog);
-                            uploadDialog.setCancelable(false);
-                            uploadDialog.setCanceledOnTouchOutside(false);
-                            uploadDialog.getWindow().getAttributes().windowAnimations = R.style.BottomUpSlideDialogAnimation;
-
-                            Window window = uploadDialog.getWindow();
-                            window.setGravity(Gravity.BOTTOM);
-                            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
-                            window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-                            window.setDimAmount(0.75f);
-                            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-
-                            uploadProgressbar = uploadDialog.findViewById(R.id.gallery_upload_dialog_progressbar);
-                            uploadTextView = uploadDialog.findViewById(R.id.gallery_upload_dialog_textview);
-                            uploadPorgressTextView = uploadDialog.findViewById(R.id.gallery_upload_dialog_progress_textview);
-                            uploadImageview = uploadDialog.findViewById(R.id.gallery_upload_dialog_imageview);
-
-                            uploadDialog.show();
-                        }
-                        allImagesInCurrentCommunity.add(Uri.fromFile(imgFile).getLastPathSegment());
-                        imagesQueue.add(new GalleryImageModel(imgFile.toString(),true,true,String.valueOf(imgFile.lastModified())));
-                        imagesToUpload+=imagesQueue.size();
-                        
-                        firebaseUploader(imagesQueue);
-
-                    }
-                    else if(!ImageNotAlreadyUploaded(Uri.fromFile(imgFile).getLastPathSegment()))
-                    {
-                        Snackbar.make(rootGalleryRelativeLayout,"Upload skipped to avoid copies",BaseTransientBottomBar.LENGTH_LONG).show();
-
-                    }
-                    else
-                    {
-                        Snackbar.make(rootGalleryRelativeLayout,"This photo cannot be uploaded.", BaseTransientBottomBar.LENGTH_SHORT).setAction("Learn more", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-
-                                // todo
-                                Toast.makeText(InlensGalleryActivity.this, "Explain why this cannot be done", Toast.LENGTH_SHORT).show();
-
-                            }
-                        }).show();
-                    }
+                    Toast.makeText(InlensGalleryActivity.this, "initiate work manager now", Toast.LENGTH_SHORT).show();
 
                 }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-
-
+            }).show();
 //        Log.i("gallerySend","id"+communityID);
 //        Log.i("gallerySend","time"+communityStartTime);
 
 
-        }
-        else
-        {
-            Snackbar.make(rootGalleryRelativeLayout,"You have no active album at the moment.", BaseTransientBottomBar.LENGTH_SHORT).show();
+        } else {
+            Snackbar.make(rootGalleryRelativeLayout, "You have no active album at the moment.", BaseTransientBottomBar.LENGTH_SHORT).show();
         }
 
 //        Log.i("gallerySend","input stream "+imageUri.getPath());
 //        Log.i("gallerySend","path "+getFilePathFromUri(projection,imageUri));
 
 
-
     }
 
     private void handleMultipleImages(Intent intent) {
 
+        queuedCount = 0;
         ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
         String[] projection = {MediaStore.Images.Media.DATA};
 
         if (imageUris != null) {
             SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
-            if(CurrentActiveCommunity.contains("startAt") && CurrentActiveCommunity.contains("id"))
-            {
-                communityStartTime = CurrentActiveCommunity.getString("startAt",String.valueOf(System.currentTimeMillis()));
-                communityID =  CurrentActiveCommunity.getString("id",AppConstants.NOT_AVALABLE);
+            if (CurrentActiveCommunity.contains("startAt") && CurrentActiveCommunity.contains("id")) {
+                communityStartTime = CurrentActiveCommunity.getString("startAt", String.valueOf(System.currentTimeMillis()));
+                communityID = CurrentActiveCommunity.getString("id", AppConstants.NOT_AVALABLE);
+                for (Uri imageUri : imageUris) {
+                    File imgFile = new File(getFilePathFromUri(projection, imageUri));
+                    if (imgFile.lastModified() > Long.parseLong(communityStartTime) && ImageNotAlreadyUploaded(Uri.fromFile(imgFile).getLastPathSegment())) {
 
-                postRef.child(communityID).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                        for (DataSnapshot snapshot:dataSnapshot.getChildren())
-                        {
-                            if(snapshot.hasChild(FirebaseConstants.POSTURL))
-                            {
-                                String uri=snapshot.child(FirebaseConstants.POSTURL).getValue().toString();
-                                String by = snapshot.child(FirebaseConstants.POSTBY).getValue().toString();
-                                if(!allImagesInCurrentCommunity.contains(uri) && by.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
-                                {
-                                    allImagesInCurrentCommunity.add(uri);
-                                }
-                            }
-                        }
-                        for(Uri imageUri:imageUris)
-                        {
-                            queuedImageCount++;
-                            File imgFile = new File(getFilePathFromUri(projection, imageUri));
-                            if(imgFile.lastModified()>Long.parseLong(communityStartTime) && ImageNotAlreadyUploaded(Uri.fromFile(imgFile).getLastPathSegment()))
-                            {
-                                allImagesInCurrentCommunity.add(Uri.fromFile(imgFile).getLastPathSegment());
-                                imagesQueue.add(new GalleryImageModel(imgFile.toString(),true,true,String.valueOf(imgFile.lastModified())));
+//                        imagesQueue.add(new GalleryImageModel(imgFile.toString(),true,true,String.valueOf(imgFile.lastModified())));
 //                                Log.i("gallerySend","uri "+Uri.fromFile(imgFile).getLastPathSegment());
 //                                Log.i("gallerySend","ImageNotAlreadyUploaded(Uri.fromFile(imgFile).getLastPathSegment()) "+ImageNotAlreadyUploaded(Uri.fromFile(imgFile).getLastPathSegment()));
 
-                            }
+                        if (uploadQueueDB.insertData(Uri.fromFile(imgFile).getLastPathSegment(), getFilePathFromUri(projection, imageUri).toString(), String.valueOf(System.currentTimeMillis()))) {
+                            queuedCount++;
                         }
-
-                        imagesToUpload+=imagesQueue.size();
-//                        Log.i("gallerySend","size "+imagesToUpload);
-                        if(imagesToUpload>0)
-                        {
-
-                            if(uploadDialog==null)
-                            {
-                                uploadDialog = new Dialog(InlensGalleryActivity.this);
-                                uploadDialog.setContentView(R.layout.gallery_upload_item_dialog);
-                                uploadDialog.setCancelable(false);
-                                uploadDialog.setCanceledOnTouchOutside(false);
-                                uploadDialog.getWindow().getAttributes().windowAnimations = R.style.BottomUpSlideDialogAnimation;
-
-                                Window window = uploadDialog.getWindow();
-                                window.setGravity(Gravity.BOTTOM);
-                                window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
-                                window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-                                window.setDimAmount(0.75f);
-                                window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-
-                                uploadProgressbar = uploadDialog.findViewById(R.id.gallery_upload_dialog_progressbar);
-                                uploadTextView = uploadDialog.findViewById(R.id.gallery_upload_dialog_textview);
-                                uploadPorgressTextView = uploadDialog.findViewById(R.id.gallery_upload_dialog_progress_textview);
-                                uploadImageview = uploadDialog.findViewById(R.id.gallery_upload_dialog_imageview);
-
-                                uploadDialog.show();
-                            }
-                            firebaseUploader(imagesQueue);
-                        }
-                        else if(queuedImageCount > 0)
-                        {
-                            Snackbar.make(rootGalleryRelativeLayout,queuedImageCount-imagesToUpload+" photo(s) were skipped.",BaseTransientBottomBar.LENGTH_LONG).setAction("Learn more", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-
-                                    Toast.makeText(InlensGalleryActivity.this, "1. avoid copies\n2. photos where taken prior to this album", Toast.LENGTH_SHORT).show();
-                                }
-                            }).show();                        }
-
-
                     }
+                }
 
+                //todo update the time in sharedpref to match with the system current time to avoid notifications about already updated images.
+                
+                Snackbar.make(rootGalleryRelativeLayout, "Queued " + queuedCount + " images.", BaseTransientBottomBar.LENGTH_SHORT).setAction("Learn more", new View.OnClickListener() {
                     @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    public void onClick(View view) {
+
+                        Snackbar.make(rootGalleryRelativeLayout, imageUris.size()-queuedCount+" images skipped in order to avoid copies.", BaseTransientBottomBar.LENGTH_LONG).show();
 
                     }
-                });
+                }).show();
 
-
-            }
-            else
-            {
-                Snackbar.make(rootGalleryRelativeLayout,"You have no active album at the moment.", BaseTransientBottomBar.LENGTH_SHORT).show();
+            } else {
+                Snackbar.make(rootGalleryRelativeLayout, "You have no active album at the moment.", BaseTransientBottomBar.LENGTH_SHORT).show();
             }
 
         }
     }
 
 
-    public String getFilePathFromUri(String[] projection, Uri uri)
-    {
+    public String getFilePathFromUri(String[] projection, Uri uri) {
         Cursor c = null;
         try {
-            c = getContentResolver().query(uri,projection,null,null,null);
+            c = getContentResolver().query(uri, projection, null, null, null);
             int columnIndex = c.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
             c.moveToFirst();
             return c.getString(columnIndex);
-        }
-        finally {
-            if(c!=null)
-            {
+        } finally {
+            if (c != null) {
                 c.close();
             }
         }
@@ -533,19 +411,16 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
     private synchronized void firebaseUploader(List<GalleryImageModel> allCommunityImages) {
 
-        imgPosition=-1;
+        imgPosition = -1;
 
-        for(int i=0;i<allCommunityImages.size();i++)
-        {
-            if(allCommunityImages.get(i).isQueued())
-            {
-                imgPosition=i;
+        for (int i = 0; i < allCommunityImages.size(); i++) {
+            if (allCommunityImages.get(i).isQueued()) {
+                imgPosition = i;
                 break;
             }
         }
 
-        if( imgPosition >- 1 && imagesToUpload-imgCount > 0 && ImageNotAlreadyUploaded(Uri.fromFile(new File(allCommunityImages.get(imgPosition).getImageUri())).getLastPathSegment()))
-        {
+        if (imgPosition > -1 && imagesToUpload - imgCount > 0 && ImageNotAlreadyUploaded(Uri.fromFile(new File(allCommunityImages.get(imgPosition).getImageUri())).getLastPathSegment())) {
             imgCount++;
 
             Glide.with(this).load(allCommunityImages.get(imgPosition).getImageUri()).into(uploadImageview);
@@ -565,15 +440,15 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                 uploadProgressbar.setMax(100);
                 uploadProgressbar.setProgressDrawable(getResources().getDrawable(R.drawable.progress_circle));
                 uploadProgressbar.clearAnimation();
-                uploadProgressbar.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate));
+                uploadProgressbar.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate));
                 uploadProgressbar.getAnimation().start();
 
-                uploadTextView.setText("Uploading file "+imgCount+" of "+imagesToUpload);
+                uploadTextView.setText("Uploading file " + imgCount + " of " + imagesToUpload);
 
                 bitmapAfterCompression.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                 byte[] compressedImage = baos.toByteArray();
 
-                String fileName = + System.currentTimeMillis()+Uri.fromFile(new File(allCommunityImages.get(imgPosition).getImageUri())).getLastPathSegment().toLowerCase();
+                String fileName = +System.currentTimeMillis() + Uri.fromFile(new File(allCommunityImages.get(imgPosition).getImageUri())).getLastPathSegment().toLowerCase();
                 StorageReference filePath = storageRef.child(communityID).child(fileName);
 
                 filePath.putBytes(compressedImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -586,7 +461,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                             public void onSuccess(Uri uri) {
 
                                 final String downloadUrl = String.valueOf(uri);
-                                Log.i("uploading","url "+downloadUrl);
+                                Log.i("uploading", "url " + downloadUrl);
                                 String pushid = postRef.child(communityID).push().getKey();
                                 Map uploadmap = new HashMap();
                                 uploadmap.put(FirebaseConstants.POSTURL, downloadUrl);
@@ -603,7 +478,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
                                         } else {
                                             allCommunityImages.get(imgPosition).setQueued(false);
-                                            Snackbar.make(rootGalleryRelativeLayout,"Image failed to upload. Please try again later.",Snackbar.LENGTH_SHORT).show();
+                                            Snackbar.make(rootGalleryRelativeLayout, "Image failed to upload. Please try again later.", Snackbar.LENGTH_SHORT).show();
                                             imageAdapter.notifyItemChanged(imgPosition);
                                             firebaseUploader(allCommunityImages);
                                         }
@@ -628,7 +503,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                     public void onFailure(@NonNull Exception e) {
 
                         allCommunityImages.get(imgPosition).setQueued(false);
-                        Snackbar.make(rootGalleryRelativeLayout,"Image failed to upload. Please try again later.",Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(rootGalleryRelativeLayout, "Image failed to upload. Please try again later.", Snackbar.LENGTH_SHORT).show();
                         firebaseUploader(allCommunityImages);
                     }
                 });
@@ -636,34 +511,33 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
             } else {
                 allCommunityImages.get(imgPosition).setQueued(false);
-                Snackbar.make(rootGalleryRelativeLayout,"Image compression failed. Please try again later.",Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(rootGalleryRelativeLayout, "Image compression failed. Please try again later.", Snackbar.LENGTH_SHORT).show();
                 firebaseUploader(allCommunityImages);
             }
 
-        }
-        else
-        {
+        } else {
 
             uploadDialog.dismiss();
             gallerySwipeRefresh.setRefreshing(true);
-            displayImagesBasedOnTime(communityID,communityStartTime);
+            displayImagesBasedOnTime(communityID, communityStartTime);
             isUploading = false;
-            if(queuedImageCount>0 && imagesToUpload != queuedImageCount)
-            {
-                Snackbar.make(rootGalleryRelativeLayout,queuedImageCount-imagesToUpload+" photo(s) were skipped.",BaseTransientBottomBar.LENGTH_LONG).setAction("Learn more", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
+//            if(queuedImageCount>0 && imagesToUpload != queuedImageCount)
+//            {
+//                Snackbar.make(rootGalleryRelativeLayout,queuedImageCount-imagesToUpload+" photo(s) were skipped.",BaseTransientBottomBar.LENGTH_LONG).setAction("Learn more", new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//
+//                        Toast.makeText(InlensGalleryActivity.this, "Avoid copies.", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(InlensGalleryActivity.this, "Photos where taken prior to this album.", Toast.LENGTH_SHORT).show();
+//                    }
+//                }).show();
+//            }
+//            else
+//            {
+//
+//            }
+            Snackbar.make(rootGalleryRelativeLayout, "Upload complete.", Snackbar.LENGTH_SHORT).show();
 
-                        Toast.makeText(InlensGalleryActivity.this, "Avoid copies.", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(InlensGalleryActivity.this, "Photos where taken prior to this album.", Toast.LENGTH_SHORT).show();
-                    }
-                }).show();
-            }
-            else
-            {
-                Snackbar.make(rootGalleryRelativeLayout,"Upload complete.",Snackbar.LENGTH_SHORT).show();
-
-            }
         }
     }
 
@@ -681,19 +555,16 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
         gallerySwipeRefresh.setRefreshing(true);
 
-        if(communityID==null && communityStartTime==null)
-        {
-            if(new PreOperationCheck().checkInternetConnectivity(InlensGalleryActivity.this))
-            {
+        if (communityID == null && communityStartTime == null) {
+            if (new PreOperationCheck().checkInternetConnectivity(InlensGalleryActivity.this)) {
                 currentUserRef.child(FirebaseConstants.USERS).child(currentUserId).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        if(dataSnapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID))
-                        {
-                            communityID  = dataSnapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString();
+                        if (dataSnapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID)) {
+                            communityID = dataSnapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString();
                             communityStartTime = dataSnapshot.child(FirebaseConstants.COMMUNITIES).child(communityID).getValue().toString();
-                            displayImagesBasedOnTime(communityID,communityStartTime);
+                            displayImagesBasedOnTime(communityID, communityStartTime);
                         }
 
                     }
@@ -708,10 +579,8 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
             }
 
-        }
-        else
-        {
-            displayImagesBasedOnTime(communityID,communityStartTime);
+        } else {
+            displayImagesBasedOnTime(communityID, communityStartTime);
         }
     }
 
@@ -719,11 +588,10 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
     @Override
     public void onBackPressed() {
         if (isUploading) {
-            Snackbar.make(rootGalleryRelativeLayout,"Wait until upload is complete.",Snackbar.LENGTH_SHORT).show();
-        }
-        else{
-            startActivity(new Intent(InlensGalleryActivity.this,SplashScreenActivity.class));
-            overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+            Snackbar.make(rootGalleryRelativeLayout, "Wait until upload is complete.", Snackbar.LENGTH_SHORT).show();
+        } else {
+            startActivity(new Intent(InlensGalleryActivity.this, SplashScreenActivity.class));
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             finish();
         }
     }
@@ -740,13 +608,10 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
             @Override
             public void onSuccess(DataSnapshot dataSnapshot) {
                 allImagesInCurrentCommunity.clear();
-                for (DataSnapshot snapshot:dataSnapshot.getChildren())
-                {
-                    if(snapshot.hasChild(FirebaseConstants.POSTURL))
-                    {
-                        String uri=snapshot.child(FirebaseConstants.POSTURL).getValue().toString();
-                        if(!allImagesInCurrentCommunity.contains(uri))
-                        {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    if (snapshot.hasChild(FirebaseConstants.POSTURL)) {
+                        String uri = snapshot.child(FirebaseConstants.POSTURL).getValue().toString();
+                        if (!allImagesInCurrentCommunity.contains(uri)) {
                             allImagesInCurrentCommunity.add(uri);
                         }
                     }
@@ -754,28 +619,25 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
                 try {
                     allCommunityImages = getAllShownImagesPath(Long.parseLong(communityStartTime));
-                }
-                catch (NumberFormatException e){
+                } catch (NumberFormatException e) {
 
                     SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
-                    String startTime  = CurrentActiveCommunity.getString("startAt",String.valueOf(System.currentTimeMillis()));
+                    String startTime = CurrentActiveCommunity.getString("startAt", String.valueOf(System.currentTimeMillis()));
                     allCommunityImages = getAllShownImagesPath(Long.parseLong(startTime));
 
                 }
 
                 if (allCommunityImages.size() == 0) {
-                    final RippleBackground rippleBackground=(RippleBackground)findViewById(R.id.content);
+                    final RippleBackground rippleBackground = (RippleBackground) findViewById(R.id.content);
                     rippleBackground.startRippleAnimation();
 
                     allCommunityImages.add(null);
-                    galleryGridRecyclerView.setLayoutManager(new GridLayoutManager(InlensGalleryActivity.this,  1));
+                    galleryGridRecyclerView.setLayoutManager(new GridLayoutManager(InlensGalleryActivity.this, 1));
                     imageAdapter = new ImageAdapter(InlensGalleryActivity.this, allCommunityImages);
                     galleryGridRecyclerView.removeAllViews();
                     galleryGridRecyclerView.setAdapter(imageAdapter);
                     galleryUploadFab.hide();
-                }
-                else
-                {
+                } else {
 
                     galleryGridRecyclerView.setLayoutManager(new GridLayoutManager(InlensGalleryActivity.this, 3));
                     Collections.reverse(allCommunityImages);
@@ -783,8 +645,8 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                     galleryGridRecyclerView.removeAllViews();
                     galleryGridRecyclerView.setAdapter(imageAdapter);
 
-                    if(!snack) {
-                         snack=true;
+                    if (!snack) {
+                        snack = true;
                     }
 
 
@@ -797,7 +659,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                         gallerySwipeRefresh.setRefreshing(false);
 
                     }
-                },2000);
+                }, 2000);
             }
 
             @Override
@@ -815,13 +677,11 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                         gallerySwipeRefresh.setRefreshing(false);
 
                     }
-                },2000);
+                }, 2000);
             }
         });
 
     }
-
-
 
 
     private List<GalleryImageModel> getAllShownImagesPath(long starttime) {
@@ -845,53 +705,48 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
         cursor = getContentResolver().query(uri, projection, null,
                 null, null);
 
-        SharedPreferences dirPreference = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF,Context.MODE_PRIVATE);
-        String directories = dirPreference.getString(AppConstants.SELECTED_DIRECTORIES,"");
+        SharedPreferences dirPreference = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
+        String directories = dirPreference.getString(AppConstants.SELECTED_DIRECTORIES, "");
 
-       try
-       {
-           column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+        try {
+            column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
 
-           while (cursor.moveToNext()) {
-               absolutePathOfImage = cursor.getString(column_index_data);
-               String[] pathSegments = absolutePathOfImage.split("/");
-               if(pathSegments.length>4)
-               {
-                   if(!directories.contains(pathSegments[4].toLowerCase()))
-                   {
-                       File img = new File(absolutePathOfImage);
-                       //if (img.lastModified() > starttime && !absolutePathOfImage.toLowerCase().contains("screenshot") && !absolutePathOfImage.toLowerCase().contains("whatsapp")) {
-                       if (img.lastModified() > starttime) {
+            while (cursor.moveToNext()) {
+                absolutePathOfImage = cursor.getString(column_index_data);
+                String[] pathSegments = absolutePathOfImage.split("/");
+                if (pathSegments.length > 4) {
+                    if (!directories.contains(pathSegments[4].toLowerCase())) {
+                        File img = new File(absolutePathOfImage);
+                        //if (img.lastModified() > starttime && !absolutePathOfImage.toLowerCase().contains("screenshot") && !absolutePathOfImage.toLowerCase().contains("whatsapp")) {
+                        if (img.lastModified() > starttime) {
 
-                           String lastsegmentedpath = Uri.fromFile(new File(absolutePathOfImage)).getLastPathSegment();
+                            String lastsegmentedpath = Uri.fromFile(new File(absolutePathOfImage)).getLastPathSegment();
 
-                           if (!listOfAllImages.contains(lastsegmentedpath) && ImageNotAlreadyUploaded(lastsegmentedpath)) {
+                            if (!listOfAllImages.contains(lastsegmentedpath) && ImageNotAlreadyUploaded(lastsegmentedpath)) {
 
-                               listOfAllImages.add(absolutePathOfImage);
-                               lastmodifieddate.add(String.valueOf(img.lastModified()));
+                                listOfAllImages.add(absolutePathOfImage);
+                                lastmodifieddate.add(String.valueOf(img.lastModified()));
 
-                           }
+                            }
 
 
-                       }
-                   }
-               }
+                        }
+                    }
+                }
 
 
-           }
+            }
 
 
-           for (int i = 0; i < listOfAllImages.size(); i++) {
-               AllImagesList.add(new GalleryImageModel(listOfAllImages.get(i), false,false,lastmodifieddate.get(i)));
-           }
-           return AllImagesList;
+            for (int i = 0; i < listOfAllImages.size(); i++) {
+                AllImagesList.add(new GalleryImageModel(listOfAllImages.get(i), false, false, lastmodifieddate.get(i)));
+            }
+            return AllImagesList;
 
-       }
-       catch (Exception e)
-       {
-           return AllImagesList;
+        } catch (Exception e) {
+            return AllImagesList;
 
-       }
+        }
 
 
     }
@@ -911,8 +766,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
     @Override
     public void reloadData() {
 
-        if(directoryFragment !=null)
-        {
+        if (directoryFragment != null) {
             directoryFragment.dismiss();
         }
         onResume();
@@ -945,7 +799,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
         private Context context;
         private List<GalleryImageModel> ImageList;
-        private int VIEW_TYPE_EMPTY=1,VIEW_TYPE_IMAGE=0;
+        private int VIEW_TYPE_EMPTY = 1, VIEW_TYPE_IMAGE = 0;
 
         public ImageAdapter(Context context, List<GalleryImageModel> imageList) {
             this.context = context;
@@ -956,29 +810,25 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
         @Override
         public int getItemViewType(int position) {
-            return ImageList.get(position)==null?VIEW_TYPE_EMPTY:VIEW_TYPE_IMAGE;
+            return ImageList.get(position) == null ? VIEW_TYPE_EMPTY : VIEW_TYPE_IMAGE;
         }
 
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            if(viewType==VIEW_TYPE_IMAGE)
-            {
+            if (viewType == VIEW_TYPE_IMAGE) {
                 return new ImageViewHolder(LayoutInflater.from(context).inflate(R.layout.gallery_item_card, parent, false));
 
-            }
-            else if(viewType==VIEW_TYPE_EMPTY)
-            {
+            } else if (viewType == VIEW_TYPE_EMPTY) {
                 View view = LayoutInflater.from(context).inflate(R.layout.empty_layout, parent, false);
                 view.findViewById(R.id.CloseButtonTextView).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        NotificationHelper notificationHelper=new NotificationHelper(getApplicationContext());
-                        notificationHelper.displayAlbumStartNotification("Go to Gallery.","After taking photos tap here to upload.");
+                        NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
+                        notificationHelper.displayAlbumStartNotification("Go to Gallery.", "After taking photos tap here to upload.");
                         Intent cameraIntent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
                         startActivity(cameraIntent);
                         finishAffinity();
-
 
 
                     }
@@ -990,11 +840,8 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
         }
 
 
-
         @Override
         public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
-
-
 
 
             if (holder instanceof ImageViewHolder) {
@@ -1019,8 +866,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                     public void onClick(View view) {
 
 
-                        try
-                        {
+                        try {
                             if (ImageList.get(position).isSelected()) {
                                 ImageList.get(position).setSelected(false);
                                 imageAdapter.notifyItemChanged(position);
@@ -1032,9 +878,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                                 CheckFabVisibility();
 
                             }
-                        }
-                        catch (IndexOutOfBoundsException e)
-                        {
+                        } catch (IndexOutOfBoundsException e) {
 
                         }
 
@@ -1091,20 +935,18 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
     }
 
 
-
-
     public Bitmap compressUploadFile(File bitmapFile) {
         try {
             Bitmap result = new Compressor(InlensGalleryActivity.this)
                     .compressToBitmap(bitmapFile);
-            if(orientation(result)==PORTRAIT){
+            if (orientation(result) == PORTRAIT) {
                 result = new Compressor(InlensGalleryActivity.this)
                         .setQuality(90)
                         .setMaxHeight(640)
                         .setMaxWidth(480)
                         .compressToBitmap(bitmapFile);
 
-            }else{
+            } else {
                 result = new Compressor(InlensGalleryActivity.this)
                         .setQuality(90)
                         .setMaxHeight(480)
@@ -1124,9 +966,9 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
     private int orientation(Bitmap result) {
 
-        if(result.getHeight()>result.getWidth()){
+        if (result.getHeight() > result.getWidth()) {
             return PORTRAIT;
-        }else{
+        } else {
             return LANDSCAPE;
         }
 
