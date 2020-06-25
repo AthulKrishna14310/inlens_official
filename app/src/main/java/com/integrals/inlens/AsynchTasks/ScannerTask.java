@@ -8,6 +8,12 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import androidx.core.content.ContextCompat;
+import androidx.work.Constraints;
+import androidx.work.Data;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+
 import android.text.TextUtils;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -17,6 +23,7 @@ import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.Notification.NotificationHelper;
 import com.integrals.inlens.Notification.RecentImageScan;
+import com.integrals.inlens.WorkManager.AlbumEndWorker;
 
 public class ScannerTask extends AsyncTask<Void, Void, Void> {
 
@@ -101,12 +108,21 @@ public class ScannerTask extends AsyncTask<Void, Void, Void> {
                         notificationHelper.displayAlbumEndedNotification();
                         editor.putBoolean(AppConstants.IS_NOTIFIED,true);
                         editor.commit();
+
+                        Constraints quitWorkConstraint = new Constraints.Builder()
+                                .setRequiredNetworkType(NetworkType.CONNECTED)
+                                .build();
+                        OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(AlbumEndWorker.class)
+                                .setConstraints(quitWorkConstraint)
+                                .build();
+                        WorkManager.getInstance(context).enqueue(request);
+
                     }
-                    if(isConnected)
-                    {
-                        FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USERS).child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                .child(FirebaseConstants.LIVECOMMUNITYID).removeValue();
-                    }
+//                    if(isConnected)
+//                    {
+//                        FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USERS).child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+//                                .child(FirebaseConstants.LIVECOMMUNITYID).removeValue();
+//                    }
                 }
                 //Log.i("timeScanner","serverTime "+serverTimeInMillis+" EndTime "+endTime+" SysTime "+System.currentTimeMillis()+" offset "+offsetInMillis);
             /*
