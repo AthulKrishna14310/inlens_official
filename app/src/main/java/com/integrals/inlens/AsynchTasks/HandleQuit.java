@@ -84,14 +84,14 @@ public class HandleQuit extends AsyncTask<Void,Void,Void>
                     String scanWorkId = CurrentActiveCommunity.getString("scanWorkerId", AppConstants.NOT_AVALABLE);
                     String albumEndWorkId = CurrentActiveCommunity.getString("albumendWorkerId", AppConstants.NOT_AVALABLE);
                     if (scanWorkId.equals(AppConstants.NOT_AVALABLE)) {
-                        WorkManager.getInstance().cancelUniqueWork(AppConstants.PHOTO_SCAN_WORK);
+                        WorkManager.getInstance(context).cancelUniqueWork(AppConstants.PHOTO_SCAN_WORK);
                     } else {
-                        WorkManager.getInstance().cancelWorkById(UUID.fromString(scanWorkId));
+                        WorkManager.getInstance(context).cancelWorkById(UUID.fromString(scanWorkId));
                     }
                     if (albumEndWorkId.equals(AppConstants.NOT_AVALABLE)) {
-                        WorkManager.getInstance().cancelAllWork();
+                        WorkManager.getInstance(context).cancelAllWork();
                     } else {
-                        WorkManager.getInstance().cancelWorkById(UUID.fromString(albumEndWorkId));
+                        WorkManager.getInstance(context).cancelWorkById(UUID.fromString(albumEndWorkId));
                     }
                     isTaskSuccessful=true;
 
