@@ -376,7 +376,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                 }
 
                 //todo update the time in sharedpref to match with the system current time to avoid notifications about already updated images.
-                
+
                 Snackbar.make(rootGalleryRelativeLayout, "Queued " + queuedCount + " images.", BaseTransientBottomBar.LENGTH_SHORT).setAction("Learn more", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
