@@ -45,9 +45,5 @@
         android:visibility="gone"
         app:fabSize="normal" />
 
-    <Button
-        android:id="@+id/log_gallery"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"/>
+
 </RelativeLayout>

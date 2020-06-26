@@ -23,7 +23,9 @@ public class NotificationHelper {
 
     int notificationIdAlbumEnd =7908,
             notificationIdAlbumPhoto =7907,
-            notificationIdAlbumStart=7906;
+            notificationIdAlbumStart=7906,
+            notificationGalleryReport=7852;
+
 
 
     public NotificationHelper(Context context) {
@@ -130,6 +132,43 @@ public class NotificationHelper {
             Uri path= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             builder.setSound(path);
             notificationManager.notify(notificationIdAlbumEnd,builder.build());
+        }
+
+    }
+
+    public void displayTitleMesageNoti(String title, String message){
+
+
+
+        NotificationManager notificationManager=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+
+
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) {
+            String channelID = "ID_512";
+            NotificationChannel notificationChannel = new NotificationChannel(channelID,"InLens Gallery Report", NotificationManager.IMPORTANCE_DEFAULT);
+            notificationManager.createNotificationChannel(notificationChannel);
+
+            Notification.Builder notificationBuilder = new Notification.Builder(context, channelID)
+                    .setContentTitle(title)
+                    .setContentText(message)
+                    .setSmallIcon(R.drawable.ic_notification)
+                    .setAutoCancel(true);
+
+            notificationManager.notify(notificationGalleryReport,notificationBuilder.build());
+        }
+        else
+        {
+            NotificationCompat.Builder builder=new NotificationCompat.Builder(context);
+            builder.setSmallIcon(R.drawable.ic_notification)
+                    .setContentTitle(title)
+                    .setContentText(message)
+                    .setAutoCancel(true)
+                    .setOngoing(false);
+
+            Uri path= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            builder.setSound(path);
+            notificationManager.notify(notificationGalleryReport,builder.build());
         }
 
     }

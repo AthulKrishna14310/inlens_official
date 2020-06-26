@@ -50,7 +50,13 @@ public class UploadQueueDB extends SQLiteOpenHelper {
     {
         SQLiteDatabase db = this.getWritableDatabase();
         long result = db.delete(AppConstants.SQLITE_TABLE_NAME,AppConstants.SQLITE_COLUMN_FIELD_ID+"=?",new String[]{name});
-        return result !=    0;
+        return result != 0;
+    }
+
+    public void deleteAllData()
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from "+AppConstants.SQLITE_TABLE_NAME);
     }
     
 }

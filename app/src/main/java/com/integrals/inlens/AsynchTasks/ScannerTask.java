@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -15,9 +16,11 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import com.integrals.inlens.Database.UploadQueueDB;
 import com.integrals.inlens.Helper.AppConstants;
 
 import com.integrals.inlens.Helper.FirebaseConstants;
@@ -99,6 +102,31 @@ public class ScannerTask extends AsyncTask<Void, Void, Void> {
                         }
                         editor.putString("time", String.valueOf(System.currentTimeMillis()));
                         editor.commit();
+
+
+                    }
+                }
+                else if(System.currentTimeMillis() < endTime)
+                {
+                    try
+                    {
+                        UploadQueueDB uploadQueueDB  = new UploadQueueDB(context);
+                        Cursor c = uploadQueueDB.getQueuedData();
+                        Log.i("Scanner","count"+c.getCount());
+                        if(c.getCount()>0)
+                        {
+                            Constraints quitWorkConstraint = new Constraints.Builder()
+                                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                                    .build();
+                            OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(AlbumEndWorker.class)
+                                    .setConstraints(quitWorkConstraint)
+                                    .build();
+                            WorkManager.getInstance(context).enqueue(request);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        // error
                     }
                 }
                 else if(System.currentTimeMillis()>=endTime)

@@ -51,6 +51,7 @@ public class UserNameInfoActivity extends AppCompatActivity {
 
     String appTheme="";
 
+    //todo if the user is active  in an album set pref values in this activity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -41,6 +41,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.integrals.inlens.Database.UploadQueueDB;
 import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.CustomToast;
 import com.integrals.inlens.Helper.FirebaseConstants;
@@ -518,6 +519,8 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         ceditor.remove(AppConstants.IS_NOTIFIED);
                         ceditor.commit();
 
+                        //drop table and create new one
+                        new UploadQueueDB(CreateCloudAlbum.this).deleteAllData();
 
                         photographerRef.child(newCommunityId).child(currentUserId).setValue(ServerValue.TIMESTAMP);
                         currentUserRef.child(FirebaseConstants.COMMUNITIES).child(newCommunityId).setValue(String.valueOf(System.currentTimeMillis()));

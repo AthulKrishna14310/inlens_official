@@ -2,10 +2,15 @@ package com.integrals.inlens.AsynchTasks;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import androidx.annotation.NonNull;
 import android.widget.Toast;
 
+import androidx.work.Constraints;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -14,8 +19,11 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.integrals.inlens.Activities.InlensGalleryActivity;
+import com.integrals.inlens.Database.UploadQueueDB;
 import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.FirebaseConstants;
+import com.integrals.inlens.WorkManager.UploadWorker;
 
 import java.util.UUID;
 
@@ -24,9 +32,9 @@ public class HandleQuit extends AsyncTask<Void,Void,Void>
 
     private DatabaseReference linkRef,statusRef,currentUserRef;
     private String activeCommunityId;
-    private boolean isTaskSuccessful;
     private Context context;
     SharedPreferences CurrentActiveCommunity;
+    UploadQueueDB uploadQueueDB;
 
     public HandleQuit(Context applicationContext, DatabaseReference currentUserRef, DatabaseReference linkRef, DatabaseReference statusRef, String currentActiveCommunityID) {
 
@@ -35,7 +43,7 @@ public class HandleQuit extends AsyncTask<Void,Void,Void>
         this.linkRef=linkRef;
         this.statusRef=statusRef;
         activeCommunityId=currentActiveCommunityID;
-        isTaskSuccessful=false;
+        uploadQueueDB = new UploadQueueDB(applicationContext);
     }
 
     @Override
@@ -73,49 +81,40 @@ public class HandleQuit extends AsyncTask<Void,Void,Void>
 
                     currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).removeValue();
 
-                    SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
-                    ceditor.remove("id");
-                    ceditor.remove("time");
-                    ceditor.remove("stopAt");
-                    ceditor.remove("startAt");
-                    ceditor.remove("notiCount");
-                    ceditor.commit();
-
-                    String scanWorkId = CurrentActiveCommunity.getString("scanWorkerId", AppConstants.NOT_AVALABLE);
-                    String albumEndWorkId = CurrentActiveCommunity.getString("albumendWorkerId", AppConstants.NOT_AVALABLE);
-                    if (scanWorkId.equals(AppConstants.NOT_AVALABLE)) {
-                        WorkManager.getInstance(context).cancelUniqueWork(AppConstants.PHOTO_SCAN_WORK);
-                    } else {
-                        WorkManager.getInstance(context).cancelWorkById(UUID.fromString(scanWorkId));
+                    Cursor cursor = uploadQueueDB.getQueuedData();
+                    if(cursor.getCount()==0)
+                    {
+                        SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
+                        ceditor.remove("id");
+                        ceditor.remove("time");
+                        ceditor.remove("stopAt");
+                        ceditor.remove("startAt");
+                        ceditor.remove("notiCount");
+                        ceditor.commit();
+                        String scanWorkId = CurrentActiveCommunity.getString("scanWorkerId", AppConstants.NOT_AVALABLE);
+                        String albumEndWorkId = CurrentActiveCommunity.getString("albumendWorkerId", AppConstants.NOT_AVALABLE);
+                        if (scanWorkId.equals(AppConstants.NOT_AVALABLE)) {
+                            WorkManager.getInstance(context).cancelUniqueWork(AppConstants.PHOTO_SCAN_WORK);
+                        } else {
+                            WorkManager.getInstance(context).cancelWorkById(UUID.fromString(scanWorkId));
+                        }
+                        if (albumEndWorkId.equals(AppConstants.NOT_AVALABLE)) {
+                            WorkManager.getInstance(context).cancelAllWork();
+                        } else {
+                            WorkManager.getInstance(context).cancelWorkById(UUID.fromString(albumEndWorkId));
+                        }
                     }
-                    if (albumEndWorkId.equals(AppConstants.NOT_AVALABLE)) {
-                        WorkManager.getInstance(context).cancelAllWork();
-                    } else {
-                        WorkManager.getInstance(context).cancelWorkById(UUID.fromString(albumEndWorkId));
+                    else
+                    {
+                        //  todo upload the remaining images and den quit from the album.
+                        Constraints uploadConstraints = new Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build();
+                        OneTimeWorkRequest galleryUploader = new OneTimeWorkRequest.Builder(UploadWorker.class).setConstraints(uploadConstraints).build();
+                        WorkManager.getInstance(context).enqueue(galleryUploader);
                     }
-                    isTaskSuccessful=true;
 
                 }
             }
         });
         return null;
-    }
-
-    @Override
-    protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
-
-        if(isTaskSuccessful)
-        {
-
-            Toast.makeText(context, "Successfully left the album.", Toast.LENGTH_SHORT).show();
-
-        }
-        else
-        {
-            Toast.makeText(context, "Album quit unsuccessful.", Toast.LENGTH_SHORT).show();
-
-        }
-
     }
 }

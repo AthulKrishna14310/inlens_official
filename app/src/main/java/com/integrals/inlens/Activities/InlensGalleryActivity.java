@@ -14,7 +14,6 @@ import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
@@ -24,11 +23,20 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.Constraints;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
 
 import android.util.Log;
 import android.view.Gravity;
@@ -71,6 +79,7 @@ import com.integrals.inlens.Interface.FirebaseRead;
 import com.integrals.inlens.Models.GalleryImageModel;
 import com.integrals.inlens.Notification.NotificationHelper;
 import com.integrals.inlens.R;
+import com.integrals.inlens.WorkManager.UploadWorker;
 import com.skyfishjy.library.RippleBackground;
 
 import java.io.ByteArrayOutputStream;
@@ -157,18 +166,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
         imgCount = 0;
 
         uploadQueueDB = new UploadQueueDB(this);
-        findViewById(R.id.log_gallery).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Cursor cursor = uploadQueueDB.getQueuedData();
 
-
-                while (cursor.moveToNext()) {
-                    Log.i("dbUpload", "row " + cursor.getString(0) + " " + cursor.getString(1) + " " + cursor.getString(1));
-                }
-
-            }
-        });
 
         rootGalleryRelativeLayout = findViewById(R.id.root_for_gallery);
         gallerySwipeRefresh = findViewById(R.id.gallerySwipeRefreshLayout);
@@ -295,8 +293,10 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
         if (Intent.ACTION_SEND.equals(action) && type != null && type.startsWith("image/")) {
             handleSingleImage(intent);
+
         } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null && type.startsWith("image/")) {
             handleMultipleImages(intent);
+
         } else {
             communityID = intent.getStringExtra("CommunityID");
             communityStartTime = intent.getStringExtra("CommunityStartTime");
@@ -322,20 +322,60 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
         if (CurrentActiveCommunity.contains("startAt") && CurrentActiveCommunity.contains("id")) {
             communityStartTime = CurrentActiveCommunity.getString("startAt", String.valueOf(System.currentTimeMillis()));
             communityID = CurrentActiveCommunity.getString("id", AppConstants.NOT_AVALABLE);
-            if (imgFile.lastModified() > Long.parseLong(communityStartTime) && ImageNotAlreadyUploaded(Uri.fromFile(imgFile).getLastPathSegment())) {
-                if (uploadQueueDB.insertData(Uri.fromFile(imgFile).getLastPathSegment(), getFilePathFromUri(projection, imageUri).toString(), String.valueOf(System.currentTimeMillis()))) {
-                    queuedCount++;
-                }
+            String communityEndTime = CurrentActiveCommunity.getString("stopAt", AppConstants.NOT_AVALABLE);
+            if( !communityEndTime.equals(AppConstants.NOT_AVALABLE) && System.currentTimeMillis()<Long.parseLong(communityEndTime))
+            {
+                postRef.child(communityID).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        allImagesInCurrentCommunity.clear();
+                        for (DataSnapshot snapshot:dataSnapshot.getChildren())
+                        {
+                            if(snapshot.hasChild(FirebaseConstants.POSTURL))
+                            {
+                                String uri=snapshot.child(FirebaseConstants.POSTURL).getValue().toString();
+                                String by = snapshot.child(FirebaseConstants.POSTBY).getValue().toString();
+                                if(!allImagesInCurrentCommunity.contains(uri) && by.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
+                                {
+                                    allImagesInCurrentCommunity.add(uri);
+                                }
+                            }
+                        }
+                        if (imgFile.lastModified() > Long.parseLong(communityStartTime) && ImageNotAlreadyUploaded(Uri.fromFile(imgFile).getLastPathSegment())) {
+                            if (uploadQueueDB.insertData(Uri.fromFile(imgFile).getLastPathSegment(), getFilePathFromUri(projection, imageUri).toString(), String.valueOf(System.currentTimeMillis()))) {
+                                queuedCount++;
+                            }
+                        }
+                        if(queuedCount>0)
+                        {
+                            Constraints uploadConstraints = new Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build();
+                            OneTimeWorkRequest galleryUploader = new OneTimeWorkRequest.Builder(UploadWorker.class).setConstraints(uploadConstraints).build();
+                            WorkManager.getInstance(InlensGalleryActivity.this).enqueue(galleryUploader);
+
+                        }
+                        Snackbar.make(rootGalleryRelativeLayout, "Queued " + queuedCount + " image.", BaseTransientBottomBar.LENGTH_SHORT).setAction("Upload now", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                                Toast.makeText(InlensGalleryActivity.this, "initiate work manager now", Toast.LENGTH_SHORT).show();
+                            }
+                        }).show();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+
+            }
+            else
+            {
+                Snackbar.make(rootGalleryRelativeLayout, "Cloud-album has expired. Create a new one and upload more.", BaseTransientBottomBar.LENGTH_SHORT).show();
+
             }
 
-            Snackbar.make(rootGalleryRelativeLayout, "Queued " + queuedCount + " image.", BaseTransientBottomBar.LENGTH_SHORT).setAction("Upload now", new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    Toast.makeText(InlensGalleryActivity.this, "initiate work manager now", Toast.LENGTH_SHORT).show();
-
-                }
-            }).show();
 //        Log.i("gallerySend","id"+communityID);
 //        Log.i("gallerySend","time"+communityStartTime);
 
@@ -361,30 +401,92 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
             if (CurrentActiveCommunity.contains("startAt") && CurrentActiveCommunity.contains("id")) {
                 communityStartTime = CurrentActiveCommunity.getString("startAt", String.valueOf(System.currentTimeMillis()));
                 communityID = CurrentActiveCommunity.getString("id", AppConstants.NOT_AVALABLE);
-                for (Uri imageUri : imageUris) {
-                    File imgFile = new File(getFilePathFromUri(projection, imageUri));
-                    if (imgFile.lastModified() > Long.parseLong(communityStartTime) && ImageNotAlreadyUploaded(Uri.fromFile(imgFile).getLastPathSegment())) {
+                String communityEndTime = CurrentActiveCommunity.getString("stopAt", AppConstants.NOT_AVALABLE);
+                if( !communityEndTime.equals(AppConstants.NOT_AVALABLE) && System.currentTimeMillis()<Long.parseLong(communityEndTime))
+                {
+                    postRef.child(communityID).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            allImagesInCurrentCommunity.clear();
+                            for (DataSnapshot snapshot:dataSnapshot.getChildren())
+                            {
+                                if(snapshot.hasChild(FirebaseConstants.POSTURL))
+                                {
+                                    String uri=snapshot.child(FirebaseConstants.POSTURL).getValue().toString();
+                                    String by = snapshot.child(FirebaseConstants.POSTBY).getValue().toString();
+                                    if(!allImagesInCurrentCommunity.contains(uri) && by.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
+                                    {
+                                        allImagesInCurrentCommunity.add(uri);
+                                    }
+                                }
+                            }
+                            for (Uri imageUri : imageUris) {
+                                File imgFile = new File(getFilePathFromUri(projection, imageUri));
+                                if (imgFile.lastModified() > Long.parseLong(communityStartTime) && ImageNotAlreadyUploaded(Uri.fromFile(imgFile).getLastPathSegment())) {
 
 //                        imagesQueue.add(new GalleryImageModel(imgFile.toString(),true,true,String.valueOf(imgFile.lastModified())));
 //                                Log.i("gallerySend","uri "+Uri.fromFile(imgFile).getLastPathSegment());
 //                                Log.i("gallerySend","ImageNotAlreadyUploaded(Uri.fromFile(imgFile).getLastPathSegment()) "+ImageNotAlreadyUploaded(Uri.fromFile(imgFile).getLastPathSegment()));
 
-                        if (uploadQueueDB.insertData(Uri.fromFile(imgFile).getLastPathSegment(), getFilePathFromUri(projection, imageUri).toString(), String.valueOf(System.currentTimeMillis()))) {
-                            queuedCount++;
+                                    if (uploadQueueDB.insertData(Uri.fromFile(imgFile).getLastPathSegment(), getFilePathFromUri(projection, imageUri).toString(), String.valueOf(System.currentTimeMillis()))) {
+                                        queuedCount++;
+//                                        Log.i("galleryS","imgFile "+imgFile+" true");
+
+                                    }
+//                                    Log.i("galleryS","imgFile "+imgFile+" false");
+
+                                }
+
+                            }
+
+//                            Log.i("galleryS","communityStartTime "+communityStartTime);
+//                            Log.i("galleryS","communityID "+communityID);
+//                            Log.i("galleryS","communityEndTime "+communityEndTime);
+
+
+                            Cursor c =uploadQueueDB.getQueuedData();
+                            while(c.moveToNext())
+                            {
+                                Log.i("galleryS","row "+c.getString(0)+c.getString(1)+c.getString(2));
+
+                            }
+
+                            if(queuedCount>0)
+                            {
+                                Constraints uploadConstraints = new Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build();
+                                OneTimeWorkRequest galleryUploader = new OneTimeWorkRequest.Builder(UploadWorker.class).setConstraints(uploadConstraints).build();
+                                WorkManager.getInstance(InlensGalleryActivity.this).enqueue(galleryUploader);
+
+                            }
+
+
+                            //todo update the time in sharedpref to match with the system current time to avoid notifications about already updated images.
+
+                            Snackbar.make(rootGalleryRelativeLayout, "Queued " + queuedCount + " images.", BaseTransientBottomBar.LENGTH_SHORT).setAction("Learn more", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                    Snackbar.make(rootGalleryRelativeLayout, imageUris.size()-queuedCount+" images skipped in order to avoid copies.", BaseTransientBottomBar.LENGTH_LONG).show();
+
+                                }
+                            }).show();
                         }
-                    }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+
+                }
+                else
+                {
+                    Snackbar.make(rootGalleryRelativeLayout, "Cloud-album has expired. Create a new one and upload more.", BaseTransientBottomBar.LENGTH_SHORT).show();
+
                 }
 
-                //todo update the time in sharedpref to match with the system current time to avoid notifications about already updated images.
-
-                Snackbar.make(rootGalleryRelativeLayout, "Queued " + queuedCount + " images.", BaseTransientBottomBar.LENGTH_SHORT).setAction("Learn more", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                        Snackbar.make(rootGalleryRelativeLayout, imageUris.size()-queuedCount+" images skipped in order to avoid copies.", BaseTransientBottomBar.LENGTH_LONG).show();
-
-                    }
-                }).show();
 
             } else {
                 Snackbar.make(rootGalleryRelativeLayout, "You have no active album at the moment.", BaseTransientBottomBar.LENGTH_SHORT).show();
@@ -547,7 +649,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
         super.onResume();
 
         SharedPreferences LastShownNotificationInfo = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
-        if (!LastShownNotificationInfo.contains("time")) {
+        if (LastShownNotificationInfo.contains("time")) {
             SharedPreferences.Editor editor = LastShownNotificationInfo.edit();
             editor.putString("time", String.valueOf(System.currentTimeMillis()));
             editor.commit();
