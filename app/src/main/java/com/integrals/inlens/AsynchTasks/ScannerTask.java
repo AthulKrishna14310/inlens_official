@@ -29,6 +29,7 @@ import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.Notification.NotificationHelper;
 import com.integrals.inlens.Notification.RecentImageScan;
 import com.integrals.inlens.WorkManager.AlbumEndWorker;
+import com.integrals.inlens.WorkManager.UploadWorker;
 
 public class ScannerTask extends AsyncTask<Void, Void, Void> {
 
@@ -120,7 +121,7 @@ public class ScannerTask extends AsyncTask<Void, Void, Void> {
                             Constraints quitWorkConstraint = new Constraints.Builder()
                                     .setRequiredNetworkType(NetworkType.CONNECTED)
                                     .build();
-                            OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(AlbumEndWorker.class)
+                            OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(UploadWorker.class)
                                     .setConstraints(quitWorkConstraint)
                                     .build();
                             WorkManager.getInstance(context).enqueueUniqueWork("uploadWorker", ExistingWorkPolicy.REPLACE,request);
