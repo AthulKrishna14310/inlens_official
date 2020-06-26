@@ -341,6 +341,14 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                                 }
                             }
                         }
+                        Cursor c = uploadQueueDB.getQueuedData();
+                        while(c.moveToNext())
+                        {
+                            if(!allImagesInCurrentCommunity.contains(c.getString(1)))
+                            {
+                                allImagesInCurrentCommunity.add(c.getString(1));
+
+                            }                        }
                         if (imgFile.lastModified() > Long.parseLong(communityStartTime) && ImageNotAlreadyUploaded(Uri.fromFile(imgFile).getLastPathSegment())) {
                             if (uploadQueueDB.insertData(Uri.fromFile(imgFile).getLastPathSegment(), getFilePathFromUri(projection, imageUri).toString(), String.valueOf(System.currentTimeMillis()))) {
                                 queuedCount++;
@@ -350,9 +358,11 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                         {
                             Constraints uploadConstraints = new Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build();
                             OneTimeWorkRequest galleryUploader = new OneTimeWorkRequest.Builder(UploadWorker.class).setConstraints(uploadConstraints).build();
-                            WorkManager.getInstance(InlensGalleryActivity.this).enqueue(galleryUploader);
+                            WorkManager.getInstance(InlensGalleryActivity.this).enqueueUniqueWork("uploadWorker",ExistingWorkPolicy.REPLACE,galleryUploader);
 
                         }
+
+                        // todo remove qued images from gallery
                         Snackbar.make(rootGalleryRelativeLayout, "Queued " + queuedCount + " image.", BaseTransientBottomBar.LENGTH_SHORT).setAction("Upload now", new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -421,6 +431,15 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                                     }
                                 }
                             }
+                            Cursor c = uploadQueueDB.getQueuedData();
+                            while(c.moveToNext())
+                            {
+                                if(!allImagesInCurrentCommunity.contains(c.getString(0)))
+                                {
+                                    allImagesInCurrentCommunity.add(c.getString(0));
+
+                                }
+                            }
                             for (Uri imageUri : imageUris) {
                                 File imgFile = new File(getFilePathFromUri(projection, imageUri));
                                 if (imgFile.lastModified() > Long.parseLong(communityStartTime) && ImageNotAlreadyUploaded(Uri.fromFile(imgFile).getLastPathSegment())) {
@@ -444,19 +463,17 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 //                            Log.i("galleryS","communityID "+communityID);
 //                            Log.i("galleryS","communityEndTime "+communityEndTime);
 
-
-                            Cursor c =uploadQueueDB.getQueuedData();
-                            while(c.moveToNext())
-                            {
-                                Log.i("galleryS","row "+c.getString(0)+c.getString(1)+c.getString(2));
-
-                            }
+//                            while(c.moveToNext())
+//                            {
+//                                Log.i("galleryS","row "+c.getString(0)+c.getString(1)+c.getString(2));
+//
+//                            }
 
                             if(queuedCount>0)
                             {
                                 Constraints uploadConstraints = new Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build();
                                 OneTimeWorkRequest galleryUploader = new OneTimeWorkRequest.Builder(UploadWorker.class).setConstraints(uploadConstraints).build();
-                                WorkManager.getInstance(InlensGalleryActivity.this).enqueue(galleryUploader);
+                                WorkManager.getInstance(InlensGalleryActivity.this).enqueueUniqueWork("uploadWorker",ExistingWorkPolicy.REPLACE,galleryUploader);
 
                             }
 

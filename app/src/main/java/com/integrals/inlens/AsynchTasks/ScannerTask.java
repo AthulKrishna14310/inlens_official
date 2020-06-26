@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import androidx.core.content.ContextCompat;
 import androidx.work.Constraints;
 import androidx.work.Data;
+import androidx.work.ExistingWorkPolicy;
 import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
@@ -20,6 +21,7 @@ import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import com.integrals.inlens.Activities.InlensGalleryActivity;
 import com.integrals.inlens.Database.UploadQueueDB;
 import com.integrals.inlens.Helper.AppConstants;
 
@@ -121,7 +123,7 @@ public class ScannerTask extends AsyncTask<Void, Void, Void> {
                             OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(AlbumEndWorker.class)
                                     .setConstraints(quitWorkConstraint)
                                     .build();
-                            WorkManager.getInstance(context).enqueue(request);
+                            WorkManager.getInstance(context).enqueueUniqueWork("uploadWorker", ExistingWorkPolicy.REPLACE,request);
                         }
                     }
                     catch (Exception e)
