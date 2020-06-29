@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Color;
 
 import androidx.annotation.NonNull;
@@ -13,6 +14,8 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.work.WorkManager;
+
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -30,6 +33,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.crowdfire.cfalertdialog.CFAlertDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -227,6 +231,30 @@ public class CreateCloudAlbum extends AppCompatActivity {
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+//                Cursor cursor = new UploadQueueDB(CreateCloudAlbum.this).getQueuedData();
+//                if(cursor.getCount()>0)
+//                {
+//                    Toast.makeText(CreateCloudAlbum.this, "You have "+cursor.getCount()+"photos queued for upload. Wait till they are uploaded", Toast.LENGTH_SHORT).show();
+//                }
+//                else
+//                {
+//                    WorkManager.getInstance(CreateCloudAlbum.this).cancelAllWorkByTag("uploadWorker");
+//
+//                    if (eventTypeSet && albumDateSet) {
+//                        if (!new PreOperationCheck().checkInternetConnectivity(getApplicationContext())) {
+//                            showDialogue("No Internet. Please check your internet connection and try again", false);
+//
+//                        } else {
+//                            uploadNewAlbumData();
+//                        }
+//                    } else {
+//                        showDialogue("Please fill up all the provided fields and continue.",false);
+//                    }
+//                }
+//                cursor.close();
+                WorkManager.getInstance(CreateCloudAlbum.this).cancelAllWorkByTag("uploadWorker");
+
                 if (eventTypeSet && albumDateSet) {
                     if (!new PreOperationCheck().checkInternetConnectivity(getApplicationContext())) {
                         showDialogue("No Internet. Please check your internet connection and try again", false);
@@ -237,6 +265,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                 } else {
                     showDialogue("Please fill up all the provided fields and continue.",false);
                 }
+
             }
         });
 

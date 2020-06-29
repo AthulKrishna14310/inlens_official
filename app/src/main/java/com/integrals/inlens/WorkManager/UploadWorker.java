@@ -6,19 +6,13 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.work.Constraints;
-import androidx.work.Data;
-import androidx.work.ExistingWorkPolicy;
-import androidx.work.NetworkType;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkContinuation;
-import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
@@ -61,18 +55,19 @@ public class UploadWorker extends Worker {
     StorageReference storageRef;
     Context context;
     DatabaseReference postRef;
-    String communityStartTime,communityID,communityEndTime;
-    int imageMissingCount, failedToUploadCount,skippedImageCount;
+    String communityStartTime, communityID, communityEndTime;
+    int imageMissingCount, failedToUploadCount, skippedImageCount;
     List<String> allImagesInCurrentCommunity;
 
     // debugging
-    int imgUploaded,failedCount;
-    String TAG="UploadWorker";
+    int imgUploaded, failedCount;
+    String TAG = "UploadWorker";
     public static final int PORTRAIT = 1, LANDSCAPE = 0;
+    int imgPosition=-1;
 
     public UploadWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
-        this.context=context;
+        this.context = context;
         SharedPreferences currentActiveCommunity = context.getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
         communityStartTime = currentActiveCommunity.getString("startAt", String.valueOf(System.currentTimeMillis()));
         communityID = currentActiveCommunity.getString("id", AppConstants.NOT_AVALABLE);
@@ -81,106 +76,78 @@ public class UploadWorker extends Worker {
         postRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.POSTS);
         storageRef = FirebaseStorage.getInstance().getReference().child(FirebaseConstants.COMMUNITIES_STORAGE);
         uploadQueueDB = new UploadQueueDB(context);
-        imageMissingCount=0;
-        failedToUploadCount =0;
-        skippedImageCount=0;
-        allImagesInCurrentCommunity=new ArrayList<>();
-        imgUploaded=0;
-        failedCount=0;
+        imageMissingCount = 0;
+        failedToUploadCount = 0;
+        skippedImageCount = 0;
+        allImagesInCurrentCommunity = new ArrayList<>();
+        imgUploaded = 0;
+        failedCount = 0;
     }
 
     @NonNull
     @Override
     public Result doWork() {
 
-        postRef.child(communityID).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+        new UploadImages().execute();
 
-                allImagesInCurrentCommunity.clear();
-                for (DataSnapshot snapshot:dataSnapshot.getChildren())
-                {
-                    if(snapshot.hasChild(FirebaseConstants.POSTURL))
-                    {
-                        String uri=snapshot.child(FirebaseConstants.POSTURL).getValue().toString();
-                        String by = snapshot.child(FirebaseConstants.POSTBY).getValue().toString();
-                        if(!allImagesInCurrentCommunity.contains(uri) && by.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
-                        {
-                            allImagesInCurrentCommunity.add(uri);
-                        }
-                    }
-                }
-                Cursor cursor = uploadQueueDB.getQueuedData();
-                List<GalleryImageModel> imageUri = new ArrayList<>();
-                while (cursor.moveToNext())
-                {
-                    File imgFile = new File(cursor.getString(1));
-                    if(imgFile.exists() &&  !isAlreadyUpload(Uri.fromFile(imgFile).getLastPathSegment()))
-                    {
-                        Log.i("dbUpload","uri to upload "+cursor.getString(1));
-                        imageUri.add(new GalleryImageModel(cursor.getString(1),true,true,String.valueOf(imgFile.lastModified())));
-                    }
-                    else if(isAlreadyUpload(Uri.fromFile(imgFile).getLastPathSegment()))
-                    {
-                        skippedImageCount++;
-                        uploadQueueDB.deleteData(cursor.getString(0));
-                        Log.i(TAG,"skippedImageCount "+skippedImageCount);
-
-                    }
-                    else
-                    {
-                        uploadQueueDB.deleteData(cursor.getString(0));
-                        imageMissingCount++;
-                        Log.i(TAG,"imageMissingCount "+imageMissingCount);
-                    }
-                }
-                if(imageUri.size()>0)
-                {
-                    NotificationHelper helper = new NotificationHelper(context);
-                    String title="InLens Gallery Report";
-                    String message = imageUri.size() +" image(s) to upload";
-                    helper.displayTitleMesageNoti(title,message);
-                    for(GalleryImageModel model:imageUri)
-                    {
-                        uploadToFirebase(model.getImageUri(),model.getCreatedTime(),imageUri.size());
-
-                    }
-
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        try
-        {
+        try {
             long endTime = Long.parseLong(communityEndTime);
-            if(System.currentTimeMillis()>=endTime && uploadQueueDB.getQueuedData().getCount()==0)
-            {
+            if (System.currentTimeMillis() >= endTime && uploadQueueDB.getQueuedData().getCount() == 0) {
                 DatabaseReference currentUserRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USERS).child(FirebaseAuth.getInstance().getCurrentUser().getUid());
                 DatabaseReference communityRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.COMMUNITIES);
                 DatabaseReference linkRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.INVITE_LINK);
-                new HandleQuit(context,currentUserRef,linkRef,communityRef,communityID).execute();
+                new HandleQuit(context, currentUserRef, linkRef, communityRef, communityID).execute();
             }
 
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             // catch error
         }
         return Result.success();
 
     }
 
-    public  boolean isAlreadyUpload(String imageName)
+    public class UploadImages  extends AsyncTask<Void,Void,Void>
     {
-        for(int i=0;i<allImagesInCurrentCommunity.size();i++)
-        {
-            if(allImagesInCurrentCommunity.get(i).toLowerCase().contains(imageName.toLowerCase()))
-            {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            Cursor cursor = uploadQueueDB.getQueuedData();
+            List<GalleryImageModel> imageUri = new ArrayList<>();
+            while (cursor.moveToNext()) {
+                File imgFile = new File(cursor.getString(1));
+                if (imgFile.exists() && !isAlreadyUpload(Uri.fromFile(imgFile).getLastPathSegment())) {
+                    Log.i("dbUpload", "uri to upload " + cursor.getString(1));
+                    imageUri.add(new GalleryImageModel(cursor.getString(1), true, true, String.valueOf(imgFile.lastModified())));
+                } else if (isAlreadyUpload(Uri.fromFile(imgFile).getLastPathSegment())) {
+                    skippedImageCount++;
+                    uploadQueueDB.deleteData(cursor.getString(0));
+                    Log.i(TAG, "skippedImageCount " + skippedImageCount);
+
+                } else {
+                    uploadQueueDB.deleteData(cursor.getString(0));
+                    imageMissingCount++;
+                    Log.i(TAG, "imageMissingCount " + imageMissingCount);
+                }
+            }
+            cursor.close();
+            if (imageUri.size() > 0) {
+                    /*for (GalleryImageModel model : imageUri) {
+                        uploadToFirebase(model.getImageUri(), model.getCreatedTime(), imageUri.size());
+
+                    }*/
+                NotificationHelper helper = new NotificationHelper(context);
+                String title="InLens Gallery Report";
+                String message = imageUri.size() +" image(s) to upload";
+                helper.displayTitleMesageNoti(title,message);
+                uploadToFirebase(imageUri);
+            }
+            return null;
+        }
+    }
+
+    public boolean isAlreadyUpload(String imageName) {
+        for (int i = 0; i < allImagesInCurrentCommunity.size(); i++) {
+            if (allImagesInCurrentCommunity.get(i).toLowerCase().contains(imageName.toLowerCase())) {
                 return true;
             }
 
@@ -188,17 +155,31 @@ public class UploadWorker extends Worker {
         return false;
     }
 
-    public synchronized void uploadToFirebase(String uri,String createdTime,int totalCount)
-    {
+    public void uploadToFirebase(List<GalleryImageModel> queuedImages) {
 
-        File imgFile =  new File(uri);
-        if(imgFile.exists())
+
+
+        String uri;
+        String createdTime;
+        imgPosition=-1;
+        for(int i=0;i<queuedImages.size();i++)
         {
+            if(queuedImages.get(i).isQueued())
+            {
+                imgPosition=i;
+                break;
+            }
+        }
+        uri=queuedImages.get(imgPosition).getImageUri();
+        createdTime=queuedImages.get(imgPosition).getCreatedTime();
+
+        File imgFile = new File(uri);
+        if (imgFile.exists()) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             Bitmap bitmapAfterCompression = compressUploadFile(imgFile);
             if (bitmapAfterCompression != null) {
 
-                String fileName = +System.currentTimeMillis() + Uri.fromFile(new File(uri)).getLastPathSegment().toLowerCase();
+                String fileName = FirebaseAuth.getInstance().getCurrentUser().getUid() + "_uploaded_" + Uri.fromFile(new File(uri)).getLastPathSegment().toLowerCase();
                 StorageReference filePath = storageRef.child(communityID).child(fileName);
 
                 bitmapAfterCompression.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -220,13 +201,12 @@ public class UploadWorker extends Worker {
 
                                     final String downloadUrl = String.valueOf(downloadUri);
                                     Log.i("uploading", "url " + downloadUrl);
-                                    String pushid = postRef.child(communityID).push().getKey();
                                     Map uploadmap = new HashMap();
                                     uploadmap.put(FirebaseConstants.POSTURL, downloadUrl);
                                     uploadmap.put(FirebaseConstants.POSTBY, FirebaseAuth.getInstance().getCurrentUser().getUid());
                                     uploadmap.put(FirebaseConstants.POSTTIME, createdTime);
 
-                                    postRef.child(communityID).child(pushid).setValue(uploadmap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    postRef.child(communityID).child(fileName).setValue(uploadmap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()) {
@@ -235,24 +215,24 @@ public class UploadWorker extends Worker {
 //                                            allCommunityImages.get(imgPosition).setQueued(false);
                                                 String fileName = Uri.fromFile(new File(uri)).getLastPathSegment();
                                                 UploadQueueDB uploadQueueDB = new UploadQueueDB(getApplicationContext());
-                                                boolean result =  uploadQueueDB.deleteData(fileName);
-                                                Log.i("uploading","deleted "+fileName+" result "+result);
+                                                boolean result = uploadQueueDB.deleteData(fileName);
+                                                Log.i("uploading", "deleted " + fileName + " result " + result);
 
-                                                helper.getManager().cancelAll();
 
-                                                if (imgUploaded==totalCount) {
+                                                if (imgUploaded == queuedImages.size()) {
+                                                    helper.getManager().cancelAll();
                                                     NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
-                                                    String message = "Uploaded " + imgUploaded + " out of " + totalCount + " photo(s). ";
+                                                    String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). ";
                                                     notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
-                                                }
-                                                else if(failedCount>0 && imgUploaded+failedCount==totalCount)
-                                                {
+                                                } else if (failedCount > 0 && imgUploaded + failedCount == queuedImages.size()) {
+                                                    helper.getManager().cancelAll();
                                                     NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
-                                                    String message = "Uploaded " + imgUploaded + " out of " + totalCount + " photo(s). Remaining photos will be uploaded later.";
+                                                    String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). Remaining photos will be uploaded later.";
                                                     notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
 
                                                 }
-//                                            uploadToFirebase(allCommunityImages);
+                                            queuedImages.get(imgPosition).setQueued(false);
+                                            uploadToFirebase(queuedImages);
 
 
                                             } else {
@@ -260,23 +240,23 @@ public class UploadWorker extends Worker {
                                                 failedCount++;
 //                                            allCommunityImages.get(imgPosition).setQueued(false);
 
-                                                helper.getManager().cancelAll();
 
-                                                if (imgUploaded==totalCount) {
+
+                                                if (imgUploaded == queuedImages.size()) {
+                                                    helper.getManager().cancelAll();
                                                     NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
-                                                    String message = "Uploaded " + imgUploaded + " out of " + totalCount + " photo(s). ";
+                                                    String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). ";
                                                     notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
-                                                }
-                                                else if(failedCount>0 && imgUploaded+failedCount==totalCount)
-                                                {
+                                                } else if (failedCount > 0 && imgUploaded + failedCount == queuedImages.size()) {
+                                                    helper.getManager().cancelAll();
                                                     NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
-                                                    String message = "Uploaded " + imgUploaded + " out of " + totalCount + " photo(s). Remaining photos will be uploaded later.";
+                                                    String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). Remaining photos will be uploaded later.";
                                                     notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
 
                                                 }
-//                                            uploadToFirebase(allCommunityImages);
 
-
+                                                queuedImages.get(imgPosition).setQueued(false);
+                                                uploadToFirebase(queuedImages);
                                             }
                                         }
                                     });
@@ -289,12 +269,12 @@ public class UploadWorker extends Worker {
                         @Override
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
 
-                            int PROGRESS_CURRENT = (int) ((100.0 * ((double) (taskSnapshot.getBytesTransferred() ))) / ((double) taskSnapshot.getTotalByteCount()));
-                            Log.i("imguploader","progress of "+imgUploaded+" : "+PROGRESS_CURRENT);
+                            int PROGRESS_CURRENT = (int) ((100.0 * ((double) (taskSnapshot.getBytesTransferred()))) / ((double) taskSnapshot.getTotalByteCount()));
+                            Log.i("imguploader", "progress of " + imgUploaded + " : " + PROGRESS_CURRENT);
 
-                            int uploadingCount=imgUploaded+1;
+                            int uploadingCount = imgUploaded + 1;
 
-                            builderOreo.setContentText("Uploading photo " + uploadingCount + " of " + totalCount).setProgress(100, PROGRESS_CURRENT, false);
+                            builderOreo.setContentText("Uploading photo " + uploadingCount + " of " + queuedImages.size()).setProgress(100, PROGRESS_CURRENT, false);
                             helper.getManager().notify(123, builderOreo.build());
 
                         }
@@ -306,31 +286,28 @@ public class UploadWorker extends Worker {
 
 //                        allCommunityImages.get(imgPosition).setQueued(false);
 
-                            helper.getManager().cancelAll();
 
-                            if (imgUploaded==totalCount) {
+                            if (imgUploaded == queuedImages.size()) {
+                                helper.getManager().cancelAll();
                                 NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
-                                String message = "Uploaded " + imgUploaded + " out of " + totalCount + " photo(s). ";
+                                String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). ";
                                 notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
-                            }
-                            else if(failedCount>0 && imgUploaded+failedCount==totalCount)
-                            {
+                            } else if (failedCount > 0 && imgUploaded + failedCount == queuedImages.size()) {
+                                helper.getManager().cancelAll();
                                 NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
-                                String message = "Uploaded " + imgUploaded + " out of " + totalCount + " photo(s). ";
+                                String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). ";
                                 notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
 
                             }
 
-//                        uploadToFirebase(allCommunityImages);
-
+                            queuedImages.get(imgPosition).setQueued(false);
+                            uploadToFirebase(queuedImages);
                         }
                     });
 
-                }
-                else
-                {
+                } else {
                     final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
-                    final NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(),"123");
+                    final NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "123");
                     builder.setContentTitle("Cloud Album Upload")
                             .setContentText("Starting upload to cloud album")
                             .setProgress(100, 0, true)
@@ -361,48 +338,45 @@ public class UploadWorker extends Worker {
 //                                            allCommunityImages.get(imgPosition).setQueued(false);
                                                 String fileName = Uri.fromFile(new File(uri)).getLastPathSegment();
                                                 UploadQueueDB uploadQueueDB = new UploadQueueDB(getApplicationContext());
-                                                boolean result =  uploadQueueDB.deleteData(fileName);
-                                                Log.i("uploading","deleted "+fileName+" result "+result);
+                                                boolean result = uploadQueueDB.deleteData(fileName);
+                                                Log.i("uploading", "deleted " + fileName + " result " + result);
 
-                                                notificationManager.cancel(123);
 
-                                                if (imgUploaded==totalCount) {
+                                                if (imgUploaded == queuedImages.size()) {
+                                                    notificationManager.cancel(123);
                                                     NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
-                                                    String message = "Uploaded " + imgUploaded + " out of " + totalCount + " photo(s). ";
+                                                    String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). ";
                                                     notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
-                                                }
-                                                else if(failedCount>0 && imgUploaded+failedCount==totalCount)
-                                                {
+                                                } else if (failedCount > 0 && imgUploaded + failedCount == queuedImages.size()) {
+                                                    notificationManager.cancel(123);
                                                     NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
-                                                    String message = "Uploaded " + imgUploaded + " out of " + totalCount + " photo(s). Remaining photos will be uploaded later.";
+                                                    String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). Remaining photos will be uploaded later.";
                                                     notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
 
                                                 }
-//                                            uploadToFirebase(allCommunityImages);
-
+                                                queuedImages.get(imgPosition).setQueued(false);
+                                                uploadToFirebase(queuedImages);
 
                                             } else {
 
                                                 failedCount++;
 //                                            allCommunityImages.get(imgPosition).setQueued(false);
 
-                                                notificationManager.cancel(123);
 
-
-                                                if (imgUploaded==totalCount) {
+                                                if (imgUploaded == queuedImages.size()) {
+                                                    notificationManager.cancel(123);
                                                     NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
-                                                    String message = "Uploaded " + imgUploaded + " out of " + totalCount + " photo(s). ";
+                                                    String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). ";
                                                     notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
-                                                }
-                                                else if(failedCount>0 && imgUploaded+failedCount==totalCount)
-                                                {
+                                                } else if (failedCount > 0 && imgUploaded + failedCount == queuedImages.size()) {
+                                                    notificationManager.cancel(123);
                                                     NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
-                                                    String message = "Uploaded " + imgUploaded + " out of " + totalCount + " photo(s). Remaining photos will be uploaded later.";
+                                                    String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). Remaining photos will be uploaded later.";
                                                     notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
 
                                                 }
-//                                            uploadToFirebase(allCommunityImages);
-
+                                                queuedImages.get(imgPosition).setQueued(false);
+                                                uploadToFirebase(queuedImages);
 
                                             }
                                         }
@@ -416,12 +390,12 @@ public class UploadWorker extends Worker {
                         @Override
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
 
-                            int PROGRESS_CURRENT = (int) ((100.0 * ((double) (taskSnapshot.getBytesTransferred() ))) / ((double) taskSnapshot.getTotalByteCount()));
-                            Log.i("imguploader","progress of "+imgUploaded+" : "+PROGRESS_CURRENT);
+                            int PROGRESS_CURRENT = (int) ((100.0 * ((double) (taskSnapshot.getBytesTransferred()))) / ((double) taskSnapshot.getTotalByteCount()));
+                            Log.i("imguploader", "progress of " + imgUploaded + " : " + PROGRESS_CURRENT);
 
-                            int uploadingCount=imgUploaded+1;
+                            int uploadingCount = imgUploaded + 1;
 
-                            builder.setContentText("Uploading photo " + uploadingCount + " of " + totalCount).setProgress(100, PROGRESS_CURRENT, false);
+                            builder.setContentText("Uploading photo " + uploadingCount + " of " + queuedImages.size()).setProgress(100, PROGRESS_CURRENT, false);
                             notificationManager.notify(123, builder.build());
 
                         }
@@ -433,27 +407,25 @@ public class UploadWorker extends Worker {
 
 //                        allCommunityImages.get(imgPosition).setQueued(false);
 
-                            notificationManager.cancel(123);
 
-                            if (imgUploaded==totalCount) {
+                            if (imgUploaded == queuedImages.size()) {
+                                notificationManager.cancel(123);
                                 NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
-                                String message = "Uploaded " + imgUploaded + " out of " + totalCount + " photo(s). ";
+                                String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). ";
                                 notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
-                            }
-                            else if(failedCount>0 && imgUploaded+failedCount==totalCount)
-                            {
+                            } else if (failedCount > 0 && imgUploaded + failedCount == queuedImages.size()) {
+                                notificationManager.cancel(123);
                                 NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
-                                String message = "Uploaded " + imgUploaded + " out of " + totalCount + " photo(s). ";
+                                String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). ";
                                 notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
 
                             }
 
-//                        uploadToFirebase(allCommunityImages);
-
+                            queuedImages.get(imgPosition).setQueued(false);
+                            uploadToFirebase(queuedImages);
                         }
                     });
                 }
-
 
 
             }
@@ -498,4 +470,7 @@ public class UploadWorker extends Worker {
         return null;
 
     }
+
+
+
 }

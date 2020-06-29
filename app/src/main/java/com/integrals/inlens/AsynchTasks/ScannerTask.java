@@ -108,6 +108,30 @@ public class ScannerTask extends AsyncTask<Void, Void, Void> {
 
 
                     }
+                    try
+                    {
+                        UploadQueueDB uploadQueueDB  = new UploadQueueDB(context);
+                        Cursor c = uploadQueueDB.getQueuedData();
+                        Log.i("Scanner","count"+c.getCount());
+                        if(c.getCount()>0)
+                        {
+                            Constraints quitWorkConstraint = new Constraints.Builder()
+                                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                                    .build();
+                            OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(UploadWorker.class)
+                                    .addTag("uploadWorker")
+                                    .setConstraints(quitWorkConstraint)
+                                    .build();
+                            WorkManager.getInstance(context).cancelAllWorkByTag("uploadWorker");
+                            WorkManager.getInstance(context).enqueueUniqueWork("uploadWorker", ExistingWorkPolicy.REPLACE,request);
+                        }
+                        c.close();
+                        uploadQueueDB.close();
+                    }
+                    catch (Exception e)
+                    {
+                        // error
+                    }
                 }
                 else if(System.currentTimeMillis() < endTime)
                 {
@@ -122,10 +146,14 @@ public class ScannerTask extends AsyncTask<Void, Void, Void> {
                                     .setRequiredNetworkType(NetworkType.CONNECTED)
                                     .build();
                             OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(UploadWorker.class)
+                                    .addTag("uploadWorker")
                                     .setConstraints(quitWorkConstraint)
                                     .build();
+                            WorkManager.getInstance(context).cancelAllWorkByTag("uploadWorker");
                             WorkManager.getInstance(context).enqueueUniqueWork("uploadWorker", ExistingWorkPolicy.REPLACE,request);
                         }
+                        c.close();
+                        uploadQueueDB.close();
                     }
                     catch (Exception e)
                     {

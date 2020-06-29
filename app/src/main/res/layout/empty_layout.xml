@@ -52,4 +52,5 @@
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
             android:textColor="?attr/colorPrimary" />
     </com.balysv.materialripple.MaterialRippleLayout>
+
 </RelativeLayout>

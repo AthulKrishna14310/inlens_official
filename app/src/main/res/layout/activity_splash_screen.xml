@@ -25,7 +25,7 @@
         android:layout_above="@+id/desc"
         android:alpha="0.8"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="8dp"></ProgressBar>
+        android:layout_marginBottom="8dp"/>
 
     <TextView
         android:layout_width="wrap_content"

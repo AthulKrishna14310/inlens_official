@@ -37,6 +37,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -67,6 +68,7 @@ import android.widget.TextView;
 
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
 import com.bumptech.glide.Glide;
@@ -877,18 +879,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                                     } else {
                                         // start the necessary services
-                                        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-
-                                            PeriodicWorkRequest periodicWorkRequest = new PeriodicWorkRequest
-                                                    .Builder(AlbumScanWorker.class, 15, TimeUnit.MINUTES)
-                                                    .addTag(AppConstants.PHOTO_SCAN_WORK)
-                                                    .build();
-                                            WorkManager.getInstance().enqueueUniquePeriodicWork(AppConstants.PHOTO_SCAN_WORK, ExistingPeriodicWorkPolicy.REPLACE, periodicWorkRequest);
-                                            SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
-                                            SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
-                                            ceditor.putString("scanWorkerId", String.valueOf(periodicWorkRequest.getId()));
-                                            ceditor.commit();
-                                        } else {
+                                        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
                                             if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
                                                     Manifest.permission.READ_EXTERNAL_STORAGE)) {
@@ -903,6 +894,19 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                         MY_PERMISSIONS_REQUEST_START_WORKMANAGER);
 
                                             }
+
+                                        } else {
+
+                                            PeriodicWorkRequest periodicWorkRequest = new PeriodicWorkRequest
+                                                    .Builder(AlbumScanWorker.class, 15, TimeUnit.MINUTES)
+                                                    .addTag(AppConstants.PHOTO_SCAN_WORK)
+                                                    .build();
+
+                                            WorkManager.getInstance(MainActivity.this).enqueueUniquePeriodicWork(AppConstants.PHOTO_SCAN_WORK, ExistingPeriodicWorkPolicy.REPLACE, periodicWorkRequest);
+                                            SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
+                                            SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
+                                            ceditor.putString("scanWorkerId", String.valueOf(periodicWorkRequest.getId()));
+                                            ceditor.commit();
                                         }
                                     }
                                 } else {
@@ -2009,6 +2013,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     }
 
     public void quitCloudAlbum(boolean forceQuit) {
+
+        //todo check if db is empty or not. If not empty prompt user to finish upload
 
 
         ProgressBar progressBar = findViewById(R.id.mainloadingpbar);

@@ -2,7 +2,7 @@
     <string name="app_name">InLens</string>
     <string name="photographer">Photographers</string>
     <string name="quit_cloud_album">Exit Participation</string>
-    <string name="intruction">No photos to upload .\n <b>Take photos</b> and tap on the <b>Notification</b>.</string>
+    <string name="intruction">No photos to upload or have been queued.\n <b>Take photos</b> and tap on the <b>Notification</b>.</string>
     <string name="qr_message"> Scan this QR CODE with InLens to add <b>other users as photographers</b> to this Cloud-Album </string>
     <string name="add_photographers"><u><b>ADD PHOTOGRAPHERS</b></u></string>
     <string name="initial_start_notification">Have you received Gallery notification ?</string>

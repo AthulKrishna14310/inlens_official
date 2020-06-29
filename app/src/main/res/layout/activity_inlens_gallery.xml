@@ -46,4 +46,51 @@
         app:fabSize="normal" />
 
 
+    <RelativeLayout
+        android:id="@+id/gallery_shared_image_loading_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:elevation="10dp"
+        android:visibility="gone">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            app:cardCornerRadius="8dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:backgroundTint="?attr/default_bg_color"
+                android:background="@drawable/rounded_corners"
+                >
+
+                <ProgressBar
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:indeterminate="true"
+                    android:layout_gravity="center_horizontal"/>
+
+                <TextView
+                    android:id="@+id/appabout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:text="Preparing photos"
+                    android:fontFamily="@font/base_font"
+                    android:textColor="?attr/colorPrimaryLight"
+                    android:textSize="16sp" />
+
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </RelativeLayout>
+
 </RelativeLayout>
