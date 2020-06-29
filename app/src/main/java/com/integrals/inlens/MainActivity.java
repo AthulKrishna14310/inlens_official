@@ -64,17 +64,13 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
@@ -125,7 +121,6 @@ import com.skyfishjy.library.RippleBackground;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -137,10 +132,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 import id.zelory.compressor.Compressor;
-
 import static com.integrals.inlens.Helper.AppConstants.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE;
 import static com.integrals.inlens.Helper.AppConstants.MY_PERMISSIONS_REQUEST_START_WORKMANAGER;
 
@@ -2371,7 +2364,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == COVER_GALLERY_PICK && resultCode == RESULT_OK) {
-
             Uri imageUri = data.getData();
             CropImage.activity(imageUri)
                     .setAspectRatio(1, 1)
@@ -2399,7 +2391,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
-
                 showSnackbarMessage("Profile picture is being uploaded. Please wait.");
                 Uri resultUri = result.getUri();
                 Bitmap bitmap = null;
@@ -2409,7 +2400,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
-
 
                 File thumb_filePath = new File(resultUri.getPath());
                 final String current_u_i_d = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -2433,7 +2423,9 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 filepath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        currentUserRef.child("Profile_picture").setValue(uri.toString())
+                        currentUserRef
+                                .child("Profile_picture")
+                                .setValue(uri.toString())
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {

@@ -127,6 +127,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
             colorPrimary = getResources().getColor(R.color.colorLightPrimary);
             red_inlens =  getResources().getColor(R.color.Light_red_inlens);
             cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Light_cf_alert_dialogue_dim_bg);
+
         }
         else
         {
@@ -171,7 +172,6 @@ public class CreateCloudAlbum extends AppCompatActivity {
         dateofCompletionCheckbox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dateofCompletionCheckbox.setChecked(false);
                 Calendar calendar = Calendar.getInstance();
                 int year = calendar.get(Calendar.YEAR);
                 int month = calendar.get(Calendar.MONTH);
@@ -184,58 +184,62 @@ public class CreateCloudAlbum extends AppCompatActivity {
                 );
                 dialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
                 dialog.getDatePicker().setMaxDate(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 4);
+                dialog.setOnCancelListener(dialogInterface -> {
+                    albumTime="";
+                    dateofCompletionCheckbox.setChecked(false);
+                    albumDateSet=false;
+                    dateofCompletionCheckbox.setText("Expiry date");
+                    TextView textView=findViewById(R.id.expiry_txt);
+                    textView.setVisibility(View.VISIBLE);
+                    textView.setText("Please select an album expiry date for your album.");
+
+                });
                 dialog.show();
             }
         });
 
-        dateSetListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+        dateSetListener = (datePicker, year, month, day) -> {
 
-                month = month + 1;
-                if (month < 10) {
-                    albumTime = day + "-" + "0" + month + "-" + year;
-                    if (!checkNumberOfDays(checkTimeTaken, albumTime)) {
-                        albumDateSet = true;
-                        dateofCompletionCheckbox.setChecked(true);
-                        dateofCompletionCheckbox.setText(albumTime);
-                        TextView textView=findViewById(R.id.expiry_txt);
-                        textView.setVisibility(View.VISIBLE);
-                        textView.setText("You can only upload images and add participants to this album till " + albumTime);
-                    }
-
-                } else {
-                    albumTime = day + "-" + month + "-" + year;
-                    if (!checkNumberOfDays(checkTimeTaken, albumTime)) {
-                        albumDateSet = true;
-                        dateofCompletionCheckbox.setChecked(true);
-
-                        TextView textView=findViewById(R.id.expiry_txt);
-                        textView.setVisibility(View.VISIBLE);
-                        textView.setText("You can only upload images and add participants to this album till " + albumTime);
-
-
-                    }
+            month = month + 1;
+            if (month < 10) {
+                albumTime = day + "-" + "0" + month + "-" + year;
+                if (!checkNumberOfDays(checkTimeTaken, albumTime)) {
+                    albumDateSet = true;
+                    dateofCompletionCheckbox.setChecked(true);
+                    dateofCompletionCheckbox.setText(albumTime);
+                    TextView textView=findViewById(R.id.expiry_txt);
+                    textView.setVisibility(View.VISIBLE);
+                    textView.setText("You can only upload images and add participants to this album till " + albumTime);
                 }
 
+            } else {
+                albumTime = day + "-" + month + "-" + year;
+                if (!checkNumberOfDays(checkTimeTaken, albumTime)) {
+                    albumDateSet = true;
+                    dateofCompletionCheckbox.setChecked(true);
 
+                    TextView textView=findViewById(R.id.expiry_txt);
+                    textView.setVisibility(View.VISIBLE);
+                    textView.setText("You can only upload images and add participants to this album till " + albumTime);
+
+
+                }
             }
+
+
         };
 
 
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (eventTypeSet && albumDateSet) {
-                    if (!new PreOperationCheck().checkInternetConnectivity(getApplicationContext())) {
-                        showDialogue("No Internet. Please check your internet connection and try again", false);
+        submitButton.setOnClickListener(v -> {
+            if (eventTypeSet && albumDateSet) {
+                if (!new PreOperationCheck().checkInternetConnectivity(getApplicationContext())) {
+                    showDialogue("No Internet. Please check your internet connection and try again", false);
 
-                    } else {
-                        uploadNewAlbumData();
-                    }
                 } else {
-                    showDialogue("Please fill up all the provided fields and continue.",false);
+                    uploadNewAlbumData();
                 }
+            } else {
+                showDialogue("Please fill up all the provided fields and continue.",false);
             }
         });
 
@@ -318,148 +322,127 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
         }
 
-        EventTypeDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        EventTypeDone.setOnClickListener(view -> {
 
-                if (!TextUtils.isEmpty(eventType)) {
-                    eventDialog.dismiss();
-                } else {
-                    Snackbar.make(rootCreateCloudAlbum,"Please select an event type.",Snackbar.LENGTH_SHORT).show();
-                }
+            if (!TextUtils.isEmpty(eventType)) {
+                eventDialog.dismiss();
+            } else {
+                Snackbar.make(rootCreateCloudAlbum,"Please select an event type.",Snackbar.LENGTH_SHORT).show();
+            }
+
+        });
+
+        EventCeremony.setOnClickListener(view -> {
+
+            SetCheckFalse(EventWedding, EventOthers, EventParty, EventTravel, EventHangout);
+            EventCeremony.setBackgroundResource(R.drawable.radiobutton_pressed);
+            EventCeremony.setTextColor(cf_bg_color);
+            eventType = "Ceremony";
+            SelectedEvent.setText("Selected Event Type : " + eventType);
+            if (!TextUtils.isEmpty(eventType)) {
+                EventTypeDone.setVisibility(View.VISIBLE);
+                eventTypeSet = true;
+                eventPickerCheckbox.setChecked(true);
+                eventPickerCheckbox.setText(eventType);
+                eventDialog.dismiss();
+            } else {
+                EventTypeDone.setVisibility(View.GONE);
 
             }
         });
 
-        EventCeremony.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        EventWedding.setOnClickListener(view -> {
 
-                SetCheckFalse(EventWedding, EventOthers, EventParty, EventTravel, EventHangout);
-                EventCeremony.setBackgroundResource(R.drawable.radiobutton_pressed);
-                EventCeremony.setTextColor(Color.parseColor("#ffffff"));
-                eventType = "Ceremony";
-                SelectedEvent.setText("Selected Event Type : " + eventType);
-                if (!TextUtils.isEmpty(eventType)) {
-                    EventTypeDone.setVisibility(View.VISIBLE);
-                    eventTypeSet = true;
-                    eventPickerCheckbox.setChecked(true);
-                    eventPickerCheckbox.setText(eventType);
-                    eventDialog.dismiss();
-                } else {
-                    EventTypeDone.setVisibility(View.GONE);
+            SetCheckFalse(EventCeremony, EventOthers, EventParty, EventTravel, EventHangout);
+            EventWedding.setBackgroundResource(R.drawable.radiobutton_pressed);
+            EventWedding.setTextColor(cf_bg_color);
+            eventType = "Wedding";
+            SelectedEvent.setText("Selected Event Type : " + eventType);
+            if (!TextUtils.isEmpty(eventType)) {
+                EventTypeDone.setVisibility(View.VISIBLE);
+                eventTypeSet = true;
+                eventPickerCheckbox.setChecked(true);
+                eventPickerCheckbox.setText(eventType);
+                eventDialog.dismiss();
+            } else {
+                EventTypeDone.setVisibility(View.GONE);
 
-                }
             }
         });
 
-        EventWedding.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        EventOthers.setOnClickListener(view -> {
 
-                SetCheckFalse(EventCeremony, EventOthers, EventParty, EventTravel, EventHangout);
-                EventWedding.setBackgroundResource(R.drawable.radiobutton_pressed);
-                EventWedding.setTextColor(Color.parseColor("#ffffff"));
-                eventType = "Wedding";
-                SelectedEvent.setText("Selected Event Type : " + eventType);
-                if (!TextUtils.isEmpty(eventType)) {
-                    EventTypeDone.setVisibility(View.VISIBLE);
-                    eventTypeSet = true;
-                    eventPickerCheckbox.setChecked(true);
-                    eventPickerCheckbox.setText(eventType);
-                    eventDialog.dismiss();
-                } else {
-                    EventTypeDone.setVisibility(View.GONE);
+            SetCheckFalse(EventWedding, EventCeremony, EventParty, EventTravel, EventHangout);
+            EventOthers.setBackgroundResource(R.drawable.radiobutton_pressed);
+            EventOthers.setTextColor(cf_bg_color);
+            eventType = "Others";
+            SelectedEvent.setText("Selected Event Type : " + eventType);
+            if (!TextUtils.isEmpty(eventType)) {
+                EventTypeDone.setVisibility(View.VISIBLE);
+                eventTypeSet = true;
+                eventPickerCheckbox.setChecked(true);
+                eventPickerCheckbox.setText(eventType);
+                eventDialog.dismiss();
+            } else {
+                EventTypeDone.setVisibility(View.GONE);
 
-                }
             }
         });
 
-        EventOthers.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        EventParty.setOnClickListener(view -> {
 
-                SetCheckFalse(EventWedding, EventCeremony, EventParty, EventTravel, EventHangout);
-                EventOthers.setBackgroundResource(R.drawable.radiobutton_pressed);
-                EventOthers.setTextColor(Color.parseColor("#ffffff"));
-                eventType = "Others";
-                SelectedEvent.setText("Selected Event Type : " + eventType);
-                if (!TextUtils.isEmpty(eventType)) {
-                    EventTypeDone.setVisibility(View.VISIBLE);
-                    eventTypeSet = true;
-                    eventPickerCheckbox.setChecked(true);
-                    eventPickerCheckbox.setText(eventType);
-                    eventDialog.dismiss();
-                } else {
-                    EventTypeDone.setVisibility(View.GONE);
+            SetCheckFalse(EventWedding, EventOthers, EventCeremony, EventTravel, EventHangout);
+            EventParty.setBackgroundResource(R.drawable.radiobutton_pressed);
+            EventParty.setTextColor(cf_bg_color);
+            eventType = "Party";
+            SelectedEvent.setText("Selected Event Type : " + eventType);
+            if (!TextUtils.isEmpty(eventType)) {
+                EventTypeDone.setVisibility(View.VISIBLE);
+                eventTypeSet = true;
+                eventPickerCheckbox.setChecked(true);
+                eventPickerCheckbox.setText(eventType);
+                eventDialog.dismiss();
+            } else {
+                EventTypeDone.setVisibility(View.GONE);
 
-                }
             }
         });
 
-        EventParty.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        EventTravel.setOnClickListener(view -> {
 
-                SetCheckFalse(EventWedding, EventOthers, EventCeremony, EventTravel, EventHangout);
-                EventParty.setBackgroundResource(R.drawable.radiobutton_pressed);
-                EventParty.setTextColor(Color.parseColor("#ffffff"));
-                eventType = "Party";
-                SelectedEvent.setText("Selected Event Type : " + eventType);
-                if (!TextUtils.isEmpty(eventType)) {
-                    EventTypeDone.setVisibility(View.VISIBLE);
-                    eventTypeSet = true;
-                    eventPickerCheckbox.setChecked(true);
-                    eventPickerCheckbox.setText(eventType);
-                    eventDialog.dismiss();
-                } else {
-                    EventTypeDone.setVisibility(View.GONE);
+            SetCheckFalse(EventWedding, EventOthers, EventParty, EventCeremony, EventHangout);
+            EventTravel.setBackgroundResource(R.drawable.radiobutton_pressed);
+            EventTravel.setTextColor(cf_bg_color);
+            eventType = "Travel";
+            SelectedEvent.setText("Selected Event Type : " + eventType);
+            if (!TextUtils.isEmpty(eventType)) {
+                EventTypeDone.setVisibility(View.VISIBLE);
+                eventTypeSet = true;
+                eventPickerCheckbox.setChecked(true);
+                eventPickerCheckbox.setText(eventType);
+                eventDialog.dismiss();
+            } else {
+                EventTypeDone.setVisibility(View.GONE);
 
-                }
             }
         });
 
-        EventTravel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        EventHangout.setOnClickListener(view -> {
 
-                SetCheckFalse(EventWedding, EventOthers, EventParty, EventCeremony, EventHangout);
-                EventTravel.setBackgroundResource(R.drawable.radiobutton_pressed);
-                EventTravel.setTextColor(Color.parseColor("#ffffff"));
-                eventType = "Travel";
-                SelectedEvent.setText("Selected Event Type : " + eventType);
-                if (!TextUtils.isEmpty(eventType)) {
-                    EventTypeDone.setVisibility(View.VISIBLE);
-                    eventTypeSet = true;
-                    eventPickerCheckbox.setChecked(true);
-                    eventPickerCheckbox.setText(eventType);
-                    eventDialog.dismiss();
-                } else {
-                    EventTypeDone.setVisibility(View.GONE);
+            SetCheckFalse(EventWedding, EventOthers, EventParty, EventCeremony, EventTravel);
+            EventHangout.setBackgroundResource(R.drawable.radiobutton_pressed);
+            EventHangout.setTextColor(cf_bg_color);
+            eventType = "Hangouts";
+            SelectedEvent.setText("Selected Event Type : " + eventType);
+            if (!TextUtils.isEmpty(eventType)) {
+                EventTypeDone.setVisibility(View.VISIBLE);
+                eventTypeSet = true;
+                eventPickerCheckbox.setChecked(true);
+                eventPickerCheckbox.setText(eventType);
+                eventDialog.dismiss();
+            } else {
+                EventTypeDone.setVisibility(View.GONE);
 
-                }
-            }
-        });
-
-        EventHangout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                SetCheckFalse(EventWedding, EventOthers, EventParty, EventCeremony, EventTravel);
-                EventHangout.setBackgroundResource(R.drawable.radiobutton_pressed);
-                EventHangout.setTextColor(Color.parseColor("#ffffff"));
-                eventType = "Hangouts";
-                SelectedEvent.setText("Selected Event Type : " + eventType);
-                if (!TextUtils.isEmpty(eventType)) {
-                    EventTypeDone.setVisibility(View.VISIBLE);
-                    eventTypeSet = true;
-                    eventPickerCheckbox.setChecked(true);
-                    eventPickerCheckbox.setText(eventType);
-                    eventDialog.dismiss();
-                } else {
-                    EventTypeDone.setVisibility(View.GONE);
-
-                }
             }
         });
 
@@ -469,15 +452,15 @@ public class CreateCloudAlbum extends AppCompatActivity {
     private void SetCheckFalse(Button btn1, Button btn2, Button btn3, Button btn4, Button btn5) {
 
         btn1.setBackgroundResource(R.drawable.radiobutton_unpressed);
-        btn1.setTextColor(Color.parseColor("#000000"));
+        btn1.setTextColor(colorPrimary);
         btn2.setBackgroundResource(R.drawable.radiobutton_unpressed);
-        btn2.setTextColor(Color.parseColor("#000000"));
+        btn2.setTextColor(colorPrimary);
         btn3.setBackgroundResource(R.drawable.radiobutton_unpressed);
-        btn3.setTextColor(Color.parseColor("#000000"));
+        btn3.setTextColor(colorPrimary);
         btn4.setBackgroundResource(R.drawable.radiobutton_unpressed);
-        btn4.setTextColor(Color.parseColor("#000000"));
+        btn4.setTextColor(colorPrimary);
         btn5.setBackgroundResource(R.drawable.radiobutton_unpressed);
-        btn5.setTextColor(Color.parseColor("#000000"));
+        btn5.setTextColor(colorPrimary);
 
     }
 
