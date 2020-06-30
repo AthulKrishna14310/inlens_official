@@ -575,40 +575,46 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             @Override
             public void loadMore() {
 
+                GridLayoutManager manager = (GridLayoutManager) MainVerticalRecyclerView.getLayoutManager();
 
-                visibleItemCount = gridLayoutManager.getChildCount();
-                totalItemCount = gridLayoutManager.getItemCount();
-                lastVisiblesItems = gridLayoutManager.findLastVisibleItemPosition();
+                if(manager.getSpanCount()>1)
+                {
+                    visibleItemCount = manager.getChildCount();
+                    totalItemCount = manager.getItemCount();
+                    lastVisiblesItems = manager.findLastVisibleItemPosition();
+
+                    if ((visibleItemCount + lastVisiblesItems) >= totalItemCount) {
+
+                        if (postImageList.size() < _postImageList.size()) {
 
 
-                if ((visibleItemCount + lastVisiblesItems) >= totalItemCount) {
-                    if (postImageList.size() < _postImageList.size()) {
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                int index = postImageList.size();
-                                int end;
-                                if (index + POST_IMAGE_LOAD_COUNT > _postImageList.size()) {
-                                    end = index + (Math.abs(index + POST_IMAGE_LOAD_COUNT - _postImageList.size()));
-                                } else {
-                                    end = index + POST_IMAGE_LOAD_COUNT;
-                                }
-                                for (int i = index; i < end; i++) {
-                                    try {
-                                        postImageList.add(_postImageList.get(i));
-                                        MainVerticalRecyclerView.getAdapter().notifyItemInserted(i);
-                                    } catch (IndexOutOfBoundsException e) {
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    int index = postImageList.size();
+                                    int end;
+                                    if (index + POST_IMAGE_LOAD_COUNT > _postImageList.size()) {
+                                        end = index + (Math.abs(index + POST_IMAGE_LOAD_COUNT - _postImageList.size()));
+                                    } else {
+                                        end = index + POST_IMAGE_LOAD_COUNT;
                                     }
+                                    for (int i = index; i < end; i++) {
+                                        try {
+                                            postImageList.add(_postImageList.get(i));
+                                            MainVerticalRecyclerView.getAdapter().notifyItemInserted(i);
+                                        } catch (IndexOutOfBoundsException e) {
+                                        }
 
+                                    }
                                 }
-                            }
-                        }, 1000);
+                            }, 1000);
 
+
+                        }
 
                     }
 
                 }
-
 
             }
         });
@@ -1829,6 +1835,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                     }
 
+                    Log.i("galleryCount","_postImageList"+_postImageList.size());
+
                     Collections.reverse(_postImageList);
                     for (int i = 0; i < POST_IMAGE_LOAD_COUNT && i < _postImageList.size(); i++) {
                         if (!getPostKeys(postImageList).contains(_postImageList.get(i).getPoskKey())) {
@@ -1848,6 +1856,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                         mainVerticalAdapter.notifyDataSetChanged();
                     }
 
+                    Log.i("galleryCount","postImageList"+postImageList.size());
 
                 }
 
