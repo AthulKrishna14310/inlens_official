@@ -179,7 +179,7 @@ public class UploadWorker extends Worker {
             Bitmap bitmapAfterCompression = compressUploadFile(imgFile);
             if (bitmapAfterCompression != null) {
 
-                String fileName = FirebaseAuth.getInstance().getCurrentUser().getUid() + "_uploaded_" + Uri.fromFile(imgFile).getLastPathSegment().toLowerCase().replaceAll("[^a-zA-Z0-9]", "");
+                String fileName = FirebaseAuth.getInstance().getCurrentUser().getUid() + "_uploaded_" + Uri.fromFile(imgFile).getLastPathSegment().toLowerCase();
                 StorageReference filePath = storageRef.child(communityID).child(fileName);
 
                 bitmapAfterCompression.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -206,7 +206,7 @@ public class UploadWorker extends Worker {
                                     uploadmap.put(FirebaseConstants.POSTBY, FirebaseAuth.getInstance().getCurrentUser().getUid());
                                     uploadmap.put(FirebaseConstants.POSTTIME, createdTime);
 
-                                    postRef.child(communityID).child(fileName).setValue(uploadmap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    postRef.child(communityID).child(fileName.replaceAll("[^a-zA-Z0-9]", "")).setValue(uploadmap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()) {
@@ -337,7 +337,7 @@ public class UploadWorker extends Worker {
                                     uploadmap.put(FirebaseConstants.POSTBY, FirebaseAuth.getInstance().getCurrentUser().getUid());
                                     uploadmap.put(FirebaseConstants.POSTTIME, createdTime);
 
-                                    postRef.child(communityID).child(fileName).setValue(uploadmap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    postRef.child(communityID).child(fileName.replaceAll("[^a-zA-Z0-9]", "")).setValue(uploadmap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()) {

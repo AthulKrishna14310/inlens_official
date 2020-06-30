@@ -669,7 +669,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                 bitmapAfterCompression.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                 byte[] compressedImage = baos.toByteArray();
 
-                String fileName = +System.currentTimeMillis() + Uri.fromFile(new File(allCommunityImages.get(imgPosition).getImageUri())).getLastPathSegment().toLowerCase();
+                String fileName = FirebaseAuth.getInstance().getCurrentUser().getUid() + "_uploaded_" + Uri.fromFile(new File(allCommunityImages.get(imgPosition).getImageUri())).getLastPathSegment().toLowerCase();
                 StorageReference filePath = storageRef.child(communityID).child(fileName);
 
                 filePath.putBytes(compressedImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -688,7 +688,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                                 uploadmap.put(FirebaseConstants.POSTURL, downloadUrl);
                                 uploadmap.put(FirebaseConstants.POSTBY, FirebaseAuth.getInstance().getCurrentUser().getUid());
                                 uploadmap.put(FirebaseConstants.POSTTIME, ServerValue.TIMESTAMP);
-                                postRef.child(communityID).child(pushid).setValue(uploadmap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                postRef.child(communityID).child(fileName.replaceAll("[^a-zA-Z0-9]", "")).setValue(uploadmap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
