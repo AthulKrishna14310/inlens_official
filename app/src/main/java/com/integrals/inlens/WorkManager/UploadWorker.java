@@ -179,7 +179,7 @@ public class UploadWorker extends Worker {
             Bitmap bitmapAfterCompression = compressUploadFile(imgFile);
             if (bitmapAfterCompression != null) {
 
-                String fileName = FirebaseAuth.getInstance().getCurrentUser().getUid() + "_uploaded_" + Uri.fromFile(new File(uri)).getLastPathSegment().toLowerCase();
+                String fileName = FirebaseAuth.getInstance().getCurrentUser().getUid() + "_uploaded_" + Uri.fromFile(imgFile).getLastPathSegment().toLowerCase().replaceAll("[^a-zA-Z0-9]", "");
                 StorageReference filePath = storageRef.child(communityID).child(fileName);
 
                 bitmapAfterCompression.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -231,8 +231,12 @@ public class UploadWorker extends Worker {
                                                     notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
 
                                                 }
-                                            queuedImages.get(imgPosition).setQueued(false);
-                                            uploadToFirebase(queuedImages);
+                                                else
+                                                {
+                                                    queuedImages.get(imgPosition).setQueued(false);
+                                                    uploadToFirebase(queuedImages);
+                                                }
+
 
 
                                             } else {
@@ -254,9 +258,11 @@ public class UploadWorker extends Worker {
                                                     notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
 
                                                 }
-
-                                                queuedImages.get(imgPosition).setQueued(false);
-                                                uploadToFirebase(queuedImages);
+                                                else
+                                                {
+                                                    queuedImages.get(imgPosition).setQueued(false);
+                                                    uploadToFirebase(queuedImages);
+                                                }
                                             }
                                         }
                                     });
@@ -299,9 +305,11 @@ public class UploadWorker extends Worker {
                                 notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
 
                             }
-
-                            queuedImages.get(imgPosition).setQueued(false);
-                            uploadToFirebase(queuedImages);
+                            else
+                            {
+                                queuedImages.get(imgPosition).setQueued(false);
+                                uploadToFirebase(queuedImages);
+                            }
                         }
                     });
 
@@ -329,7 +337,7 @@ public class UploadWorker extends Worker {
                                     uploadmap.put(FirebaseConstants.POSTBY, FirebaseAuth.getInstance().getCurrentUser().getUid());
                                     uploadmap.put(FirebaseConstants.POSTTIME, createdTime);
 
-                                    postRef.child(communityID).child(pushid).setValue(uploadmap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    postRef.child(communityID).child(fileName).setValue(uploadmap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()) {
@@ -354,8 +362,11 @@ public class UploadWorker extends Worker {
                                                     notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
 
                                                 }
-                                                queuedImages.get(imgPosition).setQueued(false);
-                                                uploadToFirebase(queuedImages);
+                                                else
+                                                {
+                                                    queuedImages.get(imgPosition).setQueued(false);
+                                                    uploadToFirebase(queuedImages);
+                                                }
 
                                             } else {
 
@@ -375,8 +386,11 @@ public class UploadWorker extends Worker {
                                                     notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
 
                                                 }
-                                                queuedImages.get(imgPosition).setQueued(false);
-                                                uploadToFirebase(queuedImages);
+                                                else
+                                                {
+                                                    queuedImages.get(imgPosition).setQueued(false);
+                                                    uploadToFirebase(queuedImages);
+                                                }
 
                                             }
                                         }
@@ -420,9 +434,11 @@ public class UploadWorker extends Worker {
                                 notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
 
                             }
-
-                            queuedImages.get(imgPosition).setQueued(false);
-                            uploadToFirebase(queuedImages);
+                            else
+                            {
+                                queuedImages.get(imgPosition).setQueued(false);
+                                uploadToFirebase(queuedImages);
+                            }
                         }
                     });
                 }

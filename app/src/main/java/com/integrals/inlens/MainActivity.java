@@ -619,12 +619,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             }
         });
 
-
-
-
-
-
-
         rippleBackground = (RippleBackground) findViewById(R.id.content);
         rippleBackground2 = (RippleBackground) findViewById(R.id.content2);
 

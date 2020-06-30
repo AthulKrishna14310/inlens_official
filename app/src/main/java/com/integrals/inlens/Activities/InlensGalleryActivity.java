@@ -432,6 +432,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                                 Toast.makeText(InlensGalleryActivity.this, "initiate work manager now", Toast.LENGTH_SHORT).show();
                             }
                         }).show();
+                        initGallery();
                     }
 
                     @Override
