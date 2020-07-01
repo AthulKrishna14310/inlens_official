@@ -3,6 +3,7 @@ package com.integrals.inlens;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.ActivityNotFoundException;
@@ -13,6 +14,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -26,10 +28,13 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
+
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.core.content.ContextCompat;
@@ -37,10 +42,10 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
@@ -66,17 +71,18 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
@@ -103,6 +109,7 @@ import com.integrals.inlens.Activities.PhotoView;
 import com.integrals.inlens.Activities.QRCodeReader;
 import com.integrals.inlens.Activities.SplashScreenActivity;
 import com.integrals.inlens.Activities.WebViewActivity;
+import com.integrals.inlens.Database.UploadQueueDB;
 import com.integrals.inlens.Helper.AlbumOptionsBottomSheetFragment;
 import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.BottomSheetFragment;
@@ -113,7 +120,6 @@ import com.integrals.inlens.Helper.CustomVerticalRecyclerViewScrollListener;
 import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.Helper.MainCommunityViewHolder;
 import com.integrals.inlens.Helper.MainHorizontalLoadingViewHolder;
-import com.integrals.inlens.Helper.MainHorizontalOptionsViewHolder;
 import com.integrals.inlens.Helper.ParticipantsAdapter;
 import com.integrals.inlens.Helper.QRCodeBottomSheet;
 import com.integrals.inlens.Helper.ReadFirebaseData;
@@ -123,6 +129,7 @@ import com.integrals.inlens.Models.PhotographerModel;
 import com.integrals.inlens.Models.PostModel;
 import com.integrals.inlens.Notification.NotificationHelper;
 import com.integrals.inlens.WorkManager.AlbumScanWorker;
+import com.integrals.inlens.WorkManager.UploadWorker;
 import com.skyfishjy.library.RippleBackground;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
@@ -158,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     private static final int COVER_GALLERY_PICK = 78;
     private static boolean COVER_CHANGE = false, PROFILE_CHANGE = false;
     private NavigationView navigationView;
-    private DrawerLayout RootForMainActivity;
+    private DrawerLayout rootForMainActivity;
     private boolean displayed = false;
 
     private RecyclerView MainHorizontalRecyclerview, MainVerticalRecyclerView;
@@ -178,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     DatabaseReference currentUserRef, communityRef, participantRef, postRef, linkRef;
     FirebaseAuth firebaseAuth;
     String currentUserId;
-    ValueEventListener userRefListenerForActiveAlbum, communityRefListenerForActiveAlbum, coummunityUserAddListener, communitiesDataListener, postRefListener, participantRefListener,communitiesListener;
+    ValueEventListener userRefListenerForActiveAlbum, communityRefListenerForActiveAlbum, coummunityUserAddListener, communitiesDataListener, postRefListener, participantRefListener, communitiesListener;
     ReadFirebaseData readFirebaseData;
     ArrayList<String> userCommunityIdList;
     MainHorizontalAdapter mainHorizontalAdapter;
@@ -250,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        
         // to calculate screen width
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -270,8 +277,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         });
 
 
-
-
         // Fab
         mainAddPhotosFab = findViewById(R.id.fabadd);
         mainAddPhotosFab.hide();
@@ -280,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         expandableCardView = findViewById(R.id.photographers);
 
         // navigation view and drawerLayout  (Root)
-        RootForMainActivity = findViewById(R.id.root_for_main_activity);
+        rootForMainActivity = findViewById(R.id.root_for_main_activity);
         navigationView = (NavigationView) findViewById(R.id.nv);
 
         // dark theme options
@@ -338,8 +343,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         cfBuilder = new CFAlertDialog.Builder(MainActivity.this);
         cfDialogAddPhotoFab = showAddPhotoFabPermissionDialog(cfBuilder);
         cfDialogService = showServicePermissionDialog(cfBuilder);
-
-
 
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -436,7 +439,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         findViewById(R.id.nav_open).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                RootForMainActivity.openDrawer(Gravity.START);
+                rootForMainActivity.openDrawer(Gravity.START);
             }
         });
 
@@ -577,8 +580,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                 GridLayoutManager manager = (GridLayoutManager) MainVerticalRecyclerView.getLayoutManager();
 
-                if(manager.getSpanCount()>1)
-                {
+                if (manager.getSpanCount() > 1) {
                     visibleItemCount = manager.getChildCount();
                     totalItemCount = manager.getItemCount();
                     lastVisiblesItems = manager.findLastVisibleItemPosition();
@@ -623,16 +625,90 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         rippleBackground2 = (RippleBackground) findViewById(R.id.content2);
 
 
-
         findViewById(R.id.plus_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                optionsBottomSheetFragment.show(((FragmentActivity) MainActivity.this).getSupportFragmentManager(), optionsBottomSheetFragment.getTag());
+
+
+                if (checkIfImagesAreQueued()) {
+                    provideQueueOptions();
+                } else {
+                    optionsBottomSheetFragment.show(((FragmentActivity) MainActivity.this).getSupportFragmentManager(), optionsBottomSheetFragment.getTag());
+                }
+
 
             }
         });
     }
 
+
+    public void provideQueueOptions() {
+        Snackbar uploadFromQueue = Snackbar.make(rootForMainActivity, "Upload all queued photos", BaseTransientBottomBar.LENGTH_INDEFINITE).setAction("Options", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                AlertDialog.Builder queuedOptionsDialog = new AlertDialog.Builder(MainActivity.this);
+                queuedOptionsDialog.setMessage("Upload queued images to create or  join new album. Please select one the following options.")
+                        .setPositiveButton("Upload now", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                                Constraints uploadConstraints = new Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build();
+                                OneTimeWorkRequest galleryUploader = new OneTimeWorkRequest.Builder(UploadWorker.class).addTag("uploadWorker").setConstraints(uploadConstraints).build();
+                                WorkManager.getInstance(MainActivity.this).cancelAllWorkByTag("uploadWorker");
+                                WorkManager.getInstance(MainActivity.this).enqueueUniqueWork("uploadWorker", ExistingWorkPolicy.REPLACE, galleryUploader);
+                                showSnackbarMessage("Upload initiated");
+
+                            }
+                        })
+                        .setNegativeButton("Clear Queue", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                                UploadQueueDB queueDB = new UploadQueueDB(MainActivity.this);
+                                queueDB.deleteAllData();
+                                Cursor cursor = queueDB.getQueuedData();
+                                if (cursor.getCount() == 0) {
+                                    showSnackbarMessage("Upload queue cleared");
+
+                                } else {
+                                    showSnackbarMessage("Could not clear upload queue. Try again.");
+
+                                }
+                                queueDB.close();
+                                cursor.close();
+
+                            }
+                        });
+
+                if (!queuedOptionsDialog.create().isShowing()) {
+                    queuedOptionsDialog.create().show();
+                }
+            }
+        });
+
+        if (!uploadFromQueue.isShown()) {
+            uploadFromQueue.show();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    uploadFromQueue.dismiss();
+
+                }
+            }, 5000);
+        }
+    }
+
+    public boolean checkIfImagesAreQueued() {
+        Cursor cursor = new UploadQueueDB(MainActivity.this).getQueuedData();
+        if (cursor.getCount() > 0) {
+            cursor.close();
+            return true;
+        }
+        cursor.close();
+        return false;
+    }
 
     private CFAlertDialog showAddPhotoFabPermissionDialog(CFAlertDialog.Builder builder) {
 
@@ -747,7 +823,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     }
 
     private void showSnackbarMessage(String message) {
-        Snackbar.make(RootForMainActivity, message, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(rootForMainActivity, message, Snackbar.LENGTH_LONG).show();
     }
 
     @Override
@@ -766,25 +842,21 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         super.onResume();
 
 
-        communitiesListener=currentUserRef.addValueEventListener(new ValueEventListener() {
+        communitiesListener = currentUserRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                userCommunityIdList=new ArrayList<>();
-                if(dataSnapshot.hasChild(FirebaseConstants.COMMUNITIES))
-                {
+                userCommunityIdList = new ArrayList<>();
+                if (dataSnapshot.hasChild(FirebaseConstants.COMMUNITIES)) {
                     for (DataSnapshot snapshot : dataSnapshot.child(FirebaseConstants.COMMUNITIES).getChildren()) {
                         userCommunityIdList.add(snapshot.getKey());
                     }
                     Collections.sort(userCommunityIdList, Collections.reverseOrder());
                     getCloudAlbumData(userCommunityIdList);
                 }
-                if(dataSnapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID) && isConnectedToNet())
-                {
+                if (dataSnapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID) && isConnectedToNet()) {
                     mainAddPhotosFab.show();
-                }
-                else
-                {
+                } else {
                     mainAddPhotosFab.hide();
                 }
             }
@@ -796,7 +868,10 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         });
 
         // FIXME has to update decryption and  encryption.
+
         decryptDeepLink();
+
+
         // get live community id and check if album  is active or the app should quit the user from the album
         // if the album status is true the we  can start the service from the getServerTime async task only if the end time has not been reached;
         userRefListenerForActiveAlbum = readFirebaseData.readData(currentUserRef, new FirebaseRead() {
@@ -968,35 +1043,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 expandableCardView.setVisibility(View.GONE);
             } else {
                 expandableCardView.setVisibility(View.VISIBLE);
-            }
-
-            if (_communityDataList.size() == 0) {
-                _communityDataList.add(new CommunityModel(
-                        AppConstants.NOT_AVALABLE,
-                        AppConstants.NOT_AVALABLE,
-                        AppConstants.NOT_AVALABLE,
-                        AppConstants.NOT_AVALABLE,
-                        AppConstants.NOT_AVALABLE,
-                        AppConstants.NOT_AVALABLE,
-                        AppConstants.NOT_AVALABLE,
-                        AppConstants.NOT_AVALABLE,
-                        AppConstants.MORE_OPTIONS,
-                        false
-
-                ));
-            } else if (!_communityDataList.get(0).getCommunityID().equals(AppConstants.MORE_OPTIONS)) {
-                _communityDataList.add(0, new CommunityModel(
-                        AppConstants.NOT_AVALABLE,
-                        AppConstants.NOT_AVALABLE,
-                        AppConstants.NOT_AVALABLE,
-                        AppConstants.NOT_AVALABLE,
-                        AppConstants.NOT_AVALABLE,
-                        AppConstants.NOT_AVALABLE,
-                        AppConstants.NOT_AVALABLE,
-                        AppConstants.NOT_AVALABLE,
-                        AppConstants.MORE_OPTIONS,
-                        false
-                ));
             }
 
             for (int i = 1; i < _communityDataList.size(); i++) {
@@ -1173,70 +1219,37 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             public void onSuccess(PendingDynamicLinkData pendingDynamicLinkData) {
 
                 if (pendingDynamicLinkData != null) {
-                    Uri deeplink = pendingDynamicLinkData.getLink();
-                    String communityRefLinkId = deeplink.toString().replace("https://inlens.com=", "");
 
-                    linkRef.child(communityRefLinkId).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
+                    if(checkIfImagesAreQueued())
+                    {
+                        provideQueueOptions();
+                    }
+                    else
+                    {
+                        Uri deeplink = pendingDynamicLinkData.getLink();
+                        String communityRefLinkId = deeplink.toString().replace("https://inlens.com=", "");
 
-                            Log.i("linkref", " datasnapshot "+dataSnapshot);
+                        linkRef.child(communityRefLinkId).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                            if (dataSnapshot.hasChild("id") && dataSnapshot.hasChild("count")) {
-                                String communityId = dataSnapshot.child("id").getValue().toString();
-                                String count = dataSnapshot.child("count").getValue().toString();
+                                Log.i("linkref", " datasnapshot " + dataSnapshot);
 
-                                if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
+                                if (dataSnapshot.hasChild("id") && dataSnapshot.hasChild("count")) {
+                                    String communityId = dataSnapshot.child("id").getValue().toString();
+                                    String count = dataSnapshot.child("count").getValue().toString();
 
-                                    CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
-                                            .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                                            .setTitle("New Community")
-                                            .setIcon(R.mipmap.ic_launcher_foreground)
-                                            .setDialogBackgroundColor(cf_bg_color)
-                                            .setTextColor(colorPrimary)
-                                            .setCancelable(false)
-                                            .setMessage("You are about to join a new community.")
-                                            .addButton("JOIN",
-                                                    colorPrimary,
-                                                    cf_alert_dialogue_dim_bg,
-                                                    CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                                                    CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialog, int which) {
-                                                            addCommunityToUserRef(communityId, count, communityRefLinkId);
-                                                            dialog.dismiss();
-                                                        }
-                                                    })
-                                            .addButton("CANCEL",
-                                                    red_inlens,
-                                                    cf_alert_dialogue_dim_bg,
-                                                    CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                                                    CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialog, int which) {
-                                                            dialog.dismiss();
-                                                        }
-                                                    });
+                                    if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
 
-                                    builder.show();
-
-
-                                } else {
-
-                                    if (currentActiveCommunityID.equals(communityId)) {
-
-                                        showInfoMessage("Your Community", "You are currently part of this community.");
-                                    } else {
                                         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
                                                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                                                 .setTitle("New Community")
                                                 .setIcon(R.mipmap.ic_launcher_foreground)
-                                                .setMessage("Are you sure you want to join this new community? This means quitting the previous one.")
-                                                .setTextGravity(Gravity.START)
                                                 .setDialogBackgroundColor(cf_bg_color)
                                                 .setTextColor(colorPrimary)
                                                 .setCancelable(false)
-                                                .addButton("YES",
+                                                .setMessage("You are about to join a new community.")
+                                                .addButton("JOIN",
                                                         colorPrimary,
                                                         cf_alert_dialogue_dim_bg,
                                                         CFAlertDialog.CFAlertActionStyle.DEFAULT,
@@ -1247,7 +1260,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                                 dialog.dismiss();
                                                             }
                                                         })
-                                                .addButton("NO",
+                                                .addButton("CANCEL",
                                                         red_inlens,
                                                         cf_alert_dialogue_dim_bg,
                                                         CFAlertDialog.CFAlertActionStyle.DEFAULT,
@@ -1257,23 +1270,66 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                                 dialog.dismiss();
                                                             }
                                                         });
+
                                         builder.show();
+
+
+                                    } else {
+
+                                        if (currentActiveCommunityID.equals(communityId)) {
+
+                                            showInfoMessage("Your Community", "You are currently part of this community.");
+                                        } else {
+                                            CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
+                                                    .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                                                    .setTitle("New Community")
+                                                    .setIcon(R.mipmap.ic_launcher_foreground)
+                                                    .setMessage("Are you sure you want to join this new community? This means quitting the previous one.")
+                                                    .setTextGravity(Gravity.START)
+                                                    .setDialogBackgroundColor(cf_bg_color)
+                                                    .setTextColor(colorPrimary)
+                                                    .setCancelable(false)
+                                                    .addButton("YES",
+                                                            colorPrimary,
+                                                            cf_alert_dialogue_dim_bg,
+                                                            CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
+                                                                @Override
+                                                                public void onClick(DialogInterface dialog, int which) {
+                                                                    addCommunityToUserRef(communityId, count, communityRefLinkId);
+                                                                    dialog.dismiss();
+                                                                }
+                                                            })
+                                                    .addButton("NO",
+                                                            red_inlens,
+                                                            cf_alert_dialogue_dim_bg,
+                                                            CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
+                                                                @Override
+                                                                public void onClick(DialogInterface dialog, int which) {
+                                                                    dialog.dismiss();
+                                                                }
+                                                            });
+                                            builder.show();
+                                        }
+
                                     }
 
+                                } else {
+                                    Log.i("linkref", communityRefLinkId);
+                                    showSnackbarMessage("Invite-Link is corrupted. Get a new Invite-Link.");
                                 }
 
-                            } else {
-                                Log.i("linkref",communityRefLinkId);
-                                showSnackbarMessage("Invite-Link is corrupted. Get a new Invite-Link.");
                             }
 
-                        }
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                            }
+                        });
+                    }
 
-                        }
-                    });
+
 
                 }
 
@@ -1317,8 +1373,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                 currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).setValue(communityId);
                                 participantRef.child(communityId).child(currentUserId).setValue(ServerValue.TIMESTAMP);
 
-                                if(!userCommunityIdList.contains(communityId))
-                                {
+                                if (!userCommunityIdList.contains(communityId)) {
                                     userCommunityIdList.add(0, communityId);
                                     communityRef.child(communityId).addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
@@ -1326,7 +1381,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
 
                                             String admin = AppConstants.NOT_AVALABLE, coverimage = AppConstants.NOT_AVALABLE, description = AppConstants.NOT_AVALABLE, endtime = AppConstants.NOT_AVALABLE, starttime = AppConstants.NOT_AVALABLE, status = AppConstants.NOT_AVALABLE, title = AppConstants.NOT_AVALABLE, type = AppConstants.NOT_AVALABLE;
-                                            boolean isReported=false;
+                                            boolean isReported = false;
                                             if (snapshot.hasChild(FirebaseConstants.COMMUNITYADMIN)) {
                                                 admin = snapshot.child(FirebaseConstants.COMMUNITYADMIN).getValue().toString();
                                             }
@@ -1351,16 +1406,14 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                             if (snapshot.hasChild(FirebaseConstants.COMMUNITYTYPE)) {
                                                 type = snapshot.child(FirebaseConstants.COMMUNITYTYPE).getValue().toString();
                                             }
-                                            if(snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITY_REPORTED))
-                                            {
-                                                isReported=true;
+                                            if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITY_REPORTED)) {
+                                                isReported = true;
                                             }
 
-                                            CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId,isReported);
+                                            CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId, isReported);
                                             communityDataList.add(1, model);
                                             mainHorizontalAdapter.notifyItemInserted(1);
                                             showSnackbarMessage("You have been added to " + title);
-
 
 
                                             SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
@@ -1390,34 +1443,28 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                 notificationStr += ",";
                                             }
                                             if (hr > 0) {
-                                                if(hr==1)
-                                                {
+                                                if (hr == 1) {
                                                     notificationStr += " " + (int) hr + " hr left";
-                                                }
-                                                else
-                                                {
+                                                } else {
                                                     notificationStr += " " + (int) hr + " hrs left";
                                                 }
                                             }
                                             if (hr < 1 && dy < 1) {
-                                                if(min==1)
-                                                {
+                                                if (min == 1) {
                                                     notificationStr += " " + (int) min + " minute left";
-                                                }
-                                                else
-                                                {
+                                                } else {
                                                     notificationStr += " " + (int) min + " minutes left";
                                                 }
                                             }
                                             long time = Long.parseLong(endtime);
                                             CharSequence Time = DateUtils.getRelativeDateTimeString(MainActivity.this, time, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
-                                            String timesubstring = Time.toString().substring(Time.length()-8);
+                                            String timesubstring = Time.toString().substring(Time.length() - 8);
 
                                             Date date = new Date(Long.parseLong(endtime));
-                                            String dateformat = DateFormat.format("dd-MM-yyyy",date).toString();
+                                            String dateformat = DateFormat.format("dd-MM-yyyy", date).toString();
 
 
-                                            helper.displayAlbumStartNotification(notificationStr, "You are active in this Cloud-Album till " + dateformat+", "+timesubstring);
+                                            helper.displayAlbumStartNotification(notificationStr, "You are active in this Cloud-Album till " + dateformat + ", " + timesubstring);
                                             MainActivity.this.getIntent().putExtra("CREATED", "YES");
                                             MainActivity.this.getIntent().putExtra("ID", communityId);
                                         }
@@ -1427,18 +1474,15 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                                         }
                                     });
-                                }
-                                else
-                                {
+                                } else {
 
                                     communityRef.child(communityId).addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(DataSnapshot snapshot) {
 
 
-
                                             String admin = AppConstants.NOT_AVALABLE, coverimage = AppConstants.NOT_AVALABLE, description = AppConstants.NOT_AVALABLE, endtime = AppConstants.NOT_AVALABLE, starttime = AppConstants.NOT_AVALABLE, status = AppConstants.NOT_AVALABLE, title = AppConstants.NOT_AVALABLE, type = AppConstants.NOT_AVALABLE;
-                                            boolean isReported=false;
+                                            boolean isReported = false;
                                             if (snapshot.hasChild(FirebaseConstants.COMMUNITYADMIN)) {
                                                 admin = snapshot.child(FirebaseConstants.COMMUNITYADMIN).getValue().toString();
                                             }
@@ -1463,9 +1507,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                             if (snapshot.hasChild(FirebaseConstants.COMMUNITYTYPE)) {
                                                 type = snapshot.child(FirebaseConstants.COMMUNITYTYPE).getValue().toString();
                                             }
-                                            if(snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITY_REPORTED))
-                                            {
-                                                isReported=true;
+                                            if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITY_REPORTED)) {
+                                                isReported = true;
                                             }
 
 
@@ -1480,8 +1523,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                             ceditor.commit();
 
 
-                                            CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId,isReported);
-                                            mainHorizontalAdapter.selectedAlbumKey=snapshot.getKey();
+                                            CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId, isReported);
+                                            mainHorizontalAdapter.selectedAlbumKey = snapshot.getKey();
                                             mainHorizontalAdapter.notifyDataSetChanged();
 
                                             setParticipants(model);
@@ -1502,33 +1545,27 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                 notificationStr += ",";
                                             }
                                             if (hr > 0) {
-                                                if(hr==1)
-                                                {
+                                                if (hr == 1) {
                                                     notificationStr += " " + (int) hr + " hr left";
-                                                }
-                                                else
-                                                {
+                                                } else {
                                                     notificationStr += " " + (int) hr + " hrs left";
                                                 }
                                             }
                                             if (hr < 1 && dy < 1) {
-                                                if(min==1)
-                                                {
+                                                if (min == 1) {
                                                     notificationStr += " " + (int) min + " minute left";
-                                                }
-                                                else
-                                                {
+                                                } else {
                                                     notificationStr += " " + (int) min + " minutes left";
                                                 }
                                             }
                                             long time = Long.parseLong(endtime);
                                             CharSequence Time = DateUtils.getRelativeDateTimeString(MainActivity.this, time, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
-                                            String timesubstring = Time.toString().substring(Time.length()-8);
+                                            String timesubstring = Time.toString().substring(Time.length() - 8);
 
                                             Date date = new Date(Long.parseLong(endtime));
-                                            String dateformat = DateFormat.format("dd-MM-yyyy",date).toString();
+                                            String dateformat = DateFormat.format("dd-MM-yyyy", date).toString();
 
-                                            helper.displayAlbumStartNotification(notificationStr, "You are active in this Cloud-Album till " + dateformat+", "+timesubstring);
+                                            helper.displayAlbumStartNotification(notificationStr, "You are active in this Cloud-Album till " + dateformat + ", " + timesubstring);
                                             //MainActivity.this.getIntent().putExtra("CREATED", "YES");
                                             //MainActivity.this.getIntent().putExtra("ID", communityId);
                                         }
@@ -1542,7 +1579,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                             } else {
                                 //linkRef.child(communityRefLinkId).removeValue();
-                                Log.i("linkref",communityRefLinkId);
+                                Log.i("linkref", communityRefLinkId);
                                 showSnackbarMessage("Invite-Link expired. Get a new Invite-Link.");
                             }
                         } catch (NumberFormatException e) {
@@ -1558,7 +1595,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
 
                                         String admin = AppConstants.NOT_AVALABLE, coverimage = AppConstants.NOT_AVALABLE, description = AppConstants.NOT_AVALABLE, endtime = AppConstants.NOT_AVALABLE, starttime = AppConstants.NOT_AVALABLE, status = AppConstants.NOT_AVALABLE, title = AppConstants.NOT_AVALABLE, type = AppConstants.NOT_AVALABLE;
-                                        boolean isReported=false;
+                                        boolean isReported = false;
 
                                         if (snapshot.hasChild(FirebaseConstants.COMMUNITYADMIN)) {
                                             admin = snapshot.child(FirebaseConstants.COMMUNITYADMIN).getValue().toString();
@@ -1584,25 +1621,23 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                         if (snapshot.hasChild(FirebaseConstants.COMMUNITYTYPE)) {
                                             type = snapshot.child(FirebaseConstants.COMMUNITYTYPE).getValue().toString();
                                         }
-                                        if(snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITY_REPORTED))
-                                        {
-                                            isReported=true;
+                                        if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITY_REPORTED)) {
+                                            isReported = true;
                                         }
 
-                                        CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId,isReported);
+                                        CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId, isReported);
                                         communityDataList.add(1, model);
                                         mainHorizontalAdapter.notifyItemInserted(1);
                                         showSnackbarMessage("You have been added to " + title);
 
-                                        photographerList.add(0,new PhotographerModel("add", "add", "add","add"));
-
+                                        photographerList.add(0, new PhotographerModel("add", "add", "add", "add"));
 
 
                                         SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
                                         SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
                                         ceditor.putString("id", communityId);
                                         ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
-                                        ceditor.putString("stopAt",endtime);
+                                        ceditor.putString("stopAt", endtime);
                                         ceditor.putString("startAt", String.valueOf(System.currentTimeMillis()));
                                         ceditor.putInt("notiCount", 0);
                                         ceditor.remove(AppConstants.IS_NOTIFIED);
@@ -1629,12 +1664,12 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                         }
                                         long time = Long.parseLong(endtime);
                                         CharSequence Time = DateUtils.getRelativeDateTimeString(MainActivity.this, time, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
-                                        String timesubstring = Time.toString().substring(Time.length()-8);
+                                        String timesubstring = Time.toString().substring(Time.length() - 8);
 
                                         Date date = new Date(time);
-                                        String dateformat = DateFormat.format("dd-MM-yyyy",date).toString();
+                                        String dateformat = DateFormat.format("dd-MM-yyyy", date).toString();
 
-                                        helper.displayAlbumStartNotification(notificationStr, "You are active in this Cloud-Album till " + dateformat+", "+timesubstring);
+                                        helper.displayAlbumStartNotification(notificationStr, "You are active in this Cloud-Album till " + dateformat + ", " + timesubstring);
                                         MainActivity.this.getIntent().putExtra("CREATED", "YES");
                                         MainActivity.this.getIntent().putExtra("ID", communityId);
                                     }
@@ -1687,48 +1722,53 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
         }
 
-        if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
-            startActivity(new Intent(MainActivity.this, CreateCloudAlbum.class).putStringArrayListExtra(AppConstants.USER_ID_LIST, (ArrayList<String>) userCommunityIdList));
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            finish();
+
+        if (checkIfImagesAreQueued()) {
+            provideQueueOptions();
         } else {
+            if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
+                startActivity(new Intent(MainActivity.this, CreateCloudAlbum.class).putStringArrayListExtra(AppConstants.USER_ID_LIST, (ArrayList<String>) userCommunityIdList));
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                finish();
+            } else {
 
-            CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
-                    .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                    .setTitle("Album Active")
-                    .setIcon(R.drawable.ic_info)
-                    .setDialogBackgroundColor(cf_bg_color)
-                    .setTextColor(colorPrimary)
-                    .setMessage("You have to leave the currently active album before creating a new album.")
-                    .setCancelable(true)
-                    .addButton("EXIT PARTICIPATION",
-                            red_inlens,
-                            cf_alert_dialogue_dim_bg,
-                            CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                    quitCloudAlbum(false);
-                                }
-                            })
+                CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
+                        .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                        .setTitle("Album Active")
+                        .setIcon(R.drawable.ic_info)
+                        .setDialogBackgroundColor(cf_bg_color)
+                        .setTextColor(colorPrimary)
+                        .setMessage("You have to leave the currently active album before creating a new album.")
+                        .setCancelable(true)
+                        .addButton("EXIT PARTICIPATION",
+                                red_inlens,
+                                cf_alert_dialogue_dim_bg,
+                                CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                        quitCloudAlbum(false);
+                                    }
+                                })
 
-                    .addButton("CANCEL",
-                            colorPrimary,
-                            cf_alert_dialogue_dim_bg,
-                            CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
+                        .addButton("CANCEL",
+                                colorPrimary,
+                                cf_alert_dialogue_dim_bg,
+                                CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
 
-                                }
+                                    }
 
-                            });
-            builder.show();
+                                });
+                builder.show();
 
+            }
         }
 
 
@@ -1750,47 +1790,53 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
         }
 
-        if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
-            startActivity(new Intent(MainActivity.this, QRCodeReader.class).putStringArrayListExtra(AppConstants.USER_ID_LIST, (ArrayList<String>) userCommunityIdList));
-            finish();
 
+        if (checkIfImagesAreQueued()) {
+            provideQueueOptions();
         } else {
-            CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
-                    .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                    .setTitle("Album Active")
-                    .setDialogBackgroundColor(cf_bg_color)
-                    .setTextColor(colorPrimary)
-                    .setIcon(R.drawable.ic_info)
-                    .setMessage("You have to leave the currently active album before creating a new album.")
-                    .setCancelable(true)
+            if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
+                startActivity(new Intent(MainActivity.this, QRCodeReader.class).putStringArrayListExtra(AppConstants.USER_ID_LIST, (ArrayList<String>) userCommunityIdList));
+                finish();
 
-                    .addButton("QUIT CLOUD-ALBUM",
-                            red_inlens,
-                            cf_alert_dialogue_dim_bg,
-                            CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                    quitCloudAlbum(false);
-                                }
-                            })
+            } else {
+                CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
+                        .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                        .setTitle("Album Active")
+                        .setDialogBackgroundColor(cf_bg_color)
+                        .setTextColor(colorPrimary)
+                        .setIcon(R.drawable.ic_info)
+                        .setMessage("You have to leave the currently active album before creating a new album.")
+                        .setCancelable(true)
 
-                    .addButton("CANCEL",
-                            colorPrimary,
-                            cf_alert_dialogue_dim_bg,
-                            CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
+                        .addButton("QUIT CLOUD-ALBUM",
+                                red_inlens,
+                                cf_alert_dialogue_dim_bg,
+                                CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                        quitCloudAlbum(false);
+                                    }
+                                })
 
-                                }
+                        .addButton("CANCEL",
+                                colorPrimary,
+                                cf_alert_dialogue_dim_bg,
+                                CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
 
-                            });
-            builder.show();
+                                    }
+
+                                });
+                builder.show();
+            }
+
         }
 
     }
@@ -1829,7 +1875,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                     }
 
-                    Log.i("galleryCount","_postImageList"+_postImageList.size());
+                    Log.i("galleryCount", "_postImageList" + _postImageList.size());
 
                     Collections.reverse(_postImageList);
                     for (int i = 0; i < POST_IMAGE_LOAD_COUNT && i < _postImageList.size(); i++) {
@@ -1850,7 +1896,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                         mainVerticalAdapter.notifyDataSetChanged();
                     }
 
-                    Log.i("galleryCount","postImageList"+postImageList.size());
+                    Log.i("galleryCount", "postImageList" + postImageList.size());
 
                 }
 
@@ -2076,7 +2122,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                         progressBar.setVisibility(View.GONE);
                         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                        new CustomToast(MainActivity.this,MainActivity.this)
+                        new CustomToast(MainActivity.this, MainActivity.this)
                                 .showToast("Exited Participation");
                         Log.i("quit", "url" + photographerList.get(0).getImgUrl() + "getId" + photographerList.get(0).getId() + "getName" + photographerList.get(0).getName());
 
@@ -2210,7 +2256,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                         }
                                                         progressBar.setVisibility(View.GONE);
                                                         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                                                        new CustomToast(MainActivity.this,MainActivity.this)
+                                                        new CustomToast(MainActivity.this, MainActivity.this)
                                                                 .showToast("Exited Participation");
                                                         if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
                                                             photographerList.remove(0);
@@ -2258,7 +2304,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                         mainAddPhotosFab.hide();
                                                         progressBar.setVisibility(View.GONE);
                                                         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                                                        new CustomToast(MainActivity.this,MainActivity.this)
+                                                        new CustomToast(MainActivity.this, MainActivity.this)
                                                                 .showToast("Exited Participation");
 
                                                         if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
@@ -2494,12 +2540,11 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 });
             }
 
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                showSnackbarMessage("Image cropping error. Please try again.");
-            }
-
+        } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+            showSnackbarMessage("Image cropping error. Please try again.");
         }
 
+    }
 
 
     private void uploadCoverPhoto(Uri imageUri) {
@@ -2518,37 +2563,37 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
 
                     if (task.isSuccessful()) {
-                       FilePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                           @Override
-                           public void onSuccess(Uri uri) {
-                               FirebaseDatabase.getInstance().getReference()
-                                       .child("Communities")
-                                       .child(PostKeyForEdit)
-                                       .child("coverimage")
-                                       .setValue(uri.toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                   @Override
-                                   public void onComplete(@NonNull Task<Void> task) {
-                                       if (task.isSuccessful()) {
-                                           //MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-                                           showSnackbarMessage("Successfully uploaded the cover photo.");
-                                           communityDataList.get(position).setCoverImage(uri.toString());
-                                           mainHorizontalAdapter.notifyItemChanged(position);
-                                       } else {
-                                           // MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-                                           showSnackbarMessage("Failed to uploaded the cover photo. Please try again.");
+                        FilePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                FirebaseDatabase.getInstance().getReference()
+                                        .child("Communities")
+                                        .child(PostKeyForEdit)
+                                        .child("coverimage")
+                                        .setValue(uri.toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            //MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
+                                            showSnackbarMessage("Successfully uploaded the cover photo.");
+                                            communityDataList.get(position).setCoverImage(uri.toString());
+                                            mainHorizontalAdapter.notifyItemChanged(position);
+                                        } else {
+                                            // MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
+                                            showSnackbarMessage("Failed to uploaded the cover photo. Please try again.");
 
-                                       }
-                                   }
-                               });
+                                        }
+                                    }
+                                });
 
-                           }
-                       }).addOnFailureListener(new OnFailureListener() {
-                           @Override
-                           public void onFailure(@NonNull Exception e) {
-                               showSnackbarMessage("Failed to uploaded the cover photo. Please try again.");
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                showSnackbarMessage("Failed to uploaded the cover photo. Please try again.");
 
-                           }
-                       });
+                            }
+                        });
 
                     } else {
                         //MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
@@ -2579,8 +2624,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     public void onBackPressed() {
 
 
-        if (RootForMainActivity.isDrawerOpen(GravityCompat.START)) {
-            RootForMainActivity.closeDrawer(GravityCompat.START);
+        if (rootForMainActivity.isDrawerOpen(GravityCompat.START)) {
+            rootForMainActivity.closeDrawer(GravityCompat.START);
         } else if (!isAppbarOpen) {
             appBarLayout.setExpanded(true, true);
             MainVerticalRecyclerView.smoothScrollToPosition(0);
@@ -2827,7 +2872,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                     RequestOptions reqOpt = new RequestOptions()
                             .diskCacheStrategy(DiskCacheStrategy.ALL) // It will cache your image after loaded for first time
-                            .override(viewHolder.PostImageView.getWidth(),viewHolder.PostImageView.getHeight());// Overrides size of downloaded image and converts it's bitmaps to your desired image size;
+                            .override(viewHolder.PostImageView.getWidth(), viewHolder.PostImageView.getHeight());// Overrides size of downloaded image and converts it's bitmaps to your desired image size;
 
 //                    Log.i("Verticaladapter","resource "+PostList.get(position).getUri());
                     viewHolder.postRefresButton.setOnClickListener(new View.OnClickListener() {
@@ -2911,9 +2956,9 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     public class MainHorizontalAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         List<CommunityModel> communityDetails;
-        private final int VIEW_TYPE_ALBUM = 0, VIEW_TYPE_LOADING = 1, VIEW_TYPE_OPTIONS = -1;
+        private final int VIEW_TYPE_ALBUM = 0, VIEW_TYPE_LOADING = 1;
         Activity activity;
-        int selectedAlbumPosition = 1;
+        int selectedAlbumPosition = 0;
         String selectedAlbumKey;
 
         int colorSecondary;
@@ -2936,7 +2981,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             if (communityDetails.get(position) == null) {
                 return VIEW_TYPE_LOADING;
             } else {
-                return communityDetails.get(position).getCommunityID().equals(AppConstants.MORE_OPTIONS) ? VIEW_TYPE_OPTIONS : VIEW_TYPE_ALBUM;
+                return VIEW_TYPE_ALBUM;
 
             }
         }
@@ -2950,9 +2995,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             } else if (viewType == VIEW_TYPE_LOADING) {
                 View view = LayoutInflater.from(activity).inflate(R.layout.item_loading_horizontal, parent, false);
                 return new MainHorizontalLoadingViewHolder(view);
-            } else if (viewType == VIEW_TYPE_OPTIONS) {
-                View view = LayoutInflater.from(activity).inflate(R.layout.album_options_card, parent, false);
-                return new MainHorizontalOptionsViewHolder(view);
             }
             return null;
         }
@@ -3162,20 +3204,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             } else if (holder instanceof MainHorizontalLoadingViewHolder) {
                 MainHorizontalLoadingViewHolder viewHolder = (MainHorizontalLoadingViewHolder) holder;
                 viewHolder.progressBar.setIndeterminate(true);
-            } else if (holder instanceof MainHorizontalOptionsViewHolder) {
-                MainHorizontalOptionsViewHolder viewHolder = (MainHorizontalOptionsViewHolder) holder;
-                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        optionsBottomSheetFragment.show(((FragmentActivity) activity).getSupportFragmentManager(), optionsBottomSheetFragment.getTag());
-                    }
-                });
-                viewHolder.imageview.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        optionsBottomSheetFragment.show(((FragmentActivity) activity).getSupportFragmentManager(), optionsBottomSheetFragment.getTag());
-                    }
-                });
             }
         }
 

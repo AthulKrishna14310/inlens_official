@@ -425,7 +425,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                         }
 
                         // todo remove qued images from gallery
-                        Snackbar.make(rootGalleryRelativeLayout, "Queued " + queuedCount + " image.", BaseTransientBottomBar.LENGTH_SHORT).setAction("Upload now", new View.OnClickListener() {
+                        Snackbar.make(rootGalleryRelativeLayout, "Queued " + queuedCount + " image.", BaseTransientBottomBar.LENGTH_SHORT).setAction("Learn more", new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
 
