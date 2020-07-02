@@ -23,13 +23,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
+
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.core.content.ContextCompat;
@@ -102,7 +101,6 @@ import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.BottomSheetFragment;
 import com.integrals.inlens.Helper.BottomSheetFragment_Inactive;
 import com.integrals.inlens.Helper.CustomHorizontalRecyclerViewScrollListener;
-import com.integrals.inlens.Helper.CustomToast;
 import com.integrals.inlens.Helper.CustomVerticalRecyclerViewScrollListener;
 import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.Helper.MainCommunityViewHolder;
@@ -111,6 +109,7 @@ import com.integrals.inlens.Helper.MainHorizontalOptionsViewHolder;
 import com.integrals.inlens.Helper.ParticipantsAdapter;
 import com.integrals.inlens.Helper.QRCodeBottomSheet;
 import com.integrals.inlens.Helper.ReadFirebaseData;
+import com.integrals.inlens.Helper.SnackShow;
 import com.integrals.inlens.Interface.FirebaseRead;
 import com.integrals.inlens.Models.CommunityModel;
 import com.integrals.inlens.Models.PhotographerModel;
@@ -373,7 +372,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                         intent.putExtra(Intent.EXTRA_SUBJECT, "Your Response");
                         startActivity(intent);
                     } catch (android.content.ActivityNotFoundException ex) {
-                        showInfoMessage("No E-mail App found", "Please install an email app");
+                        showDialogMessageError("No E-mail App found", "Please install an email app");
                     }
                     return true;
                 }
@@ -737,9 +736,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         return model;
     }
 
-    private void showSnackbarMessage(String message) {
-        Snackbar.make(RootForMainActivity, message, Snackbar.LENGTH_LONG).show();
-    }
+
 
     @Override
     protected void onStart() {
@@ -1213,8 +1210,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                 } else {
 
                                     if (currentActiveCommunityID.equals(communityId)) {
-
-                                        showInfoMessage("Your Community", "You are currently part of this community.");
+                                        showDialogMessageError("Your Community", "You are currently part of this community.");
                                     } else {
                                         CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
                                                 .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
@@ -1253,7 +1249,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                             } else {
                                 Log.i("linkref",communityRefLinkId);
-                                showSnackbarMessage("Invite-Link is corrupted. Get a new Invite-Link.");
+
                             }
 
                         }
@@ -1271,7 +1267,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             @Override
             public void onFailure(@NonNull Exception e) {
 
-                showInfoMessage("Data Fetch Failed", e.getMessage());
+                showDialogMessageError("",e.getMessage());
 
             }
         });
@@ -1348,7 +1344,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                             CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId,isReported);
                                             communityDataList.add(1, model);
                                             mainHorizontalAdapter.notifyItemInserted(1);
-                                            showSnackbarMessage("You have been added to " + title);
+                                            showDialogMessageSuccess("","You have been added to " + title);
 
 
 
@@ -1474,7 +1470,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                             mainHorizontalAdapter.notifyDataSetChanged();
 
                                             setParticipants(model);
-                                            showSnackbarMessage("You have rejoined " + title);
+                                            showDialogMessageSuccess("","You have rejoined " + title);
 
 
                                             NotificationHelper helper = new NotificationHelper(getApplicationContext());
@@ -1532,7 +1528,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                             } else {
                                 //linkRef.child(communityRefLinkId).removeValue();
                                 Log.i("linkref",communityRefLinkId);
-                                showSnackbarMessage("Invite-Link expired. Get a new Invite-Link.");
+                                showDialogMessageError("","Invite-Link expired. Get a new Invite-Link.");
                             }
                         } catch (NumberFormatException e) {
                             if (remainingCount.equals("inf")) {
@@ -1581,7 +1577,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                         CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId,isReported);
                                         communityDataList.add(1, model);
                                         mainHorizontalAdapter.notifyItemInserted(1);
-                                        showSnackbarMessage("You have been added to " + title);
+                                        showDialogMessageSuccess("","You have been added to " + title);
 
                                         photographerList.add(0,new PhotographerModel("add", "add", "add","add"));
 
@@ -1639,19 +1635,19 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                     } else {
                         //Log.i("ClickTime","S : "+serverTimeInMillis+" E : "+endtime);
-                        showDialogMessage("Album Inactive", "The album has expired or admin has made the album inactive.");
+                        showDialogMessageError("Album Inactive", "The album has expired or admin has made the album inactive.");
                         linkRef.child(communityRefLinkId).removeValue();
                     }
 
                 } else {
                     linkRef.child(communityRefLinkId).removeValue();
-                    showDialogMessage("Album Inactive", "The album has expired or admin has made the album inactive.");
+                    showDialogMessageError("Album Inactive", "The album has expired or admin has made the album inactive.");
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                showDialogMessage("Error Caught", databaseError.toString());
+                showDialogMessageError("Error Caught", databaseError.toString());
 
             }
         });
@@ -1752,7 +1748,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                     .setIcon(R.drawable.ic_info)
                     .setMessage("You have to leave the currently active album before creating a new album.")
                     .setCancelable(true)
-
                     .addButton("QUIT CLOUD-ALBUM",
                             red_inlens,
                             cf_alert_dialogue_dim_bg,
@@ -2051,8 +2046,17 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                         progressBar.setVisibility(View.GONE);
                         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                        new CustomToast(MainActivity.this,MainActivity.this)
-                                .showToast("Exited Participation");
+
+                        Handler handler = new Handler();
+                        SnackShow snackShow=new SnackShow(RootForMainActivity,MainActivity.this);
+                        snackShow.showSuccessSnack("Successfully exited from your Cloud-Album. ");
+                        handler.postDelayed(new Runnable() {
+                            public void run() {
+
+                            }
+                        }, 3000);
+
+
                         Log.i("quit", "url" + photographerList.get(0).getImgUrl() + "getId" + photographerList.get(0).getId() + "getName" + photographerList.get(0).getName());
 
                         if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
@@ -2177,8 +2181,14 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                         }
                                                         progressBar.setVisibility(View.GONE);
                                                         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                                                        new CustomToast(MainActivity.this,MainActivity.this)
-                                                                .showToast("Exited Participation");
+                                                        Handler handler = new Handler();
+                                                        SnackShow snackShow=new SnackShow(RootForMainActivity,MainActivity.this);
+                                                        snackShow.showSuccessSnack("Successfully exited from your Cloud-Album. ");
+                                                        handler.postDelayed(new Runnable() {
+                                                            public void run() {
+
+                                                            }
+                                                        }, 3000);
                                                         if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
                                                             photographerList.remove(0);
                                                             participantsAdapter.notifyDataSetChanged();
@@ -2225,8 +2235,14 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                         mainAddPhotosFab.hide();
                                                         progressBar.setVisibility(View.GONE);
                                                         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                                                        new CustomToast(MainActivity.this,MainActivity.this)
-                                                                .showToast("Exited Participation");
+                                                        Handler handler = new Handler();
+                                                        SnackShow snackShow=new SnackShow(RootForMainActivity,MainActivity.this);
+                                                        snackShow.showSuccessSnack("Successfully exited from your Cloud-Album. ");
+                                                        handler.postDelayed(new Runnable() {
+                                                            public void run() {
+
+                                                            }
+                                                        }, 3000);
 
                                                         if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
                                                             photographerList.remove(0);
@@ -2279,43 +2295,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     }
 
     private void showDialogQuitUnsuccess() {
-
-        int cf_bg_color, colorPrimary, red_inlens, cf_alert_dialogue_dim_bg;
-        if (appTheme.equals(AppConstants.themeLight)) {
-            cf_bg_color = getResources().getColor(R.color.Light_cf_bg_color);
-            colorPrimary = getResources().getColor(R.color.colorLightPrimary);
-            red_inlens = getResources().getColor(R.color.Light_red_inlens);
-            cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Light_cf_alert_dialogue_dim_bg);
-        } else {
-            cf_bg_color = getResources().getColor(R.color.Dark_cf_bg_color);
-            colorPrimary = getResources().getColor(R.color.colorDarkPrimary);
-            red_inlens = getResources().getColor(R.color.Dark_red_inlens);
-            cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Dark_cf_alert_dialogue_dim_bg);
-
-        }
-
-        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
-                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                .setTitle("Unable to Exit")
-                .setIcon(R.drawable.ic_info)
-                .setDialogBackgroundColor(cf_bg_color)
-                .setTextColor(colorPrimary)
-                .setMessage("Unable to Quit Cloud-Album. Please check your internet connection or whether you are participating in a Cloud-Album")
-                .setCancelable(false)
-                .addButton("OK",
-                        colorPrimary,
-                        cf_alert_dialogue_dim_bg
-                        , CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-
-
-        builder.show();
-
+        SnackShow snackShow=new SnackShow(RootForMainActivity,MainActivity.this);
+        snackShow.showErrorSnack("Unable to quit the Cloud-Album , Please try again later.");
     }
 
     @Override
@@ -2391,7 +2372,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
-                showSnackbarMessage("Profile picture is being uploaded. Please wait.");
+                showDialogMessageSuccess("","Profile picture is being uploaded. Please wait.");
                 Uri resultUri = result.getUri();
                 Bitmap bitmap = null;
                 try {
@@ -2431,7 +2412,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
                                             {
-                                                showSnackbarMessage("Successfully uploaded your profile picture.");
+                                                showDialogMessageSuccess("","Successfully uploaded your profile picture.");
                                                 for (int i = 0; i < photographerList.size(); i++) {
                                                     if (photographerList.get(i).getId().equals(currentUserId)) {
                                                         photographerList.get(i).setImgUrl(uri.toString());
@@ -2441,7 +2422,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                                             }
                                         } else {
-                                            showSnackbarMessage("Failed to upload picture. Please try again.");
+                                            showDialogMessageError("","Failed to upload picture. Please try again.");
                                         }
 
                                     }
@@ -2454,14 +2435,14 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        showSnackbarMessage("Failed to upload picture. Please try again.");
+                        showDialogMessageError("","Failed to upload picture. Please try again.");
 
                     }
                 });
             }
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                showSnackbarMessage("Image cropping error. Please try again.");
+                showDialogMessageError("","Image cropping error. Please try again.");
             }
 
         }
@@ -2471,7 +2452,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     private void uploadCoverPhoto(Uri imageUri) {
 
         // MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.VISIBLE);
-        showSnackbarMessage("Uploading the cover photo. Please wait.");
+        showDialogMessageSuccess("","Uploading the cover photo. Please wait.");
         if (!TextUtils.isEmpty(PostKeyForEdit) && imageUri != null) {
 
             StorageReference
@@ -2496,12 +2477,12 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                    public void onComplete(@NonNull Task<Void> task) {
                                        if (task.isSuccessful()) {
                                            //MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-                                           showSnackbarMessage("Successfully uploaded the cover photo.");
+                                           showDialogMessageSuccess("","Successfully uploaded the cover photo.");
                                            communityDataList.get(position).setCoverImage(uri.toString());
                                            mainHorizontalAdapter.notifyItemChanged(position);
                                        } else {
                                            // MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-                                           showSnackbarMessage("Failed to uploaded the cover photo. Please try again.");
+                                           showDialogMessageError("","Failed to uploaded the cover photo. Please try again.");
 
                                        }
                                    }
@@ -2511,14 +2492,14 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                        }).addOnFailureListener(new OnFailureListener() {
                            @Override
                            public void onFailure(@NonNull Exception e) {
-                               showSnackbarMessage("Failed to uploaded the cover photo. Please try again.");
+                               showDialogMessageError("","Failed to uploaded the cover photo. Please try again.");
 
                            }
                        });
 
                     } else {
                         //MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-                        showSnackbarMessage("Failed to uploaded the cover photo. Please try again.");
+                        showDialogMessageError("","Failed to uploaded the cover photo. Please try again.");
 
 
                     }
@@ -2528,13 +2509,13 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     //MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-                    showSnackbarMessage("Failed to uploaded the cover photo. Please try again.");
+                    showDialogMessageError("","Failed to uploaded the cover photo. Please try again.");
                 }
             });
 
         } else {
             // MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-            showSnackbarMessage("Failed to uploaded the cover photo. Please try again.");
+            showDialogMessageError("","Failed to uploaded the cover photo. Please try again.");
         }
 
 
@@ -2624,87 +2605,16 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
     }
 
-    public void showDialogMessage(String title, String message) {
-
-        int cf_bg_color, colorPrimary, red_inlens, cf_alert_dialogue_dim_bg;
-        if (appTheme.equals(AppConstants.themeLight)) {
-            cf_bg_color = getResources().getColor(R.color.Light_cf_bg_color);
-            colorPrimary = getResources().getColor(R.color.colorLightPrimary);
-            red_inlens = getResources().getColor(R.color.Light_red_inlens);
-            cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Light_cf_alert_dialogue_dim_bg);
-        } else {
-            cf_bg_color = getResources().getColor(R.color.Dark_cf_bg_color);
-            colorPrimary = getResources().getColor(R.color.colorDarkPrimary);
-            red_inlens = getResources().getColor(R.color.Dark_red_inlens);
-            cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Dark_cf_alert_dialogue_dim_bg);
-
-        }
-
-        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
-                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                .setTitle(title)
-                .setDialogBackgroundColor(cf_bg_color)
-                .setTextColor(colorPrimary)
-                .setIcon(R.drawable.ic_check_circle_black_24dp)
-                .setMessage(message)
-                .setCancelable(false)
-                .addButton("OK",
-                        colorPrimary,
-                        cf_alert_dialogue_dim_bg,
-                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                //For the purpose of Quit and cancelling notification
-                                NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                                notificationManager.cancelAll();
-
-                                dialog.dismiss();
-
-                            }
-                        });
-        builder.show();
+    public void showDialogMessageError(String title, String message) {
+       SnackShow snackShow=new SnackShow(RootForMainActivity,MainActivity.this);
+       snackShow.showErrorSnack(message);
     }
 
-    public void showInfoMessage(String title, String message) {
-
-        int cf_bg_color, colorPrimary, red_inlens, cf_alert_dialogue_dim_bg;
-        if (appTheme.equals(AppConstants.themeLight)) {
-            cf_bg_color = getResources().getColor(R.color.Light_cf_bg_color);
-            colorPrimary = getResources().getColor(R.color.colorLightPrimary);
-            red_inlens = getResources().getColor(R.color.Light_red_inlens);
-            cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Light_cf_alert_dialogue_dim_bg);
-        } else {
-            cf_bg_color = getResources().getColor(R.color.Dark_cf_bg_color);
-            colorPrimary = getResources().getColor(R.color.colorDarkPrimary);
-            red_inlens = getResources().getColor(R.color.Dark_red_inlens);
-            cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Dark_cf_alert_dialogue_dim_bg);
-
-        }
-
-        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
-                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                .setTitle(title)
-                .setIcon(R.drawable.ic_info)
-                .setDialogBackgroundColor(cf_bg_color)
-                .setTextColor(colorPrimary)
-                .setMessage(message)
-                .setCancelable(false)
-                .addButton("OK",
-                        colorPrimary,
-                        cf_alert_dialogue_dim_bg,
-                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-
-                            }
-                        });
-        builder.show();
+    public void showDialogMessageSuccess(String title, String message) {
+        SnackShow snackShow=new SnackShow(RootForMainActivity,MainActivity.this);
+        snackShow.showSuccessSnack(message);
     }
+
 
     @Override
     public void dismissDialog() {

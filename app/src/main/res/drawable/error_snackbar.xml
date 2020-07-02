@@ -6,6 +6,10 @@
     </item>
     <item android:top="12dp" android:bottom="12dp" android:left="12dp" android:right="12dp">
         <shape android:shape="rectangle">
+            <padding
+                android:right="4dp"
+                android:left="4dp"
+/>
             <solid android:color="?attr/red_cancel_icon" />
             <corners android:radius="4dp" />
             </shape>

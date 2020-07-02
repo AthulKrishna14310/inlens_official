@@ -26,7 +26,7 @@ public class SnackShow {
     public void showErrorSnack(String message){
          snack = Snackbar.make(
                 view,
-                message,
+                " "+message,
                 Snackbar.LENGTH_LONG
         );
         SnackbarHelper.configSnackbar(context, snack,R.drawable.error_snackbar);
@@ -35,7 +35,7 @@ public class SnackShow {
     public void showSuccessSnack(String message){
          snack = Snackbar.make(
                 view,
-                message,
+                " "+message,
                 Snackbar.LENGTH_LONG
         );
         SnackbarHelper.configSnackbar(context, snack,R.drawable.success_snackbar);

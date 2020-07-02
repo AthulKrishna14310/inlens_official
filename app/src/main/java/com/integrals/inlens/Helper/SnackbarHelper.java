@@ -17,7 +17,6 @@ public class SnackbarHelper {
 
     private static void addMargins(Snackbar snack) {
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) snack.getView().getLayoutParams();
-        params.setMargins(12, 12, 12, 12);
         snack.getView().setLayoutParams(params);
     }
 

@@ -3,15 +3,15 @@ package com.integrals.inlens.Activities;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
-import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatDelegate;
+
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -544,10 +544,16 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         }
                         helper.displayAlbumStartNotification(notificationStr,"You are active in this Cloud-Album till "+ albumTime);
 
+                        Handler handler = new Handler();
                         SnackShow snackShow=new SnackShow(rootCreateCloudAlbum,CreateCloudAlbum.this);
-                        snackShow.showSuccessSnack("Your Cloud-Album created successfully.");
-                        createdIntent="YES";
-                        onBackPressed();
+                        snackShow.showSuccessSnack("Your Cloud-Album created successfully. Enjoy your event by uploading moments together.");
+                        handler.postDelayed(new Runnable() {
+                            public void run() {
+                                createdIntent="YES";
+                                onBackPressed();
+                            }
+                        }, 3000);
+
                     }
                     else
                     {
