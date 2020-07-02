@@ -49,6 +49,7 @@
     <color name="Light_action_secondary">@color/colorLightSecondary</color>
     <color name="Light_check_color">#81c784</color>
     <color name="Light_red_cancel_icon">#e57373</color>
+
     <color name="Light_info_icon_color">#64b5f6</color>
     <color name="Light_actionMenuTextColor">#3c3c3c</color>
 

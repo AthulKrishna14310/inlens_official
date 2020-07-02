@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 
 import androidx.annotation.NonNull;
 import com.google.android.material.snackbar.Snackbar;
@@ -23,7 +22,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
@@ -45,6 +43,7 @@ import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.CustomToast;
 import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.Helper.PreOperationCheck;
+import com.integrals.inlens.Helper.SnackShow;
 import com.integrals.inlens.MainActivity;
 
 import java.text.DateFormat;
@@ -239,7 +238,8 @@ public class CreateCloudAlbum extends AppCompatActivity {
                     uploadNewAlbumData();
                 }
             } else {
-                showDialogue("Please fill up all the provided fields and continue.",false);
+                SnackShow snackShow=new SnackShow(rootCreateCloudAlbum,this);
+                snackShow.showErrorSnack("Please fill all the fields to create your Cloud-Album");
             }
         });
 
@@ -327,7 +327,8 @@ public class CreateCloudAlbum extends AppCompatActivity {
             if (!TextUtils.isEmpty(eventType)) {
                 eventDialog.dismiss();
             } else {
-                Snackbar.make(rootCreateCloudAlbum,"Please select an event type.",Snackbar.LENGTH_SHORT).show();
+            SnackShow snackShow=new SnackShow(rootCreateCloudAlbum,this);
+            snackShow.showErrorSnack("Please select an event type.");
             }
 
         });
@@ -543,7 +544,8 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         }
                         helper.displayAlbumStartNotification(notificationStr,"You are active in this Cloud-Album till "+ albumTime);
 
-                        new CustomToast(CreateCloudAlbum.this,CreateCloudAlbum.this).showToast("Your Cloud-Album created successfully");
+                        SnackShow snackShow=new SnackShow(rootCreateCloudAlbum,CreateCloudAlbum.this);
+                        snackShow.showSuccessSnack("Your Cloud-Album created successfully.");
                         createdIntent="YES";
                         onBackPressed();
                     }
@@ -551,12 +553,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                     {
                         uploadProgressbar.setVisibility(View.GONE);
                         submitButton.setEnabled(true);
-                        Snackbar.make(rootCreateCloudAlbum,"Failed to create Cloud-Album",Snackbar.LENGTH_LONG).setAction("Retry", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                uploadNewAlbumData();
-                            }
-                        }).show();
+
 
 
                     }
@@ -569,13 +566,8 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
                     uploadProgressbar.setVisibility(View.GONE);
                     submitButton.setEnabled(true);
-                    Snackbar.make(rootCreateCloudAlbum,"Failed to create Cloud-Album",Snackbar.LENGTH_LONG).setAction("Retry", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            uploadNewAlbumData();
-                        }
-                    }).show();
-
+                    SnackShow snackShow=new SnackShow(rootCreateCloudAlbum,CreateCloudAlbum.this);
+                    snackShow.showErrorSnack("Some error occurred, Please try again "+e.getMessage());
 
                 }
             });
@@ -583,7 +575,6 @@ public class CreateCloudAlbum extends AppCompatActivity {
         } else {
             uploadProgressbar.setVisibility(View.GONE);
             submitButton.setEnabled(true);
-            Snackbar.make(rootCreateCloudAlbum,"Please fill up all the provided fields and continue.",Snackbar.LENGTH_LONG).show();
 
         }
     }
@@ -636,7 +627,8 @@ public class CreateCloudAlbum extends AppCompatActivity {
     public void onBackPressed() {
 
         if (uploadProgressbar.isShown()) {
-            Snackbar.make(rootCreateCloudAlbum,"Creating your cloud  album. Please wait.",Snackbar.LENGTH_SHORT).show();
+            SnackShow snackShow=new SnackShow(rootCreateCloudAlbum,this);
+            snackShow.showErrorSnack("Album creation on progress. Please wait...");
         } else {
 
             Intent mainIntent = new Intent(CreateCloudAlbum.this, MainActivity.class);
@@ -679,51 +671,12 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
         // Create Alert using Builder
         if (positive) {
-            CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
-                    .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                    .setTitle("Cloud-Album creation")
-                    .setIcon(R.drawable.ic_check_circle_black_24dp)
-                    .setDialogBackgroundColor(cf_bg_color)
-                    .setTextColor(colorPrimary)
-                    .setMessage(dialogue)
-                    .setCancelable(false)
-                    .addButton("OK",
-                            colorPrimary,
-                            cf_alert_dialogue_dim_bg,
-                            CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                    createdIntent="YES";
-                                    onBackPressed();
-                                }
-                            });
+            SnackShow snackShow=new SnackShow(rootCreateCloudAlbum,this);
+            snackShow.showSuccessSnack(dialogue);
 
-            builder.show();
         } else {
-            CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
-                    .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                    .setTitle("Community creation")
-                    .setIcon(R.drawable.ic_info)
-                    .setDialogBackgroundColor(cf_bg_color)
-                    .setTextColor(colorPrimary)
-                    .setMessage(dialogue)
-                    .setCancelable(false)
-                    .addButton("OK", colorPrimary,
-                            cf_alert_dialogue_dim_bg,
-                            CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
-
-
-            builder.show();
-
+        SnackShow snackShow=new SnackShow(rootCreateCloudAlbum,this);
+        snackShow.showErrorSnack(dialogue);
         }
 
     }
