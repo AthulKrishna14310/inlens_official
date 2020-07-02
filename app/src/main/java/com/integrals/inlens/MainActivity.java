@@ -2372,7 +2372,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
-                showDialogMessageSuccess("","Profile picture is being uploaded. Please wait.");
+                showDialogMessageInfo("","Uploading profile picture. Please wait...");
                 Uri resultUri = result.getUri();
                 Bitmap bitmap = null;
                 try {
@@ -2452,7 +2452,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     private void uploadCoverPhoto(Uri imageUri) {
 
         // MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.VISIBLE);
-        showDialogMessageSuccess("","Uploading the cover photo. Please wait.");
+        showDialogMessageInfo("","Uploading the cover photo. Please wait.");
         if (!TextUtils.isEmpty(PostKeyForEdit) && imageUri != null) {
 
             StorageReference
@@ -2614,7 +2614,10 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         SnackShow snackShow=new SnackShow(RootForMainActivity,MainActivity.this);
         snackShow.showSuccessSnack(message);
     }
-
+    public void showDialogMessageInfo(String title, String message) {
+        SnackShow snackShow=new SnackShow(RootForMainActivity,MainActivity.this);
+        snackShow.showInfoSnack(message);
+    }
 
     @Override
     public void dismissDialog() {
