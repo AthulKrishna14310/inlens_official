@@ -2374,71 +2374,59 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             if (resultCode == RESULT_OK) {
                 showDialogMessageInfo("","Uploading profile picture. Please wait...");
                 Uri resultUri = result.getUri();
-                Bitmap bitmap = null;
-                try {
-                    InputStream stream = getContentResolver().openInputStream(resultUri);
-                    bitmap = BitmapFactory.decodeStream(stream);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-
-                File thumb_filePath = new File(resultUri.getPath());
                 final String current_u_i_d = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                Bitmap thumb_bitmap = null;
-                try {
-                    thumb_bitmap = new Compressor(this)
-                            .setMaxWidth(200)
-                            .setMaxHeight(200)
-                            .setQuality(100)
-                            .compressToBitmap(thumb_filePath);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                thumb_bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                final byte[] thumb_byte = baos.toByteArray();
 
 
                 final StorageReference filepath = FirebaseStorage.getInstance().getReference().child("profile_images").child(current_u_i_d + ".jpg");
-                filepath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        currentUserRef
-                                .child("Profile_picture")
-                                .setValue(uri.toString())
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                            {
-                                                showDialogMessageSuccess("","Successfully uploaded your profile picture.");
-                                                for (int i = 0; i < photographerList.size(); i++) {
-                                                    if (photographerList.get(i).getId().equals(currentUserId)) {
-                                                        photographerList.get(i).setImgUrl(uri.toString());
-                                                        participantsAdapter.notifyItemChanged(i);
-                                                    }
-                                                }
 
-                                            }
-                                        } else {
-                                            showDialogMessageError("","Failed to upload picture. Please try again.");
-                                        }
+
+                filepath.putFile(resultUri)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                filepath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        currentUserRef
+                                                .child("Profile_picture")
+                                                .setValue(uri.toString())
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if (task.isSuccessful()) {
+                                                            {
+                                                                for (int i = 0; i < photographerList.size(); i++) {
+                                                                    if (photographerList.get(i).getId().equals(currentUserId)) {
+                                                                        photographerList.get(i).setImgUrl(uri.toString());
+                                                                        participantsAdapter.notifyItemChanged(i);
+                                                                    }
+                                                                }
+                                                                showDialogMessageSuccess("","Successfully uploaded your profile picture.");
+
+                                                            }
+                                                        } else {
+                                                            showDialogMessageError("","DB:"+task.getException().getMessage());
+                                                        }
+
+                                                    }
+                                                });
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        showDialogMessageError("",e.getMessage());
 
                                     }
                                 });
 
-//
-//
-//
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        showDialogMessageError("","Failed to upload picture. Please try again.");
-
+                          showDialogMessageError("",e.getMessage());
                     }
                 });
+
             }
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
