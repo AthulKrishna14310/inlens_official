@@ -11,8 +11,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import androidx.annotation.NonNull;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.core.os.ConfigurationCompat;
+
+import com.crowdfire.cfalertdialog.CFAlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -37,7 +37,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.crowdfire.cfalertdialog.CFAlertDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
@@ -51,6 +50,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.CountryItem;
 import com.integrals.inlens.Helper.HttpHandler;
+import com.integrals.inlens.Helper.SnackShow;
 import com.integrals.inlens.R;
 
 import org.json.JSONException;
@@ -173,11 +173,12 @@ public class AuthActivity extends AppCompatActivity {
                         }.start();
                         VerificationDialog.show();
                     } else {
-                        showDialogMessage("Country Code Missing", "Select country code and continue further.");
-
+                        SnackShow snackShow=new SnackShow(authRoot,AuthActivity.this);
+                        snackShow.showErrorSnack("Please select your country code");
                     }
                 } else {
-                    showDialogMessage("Phone Number Missing", "Enter phone number and continue further.");
+                    SnackShow snackShow=new SnackShow(authRoot,AuthActivity.this);
+                    snackShow.showErrorSnack("Phone Number missing...");
                 }
 
             }
@@ -202,7 +203,8 @@ public class AuthActivity extends AppCompatActivity {
             @Override
             public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
 
-                Snackbar.make(authRoot, "Login Successful", Snackbar.LENGTH_SHORT).show();
+                SnackShow snackShow=new SnackShow(authRoot,AuthActivity.this);
+                snackShow.showSuccessSnack("Sign in successful");
                 SignInWithCredential(phoneAuthCredential);
 
             }
@@ -224,6 +226,7 @@ public class AuthActivity extends AppCompatActivity {
                 }
                 Log.i("authTag", "e " + e.toString());
                 showDialogMessageFailed("Authentication Failed", e.getMessage());
+
                 Log.i(AppConstants.AUTH, e.getMessage());
             }
 
@@ -238,53 +241,7 @@ public class AuthActivity extends AppCompatActivity {
     }
 
 
-    public void showDialogMessage(String title, String message) {
-        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(AuthActivity.this)
-                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                .setTitle(title)
-                .setDialogBackgroundColor(default_bg_color)
-                .setTextColor(colorPrimary)
-                .setIcon(R.drawable.ic_check_circle_black_24dp)
-                .setMessage(message)
-                .setCancelable(false)
-                .addButton("OK",
-                        colorPrimary,
-                        cf_alert_dialogue_dim_bg,
-                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
 
-                            }
-                        });
-        builder.show();
-    }
-
-    public void showDialogMessageFailed(String title, String message) {
-        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(AuthActivity.this)
-                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                .setTitle(title)
-                .setIcon(R.drawable.ic_cancel_black_24dp)
-                .setDialogBackgroundColor(default_bg_color)
-                .setTextColor(colorPrimary)
-                .setMessage(message)
-                .setCancelable(false)
-                .addButton("OK",
-                        colorPrimary,
-                        cf_alert_dialogue_dim_bg,
-                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-
-                            }
-                        });
-        builder.show();
-    }
 
 
     private class getConfirmedList extends AsyncTask<Void, Void, Void> {
@@ -417,7 +374,7 @@ public class AuthActivity extends AppCompatActivity {
 
 
                 } else {
-                    showDialogMessage("Registration Failed", " Registration failed due to  some unknown reasons.Please try after sometime.");
+                    showDialogMessageFailed("Registration Failed", " Registration failed due to  some unknown reasons.Please try after sometime.");
                 }
             }
         });
@@ -556,6 +513,29 @@ public class AuthActivity extends AppCompatActivity {
 
     }
 
+    public void showDialogMessageFailed(String title, String message) {
+        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(AuthActivity.this)
+                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                .setTitle(title)
+                .setIcon(R.drawable.ic_cancel_black_24dp)
+                .setDialogBackgroundColor(default_bg_color)
+                .setTextColor(colorPrimary)
+                .setMessage(message)
+                .setCancelable(false)
+                .addButton("OK",
+                        colorPrimary,
+                        cf_alert_dialogue_dim_bg,
+                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+
+                            }
+                        });
+        builder.show();
+    }
     private void InitCountryNames() {
 
         CountryList = new ArrayList<>();

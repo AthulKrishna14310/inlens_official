@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
     android:id="@+id/rootCreateCloudAlbum"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -172,10 +171,7 @@
                         android:id="@+id/expiry_txt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
-
                         android:layout_gravity="center_horizontal"
-
                         android:layout_marginBottom="2dp"
                         android:fontFamily="@font/base_font"
                         android:text="TextView"
@@ -213,7 +209,7 @@
 
                             android:layout_marginBottom="@dimen/image_button_margin_create_cloud_album"
                             android:background="?attr/selectableItemBackgroundBorderless"
-                            android:src="@drawable/ic_event_type_24dp"
+                            android:src="@drawable/ic_event_type"
                             android:tint="?attr/colorSecondary"
 
                             />
@@ -244,7 +240,6 @@
         android:layout_margin="@dimen/done_button_margin_create_cloud_album_activity"
         android:background="@drawable/create_cloud_album_done_btn_bg"
         android:padding="10dp">
-
         <TextView
             android:id="@+id/DoneButtonTextView"
             android:layout_width="wrap_content"

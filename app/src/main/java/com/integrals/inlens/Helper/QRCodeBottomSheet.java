@@ -151,12 +151,12 @@ public class QRCodeBottomSheet extends BottomSheetDialogFragment {
 
                 CFAlertDialog.Builder builder = new CFAlertDialog.Builder(context,themeId)
                         .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                        .setTitle("Photographers Count ?")
+                        .setTitle("Participants Count ?")
                         .setIcon(R.drawable.ic_link)
                         .setDialogBackgroundColor(cf_bg_color)
                         .setTextColor(colorPrimary)
                         .setCancelable(false)
-                        .setMessage("Select the Number of Photographers to join via this link.")
+                        .setMessage("Select the number of participants to join via this link.")
                         .setMultiChoiceItems(new String[]{"Only 1", "5", "20", "20+"}, new boolean[]{false, false, false, false}, new DialogInterface.OnMultiChoiceClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int index, boolean b) {

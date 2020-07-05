@@ -7,6 +7,7 @@
     android:layout_gravity="center"
     android:layout_marginTop="4dp"
     android:layout_marginBottom="4dp"
+    android:alpha="1"
     android:background="?attr/default_bg_color">
 
     <RelativeLayout
@@ -21,11 +22,9 @@
             android:id="@+id/participants_profile_pic"
             android:layout_width="40dp"
             android:layout_height="40dp"
-
             android:src="@drawable/ic_account_circle_24dp"
             android:tint="?attr/colorSecondary"
-
-           />
+            />
 
         <TextView
             android:id="@+id/participants_username"

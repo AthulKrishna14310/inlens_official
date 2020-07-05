@@ -32,9 +32,9 @@ public class CustomToast {
         // set the text in the TextView
         toastTextView.setText(message);
         Toast toast = new Toast(context);
-        toast.setDuration(Toast.LENGTH_SHORT); // set the duration for the Toast
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);// set the duration for the Toast
         toast.setView(layout); // set the inflated layout
-
         toast.show(); // display the custom Toast
 
     }

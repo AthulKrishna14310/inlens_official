@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.crowdfire.cfalertdialog.CFAlertDialog;
@@ -29,6 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.Helper.PreOperationCheck;
+import com.integrals.inlens.Helper.SnackShow;
 import com.integrals.inlens.R;
 
 import java.util.ArrayList;
@@ -44,7 +46,7 @@ public class UserNameInfoActivity extends AppCompatActivity {
     private TextView UserNameTextview;
     private ImageButton UserNameDoneButton , MyToolbarBackButton ;
     private View MyToolbar;
-
+    private RelativeLayout relativeLayout;
     private String Name,Email;
 
     private ProgressBar userInfoProgressbar;
@@ -85,7 +87,7 @@ public class UserNameInfoActivity extends AppCompatActivity {
         FirebaseInit();
         CheckUserAuthentication();
         VariablesInit();
-
+        relativeLayout=findViewById(R.id.root_user_name_info);
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -197,44 +199,8 @@ public class UserNameInfoActivity extends AppCompatActivity {
     }
 
     public void showDialogMessage(String title, String message) {
-
-        int cf_bg_color,colorPrimary,red_inlens,cf_alert_dialogue_dim_bg;
-        if(appTheme.equals(AppConstants.themeLight))
-        {
-            cf_bg_color = getResources().getColor(R.color.Light_cf_bg_color);
-            colorPrimary = getResources().getColor(R.color.colorLightPrimary);
-            red_inlens =  getResources().getColor(R.color.Light_red_inlens);
-            cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Light_cf_alert_dialogue_dim_bg);
-        }
-        else
-        {
-            cf_bg_color = getResources().getColor(R.color.Dark_cf_bg_color);
-            colorPrimary = getResources().getColor(R.color.colorDarkPrimary);
-            red_inlens =  getResources().getColor(R.color.Dark_red_inlens);
-            cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Dark_cf_alert_dialogue_dim_bg);
-
-        }
-
-        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
-                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                .setTitle(title)
-                .setDialogBackgroundColor(cf_bg_color)
-                .setTextColor(colorPrimary)
-                .setIcon(R.drawable.ic_check_circle_black_24dp)
-                .setMessage(message)
-                .setCancelable(false)
-                .addButton("OK", colorPrimary,
-                        cf_alert_dialogue_dim_bg,
-                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-
-                            }
-                        });
-        builder.show();
+        SnackShow snackShow=new SnackShow(relativeLayout,UserNameInfoActivity.this);
+        snackShow.showErrorSnack(message);
     }
 
     private void VariablesInit() {
