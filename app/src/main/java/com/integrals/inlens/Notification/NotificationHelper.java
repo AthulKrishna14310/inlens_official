@@ -165,9 +165,6 @@ public class NotificationHelper {
                     .setContentText(message)
                     .setAutoCancel(true)
                     .setOngoing(false);
-
-            Uri path= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            builder.setSound(path);
             notificationManager.notify(notificationGalleryReport,builder.build());
         }
 

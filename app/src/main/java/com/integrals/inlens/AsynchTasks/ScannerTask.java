@@ -142,6 +142,11 @@ public class ScannerTask extends AsyncTask<Void, Void, Void> {
                         Log.i("Scanner","count"+c.getCount());
                         if(c.getCount()>0)
                         {
+                            SharedPreferences notificationPref = context.getSharedPreferences(AppConstants.NOTIFICATION_PREF,Context.MODE_PRIVATE);
+                            SharedPreferences.Editor notificationPrefEditor  = notificationPref.edit();
+                            notificationPrefEditor.putString("id",String.valueOf(System.currentTimeMillis()));
+                            notificationPrefEditor.commit();
+
                             Constraints quitWorkConstraint = new Constraints.Builder()
                                     .setRequiredNetworkType(NetworkType.CONNECTED)
                                     .build();

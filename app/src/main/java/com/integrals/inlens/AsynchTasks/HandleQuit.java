@@ -107,10 +107,19 @@ public class HandleQuit extends AsyncTask<Void,Void,Void>
                     else
                     {
                         //  todo upload the remaining images and den quit from the album.
-                        Constraints uploadConstraints = new Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build();
-                        OneTimeWorkRequest galleryUploader = new OneTimeWorkRequest.Builder(UploadWorker.class).setConstraints(uploadConstraints).build();
-                        WorkManager.getInstance(context).enqueue(galleryUploader);
+                        Constraints quitWorkConstraint = new Constraints.Builder()
+                                .setRequiredNetworkType(NetworkType.CONNECTED)
+                                .build();
+                        OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(UploadWorker.class)
+                                .addTag("uploadWorker")
+                                .setConstraints(quitWorkConstraint)
+                                .build();
+                        WorkManager.getInstance(context).cancelAllWorkByTag("uploadWorker");
+                        WorkManager.getInstance(context).enqueueUniqueWork("uploadWorker", ExistingWorkPolicy.REPLACE,request);
+
                     }
+
+                    cursor.close();
 
                 }
             }
