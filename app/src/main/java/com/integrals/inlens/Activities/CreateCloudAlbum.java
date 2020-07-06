@@ -1,8 +1,10 @@
 package com.integrals.inlens.Activities;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -29,10 +31,17 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.work.Constraints;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -47,6 +56,7 @@ import com.integrals.inlens.Helper.SnackShow;
 import com.integrals.inlens.MainActivity;
 import com.integrals.inlens.Notification.NotificationHelper;
 import com.integrals.inlens.R;
+import com.integrals.inlens.WorkManager.UploadWorker;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -90,12 +100,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
     String appTheme="";
     int cf_bg_color,colorPrimary,red_inlens,cf_alert_dialogue_dim_bg;
 
-    public interface ProvideOptionCallback
-    {
-        void provideQueueOption(View v);
-    }
 
-    ProvideOptionCallback provideOptionCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,7 +149,6 @@ public class CreateCloudAlbum extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_cloud_album_layout);
 
-        provideOptionCallback = (ProvideOptionCallback) this;
 
         rootCreateCloudAlbum = findViewById(R.id.rootCreateCloudAlbum);
         userCommunityIdList = new ArrayList<>();
@@ -240,7 +244,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
             Cursor cursor = new UploadQueueDB(CreateCloudAlbum.this).getQueuedData();
             if(cursor.getCount()>0)
             {
-                provideOptionCallback.provideQueueOption(rootCreateCloudAlbum);
+                provideQueueOptions(rootCreateCloudAlbum);
             }
             else
             {
@@ -304,6 +308,79 @@ public class CreateCloudAlbum extends AppCompatActivity {
             }
         });
     }
+
+    public void showDialogMessageError(String message) {
+        SnackShow snackShow=new SnackShow(rootCreateCloudAlbum,CreateCloudAlbum.this);
+        snackShow.showErrorSnack(message);
+    }
+
+    public void showDialogMessageSuccess( String message) {
+        SnackShow snackShow=new SnackShow(rootCreateCloudAlbum,CreateCloudAlbum.this);
+        snackShow.showSuccessSnack(message);
+    }
+    public void showDialogMessageInfo(String message) {
+        SnackShow snackShow=new SnackShow(rootCreateCloudAlbum,CreateCloudAlbum.this);
+        snackShow.showInfoSnack(message);
+    }
+
+    public void provideQueueOptions(View rootId) {
+        Snackbar uploadFromQueue = Snackbar.make(rootId, "Upload all queued photos", BaseTransientBottomBar.LENGTH_INDEFINITE).setAction("Options", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                AlertDialog.Builder queuedOptionsDialog = new AlertDialog.Builder(CreateCloudAlbum.this);
+                queuedOptionsDialog.setMessage("Upload queued images to create or  join new album. Please select one the following options.")
+                        .setPositiveButton("Upload now", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                                Constraints uploadConstraints = new Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build();
+                                OneTimeWorkRequest galleryUploader = new OneTimeWorkRequest.Builder(UploadWorker.class).addTag("uploadWorker").setConstraints(uploadConstraints).build();
+                                WorkManager.getInstance(CreateCloudAlbum.this).cancelAllWorkByTag("uploadWorker");
+                                WorkManager.getInstance(CreateCloudAlbum.this).enqueueUniqueWork("uploadWorker", ExistingWorkPolicy.REPLACE, galleryUploader);
+                                showDialogMessageInfo("Uploading queued images to album.");
+
+                            }
+                        })
+                        .setNegativeButton("Clear Queue", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                                UploadQueueDB queueDB = new UploadQueueDB(CreateCloudAlbum.this);
+                                queueDB.deleteAllData();
+                                Cursor cursor = queueDB.getQueuedData();
+                                if (cursor.getCount() == 0) {
+                                    showDialogMessageSuccess("Upload queue have been cleared");
+
+                                } else {
+                                    showDialogMessageError("Could not clear upload queue. Try again.");
+
+                                }
+                                queueDB.close();
+                                cursor.close();
+
+                            }
+                        });
+
+                if (!queuedOptionsDialog.create().isShowing()) {
+                    queuedOptionsDialog.create().show();
+                }
+            }
+        });
+
+        if (!uploadFromQueue.isShown()) {
+            uploadFromQueue.show();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    uploadFromQueue.dismiss();
+
+                }
+            }, 5000);
+        }
+    }
+
 
     private void EventDialogInit() {
 

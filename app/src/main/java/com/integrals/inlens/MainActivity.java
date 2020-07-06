@@ -141,7 +141,7 @@ import static com.integrals.inlens.Helper.AppConstants.MY_PERMISSIONS_REQUEST_RE
 import static com.integrals.inlens.Helper.AppConstants.MY_PERMISSIONS_REQUEST_START_WORKMANAGER;
 
 
-public class MainActivity extends AppCompatActivity implements AlbumOptionsBottomSheetFragment.IScanCallback, AlbumOptionsBottomSheetFragment.ICreateCallback, AlbumOptionsBottomSheetFragment.IDismissDialog, CreateCloudAlbum.ProvideOptionCallback {
+public class MainActivity extends AppCompatActivity implements AlbumOptionsBottomSheetFragment.IScanCallback, AlbumOptionsBottomSheetFragment.ICreateCallback, AlbumOptionsBottomSheetFragment.IDismissDialog {
 
 
     private String currentActiveCommunityID = AppConstants.NOT_AVALABLE;
@@ -372,7 +372,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                         intent.putExtra(Intent.EXTRA_SUBJECT, "Your Response");
                         startActivity(intent);
                     } catch (android.content.ActivityNotFoundException ex) {
-                        showDialogMessageError("No E-mail App found", "Please install an email app");
+                        showDialogMessageError("Please install an email app");
                     }
                     return true;
                 }
@@ -644,7 +644,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                 OneTimeWorkRequest galleryUploader = new OneTimeWorkRequest.Builder(UploadWorker.class).addTag("uploadWorker").setConstraints(uploadConstraints).build();
                                 WorkManager.getInstance(MainActivity.this).cancelAllWorkByTag("uploadWorker");
                                 WorkManager.getInstance(MainActivity.this).enqueueUniqueWork("uploadWorker", ExistingWorkPolicy.REPLACE, galleryUploader);
-                                showDialogMessageInfo("Upload initiated","Uploading queued images to album.");
+                                showDialogMessageInfo("Uploading queued images to album.");
 
                             }
                         })
@@ -656,10 +656,10 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                 queueDB.deleteAllData();
                                 Cursor cursor = queueDB.getQueuedData();
                                 if (cursor.getCount() == 0) {
-                                    showDialogMessageSuccess("Queue Cleared","Upload queue have been cleared");
+                                    showDialogMessageSuccess("Upload queue have been cleared");
 
                                 } else {
-                                    showDialogMessageError("Operation Failed","Could not clear upload queue. Try again.");
+                                    showDialogMessageError("Could not clear upload queue. Try again.");
 
                                 }
                                 queueDB.close();
@@ -1262,7 +1262,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                                         if (currentActiveCommunityID.equals(communityId)) {
 
-                                            showDialogMessageInfo("Your Community", "You are currently part of this community.");
+                                            showDialogMessageInfo("You are currently part of this community.");
                                         } else {
                                             CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
                                                     .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
@@ -1301,7 +1301,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                                 } else {
                                     Log.i("linkref", communityRefLinkId);
-                                    showDialogMessageError("Invalid Link","Invite-Link is corrupted. Get a new Invite-Link.");
+                                    showDialogMessageError("Invite-Link is corrupted. Get a new Invite-Link.");
                                 }
 
                             }
@@ -1322,7 +1322,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             @Override
             public void onFailure(@NonNull Exception e) {
 
-                showDialogMessageError("",e.getMessage());
+                showDialogMessageError(""+e.getMessage());
 
             }
         });
@@ -1397,7 +1397,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                             CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId, isReported);
                                             communityDataList.add(1, model);
                                             mainHorizontalAdapter.notifyItemInserted(1);
-                                            showDialogMessageSuccess("","You have been added to " + title);
+                                            showDialogMessageSuccess("You have been added to " + title);
 
 
                                             SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
@@ -1512,7 +1512,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                             mainHorizontalAdapter.notifyDataSetChanged();
 
                                             setParticipants(model);
-                                            showDialogMessageSuccess("","You have rejoined " + title);
+                                            showDialogMessageSuccess("You have rejoined " + title);
 
 
                                             NotificationHelper helper = new NotificationHelper(getApplicationContext());
@@ -1564,7 +1564,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                             } else {
                                 //linkRef.child(communityRefLinkId).removeValue();
                                 Log.i("linkref",communityRefLinkId);
-                                showDialogMessageError("","Invite-Link expired. Get a new Invite-Link.");
+                                showDialogMessageError("Invite-Link expired. Get a new Invite-Link.");
                             }
                         } catch (NumberFormatException e) {
                             if (remainingCount.equals("inf")) {
@@ -1612,7 +1612,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                         CommunityModel model = new CommunityModel(title, description, status, starttime, endtime, type, coverimage, admin, communityId, isReported);
                                         communityDataList.add(1, model);
                                         mainHorizontalAdapter.notifyItemInserted(1);
-                                        showDialogMessageSuccess("","You have been added to " + title);
+                                        showDialogMessageSuccess("You have been added to " + title);
 
                                         photographerList.add(0, new PhotographerModel("add", "add", "add", "add"));
 
@@ -1669,19 +1669,19 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                     } else {
                         //Log.i("ClickTime","S : "+serverTimeInMillis+" E : "+endtime);
-                        showDialogMessageError("Album Inactive", "The album has expired or admin has made the album inactive.");
+                        showDialogMessageError("The album has expired or admin has made the album inactive.");
                         linkRef.child(communityRefLinkId).removeValue();
                     }
 
                 } else {
                     linkRef.child(communityRefLinkId).removeValue();
-                    showDialogMessageError("Album Inactive", "The album has expired or admin has made the album inactive.");
+                    showDialogMessageError("The album has expired or admin has made the album inactive.");
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                showDialogMessageError("Error Caught", databaseError.toString());
+                showDialogMessageError("Error Caught"+databaseError.toString());
 
             }
         });
@@ -2430,7 +2430,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
-                showDialogMessageInfo("","Uploading profile picture. Please wait...");
+                showDialogMessageInfo("Uploading profile picture. Please wait...");
                 Uri resultUri = result.getUri();
                 final String current_u_i_d = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -2459,11 +2459,11 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                                         participantsAdapter.notifyItemChanged(i);
                                                                     }
                                                                 }
-                                                                showDialogMessageSuccess("","Successfully uploaded your profile picture.");
+                                                                showDialogMessageSuccess("Successfully uploaded your profile picture.");
 
                                                             }
                                                         } else {
-                                                            showDialogMessageError("","DB:"+task.getException().getMessage());
+                                                            showDialogMessageError("DB:"+task.getException().getMessage());
                                                         }
 
                                                     }
@@ -2472,7 +2472,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-                                        showDialogMessageError("",e.getMessage());
+                                        showDialogMessageError(""+e.getMessage());
 
                                     }
                                 });
@@ -2481,14 +2481,14 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                         }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                          showDialogMessageError("",e.getMessage());
+                          showDialogMessageError(""+e.getMessage());
                     }
                 });
 
             }
 
         } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-            showDialogMessageError("","Image cropping error. Please try again.");
+            showDialogMessageError("Image cropping error. Please try again.");
         }
 
 
@@ -2498,7 +2498,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     private void uploadCoverPhoto(Uri imageUri) {
 
         // MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.VISIBLE);
-        showDialogMessageInfo("","Uploading the cover photo. Please wait.");
+        showDialogMessageInfo("Uploading the cover photo. Please wait.");
         if (!TextUtils.isEmpty(PostKeyForEdit) && imageUri != null) {
 
             StorageReference
@@ -2524,12 +2524,12 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                    public void onComplete(@NonNull Task<Void> task) {
                                        if (task.isSuccessful()) {
                                            //MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-                                           showDialogMessageSuccess("","Successfully uploaded the cover photo.");
+                                           showDialogMessageSuccess("Successfully uploaded the cover photo.");
                                            communityDataList.get(position).setCoverImage(uri.toString());
                                            mainHorizontalAdapter.notifyItemChanged(position);
                                        } else {
                                            // MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-                                           showDialogMessageError("","Failed to uploaded the cover photo. Please try again.");
+                                           showDialogMessageError("Failed to uploaded the cover photo. Please try again.");
 
                                        }
                                    }
@@ -2539,7 +2539,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                        }).addOnFailureListener(new OnFailureListener() {
                            @Override
                            public void onFailure(@NonNull Exception e) {
-                               showDialogMessageError("","Failed to uploaded the cover photo. Please try again.");
+                               showDialogMessageError("Failed to uploaded the cover photo. Please try again.");
 
                            }
                        });
@@ -2547,7 +2547,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                     } else {
                         //MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-                        showDialogMessageError("","Failed to uploaded the cover photo. Please try again.");
+                        showDialogMessageError("Failed to uploaded the cover photo. Please try again.");
 
 
                     }
@@ -2557,13 +2557,13 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     //MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-                    showDialogMessageError("","Failed to uploaded the cover photo. Please try again.");
+                    showDialogMessageError("Failed to uploaded the cover photo. Please try again.");
                 }
             });
 
         } else {
             // MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-            showDialogMessageError("","Failed to uploaded the cover photo. Please try again.");
+            showDialogMessageError("Failed to uploaded the cover photo. Please try again.");
         }
 
 
@@ -2653,16 +2653,16 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
     }
 
-    public void showDialogMessageError(String title, String message) {
+    public void showDialogMessageError(String message) {
        SnackShow snackShow=new SnackShow(rootForMainActivity,MainActivity.this);
        snackShow.showErrorSnack(message);
     }
 
-    public void showDialogMessageSuccess(String title, String message) {
+    public void showDialogMessageSuccess(String message) {
         SnackShow snackShow=new SnackShow(rootForMainActivity,MainActivity.this);
         snackShow.showSuccessSnack(message);
     }
-    public void showDialogMessageInfo(String title, String message) {
+    public void showDialogMessageInfo(String message) {
         SnackShow snackShow=new SnackShow(rootForMainActivity,MainActivity.this);
         snackShow.showInfoSnack(message);
     }
@@ -2672,12 +2672,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         optionsBottomSheetFragment.dismiss();
     }
 
-    @Override
-    public void provideQueueOption(View v) {
-
-        provideQueueOptions(v);
-
-    }
 
     public class PostGridViewHolder extends RecyclerView.ViewHolder {
         ImageView PostImageView;
