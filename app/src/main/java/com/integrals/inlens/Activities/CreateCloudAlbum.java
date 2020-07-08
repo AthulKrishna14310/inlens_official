@@ -318,7 +318,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
         Intent travelBackInTimeIntent = getIntent();
         String typeTravelBackInTime = travelBackInTimeIntent.getType();
         String actionTravelBackInTime = travelBackInTimeIntent.getAction();
-        if(actionTravelBackInTime.equals(Intent.ACTION_SEND) && typeTravelBackInTime != null && typeTravelBackInTime.startsWith("image/"))
+        if(actionTravelBackInTime != null &&  actionTravelBackInTime.equals(Intent.ACTION_SEND) && typeTravelBackInTime != null && typeTravelBackInTime.startsWith("image/"))
         {
             Uri imageUri = (Uri) travelBackInTimeIntent.getParcelableExtra(Intent.EXTRA_STREAM);
             String[] projection = {MediaStore.Images.Media.DATA};
@@ -682,6 +682,9 @@ public class CreateCloudAlbum extends AppCompatActivity {
                 public void onComplete(@NonNull Task<Void> task) {
                     if(task.isSuccessful())
                     {
+
+                        MainActivity.getInstance().finish();
+
                         SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
                         SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
                         ceditor.putString("id", newCommunityId);

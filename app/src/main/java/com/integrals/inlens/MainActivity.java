@@ -217,6 +217,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
     String appTheme = "", mainSelectedKey = AppConstants.NOT_AVALABLE;
 
+    static MainActivity mainActivity;
+
     public MainActivity() {
     }
 
@@ -244,6 +246,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mainActivity = this;
         
         // to calculate screen width
         DisplayMetrics metrics = new DisplayMetrics();
@@ -628,6 +632,11 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         });
     }
 
+
+    public static MainActivity getInstance()
+    {
+        return mainActivity;
+    }
 
     public void provideQueueOptions(View rootId) {
         Snackbar uploadFromQueue = Snackbar.make(rootId, "Upload all queued photos", BaseTransientBottomBar.LENGTH_INDEFINITE).setAction("Options", new View.OnClickListener() {
