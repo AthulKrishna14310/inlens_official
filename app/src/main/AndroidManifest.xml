@@ -77,7 +77,13 @@
             android:name=".Activities.CreateCloudAlbum"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
-            />
+            android:label="Create album">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="image/*"/>
+            </intent-filter>
+        </activity>
         <activity
             android:name=".Activities.QRCodeReader"
             android:screenOrientation="portrait"
