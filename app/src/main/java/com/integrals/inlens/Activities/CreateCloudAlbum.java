@@ -667,7 +667,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
             communitymap.put(FirebaseConstants.COMMUNITYDESC,descriptionValue);
             communitymap.put(FirebaseConstants.COMMUNITYSTATUS,"T");
             communitymap.put(FirebaseConstants.COMMUNITYTYPE,eventType);
-            communitymap.put(FirebaseConstants.COMMUNITYENDTIME, getTimeStamp(albumTime));
+            communitymap.put(FirebaseConstants.COMMUNITYENDTIME, Long.parseLong(getTimeStamp(albumTime)));
             if(travelBackInTime)
             {
                 communitymap.put(FirebaseConstants.COMMUNITYSTARTTIME,startTime);
