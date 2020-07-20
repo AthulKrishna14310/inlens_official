@@ -78,8 +78,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="scalingPercent" value="99" />
-                                                <entry key="trimmed" value="true" />
+                                                <entry key="scalingPercent" value="72" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -104,10 +103,8 @@
                                       <entry key="backgroundAssetType" value="COLOR" />
                                       <entry key="backgroundColor" value="ffffff" />
                                       <entry key="backgroundImage" value="$PROJECT_DIR$/app/src/main/res/drawable/transparent_background.xml" />
-                                      <entry key="foregroundImage" value="/home/athul/Downloads/red-carpet.png" />
-                                      <entry key="legacyIconShape" value="CIRCLE" />
-                                      <entry key="outputName" value="ic_ceremony" />
-                                      <entry key="showGrid" value="true" />
+                                      <entry key="foregroundImage" value="/home/athul/Downloads/hngout.png" />
+                                      <entry key="outputName" value="ic_hangout" />
                                     </map>
                                   </option>
                                 </PersistentState>
