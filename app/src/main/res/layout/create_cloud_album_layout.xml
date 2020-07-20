@@ -77,6 +77,8 @@
                         android:textColor="?attr/colorPrimary"
                         android:fontFamily="@font/base_font"/>
 
+
+
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/AlbumTitleEdittextLayout"
                         android:layout_width="match_parent"
@@ -148,7 +150,7 @@
 
                             android:textSize="16sp"
 
-                           />
+                            />
 
                         <ImageButton
                             android:id="@+id/date_range_button"
@@ -215,6 +217,18 @@
                             />
                     </RelativeLayout>
 
+                    <TextView
+                        android:id="@+id/overwrite_album"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:fontFamily="@font/base_font"
+                        android:text="TextView"
+                        android:textColor="?attr/red_cancel_icon"
+                        android:textSize="12sp"
+                        android:visibility="gone"
+                        android:layout_marginTop="8dp"
+                        />
 
                     <ProgressBar
                         android:id="@+id/UploadProgress"
@@ -252,3 +266,4 @@
             android:textSize="18sp" />
     </com.balysv.materialripple.MaterialRippleLayout>
 </LinearLayout>
+

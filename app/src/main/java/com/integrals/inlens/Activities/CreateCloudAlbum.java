@@ -8,9 +8,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -58,6 +61,7 @@ import com.integrals.inlens.Notification.NotificationHelper;
 import com.integrals.inlens.R;
 import com.integrals.inlens.WorkManager.UploadWorker;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -88,10 +92,12 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
     FirebaseAuth firebaseAuth;
     DatabaseReference photographerRef, currentUserRef, communityRef;
-    List<String> userCommunityIdList;
     String currentUserId;
     LinearLayout rootCreateCloudAlbum;
     private String globalID="";
+
+    boolean travelBackInTime=false;
+    long startTime=0;
 
     public CreateCloudAlbum() {
     }
@@ -151,14 +157,13 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
 
         rootCreateCloudAlbum = findViewById(R.id.rootCreateCloudAlbum);
-        userCommunityIdList = new ArrayList<>();
+
         firebaseAuth = FirebaseAuth.getInstance();
         currentUserId = firebaseAuth.getCurrentUser().getUid();
         currentUserRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USERS).child(currentUserId);
         photographerRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.PARTICIPANTS);
         communityRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.COMMUNITIES);
 
-        userCommunityIdList = getIntent().getExtras().getStringArrayList(AppConstants.USER_ID_LIST);
         EventDialogInit();
 
         eventPickerCheckbox = findViewById(R.id.EventTypeText);
@@ -253,7 +258,8 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         showDialogue("No Internet. Please check your internet connection and try again", false);
 
                     } else {
-                        uploadNewAlbumData();
+                        uploadNewAlbumData(travelBackInTime,startTime);
+
                     }
                 } else {
                     SnackShow snackShow=new SnackShow(rootCreateCloudAlbum,this);
@@ -272,6 +278,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
             }
         });
+
 
 
         createCloudAlbumBackButton.setOnClickListener(new View.OnClickListener() {
@@ -307,6 +314,88 @@ public class CreateCloudAlbum extends AppCompatActivity {
                 eventDialog.show();
             }
         });
+
+        Intent travelBackInTimeIntent = getIntent();
+        String typeTravelBackInTime = travelBackInTimeIntent.getType();
+        String actionTravelBackInTime = travelBackInTimeIntent.getAction();
+        if(actionTravelBackInTime != null &&  actionTravelBackInTime.equals(Intent.ACTION_SEND) && typeTravelBackInTime != null && typeTravelBackInTime.startsWith("image/"))
+        {
+            Uri imageUri = (Uri) travelBackInTimeIntent.getParcelableExtra(Intent.EXTRA_STREAM);
+            String[] projection = {MediaStore.Images.Media.DATA};
+            File imgFile = new File(getFilePathFromUri(projection, imageUri));
+
+            // todo determine whether the photo was taken today
+            DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+            Date date = null;
+            try {
+                String dateformat = android.text.format.DateFormat.format("dd-MM-yyyy", new Date(System.currentTimeMillis())).toString();
+                date = (Date) formatter.parse(dateformat);
+                Log.i("travelback","time "+date);
+                long output = date.getTime() / 1000L;
+                String str = Long.toString(output);
+                long timestamp = Long.parseLong(str) * 1000;
+                Log.i("travelback","mgFile.lastModified() "+imgFile.lastModified());
+                Log.i("travelback","timestamp "+timestamp);
+                Log.i("travelback","dateformat "+dateformat);
+                if(imgFile.lastModified() > timestamp)
+                {
+                    travelBackInTime=true;
+                    startTime=imgFile.lastModified();
+                    SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
+                    String id = CurrentActiveCommunity.getString("id",AppConstants.NOT_AVALABLE);
+                    if(!id.equals(AppConstants.NOT_AVALABLE))
+                    {
+                        Snackbar activeAlbum =  Snackbar.make(rootCreateCloudAlbum,"Overwrite the current album?",BaseTransientBottomBar.LENGTH_INDEFINITE);
+                        activeAlbum.setAction("Cancel", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                                onBackPressed();
+                            }
+                        });
+                        activeAlbum.show();
+                        TextView overWriteTextView =  findViewById(R.id.overwrite_album);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                activeAlbum.dismiss();
+                                overWriteTextView.setVisibility(View.VISIBLE);
+                                overWriteTextView.setText("This album will overwrite the current active album.");
+
+
+                            }
+                        },5000);
+                    }
+                }
+                else
+                {
+                    travelBackInTime=false;
+                    startTime=0;
+                    showDialogMessageInfo("Create albums with photos taken today.");
+                }
+            } catch (ParseException e) {
+                Log.i("travelback","error "+e);
+                Snackbar.make(rootCreateCloudAlbum,"Some error occurred. Try again",BaseTransientBottomBar.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+
+        }
+
+    }
+
+    public String getFilePathFromUri(String[] projection, Uri uri) {
+        Cursor c = null;
+        try {
+            c = getContentResolver().query(uri, projection, null, null, null);
+            int columnIndex = c.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            c.moveToFirst();
+            return c.getString(columnIndex);
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
     }
 
     public void showDialogMessageError(String message) {
@@ -560,7 +649,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
     }
 
 
-    private void uploadNewAlbumData() {
+    private void uploadNewAlbumData(boolean travelBackInTime,long startTime) {
 
         final String titleValue = albumTitleEditText.getText().toString().trim();
         final String descriptionValue = albumDescEditText.getText().toString().trim();
@@ -578,14 +667,24 @@ public class CreateCloudAlbum extends AppCompatActivity {
             communitymap.put(FirebaseConstants.COMMUNITYDESC,descriptionValue);
             communitymap.put(FirebaseConstants.COMMUNITYSTATUS,"T");
             communitymap.put(FirebaseConstants.COMMUNITYTYPE,eventType);
-            communitymap.put(FirebaseConstants.COMMUNITYENDTIME, getTimeStamp(albumTime));
-            communitymap.put(FirebaseConstants.COMMUNITYSTARTTIME,ServerValue.TIMESTAMP);
+            communitymap.put(FirebaseConstants.COMMUNITYENDTIME, Long.parseLong(getTimeStamp(albumTime)));
+            if(travelBackInTime)
+            {
+                communitymap.put(FirebaseConstants.COMMUNITYSTARTTIME,startTime);
+            }
+            else
+            {
+                communitymap.put(FirebaseConstants.COMMUNITYSTARTTIME,ServerValue.TIMESTAMP);
+            }
             communitymap.put(FirebaseConstants.COMMUNITYADMIN,currentUserId);
             communityRef.child(newCommunityId).setValue(communitymap).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if(task.isSuccessful())
                     {
+
+                        MainActivity.getInstance().finish();
+
                         SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
                         SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
                         ceditor.putString("id", newCommunityId);
@@ -604,7 +703,6 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).setValue(newCommunityId);
                         submitButton.setEnabled(false);
                         uploadProgressbar.setVisibility(View.GONE);
-                        userCommunityIdList.add(newCommunityId);
 
                         final long dy = TimeUnit.MILLISECONDS.toDays(Long.parseLong(getTimeStamp(albumTime))-System.currentTimeMillis());
                         final long hr = TimeUnit.MILLISECONDS.toHours(Long.parseLong(getTimeStamp(albumTime))-System.currentTimeMillis())
@@ -646,6 +744,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         handler.postDelayed(new Runnable() {
                             public void run() {
                                 createdIntent="YES";
+                                Log.i("travelback","createdIntent "+createdIntent);
                                 onBackPressed();
                             }
                         }, 3000);
@@ -734,7 +833,6 @@ public class CreateCloudAlbum extends AppCompatActivity {
         } else {
 
             Intent mainIntent = new Intent(CreateCloudAlbum.this, MainActivity.class);
-            mainIntent.putStringArrayListExtra(AppConstants.USER_ID_LIST, (ArrayList<String>) userCommunityIdList);
             mainIntent.putExtra("CREATED",createdIntent);
             mainIntent.putExtra("ID",globalID);
             startActivity(mainIntent);

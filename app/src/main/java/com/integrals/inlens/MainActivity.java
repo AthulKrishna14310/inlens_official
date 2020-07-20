@@ -217,6 +217,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
     String appTheme = "", mainSelectedKey = AppConstants.NOT_AVALABLE;
 
+    static MainActivity mainActivity;
+
     public MainActivity() {
     }
 
@@ -244,6 +246,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mainActivity = this;
         
         // to calculate screen width
         DisplayMetrics metrics = new DisplayMetrics();
@@ -629,6 +633,11 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     }
 
 
+    public static MainActivity getInstance()
+    {
+        return mainActivity;
+    }
+
     public void provideQueueOptions(View rootId) {
         Snackbar uploadFromQueue = Snackbar.make(rootId, "Upload all queued photos", BaseTransientBottomBar.LENGTH_INDEFINITE).setAction("Options", new View.OnClickListener() {
             @Override
@@ -820,6 +829,43 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             editor.putString("time", String.valueOf(System.currentTimeMillis()));
             editor.commit();
         }
+
+
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        communitiesListener = currentUserRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                userCommunityIdList = new ArrayList<>();
+                if (dataSnapshot.hasChild(FirebaseConstants.COMMUNITIES)) {
+                    for (DataSnapshot snapshot : dataSnapshot.child(FirebaseConstants.COMMUNITIES).getChildren()) {
+                        userCommunityIdList.add(snapshot.getKey());
+                    }
+                    Collections.sort(userCommunityIdList, Collections.reverseOrder());
+
+                }
+                if (dataSnapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID)) {
+                    mainAddPhotosFab.show();
+                    String activeAlbum = dataSnapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString();
+                    userCommunityIdList.remove(activeAlbum);
+                    userCommunityIdList.add(0,activeAlbum);
+                    getCloudAlbumData(userCommunityIdList);
+                } else {
+                    mainAddPhotosFab.hide();
+                    getCloudAlbumData(userCommunityIdList);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -837,12 +883,17 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                         userCommunityIdList.add(snapshot.getKey());
                     }
                     Collections.sort(userCommunityIdList, Collections.reverseOrder());
-                    getCloudAlbumData(userCommunityIdList);
+
                 }
-                if (dataSnapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID) && isConnectedToNet()) {
+                if (dataSnapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID)) {
                     mainAddPhotosFab.show();
+                    String activeAlbum = dataSnapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString();
+                    userCommunityIdList.remove(activeAlbum);
+                    userCommunityIdList.add(0,activeAlbum);
+                    getCloudAlbumData(userCommunityIdList);
                 } else {
                     mainAddPhotosFab.hide();
+                    getCloudAlbumData(userCommunityIdList);
                 }
             }
 
@@ -906,9 +957,12 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                     try {
                         String qrIntent = getIntent().getStringExtra("CREATED");
                         String id = getIntent().getStringExtra("ID");
+                        Log.i("travelback","qrIntent"+qrIntent);
                         if ((!qrIntent.isEmpty()) && (!id.isEmpty())) {
+                            Log.i("travelback","qrIntent id non empty");
+
                             if (qrIntent.contentEquals("YES")) {
-                                if (displayed == false) {
+                                if (!displayed) {
 
                                     //PURPOSE OF USER DIRECT
                                     initialStart();
@@ -1009,7 +1063,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
     private void initialStart() {
         //PURPOSE OF USER DIRECT
-
         MainActivity.this.getIntent().putExtra("CREATED", "NO");
         MainActivity.this.getIntent().putExtra("ID", "NULL");
         qrCodeBottomSheet = new QRCodeBottomSheet(MainActivity.this, currentActiveCommunityID, linkRef, true, MainActivity.this);
@@ -1711,7 +1764,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             provideQueueOptions(rootForMainActivity);
         } else {
             if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
-                startActivity(new Intent(MainActivity.this, CreateCloudAlbum.class).putStringArrayListExtra(AppConstants.USER_ID_LIST, (ArrayList<String>) userCommunityIdList));
+                startActivity(new Intent(MainActivity.this, CreateCloudAlbum.class));
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 finish();
             } else {
