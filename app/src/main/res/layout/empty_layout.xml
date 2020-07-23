@@ -22,9 +22,8 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:textAlignment="center"
-        android:fontFamily="@font/base_font"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
         android:textColor="?attr/colorPrimary"
-        android:textSize="14sp"
         android:text="@string/intruction" />
 
 
@@ -46,10 +45,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="TAKE PHOTOS"
-            android:textSize="14sp"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
             android:maxLines="1"
-            android:fontFamily="@font/base_font"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
             android:textColor="?attr/colorPrimary" />
     </com.balysv.materialripple.MaterialRippleLayout>
 

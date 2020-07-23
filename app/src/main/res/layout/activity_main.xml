@@ -6,7 +6,6 @@
     android:id="@+id/root_for_main_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     android:background="?attr/default_bg_color"
     tools:context=".MainActivity">
 
@@ -86,11 +85,10 @@
                                     android:layout_marginRight="10dp"
                                     android:layout_marginBottom="10dp"
                                     android:background="?attr/default_bg_color"
-                                    android:fontFamily="@font/base_font"
+                                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                                     android:text="Participants"
                                     android:textColor="?attr/colorPrimary"
-                                    android:textSize="14sp"
-                                    android:textStyle="bold"/>
+                                    />
 
                                 <androidx.recyclerview.widget.RecyclerView
                                     android:id="@+id/main_bottomsheet_particpants_bottomsheet_recyclerview"
@@ -115,11 +113,9 @@
                             android:layout_marginRight="10dp"
                             android:layout_marginBottom="10dp"
                             android:background="?attr/default_bg_color"
-                            android:fontFamily="@font/base_font"
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                             android:text="Photos"
                             android:textColor="?attr/colorPrimary"
-                            android:textSize="14sp"
-                            android:textStyle="bold"
                             android:visibility="gone" />
 
                     </LinearLayout>
@@ -155,12 +151,10 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerInParent="true"
                                     android:background="?attr/default_dim_bg"
-                                    android:fontFamily="@font/base_font"
+                                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                                     android:text="Shared Albums"
                                     android:textColor="?attr/colorPrimary"
-                                    android:textSize="20sp"
-
-                                    android:textStyle="normal" />
+                                     />
 
                                 <ImageButton
                                     android:id="@+id/nav_open"
@@ -247,7 +241,23 @@
                 android:background="?attr/default_bg_color"
                 app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"></androidx.recyclerview.widget.RecyclerView>
 
-
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:id="@+id/fabadd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                app:icon="@drawable/ic_cloud_upload_black_24dp"
+                app:iconTint="?attr/action_secondary"
+                app:rippleColor="?attr/colorSecondary"
+                android:textColor="?attr/colorSecondary"
+                app:iconSize="24dp"
+                app:elevation="8dp"
+                android:layout_gravity="right|bottom"
+                android:visibility="visible"
+                android:text="Upload"
+                android:backgroundTint="?attr/image_bg_color"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:textAllCaps="false"/>
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
@@ -261,32 +271,8 @@
             android:progressTint="?attr/colorAccent"
             android:visibility="invisible" />
 
-        <com.skyfishjy.library.RippleBackground
-            android:id="@+id/content"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            app:rb_color="?attr/colorPrimary"
-            app:rb_duration="2500"
-            app:rb_radius="12dp"
-            app:rb_rippleAmount="4"
-            app:rb_scale="4"
-            app:rb_strokeWidth="8dp"
-            app:rb_type="fillRipple">
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fabadd"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:backgroundTint="?attr/action_secondary"
-                android:src="@drawable/ic_add_a_photo_24dp"
-                android:tint="?attr/default_bg_color"
-                android:visibility="gone"
-                app:fabSize="normal" />
-        </com.skyfishjy.library.RippleBackground>
+
 
         <RelativeLayout
             android:id="@+id/main_no_internet_relativelayout"

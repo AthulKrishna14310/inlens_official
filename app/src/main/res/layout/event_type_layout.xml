@@ -25,10 +25,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:text="Select Event Type"
-        android:textSize="20sp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
         android:textColor="?attr/colorPrimary"
-        android:textStyle="bold"
-        android:fontFamily="@font/base_font"
         android:layout_marginBottom="10dp"
         android:layout_gravity="center_horizontal"/>
 
@@ -43,14 +41,12 @@
             android:layout_height="50dp"
             android:layout_gravity="center_vertical"
             android:layout_margin="8dp"
-            android:fontFamily="@font/base_font"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
             android:layout_weight="1"
-            android:background="@drawable/radiobutton_background"
             android:checked="false"
             android:padding="8dp"
-            android:shadowColor="?attr/colorPrimary"
             android:text="#Ceremony"
-            android:textColor="?attr/colorPrimary"/>
+            android:textColor="?attr/default_bg_color"/>
 
         <Button
             android:id="@+id/event_type_hangouts_btn"
@@ -58,12 +54,11 @@
             android:layout_height="50dp"
             android:layout_gravity="center_vertical"
             android:layout_margin="8dp"
-            android:fontFamily="@font/base_font"
             android:layout_weight="1"
-            android:background="@drawable/radiobutton_background"
             android:checked="false"
             android:padding="8dp"
-            android:textColor="?attr/colorPrimary"
+            android:textColor="?attr/default_bg_color"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
             android:text="#Hangouts" />
 
 
@@ -80,12 +75,11 @@
             android:layout_height="50dp"
             android:layout_gravity="center_vertical"
             android:layout_margin="8dp"
-            android:fontFamily="@font/base_font"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
             android:layout_weight="1"
-            android:background="@drawable/radiobutton_background"
             android:checked="false"
             android:padding="8dp"
-            android:textColor="?attr/colorPrimary"
+            android:textColor="?attr/default_bg_color"
             android:text="#Party" />
 
         <Button
@@ -94,12 +88,11 @@
             android:layout_height="50dp"
             android:layout_gravity="center_vertical"
             android:layout_margin="8dp"
-            android:fontFamily="@font/base_font"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
             android:layout_weight="1"
-            android:background="@drawable/radiobutton_background"
             android:checked="false"
             android:padding="8dp"
-            android:textColor="?attr/colorPrimary"
+            android:textColor="?attr/default_bg_color"
             android:text="#Travel" />
 
     </LinearLayout>
@@ -117,11 +110,10 @@
             android:layout_gravity="center_vertical"
             android:layout_margin="8dp"
             android:layout_weight="1"
-            android:background="@drawable/radiobutton_background"
             android:checked="false"
             android:padding="8dp"
-            android:textColor="?attr/colorPrimary"
-            android:fontFamily="@font/base_font"
+            android:textColor="?attr/default_bg_color"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
             android:text="#Wedding" />
 
         <Button
@@ -131,11 +123,10 @@
             android:layout_gravity="center_vertical"
             android:layout_margin="8dp"
             android:layout_weight="1"
-            android:background="@drawable/radiobutton_background"
             android:checked="false"
-            android:textColor="?attr/colorPrimary"
-            android:fontFamily="@font/base_font"
+            android:textColor="?attr/default_bg_color"
             android:padding="8dp"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
             android:text="Others" />
 
     </LinearLayout>
@@ -148,9 +139,7 @@
         android:layout_margin="10dp"
         android:text="Selected Type :"
         android:textColor="?attr/colorPrimary"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:fontFamily="@font/base_font"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
         android:layout_gravity="center_horizontal"
         />
 

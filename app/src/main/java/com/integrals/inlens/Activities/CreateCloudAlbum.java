@@ -473,7 +473,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
     private void EventDialogInit() {
 
-        eventDialog = new Dialog(this, android.R.style.Theme_Light_NoTitleBar);
+        eventDialog = new Dialog(this, R.style.AppTheme);
         eventDialog.setCancelable(true);
         eventDialog.setCanceledOnTouchOutside(false);
         eventDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -518,8 +518,6 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
         EventCeremony.setOnClickListener(view -> {
 
-            SetCheckFalse(EventWedding, EventOthers, EventParty, EventTravel, EventHangout);
-            EventCeremony.setBackgroundResource(R.drawable.radiobutton_pressed);
             EventCeremony.setTextColor(cf_bg_color);
             eventType = "Ceremony";
             SelectedEvent.setText("Selected Event Type : " + eventType);
@@ -537,9 +535,6 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
         EventWedding.setOnClickListener(view -> {
 
-            SetCheckFalse(EventCeremony, EventOthers, EventParty, EventTravel, EventHangout);
-            EventWedding.setBackgroundResource(R.drawable.radiobutton_pressed);
-            EventWedding.setTextColor(cf_bg_color);
             eventType = "Wedding";
             SelectedEvent.setText("Selected Event Type : " + eventType);
             if (!TextUtils.isEmpty(eventType)) {
@@ -556,9 +551,6 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
         EventOthers.setOnClickListener(view -> {
 
-            SetCheckFalse(EventWedding, EventCeremony, EventParty, EventTravel, EventHangout);
-            EventOthers.setBackgroundResource(R.drawable.radiobutton_pressed);
-            EventOthers.setTextColor(cf_bg_color);
             eventType = "Others";
             SelectedEvent.setText("Selected Event Type : " + eventType);
             if (!TextUtils.isEmpty(eventType)) {
@@ -575,9 +567,6 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
         EventParty.setOnClickListener(view -> {
 
-            SetCheckFalse(EventWedding, EventOthers, EventCeremony, EventTravel, EventHangout);
-            EventParty.setBackgroundResource(R.drawable.radiobutton_pressed);
-            EventParty.setTextColor(cf_bg_color);
             eventType = "Party";
             SelectedEvent.setText("Selected Event Type : " + eventType);
             if (!TextUtils.isEmpty(eventType)) {
@@ -594,9 +583,6 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
         EventTravel.setOnClickListener(view -> {
 
-            SetCheckFalse(EventWedding, EventOthers, EventParty, EventCeremony, EventHangout);
-            EventTravel.setBackgroundResource(R.drawable.radiobutton_pressed);
-            EventTravel.setTextColor(cf_bg_color);
             eventType = "Travel";
             SelectedEvent.setText("Selected Event Type : " + eventType);
             if (!TextUtils.isEmpty(eventType)) {
@@ -613,9 +599,6 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
         EventHangout.setOnClickListener(view -> {
 
-            SetCheckFalse(EventWedding, EventOthers, EventParty, EventCeremony, EventTravel);
-            EventHangout.setBackgroundResource(R.drawable.radiobutton_pressed);
-            EventHangout.setTextColor(cf_bg_color);
             eventType = "Hangouts";
             SelectedEvent.setText("Selected Event Type : " + eventType);
             if (!TextUtils.isEmpty(eventType)) {
@@ -633,20 +616,20 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
     }
 
-    private void SetCheckFalse(Button btn1, Button btn2, Button btn3, Button btn4, Button btn5) {
-
-        btn1.setBackgroundResource(R.drawable.radiobutton_unpressed);
-        btn1.setTextColor(colorPrimary);
-        btn2.setBackgroundResource(R.drawable.radiobutton_unpressed);
-        btn2.setTextColor(colorPrimary);
-        btn3.setBackgroundResource(R.drawable.radiobutton_unpressed);
-        btn3.setTextColor(colorPrimary);
-        btn4.setBackgroundResource(R.drawable.radiobutton_unpressed);
-        btn4.setTextColor(colorPrimary);
-        btn5.setBackgroundResource(R.drawable.radiobutton_unpressed);
-        btn5.setTextColor(colorPrimary);
-
-    }
+//    private void SetCheckFalse(Button btn1, Button btn2, Button btn3, Button btn4, Button btn5) {
+//
+////        btn1.setBackgroundResource(R.drawable.radiobutton_unpressed);
+////        btn1.setTextColor(colorPrimary);
+////        btn2.setBackgroundResource(R.drawable.radiobutton_unpressed);
+////        btn2.setTextColor(colorPrimary);
+////        btn3.setBackgroundResource(R.drawable.radiobutton_unpressed);
+////        btn3.setTextColor(colorPrimary);
+////        btn4.setBackgroundResource(R.drawable.radiobutton_unpressed);
+////        btn4.setTextColor(colorPrimary);
+////        btn5.setBackgroundResource(R.drawable.radiobutton_unpressed);
+////        btn5.setTextColor(colorPrimary);
+//
+//    }
 
 
     private void uploadNewAlbumData(boolean travelBackInTime,long startTime) {

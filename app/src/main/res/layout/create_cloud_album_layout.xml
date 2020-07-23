@@ -15,6 +15,15 @@
         android:layout_weight="1.0"
         android:background="?attr/default_bg_color">
 
+        <ProgressBar
+            android:id="@+id/UploadProgress"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:indeterminateTint="?attr/colorSecondary"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="16dp"
+            android:visibility="invisible" />
         <ImageButton
             android:id="@+id/create_cloud_album_backbutton"
             android:layout_width="@dimen/back_button_size_create_cloud_album_activity"
@@ -30,23 +39,20 @@
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="52dp"
             android:background="?attr/default_bg_color"
             android:orientation="vertical"
-            android:padding="@dimen/spacing_smlarge">
+            android:padding="16dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/underline_margin_left_create_cloud_album_activity"
                 android:layout_marginBottom="4dp"
-                android:fontFamily="@font/base_font"
                 android:text="Create"
-                android:textStyle="bold"
-
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
                 android:textColor="?attr/colorPrimary"
-                android:textSize="24sp" />
+                 />
 
 
 
@@ -73,9 +79,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Enter the Shared Cloud-Album informations for this event"
-                        android:textSize="16sp"
                         android:textColor="?attr/colorPrimary"
-                        android:fontFamily="@font/base_font"/>
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                        />
 
 
 
@@ -85,21 +91,27 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/user_name_activity_edittext_layout"
                         android:layout_marginTop="24dp"
-                        app:hintEnabled="true"
-                        android:padding="8dp"
                         app:boxBackgroundMode="outline"
+                        app:boxCornerRadiusTopEnd="4dp"
+                        app:boxCornerRadiusBottomEnd="4dp"
+                        app:boxCornerRadiusBottomStart="4dp"
+                        app:boxCornerRadiusTopStart="4dp"
+                        app:boxStrokeColor="?attr/colorSecondary"
+                        app:boxStrokeWidth="1dp"
+                        app:boxBackgroundColor="?attr/default_dim_bg"
+                        android:padding="4dp"
+                        app:hintEnabled="true"
                         >
+
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/AlbumTitleEditText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/base_font"
-                            android:backgroundTint="?attr/default_dim_bg"
                             android:hint="Title"
                             android:inputType="text"
                             android:textColor="?attr/colorSecondary"
-                            android:textSize="22sp"
-                            android:textStyle="bold" />
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+                            />
                     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -108,24 +120,29 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/user_name_activity_edittext_layout"
-                        android:layout_marginTop="24dp"
-                        app:boxBackgroundMode="outline"
+                        android:layout_marginTop="16dp"
                         app:hintEnabled="true"
-                        android:padding="8dp"
+                        app:boxBackgroundMode="outline"
+                        app:boxCornerRadiusTopEnd="4dp"
+                        app:boxCornerRadiusBottomEnd="4dp"
+                        app:boxCornerRadiusBottomStart="4dp"
+                        app:boxCornerRadiusTopStart="4dp"
+                        app:boxStrokeColor="?attr/colorSecondary"
+                        app:boxStrokeWidth="1dp"
+                        app:boxBackgroundColor="?attr/default_dim_bg"
+                        android:padding="4dp"
+
                         >
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/AlbumDescriptionEditText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:backgroundTint="?attr/default_dim_bg"
-                            android:fontFamily="@font/base_font"
                             android:hint="Description"
+                            android:inputType="text"
                             android:textColor="?attr/colorSecondary"
-                            android:textColorHint="#cdcdcd"
-                            android:textSize="22sp"
-                            android:textStyle="bold"
-                            android:inputType="text"/>
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+                             />
                     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -142,13 +159,10 @@
                             android:layout_centerInParent="true"
                             android:layout_marginLeft="50dp"
                             android:layout_marginRight="40dp"
-                            android:fontFamily="@font/base_font"
                             android:text="Expiry date"
                             android:alpha="0.8"
-                            android:textStyle="bold"
                             android:textColor="?attr/colorSecondary"
-
-                            android:textSize="16sp"
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
 
                             />
 
@@ -175,10 +189,10 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginBottom="2dp"
-                        android:fontFamily="@font/base_font"
+
                         android:text="TextView"
                         android:textColor="?attr/red_cancel_icon"
-                        android:textSize="10sp"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
                         android:visibility="gone" />
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -193,12 +207,10 @@
                             android:layout_centerInParent="true"
                             android:layout_marginLeft="50dp"
                             android:layout_marginRight="40dp"
-                            android:fontFamily="@font/base_font"
                             android:text="Event type"
-                            android:textStyle="bold"
                             android:alpha="0.8"
                             android:textColor="?attr/colorSecondary"
-                            android:textSize="16sp"
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                             />
 
                         <ImageButton
@@ -222,21 +234,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:fontFamily="@font/base_font"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
                         android:text="TextView"
                         android:textColor="?attr/red_cancel_icon"
-                        android:textSize="12sp"
                         android:visibility="gone"
                         android:layout_marginTop="8dp"
                         />
 
-                    <ProgressBar
-                        android:id="@+id/UploadProgress"
-                        android:layout_width="@dimen/progress_bar_size_create_album_activity"
-                        android:layout_height="@dimen/progress_bar_size_create_album_activity"
-                        android:layout_gravity="center"
-                        android:layout_margin="@dimen/progress_bar_margin_create_cloud_album_activity"
-                        android:visibility="invisible" />
+
 
 
                 </LinearLayout>
@@ -252,18 +257,17 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_margin="@dimen/done_button_margin_create_cloud_album_activity"
-        android:background="@drawable/create_cloud_album_done_btn_bg"
+        android:background="@drawable/done_btn_bg"
         android:padding="10dp">
         <TextView
             android:id="@+id/DoneButtonTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:fontFamily="@font/base_font"
             android:text="DONE"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             android:textColor="?attr/colorPrimary"
-            android:textSize="18sp" />
+             />
     </com.balysv.materialripple.MaterialRippleLayout>
 </LinearLayout>
 

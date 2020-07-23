@@ -33,23 +33,24 @@
         android:id="@+id/cardcoverphotochange"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:alpha="0.8"
         app:cardBackgroundColor="?attr/default_dim_bg"
-        app:cardPreventCornerOverlap="true"
+        android:alpha="0.8"
         android:layout_gravity="end"
         android:visibility="visible"
         app:cardCornerRadius="12dp"
-        android:layout_margin="1dp"
-        app:cardElevation="0.1dp">
+        app:cardElevation="0.1dp"
+        >
 
-        <Button
+        <ImageButton
             android:id="@+id/coverphotochangebutton"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_gravity="center"
-            android:foregroundTint="?attr/colorSecondary"
             android:background="?selectableItemBackgroundBorderless"
-            android:foreground="@drawable/ic_more_vert_black_24dp" />
+            android:src="@drawable/ic_more_vert_black_24dp"
+
+            android:tint="?attr/colorSecondary"
+            />
 
     </androidx.cardview.widget.CardView>
 
@@ -94,13 +95,12 @@
         android:layout_gravity="bottom"
         android:layout_marginTop="112dp"
         android:background="?attr/default_bg_color"
-        android:fontFamily="@font/base_font"
         android:maxLines="1"
         android:padding="4dp"
         android:singleLine="true"
         android:text="Two Line"
         android:textColor="?attr/colorSecondary"
-        android:textSize="14sp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
 
-        android:textStyle="bold" />
+         />
 </androidx.cardview.widget.CardView>

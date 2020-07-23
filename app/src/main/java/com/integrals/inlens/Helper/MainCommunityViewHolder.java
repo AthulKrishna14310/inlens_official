@@ -4,6 +4,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,7 +17,7 @@ public class MainCommunityViewHolder extends RecyclerView.ViewHolder {
     public TextView AlbumNameTextView;
     public TextView AlbumDescriptionTextView;
     public Button Indicator;
-    public Button menuOptionsButton;
+    public ImageButton menuOptionsButton;
     public CardView coverPhotoChangeCard;
 
     public MainCommunityViewHolder(View itemView) {

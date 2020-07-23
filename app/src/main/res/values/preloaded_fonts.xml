@@ -1,17 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <array name="preloaded_fonts" translatable="false">
-        <item>@font/</item>
-        <item>@font/acme</item>
         <item>@font/base_font</item>
-        <item>@font/cabin</item>
-        <item>@font/comfortaa_bold</item>
-        <item>@font/droid_sans</item>
-        <item>@font/maven_pro_medium</item>
-        <item>@font/montserrat</item>
-        <item>@font/nunito_sans</item>
-        <item>@font/open_sans_light</item>
-        <item>@font/prompt</item>
+        <item>@font/pt_sans_caption</item>
 
 
     </array>

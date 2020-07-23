@@ -46,6 +46,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -80,6 +81,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
@@ -128,6 +130,7 @@ import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -167,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     LinearLayout expandableCardView;
 
 
-    FloatingActionButton mainAddPhotosFab;
+    ExtendedFloatingActionButton mainAddPhotosFab;
 
     DatabaseReference currentUserRef, communityRef, participantRef, postRef, linkRef;
     FirebaseAuth firebaseAuth;
@@ -264,6 +267,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 if (Math.abs(verticalOffset) == appBarLayout.getTotalScrollRange()) {
                     isAppbarOpen = false;
                 } else isAppbarOpen = verticalOffset == 0;
+
             }
         });
 
@@ -271,6 +275,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         // Fab
         mainAddPhotosFab = findViewById(R.id.fabadd);
         mainAddPhotosFab.hide();
+
 
         //photographers cardview
         expandableCardView = findViewById(R.id.photographers);
@@ -612,8 +617,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             }
         });
 
-        rippleBackground = (RippleBackground) findViewById(R.id.content);
-        rippleBackground2 = (RippleBackground) findViewById(R.id.content2);
+
 
 
         findViewById(R.id.plus_button).setOnClickListener(new View.OnClickListener() {
@@ -630,6 +634,11 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
             }
         });
+
+
+
+
+
     }
 
 
@@ -1065,8 +1074,10 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         //PURPOSE OF USER DIRECT
         MainActivity.this.getIntent().putExtra("CREATED", "NO");
         MainActivity.this.getIntent().putExtra("ID", "NULL");
-        qrCodeBottomSheet = new QRCodeBottomSheet(MainActivity.this, currentActiveCommunityID, linkRef, true, MainActivity.this);
-        qrCodeBottomSheet.show(getSupportFragmentManager(), qrCodeBottomSheet.getTag());
+
+
+        //        qrCodeBottomSheet = new QRCodeBottomSheet(MainActivity.this, currentActiveCommunityID, linkRef, true, MainActivity.this);
+//        qrCodeBottomSheet.show(getSupportFragmentManager(), qrCodeBottomSheet.getTag());
 
         displayed = true;
 
@@ -1235,6 +1246,14 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 .start(MainActivity.this);
     }
 
+
+    public DrawerLayout getRootForMainActivity() {
+        return rootForMainActivity;
+    }
+
+    public void setRootForMainActivity(DrawerLayout rootForMainActivity) {
+        this.rootForMainActivity = rootForMainActivity;
+    }
 
     private void decryptDeepLink() {
 
@@ -1809,6 +1828,14 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         }
 
 
+    }
+
+    public ArrayList<String> getUserCommunityIdList() {
+        return userCommunityIdList;
+    }
+
+    public void setUserCommunityIdList(ArrayList<String> userCommunityIdList) {
+        this.userCommunityIdList = userCommunityIdList;
     }
 
     public void scanQR() {
@@ -3088,6 +3115,10 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                             setVerticalRecyclerView(communityDetails.get(position));
                             if (currentActiveCommunityID.equals(communityDetails.get(position).getCommunityID()) && isConnectedToNet()) {
                                 mainAddPhotosFab.show();
+
+
+
+
                             } else {
                                 mainAddPhotosFab.hide();
                                 try {

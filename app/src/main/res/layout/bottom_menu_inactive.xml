@@ -24,11 +24,9 @@
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             android:layout_marginEnd="16dp"
-            android:textStyle="bold"
             android:background="?attr/default_dim_bg"
-            android:fontFamily="@font/base_font"
             android:text="Album Header"
-            android:textSize="24sp"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             android:textColor="?attr/colorSecondary"/>
 
         <TextView
@@ -59,16 +57,14 @@
                 android:id="@+id/AlbumDescriptionBottom"
                 android:layout_height="wrap_content"
                 android:text="Album subtitle"
-                android:textStyle="bold"
+
                 android:layout_marginTop="6dp"
                 android:background="?attr/default_dim_bg"
                 android:layout_marginBottom="6dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:textSize="16sp"
-                android:fontFamily="@font/base_font"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:textColor="?attr/colorSecondary"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 />
 
             <LinearLayout
@@ -84,12 +80,11 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="?attr/default_dim_bg"
-                    android:fontFamily="@font/base_font"
                     android:gravity="center"
                     android:inputType="text"
                     android:text=" Type -"
                     android:textColor="?attr/colorSecondary"
-                    android:textSize="14sp" />
+                 />
 
                 <TextView
                     android:id="@+id/albumtype"
@@ -97,12 +92,12 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="?attr/default_dim_bg"
-                    android:fontFamily="@font/base_font"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
                     android:gravity="center"
                     android:inputType="text"
                     android:text="typw"
                     android:textColor="?attr/colorSecondary"
-                    android:textSize="14sp" />
+                     />
 
             </LinearLayout>
 
@@ -118,12 +113,12 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="?attr/default_dim_bg"
-                    android:fontFamily="@font/base_font"
                     android:gravity="center"
                     android:inputType="text"
                     android:text="Started at -"
                     android:textColor="?attr/colorSecondary"
-                    android:textSize="14sp" />
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+                    />
 
                 <TextView
                     android:id="@+id/albumstartdate"
@@ -131,12 +126,12 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="?attr/default_dim_bg"
-                    android:fontFamily="@font/base_font"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
                     android:gravity="center"
                     android:inputType="text"
                     android:text="start"
                     android:textColor="?attr/colorSecondary"
-                    android:textSize="14sp" />
+                    />
 
             </LinearLayout>
 
@@ -152,12 +147,12 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="?attr/default_dim_bg"
-                    android:fontFamily="@font/base_font"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
                     android:gravity="center"
                     android:inputType="text"
                     android:text="End -"
                     android:textColor="?attr/colorSecondary"
-                    android:textSize="14sp" />
+                    />
 
                 <TextView
                     android:id="@+id/albumenddate"
@@ -165,13 +160,13 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="?attr/default_dim_bg"
-                    android:fontFamily="@font/base_font"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
                     android:gravity="center"
                     android:inputType="text"
 
                     android:text="end"
                     android:textColor="?attr/colorSecondary"
-                    android:textSize="14sp" />
+                    />
             </LinearLayout>
 
 
@@ -219,11 +214,9 @@
                 android:layout_gravity="center_vertical"
                 android:text="Change cover PHOTO"
                 android:textColor="?attr/colorSecondary"
-                android:textSize="14sp"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
                 android:background="?attr/default_dim_bg"
-                android:fontFamily="@font/base_font"
                 android:textAllCaps="true"
-
                 android:layout_marginStart="16dp"
 
 
@@ -255,9 +248,9 @@
                 android:layout_gravity="center_vertical"
                 android:text="Report Abuse"
                 android:textColor="?attr/colorSecondary"
-                android:textSize="14sp"
+
                 android:background="?attr/default_dim_bg"
-                android:fontFamily="@font/base_font"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
                 android:textAllCaps="true"
                 android:layout_marginStart="16dp"
 
@@ -288,9 +281,8 @@
                 android:layout_gravity="center_vertical"
                 android:text="Delete Album"
                 android:textColor="?attr/colorSecondary"
-                android:textSize="14sp"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
                 android:background="?attr/default_dim_bg"
-                android:fontFamily="@font/base_font"
                 android:textAllCaps="true"
                 android:layout_marginStart="16dp"
 

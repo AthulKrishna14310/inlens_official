@@ -32,7 +32,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
-        android:fontFamily="@font/base_font"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:text="Type your name and an email for your account."
         android:textColor="?attr/colorPrimary"
         android:gravity="center"/>
@@ -46,6 +46,7 @@
         android:layout_below="@id/user_name_activity_textview"
         app:hintEnabled="true"
         app:boxBackgroundMode="outline"
+        app:boxBackgroundColor="?attr/default_dim_bg"
         app:boxCornerRadiusTopEnd="4dp"
         app:boxCornerRadiusBottomEnd="4dp"
         app:boxCornerRadiusBottomStart="4dp"
@@ -53,7 +54,6 @@
         android:layout_marginTop="24dp"
         app:boxStrokeColor="?attr/colorPrimary"
         app:boxStrokeWidth="1dp"
-
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         >
@@ -62,11 +62,9 @@
         android:layout_height="wrap_content"
         android:textStyle="normal"
         android:padding="16dp"
-        android:theme="@style/Theme.AppCompat.DayNight"
         android:hint="Type your name"
         android:inputType="text"
-        android:fontFamily="@font/base_font"
-        android:textSize="16sp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
         android:id="@+id/user_name_activity_edittext"
         />
     </com.google.android.material.textfield.TextInputLayout>
@@ -80,7 +78,7 @@
         android:layout_below="@id/user_name_activity_edittext_layout"
         app:hintEnabled="true"
         app:boxBackgroundMode="outline"
-
+        app:boxBackgroundColor="?attr/default_dim_bg"
         app:boxCornerRadiusTopEnd="4dp"
         app:boxCornerRadiusBottomEnd="4dp"
         app:boxCornerRadiusBottomStart="4dp"
@@ -94,12 +92,10 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textStyle="normal"
             android:padding="16dp"
             android:inputType="textEmailAddress"
             android:hint="Type your Email"
-            android:fontFamily="@font/base_font"
-            android:textSize="16sp"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             android:id="@+id/user_email_activity_edittext"
             />
     </com.google.android.material.textfield.TextInputLayout>
@@ -114,6 +110,6 @@
         android:padding="10dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/user_email_activity_edittext_layout"
-        android:layout_marginTop="24dp"/>
+        android:layout_marginTop="32dp"/>
 
 </RelativeLayout>

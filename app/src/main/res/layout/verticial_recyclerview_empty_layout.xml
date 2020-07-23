@@ -18,9 +18,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/vertical_recyclerview_empty_layout_imageview"
         android:layout_centerHorizontal="true"
-        android:fontFamily="@font/base_font"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
         android:textColor="?attr/colorPrimary"
-        android:textStyle="normal"
         android:text="No photos yet..." />
 
 </RelativeLayout>

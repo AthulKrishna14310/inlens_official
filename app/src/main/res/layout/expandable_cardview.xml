@@ -44,12 +44,11 @@
                     android:layout_marginTop="10dp"
                     android:layout_toEndOf="@+id/icon"
                     android:background="?attr/default_bg_color"
-                    android:fontFamily="@font/base_font"
                     android:maxLength="39"
                     android:maxLines="1"
                     android:textColor="?attr/colorPrimary"
-                    android:textSize="14sp"
-                    android:textStyle="normal" />
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+                     />
 
                 <com.skyfishjy.library.RippleBackground
                     android:id="@+id/content2"

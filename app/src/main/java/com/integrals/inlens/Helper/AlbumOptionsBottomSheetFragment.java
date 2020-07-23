@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,15 +14,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
 import com.integrals.inlens.R;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 @SuppressLint("ValidFragment")
 public class AlbumOptionsBottomSheetFragment extends BottomSheetDialogFragment {
     RelativeLayout scanLayout,createLayout;
     ImageButton scanImageButton,createImageButton;
+    ImageView imageQR;
     Activity activity;
+    FirebaseAuth firebaseAuth;
 
     public interface IScanCallback
     {
@@ -47,6 +57,7 @@ public class AlbumOptionsBottomSheetFragment extends BottomSheetDialogFragment {
         scanCallback = (IScanCallback) activity;
         createCallback = (ICreateCallback) activity;
         dismissDialog = (IDismissDialog) activity;
+        firebaseAuth=FirebaseAuth.getInstance();
     }
 
     @Nullable
@@ -84,6 +95,7 @@ public class AlbumOptionsBottomSheetFragment extends BottomSheetDialogFragment {
         createLayout = albumOptionsView.findViewById(R.id.option_create_layout);
         scanImageButton = albumOptionsView.findViewById(R.id.main_horizontal_scan_button);
         createImageButton = albumOptionsView.findViewById(R.id.main_horizontal_new_album_button);
+        imageQR=albumOptionsView.findViewById(R.id.QR_Display);
 
         scanLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,6 +127,17 @@ public class AlbumOptionsBottomSheetFragment extends BottomSheetDialogFragment {
                 dismissDialog.dismissDialog();
             }
         });
+        final MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+        BitMatrix bitMatrix = null;
+        try {
+            bitMatrix = multiFormatWriter.encode(firebaseAuth.getCurrentUser().getUid(), BarcodeFormat.QR_CODE, 200, 200);
+            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+            Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+            imageQR.setImageBitmap(bitmap);
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+
         return albumOptionsView;
     }
 }

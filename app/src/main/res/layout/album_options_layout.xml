@@ -21,12 +21,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:fontFamily="@font/base_font"
+
             android:textAlignment="center"
             android:text="@string/new_album"
             android:background="?attr/default_dim_bg"
             android:textColor="?attr/colorPrimary"
-            android:textSize="16sp"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             android:layout_marginBottom="2dp"
 
             />
@@ -49,7 +49,6 @@
             android:background="?attr/cf_bg_color"
             android:orientation="vertical"
             android:padding="16dp"
-
             >
 
 
@@ -72,35 +71,34 @@
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/main_horizontal_new_album_button"
                 android:layout_marginLeft="16dp"
-                android:fontFamily="@font/base_font"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                 android:text="Create"
                 android:id="@+id/create_text"
                 android:textAlignment="center"
                 android:textColor="?attr/colorPrimary"
-                android:textStyle="bold"
-                android:textSize="18sp" />
+                 />
 <TextView
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="2dp"
-    android:text="(Create your Shared Cloud-Album for an event)"
-    android:fontFamily="@font/base_font"
+    android:text="Create your Shared Cloud-Album for an event"
     android:textColor="?attr/colorPrimary"
-    android:alpha="0.6"
     android:layout_marginLeft="16dp"
+    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
     android:layout_toRightOf="@id/main_horizontal_new_album_button"
     android:layout_below="@+id/create_text"
-    android:textSize="12sp"
     ></TextView>
 
 
         </RelativeLayout>
+
         <View
             android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_below="@id/option_create_layout"
-            android:background="@android:color/darker_gray" />
-
+            android:layout_height="1dp"
+            android:layout_margin="1dp"
+            android:layout_above="@id/option_scan_layout"
+            android:background="?attr/colorPrimary"
+            android:alpha="0.8"/>
         <RelativeLayout
             android:id="@+id/option_scan_layout"
             android:layout_width="match_parent"
@@ -119,6 +117,7 @@
                 android:layout_height="50dp"
                 android:layout_gravity="left"
                 android:id="@+id/scanlayout"
+
                 android:background="@drawable/circle_primary">
 
                 <ImageButton
@@ -140,27 +139,33 @@
                 android:layout_toRightOf="@+id/scanlayout"
                 android:layout_marginLeft="16dp"
                 android:layout_gravity="center_horizontal"
-                android:fontFamily="@font/base_font"
-                android:text="Scan"
+                android:text="Join"
                 android:id="@+id/scan_text"
                 android:textAlignment="center"
-                android:textStyle="bold"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                 android:textColor="?attr/colorPrimary"
-                android:textSize="18sp" />
+                 />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="(Scan QR-Code to join a Cloud-Album as photographer)"
+                android:text="Show this QR-code to get admitted into an Album"
                 android:textColor="?attr/colorPrimary"
-                android:alpha="0.6"
-                android:fontFamily="@font/base_font"
                 android:layout_marginLeft="16dp"
                 android:layout_toRightOf="@id/scanlayout"
                 android:layout_below="@+id/scan_text"
-                android:textSize="12sp"
+                android:id="@+id/scndetailstext"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
                 ></TextView>
+            <ImageView
+                android:id="@+id/QR_Display"
+                android:layout_width="230dp"
+                android:layout_height="230dp"
+                android:layout_below="@id/scndetailstext"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="8dp"
 
+                android:layout_marginTop="15dp" />
         </RelativeLayout>
 
 

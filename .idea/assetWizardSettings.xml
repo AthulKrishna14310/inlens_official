@@ -228,7 +228,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/home/athul/Android/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_check_circle_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/home/athul/Android/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/image/ic_photo_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -239,7 +239,7 @@
                         <option name="values">
                           <map>
                             <entry key="color" value="e53935" />
-                            <entry key="outputName" value="ic_bookmarked" />
+                            <entry key="outputName" value="ic_photo" />
                             <entry key="sourceFile" value="$USER_HOME$/C:\Users\deljo" />
                           </map>
                         </option>

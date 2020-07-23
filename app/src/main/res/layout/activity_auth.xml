@@ -16,10 +16,10 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:background="?attr/default_bg_color"
-        android:fontFamily="@font/base_font"
         android:text="@string/app_name"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
         android:textColor="?attr/colorPrimary"
-        android:textSize="24sp" />
+         />
 
 
     <ImageView
@@ -102,11 +102,11 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="20dp"
-            android:fontFamily="@font/base_font"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
             android:text="By InLens Team."
             android:textAllCaps="true"
             android:textColor="?attr/colorPrimaryLight"
-            android:textSize="14sp" />
+             />
 
 
 

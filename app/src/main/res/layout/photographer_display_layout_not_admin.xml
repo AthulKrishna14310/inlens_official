@@ -37,9 +37,8 @@
         android:id="@+id/name_photographer"
         android:layout_width="match_parent"
        android:layout_marginTop="40dp"
-        android:fontFamily="@font/base_font"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
         android:layout_toRightOf="@id/imageView_photographer_card"
-        android:textSize="20sp"
         android:maxLines="1"
         android:textColor="?attr/colorSecondary"
         android:layout_height="wrap_content"
@@ -52,9 +51,9 @@
         android:layout_below="@id/name_photographer"
         android:layout_toRightOf="@id/imageView_photographer_card"
         android:text="photographers@mail.com"
-        android:fontFamily="@font/base_font"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
         android:textColor="?attr/colorSecondary"
-        android:textSize="12sp">
+        >
 
     </TextView>
 <View
@@ -82,9 +81,8 @@
             android:layout_height="wrap_content"
             android:textColor="?attr/red_inlens"
             android:text="Remove"
-            android:textSize="14sp"
+           android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             android:textAlignment="center"
-            android:fontFamily="@font/base_font"
             android:layout_centerVertical="true"
             android:textAllCaps="true"
 

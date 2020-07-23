@@ -41,11 +41,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
         android:layout_toRightOf="@id/imageView_photographer_card"
-        android:fontFamily="@font/base_font"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
         android:maxLines="1"
         android:text="Photographer Name"
         android:textColor="?attr/colorSecondary"
-        android:textSize="20sp" />
+        />
 
     <TextView
         android:id="@+id/name_photographer_email"
@@ -53,10 +53,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/name_photographer"
         android:layout_toRightOf="@id/imageView_photographer_card"
-        android:fontFamily="@font/base_font"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
         android:text="photographers@mail.com"
         android:textColor="?attr/colorSecondary"
-        android:textSize="12sp">
+       >
 
     </TextView>
 
@@ -83,12 +83,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:fontFamily="@font/base_font"
             android:text="YOU ARE ADMIN"
             android:textAlignment="center"
             android:textAllCaps="true"
             android:textColor="?attr/colorPrimary"
-            android:textSize="14sp"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
 
             >
 

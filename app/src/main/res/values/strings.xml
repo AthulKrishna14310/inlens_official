@@ -9,4 +9,7 @@
     <string name="initial_start_notification">Have you received Gallery notification ?</string>
     <string name="initial_start_take_photos">Now , \n \n 1. Take  photos  \n 2. Tap on notification \n 3. Select photos and upload it to your \t \t Cloud-Album</string>
     <string name="new_album">New Cloud-Album</string>
+    <string name="added_participants_can_also_collaborate_by_upload_their_recent_images_to_your_album">Added participants can also collaborate by uploading their recent images into your album.</string>
+    <string name="add_participants_to_your_album">Add participants</string>
+    <string name="send_invite_link">SEND INVITE LINK</string>
 </resources>

@@ -14,8 +14,7 @@
         android:layout_height="wrap_content"
         android:text="Report Statement"
         android:textColor="?attr/colorPrimary"
-        android:fontFamily="@font/base_font"
-        android:textSize="20sp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
         android:background="?attr/default_dim_bg"
         android:padding="16dp"/>
 
@@ -26,7 +25,7 @@
         android:background="@drawable/submit_bg"
         android:text="Submit"
         android:visibility="gone"
-        android:fontFamily="@font/base_font"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
         android:textColor="?attr/default_bg_color"
         android:foreground="?selectableItemBackgroundBorderless"
         android:clickable="true"
@@ -41,24 +40,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/default_bg_color"
-        android:fontFamily="@font/base_font"
+
         android:text="Help us understand why you found this album unfit or the reason for reporting it."
         android:textColor="?attr/colorPrimary"
-        android:textSize="16sp"
-        android:textStyle="normal"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:layout_below="@id/head"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"/>
 
     <com.google.android.material.textfield.TextInputLayout
-    android:layout_width="match_parent"
+        android:layout_width="match_parent"
         android:id="@+id/report_layout"
-    android:layout_height="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@id/report_info"
-    app:hintEnabled="true"
-    app:boxBackgroundMode="outline"
+        app:hintEnabled="true"
+        app:boxBackgroundMode="outline"
+        app:boxBackgroundColor="?attr/default_dim_bg"
 
-    app:boxCornerRadiusTopEnd="4dp"
+        app:boxCornerRadiusTopEnd="4dp"
     app:boxCornerRadiusBottomEnd="4dp"
     app:boxCornerRadiusBottomStart="4dp"
     app:boxCornerRadiusTopStart="4dp"
@@ -72,11 +71,8 @@
     <com.google.android.material.textfield.TextInputEditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textStyle="normal"
-        android:padding="16dp"
         android:hint="Type your statement"
-        android:fontFamily="@font/base_font"
-        android:textSize="20sp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
         android:id="@+id/report"
         >
 

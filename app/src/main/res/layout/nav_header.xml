@@ -37,9 +37,9 @@
                  android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
                  android:text="James Pratterson"
-                 android:fontFamily="@font/base_font"
+                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                  android:textColor="?attr/default_dim_bg"
-                 android:textSize="16sp"/>
+                />
 
             <LinearLayout android:gravity="center"
                 android:orientation="horizontal"
@@ -57,12 +57,10 @@
                     android:id="@+id/headerEmailX"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/base_font"
-
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
                     android:text="San Francisco, CA"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     android:textColor="?attr/default_dim_bg"
-                    android:textSize="12sp" />
+                     />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

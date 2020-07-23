@@ -3,21 +3,31 @@ package com.integrals.inlens.Helper;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.content.Intent;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+
 import com.google.firebase.database.DatabaseReference;
+import com.integrals.inlens.Activities.QRCodeReader;
 import com.integrals.inlens.MainActivity;
 import com.integrals.inlens.Models.PhotographerModel;
 import com.integrals.inlens.R;
 
+
+import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
 
 public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -119,11 +129,10 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
-                    qrCodeBottomSheet.show(activity.getSupportFragmentManager(),qrCodeBottomSheet.getTag());
-
-                }
+                    activity.startActivity(new Intent(activity, QRCodeReader.class).putStringArrayListExtra(AppConstants.USER_ID_LIST, (ArrayList<String>) activity.getUserCommunityIdList()));
+                  }
             });
+
         }
 
 

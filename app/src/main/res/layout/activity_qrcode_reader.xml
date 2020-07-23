@@ -6,26 +6,98 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Activities.QRCodeReader">
+    <ImageButton
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginRight="16dp"
+        android:id="@+id/closeBtn"
+        android:layout_alignParentRight="true"
+        android:text=""
+        android:tint="?attr/colorPrimary"
+        android:src="@drawable/ic_cancel_black_24dp"
+        android:layout_marginTop="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
 
+        />
+   <TextView
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:layout_alignParentTop="true"
+       android:paddingStart="16dp"
+       android:textSize="20sp"
+       android:layout_marginTop="32dp"
+       android:id="@+id/title"
+       android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+       android:text="@string/add_participants_to_your_album"
+       android:textColor="?attr/colorPrimary"
+       />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_below="@id/title"
+        android:textSize="12sp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:text="@string/added_participants_can_also_collaborate_by_upload_their_recent_images_to_your_album"
+        android:textColor="?attr/colorPrimary"
+        />
+    <com.balysv.materialripple.MaterialRippleLayout
+        style="@style/RippleStyleWhite"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:layout_above="@id/orTxt"
+        android:background="@drawable/done_btn_bg"
+        android:padding="10dp">
+        <TextView
+            android:id="@+id/DoneButtonTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+
+            android:text="@string/send_invite_link"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textColor="?attr/colorPrimary"
+             />
+    </com.balysv.materialripple.MaterialRippleLayout>
+
+    <TextView
+        android:id="@+id/orTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/scanOverlay"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="OR"
+        android:textStyle="bold"
+        android:textColor="?attr/colorPrimary"
+        android:textSize="18sp" />
     <fragment
         android:id="@+id/barcode_fragment"
         android:name="info.androidhive.barcode.BarcodeReader"
         android:layout_width="match_parent"
-
-        android:layout_height="match_parent"
+        android:layout_height="400dp"
+        android:layout_alignParentBottom="true"
         app:auto_focus="true"
-
         app:use_flash="false" />
+
     <info.androidhive.barcode.ScannerOverlay
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:alpha="0.6"
-        android:background="?attr/colorPrimary"
+        android:layout_height="400dp"
+        android:id="@+id/scanOverlay"
+        android:alpha="0.8"
+        android:background="?attr/default_dim_bg"
         app:line_color="?attr/colorPrimary"
         app:line_speed="4"
         app:line_width="4"
+        android:layout_alignParentBottom="true"
         app:square_height="250"
-        app:square_width="250"/>
+        app:square_width="250" />
 
     <TextView
         android:id="@+id/NewCommunityStatus"
@@ -33,12 +105,13 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_gravity="top|center_horizontal"
-        android:layout_marginBottom="28dp"
-        android:text="Scan the Cloud Album QR"
-        android:textColor="?attr/default_bg_color"
-        android:textSize="15sp"
-        android:fontFamily="@font/base_font"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="Scan your participant's QR Code"
+        android:textColor="?attr/colorPrimary"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:visibility="visible" />
 
     <ProgressBar

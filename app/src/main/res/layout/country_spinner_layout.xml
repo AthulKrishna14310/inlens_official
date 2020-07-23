@@ -16,11 +16,9 @@
         android:layout_marginStart="20dp"
         android:background="@drawable/border_primary"
         android:text="INDIA"
-        android:fontFamily="@font/base_font"
         android:gravity="center"
-        android:textSize="15sp"
         android:maxLength="3"
-        android:textStyle="bold"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:textColor="?attr/colorPrimary"/>
 
     <TextView
@@ -28,9 +26,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="INDIA"
-        android:fontFamily="@font/base_font"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
         android:textColor="?attr/colorPrimary"
-        android:textSize="14sp"
         android:background="?attr/default_bg_color"
         android:layout_gravity="center_vertical"
         android:layout_toEndOf="@id/spinner_country_name"
@@ -45,8 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="+91"
-        android:fontFamily="@font/base_font"
-        android:textSize="14sp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
         android:layout_marginStart="10dp"
         android:textColor="?attr/colorPrimary"
         android:background="?attr/default_bg_color"
