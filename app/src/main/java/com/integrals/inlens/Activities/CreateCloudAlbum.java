@@ -473,7 +473,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
     private void EventDialogInit() {
 
-        eventDialog = new Dialog(this, R.style.AppTheme);
+        eventDialog = new Dialog(this, android.R.style.Theme_Light_NoTitleBar);
         eventDialog.setCancelable(true);
         eventDialog.setCanceledOnTouchOutside(false);
         eventDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -615,21 +615,6 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
 
     }
-
-//    private void SetCheckFalse(Button btn1, Button btn2, Button btn3, Button btn4, Button btn5) {
-//
-////        btn1.setBackgroundResource(R.drawable.radiobutton_unpressed);
-////        btn1.setTextColor(colorPrimary);
-////        btn2.setBackgroundResource(R.drawable.radiobutton_unpressed);
-////        btn2.setTextColor(colorPrimary);
-////        btn3.setBackgroundResource(R.drawable.radiobutton_unpressed);
-////        btn3.setTextColor(colorPrimary);
-////        btn4.setBackgroundResource(R.drawable.radiobutton_unpressed);
-////        btn4.setTextColor(colorPrimary);
-////        btn5.setBackgroundResource(R.drawable.radiobutton_unpressed);
-////        btn5.setTextColor(colorPrimary);
-//
-//    }
 
 
     private void uploadNewAlbumData(boolean travelBackInTime,long startTime) {

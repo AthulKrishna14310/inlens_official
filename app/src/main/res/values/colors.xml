@@ -23,7 +23,7 @@
     <color name="Dark_check_color">#81c784</color>
     <color name="Dark_red_cancel_icon">#e57373</color>
     <color name="Dark_info_icon_color">#64b5f6</color>
-    <color name="Dark_actionMenuTextColor">#ffffff</color>
+    <color name="Dark_actionMenuTextColor">@color/colorDarkPrimaryLight</color>
 
 
     //// Light Theme
@@ -51,7 +51,7 @@
     <color name="Light_red_cancel_icon">#e57373</color>
 
     <color name="Light_info_icon_color">#64b5f6</color>
-    <color name="Light_actionMenuTextColor">#3c3c3c</color>
+    <color name="Light_actionMenuTextColor">@color/material_grey_800</color>
 
     /// others
 

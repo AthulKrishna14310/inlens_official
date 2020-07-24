@@ -261,22 +261,30 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
         // on backpressed
         appBarLayout = findViewById(R.id.main_appbarlayout);
-        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                if (Math.abs(verticalOffset) == appBarLayout.getTotalScrollRange()) {
-                    isAppbarOpen = false;
-                } else isAppbarOpen = verticalOffset == 0;
-
-            }
-        });
 
 
         // Fab
         mainAddPhotosFab = findViewById(R.id.fabadd);
         mainAddPhotosFab.hide();
 
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
 
+                if (Math.abs(verticalOffset)-appBarLayout.getTotalScrollRange() ==0)
+                {
+
+                    mainAddPhotosFab.shrink();
+
+                }
+                else
+                {
+                    //Expanded
+                   mainAddPhotosFab.extend();
+
+                }
+            }
+        });
         //photographers cardview
         expandableCardView = findViewById(R.id.photographers);
 
@@ -1861,8 +1869,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         else
         {
             if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
-                startActivity(new Intent(MainActivity.this, QRCodeReader.class).putStringArrayListExtra(AppConstants.USER_ID_LIST, (ArrayList<String>) userCommunityIdList));
-                finish();
             }
             else
             {

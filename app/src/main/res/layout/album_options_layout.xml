@@ -85,6 +85,7 @@
     android:textColor="?attr/colorPrimary"
     android:layout_marginLeft="16dp"
     android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+    android:textSize="12sp"
     android:layout_toRightOf="@id/main_horizontal_new_album_button"
     android:layout_below="@+id/create_text"
     ></TextView>
@@ -155,6 +156,7 @@
                 android:layout_toRightOf="@id/scanlayout"
                 android:layout_below="@+id/scan_text"
                 android:id="@+id/scndetailstext"
+                android:textSize="12sp"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
                 ></TextView>
             <ImageView

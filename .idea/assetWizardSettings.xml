@@ -78,7 +78,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="scalingPercent" value="72" />
+                                                <entry key="scalingPercent" value="63" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -103,8 +103,10 @@
                                       <entry key="backgroundAssetType" value="COLOR" />
                                       <entry key="backgroundColor" value="ffffff" />
                                       <entry key="backgroundImage" value="$PROJECT_DIR$/app/src/main/res/drawable/transparent_background.xml" />
-                                      <entry key="foregroundImage" value="/home/athul/Downloads/hngout.png" />
-                                      <entry key="outputName" value="ic_hangout" />
+                                      <entry key="foregroundImage" value="/home/athul/Music/iMarkup_20200722_003309.png" />
+                                      <entry key="legacyIconShape" value="NONE" />
+                                      <entry key="outputName" value="ic_tuts" />
+                                      <entry key="previewDensity" value="XXXHIGH" />
                                     </map>
                                   </option>
                                 </PersistentState>

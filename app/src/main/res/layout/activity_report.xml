@@ -7,13 +7,22 @@
     android:layout_height="match_parent"
     android:background="?attr/default_bg_color"
     tools:context=".Activities.ReportActivity">
-
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_arrow_back"
+        android:tint="?attr/colorPrimary"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:id="@+id/bkButton"
+        android:layout_margin="16dp"
+        ></ImageButton>
     <TextView
         android:id="@+id/head"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Report Statement"
         android:textColor="?attr/colorPrimary"
+        android:layout_marginTop="56dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
         android:background="?attr/default_dim_bg"
         android:padding="16dp"/>

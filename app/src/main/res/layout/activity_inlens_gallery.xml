@@ -5,7 +5,7 @@
     android:id="@+id/root_for_gallery"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/default_bg_color"
+
     tools:context=".Activities.InlensGalleryActivity">
 
     <include
@@ -31,20 +31,19 @@
 
 
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/gallery_upload_fab"
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
+        app:fabSize="normal"
+        android:id="@+id/gallery_upload_fab"
         android:layout_alignParentBottom="true"
-        android:layout_margin="10dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:backgroundTint="?attr/colorSecondary"
-        android:src="@drawable/ic_file_upload"
-        android:tint="?attr/default_bg_color"
-        android:visibility="gone"
-        app:fabSize="normal" />
-
+        android:layout_alignParentRight="true"
+        android:layout_margin="16dp"
+        android:visibility="visible"
+        app:backgroundTint="?attr/colorSecondary"
+         app:icon="@drawable/ic_file_upload"
+         app:iconTint="?attr/default_bg_color"
+        />
 
     <RelativeLayout
         android:id="@+id/gallery_shared_image_loading_layout"

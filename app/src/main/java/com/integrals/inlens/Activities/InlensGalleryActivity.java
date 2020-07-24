@@ -18,6 +18,7 @@ import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
@@ -57,6 +58,7 @@ import com.integrals.inlens.Database.UploadQueueDB;
 import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.DirectoryFragment;
 import com.integrals.inlens.Helper.FirebaseConstants;
+import com.integrals.inlens.Helper.SnackShow;
 import com.integrals.inlens.Models.GalleryImageModel;
 import com.integrals.inlens.Notification.NotificationHelper;
 import com.integrals.inlens.R;
@@ -79,10 +81,10 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
     private List<GalleryImageModel> allCommunityImages;
     private RecyclerView galleryGridRecyclerView;
-    private FloatingActionButton galleryUploadFab;
+    private ExtendedFloatingActionButton galleryUploadFab;
     int PROGRESS_CURRENT = 0;
     private List<String> allImagesInCurrentCommunity;
-    private ImageButton galleryBackButton, galleryInfoButton;
+    private ImageButton galleryBackButton;
     private TextView galleyHeaderTextView;
     private DatabaseReference currentUserRef, postRef;
     private StorageReference storageRef;
@@ -152,11 +154,9 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
         postRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.POSTS);
         currentUserRef = FirebaseDatabase.getInstance().getReference();
         storageRef = FirebaseStorage.getInstance().getReference().child(FirebaseConstants.COMMUNITIES_STORAGE);
-
         galleryBackButton = findViewById(R.id.gallery_toolbar).findViewById(R.id.mytoolbar_back_button);
         galleyHeaderTextView = findViewById(R.id.gallery_toolbar).findViewById(R.id.mytoolbar_textview);
-        galleyHeaderTextView.setText("Your Gallery");
-        galleryInfoButton = findViewById(R.id.gallery_toolbar).findViewById(R.id.mytoolbar_info_button);
+        galleyHeaderTextView.setText("Recent Images");
         dirSelectionButton = findViewById(R.id.gallery_toolbar).findViewById(R.id.mytoolbar_dir_options);
 
         galleryBackButton.setOnClickListener(new View.OnClickListener() {
@@ -187,29 +187,6 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
                 gallerySwipeRefresh.setRefreshing(true);
                 initGallery();
-            }
-        });
-
-        galleryInfoButton.setVisibility(View.VISIBLE);
-        galleryInfoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final View customLayout = getLayoutInflater().inflate(R.layout.dialog_layout_inlens_gallery, null);
-
-                new AlertDialog.Builder(InlensGalleryActivity.this)
-                        .setMessage(" ")
-                        .setPositiveButton("Ok, I understand", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                                dialogInterface.dismiss();
-
-                            }
-                        })
-                        .setView(customLayout)
-                        .setCancelable(true)
-                        .create()
-                        .show();
             }
         });
 
@@ -263,14 +240,8 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
                     }
 
-                    // todo remove qued images from gallery
-                    Snackbar.make(rootGalleryRelativeLayout, "Queued " + imagesToUpload + " image.", BaseTransientBottomBar.LENGTH_SHORT).setAction("Learn more", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-
-                            Toast.makeText(InlensGalleryActivity.this, "open link-> help@learnMore", Toast.LENGTH_SHORT).show();
-                        }
-                    }).show();
+                    SnackShow snackShow=new SnackShow(rootGalleryRelativeLayout,InlensGalleryActivity.this);
+                    snackShow.showInfoSnack("Uploading your images...");
 
                 }
 
@@ -1002,8 +973,6 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
 
             if (allCommunityImages.size() == 0) {
-                final RippleBackground rippleBackground = (RippleBackground) findViewById(R.id.content);
-                rippleBackground.startRippleAnimation();
                 allCommunityImages.add(null);
                 galleryGridRecyclerView.setLayoutManager(new GridLayoutManager(InlensGalleryActivity.this, 1));
                 imageAdapter = new ImageAdapter(InlensGalleryActivity.this, allCommunityImages);

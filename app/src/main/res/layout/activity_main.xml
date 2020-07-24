@@ -256,7 +256,7 @@
                 android:visibility="visible"
                 android:text="Upload"
                 android:backgroundTint="?attr/image_bg_color"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:textAllCaps="false"/>
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
@@ -297,13 +297,15 @@
 
     </RelativeLayout>
 
-
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nv"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:headerLayout="@layout/nav_header"
+        app:itemTextColor="?attr/action_menu"
+        app:itemIconTint="?attr/action_menu"
+        app:itemTextAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
         app:menu="@menu/navigation_menu"
         >
 

@@ -3,51 +3,55 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/default_bg_color">
-
-    <ImageView
-        android:id="@+id/vertical_recyclerview_empty_layout_imageview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_note"
-        android:tint="?attr/colorPrimary"
-        android:layout_centerInParent="true"
-        />
+   >
 
     <TextView
         android:layout_width="match_parent"
         android:id="@+id/yxt"
         android:layout_height="wrap_content"
-        android:layout_below="@id/vertical_recyclerview_empty_layout_imageview"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        android:layout_margin="16dp"
+        android:textAlignment="textStart"
+        android:alpha="0.6"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
         android:textColor="?attr/colorPrimary"
-        android:text="@string/intruction" />
+        android:text=">  Open any camera app to take photos." />
 
-
-    <com.balysv.materialripple.MaterialRippleLayout
-        style="@style/RippleStyleWhite"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
+    <TextView
+        android:layout_width="match_parent"
+        android:id="@+id/yxt1"
         android:layout_below="@id/yxt"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/close_app_btn_bg">
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:textAlignment="textStart"
+        android:alpha="0.6"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+        android:textColor="?attr/colorPrimary"
+        android:text=">  Tap notification." />
+    <ImageView
+        android:layout_below="@id/yxt1"
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:id="@+id/imgView"
+        android:alpha="0.8"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_tuts_foreground"
+        ></ImageView>
 
-        <TextView
-            android:id="@+id/CloseButtonTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="TAKE PHOTOS"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-            android:maxLines="1"
-            android:textColor="?attr/colorPrimary" />
-    </com.balysv.materialripple.MaterialRippleLayout>
 
+
+   <Button
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
+       android:layout_alignParentBottom="true"
+       android:text="Open Camera"
+       android:padding="16dp"
+       android:alpha="0.9"
+       android:foreground="?selectableItemBackgroundBorderless"
+       android:backgroundTint="?attr/colorPrimary"
+       android:layout_marginLeft="16dp"
+       android:layout_marginRight="16dp"
+       android:layout_marginTop="4dp"
+       android:id="@+id/CloseButtonTextView"
+       />
 </RelativeLayout>

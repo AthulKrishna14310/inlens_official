@@ -120,6 +120,13 @@ public class ReportActivity extends AppCompatActivity {
                 displayAlert();
             }
         });
+
+        findViewById(R.id.bkButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
     }
 
     private String getOffsetDeletedTime(String timeStamp) {
@@ -205,6 +212,8 @@ public class ReportActivity extends AppCompatActivity {
 
         builder.show();
     }
+
+
 
     @Override
     public void onBackPressed() {

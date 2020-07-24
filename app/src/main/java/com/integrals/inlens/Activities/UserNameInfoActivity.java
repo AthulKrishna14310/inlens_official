@@ -194,7 +194,6 @@ public class UserNameInfoActivity extends AppCompatActivity {
         });
 
 
-        findViewById(R.id.mytoolbar_info_button).setVisibility(View.GONE);
 
     }
 
