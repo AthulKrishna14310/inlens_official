@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -18,8 +19,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.database.DatabaseReference;
+import com.integrals.inlens.Activities.QRCodeReader;
+import com.integrals.inlens.MainActivity;
 import com.integrals.inlens.R;
+
+import java.util.ArrayList;
 
 @SuppressLint("ValidFragment")
 public class QRCodeBottomSheet extends BottomSheetDialogFragment {
@@ -30,10 +36,10 @@ public class QRCodeBottomSheet extends BottomSheetDialogFragment {
     View qrCodeView;
     int themeId;
     boolean initialStart;
-    Activity activity;
+    MainActivity activity;
     public TextView cancelButton;
 
-    public QRCodeBottomSheet(Context context, String id, DatabaseReference linkRef , boolean initialStart, Activity activity) {
+    public QRCodeBottomSheet(Context context, String id, DatabaseReference linkRef , boolean initialStart, MainActivity activity) {
         this.context = context;
         currentActiveCommunityId = id;
         this.linkRef = linkRef;
@@ -78,8 +84,12 @@ public class QRCodeBottomSheet extends BottomSheetDialogFragment {
 
 //        final TextView textView = qrCodeView.findViewById(R.id.textViewAlbumQR);
 //        final ImageView QRCodeImageView = qrCodeView.findViewById(R.id.QR_Display);
-
-
+        qrCodeView.findViewById(R.id.ScanButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(context, QRCodeReader.class).putStringArrayListExtra(AppConstants.USER_ID_LIST, (ArrayList<String>)activity.getUserCommunityIdList()));
+            }
+        });
         QRCodeCloseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
