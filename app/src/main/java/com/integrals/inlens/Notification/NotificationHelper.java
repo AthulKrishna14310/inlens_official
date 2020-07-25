@@ -146,7 +146,7 @@ public class NotificationHelper {
 
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) {
             String channelID = "ID_512";
-            NotificationChannel notificationChannel = new NotificationChannel(channelID,"InLens Gallery Report", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel notificationChannel = new NotificationChannel(channelID,"Upload status", NotificationManager.IMPORTANCE_LOW);
             notificationManager.createNotificationChannel(notificationChannel);
 
             Notification.Builder notificationBuilder = new Notification.Builder(context, channelID)
@@ -163,6 +163,7 @@ public class NotificationHelper {
             builder.setSmallIcon(R.drawable.ic_notification)
                     .setContentTitle(title)
                     .setContentText(message)
+                    .setPriority(Notification.PRIORITY_LOW)
                     .setAutoCancel(true)
                     .setOngoing(false);
             notificationManager.notify(notificationGalleryReport,builder.build());
@@ -190,7 +191,6 @@ public class NotificationHelper {
             String channelID = "ID_505";
             NotificationChannel notificationChannel = new NotificationChannel(channelID,"Cloud Album Started", NotificationManager.IMPORTANCE_HIGH);
             notificationManager.createNotificationChannel(notificationChannel);
-
             Notification.Builder notificationBuilder = new Notification.Builder(context, channelID)
                     .setContentTitle(title)
                     .setOngoing(true)

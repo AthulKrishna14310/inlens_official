@@ -6,16 +6,17 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="20dp"
-        app:cardCornerRadius="15dp"
-        android:elevation="0dp"
-        android:layout_margin="10dp">
+        android:layout_height="360dp"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="0dp"
 
-        <LinearLayout
+        >
+
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?attr/default_dim_bg"
+            android:padding="16dp"
             android:orientation="vertical">
 
             <ImageButton
@@ -23,72 +24,84 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="10dp"
                 android:background="@drawable/circle_primary"
                 android:src="@drawable/ic_arrow_back"
-                android:tint="?attr/default_dim_bg"
-                android:padding="5dp"/>
+                android:tint="?attr/default_bg_color"
+                android:layout_margin="16dp"
+                android:layout_below="@+id/verification_progressbar"
+                android:padding="8dp"/>
 
+            <ProgressBar
+                android:id="@+id/verification_progressbar"
+                android:layout_gravity="center_horizontal"
+                android:indeterminate="true"
+                android:layout_margin="0dp"
+                android:layout_width="match_parent"
+                android:layout_height="16dp"
+                android:indeterminateTint="?attr/colorAccent"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:visibility="visible"/>
             <TextView
                 android:id="@+id/verification_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="20dp"
+                android:layout_above="@+id/verification_edittext"
+                android:layout_centerHorizontal="true"
                 android:text="Manual Verification"
+                android:layout_margin="8dp"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                android:layout_margin="20dp"
                 android:textColor="?attr/colorPrimary"/>
 
-            <EditText
+            <com.mukesh.OtpView
                 android:id="@+id/verification_edittext"
-                android:layout_width="200dp"
-                android:layout_height="60dp"
-                android:background="@drawable/circle_primary_small_radius"
-                android:layout_gravity="center_horizontal"
-                android:hint="Type in verification code"
-                android:gravity="center"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-                android:inputType="number"
-                android:layout_margin="20dp"
-                android:layout_marginTop="20dp"
-                android:textColor="?attr/default_dim_bg"
-                android:textColorHint="?attr/default_dim_bg"/>
-
-
-            <ImageButton
-                android:id="@+id/verification_done_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:inputType="number"
+                app:itemHeight="40dp"
+                app:itemWidth="40dp"
+                android:itemBackground="?attr/image_bg_color"
+                android:textColor="?attr/colorPrimary"
+                app:itemCount="6"
+
+                android:layout_centerHorizontal="true"
+                app:lineColor="?attr/colorPrimary"
+                app:viewType="line"
+                android:layout_above="@id/verification_done_button"
+                />
+
+
+            <Button
+                android:id="@+id/verification_done_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_above="@id/verification_textviewnote"
                 android:src="@drawable/ic_done"
                 android:foreground="?attr/selectableItemBackgroundBorderless"
                 android:background="@drawable/circle_primary"
-                android:padding="5dp"
+                android:padding="10dp"
+                style="?attr/materialButtonOutlinedStyle"
+                android:drawableRight="@drawable/ic_check_black_24dp"
+                android:drawableTint="?attr/colorPrimary"
+                android:text="Verify"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:tint="?attr/default_bg_color"
-                android:layout_margin="20dp"
+               android:layout_margin="16dp"
                 />
 
-            <ProgressBar
-                android:id="@+id/verification_progressbar"
-                android:layout_gravity="center_horizontal"
-                android:layout_margin="20dp"
-                android:indeterminate="true"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:indeterminateTint="?attr/colorAccent"
-                style="@style/Base.Widget.AppCompat.ProgressBar"
-                android:visibility="gone"/>
+
 
             <TextView
                 android:id="@+id/verification_counter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_margin="20dp"
+                android:layout_margin="16dp"
+                android:layout_alignParentRight="true"
+
                 android:text="Timeout : 60 s"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:textColor="?attr/colorPrimary"/>
 
             <Button
@@ -96,6 +109,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
+                android:visibility="gone"
                 android:layout_gravity="center_horizontal"
                 android:background="@drawable/circle_primary_small_radius"
                 android:padding="5dp"
@@ -110,16 +124,17 @@
             <TextView
                 android:id="@+id/verification_textviewnote"
                 android:layout_width="wrap_content"
+                android:layout_alignParentBottom="true"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:layout_margin="20dp"
+                android:visibility="invisible"
+                android:layout_margin="16dp"
+                android:textColor="?attr/colorPrimary"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-                android:textColor="@android:color/holo_red_light"
                 android:text="*NOTE \nGo  for manual verification if automatic verification failed."/>
 
 
-        </LinearLayout>
+        </RelativeLayout>
 
     </androidx.cardview.widget.CardView>
 

@@ -108,12 +108,18 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
 
 
         qrcodeReaderProgressbar = findViewById(R.id.qrcodeReaderProgressbar);
-        barcodeReader = (BarcodeReader) getSupportFragmentManager().findFragmentById(R.id.barcode_fragment);
         currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         communityRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.COMMUNITIES);
         userRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USERS).child(currentUserId);
         participantRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.PARTICIPANTS);
 
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        barcodeReader = (BarcodeReader) getSupportFragmentManager().findFragmentById(R.id.barcode_fragment);
 
     }
 

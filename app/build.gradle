@@ -30,6 +30,7 @@ android {
 }
 
 
+
 ext {
     bottomSheetsLibraryVersion = "1.0.0"
 }
@@ -38,8 +39,6 @@ ext {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.balysv:material-ripple:1.0.2'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-
 
     implementation 'com.alespero:expandable-cardview:0.8'
     implementation 'androidx.appcompat:appcompat:1.1.0'
@@ -55,7 +54,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.6.0'
-     implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.google.firebase:firebase-core:17.4.3'
     implementation 'com.google.firebase:firebase-database:19.3.0'
     implementation 'com.google.firebase:firebase-storage:19.1.1'
@@ -81,11 +80,8 @@ dependencies {
     implementation 'com.google.zxing:core:3.2.1'
     implementation 'androidx.work:work-runtime:2.3.4'
     implementation 'com.github.matecode:Snacky:1.1.5'
-    implementation 'com.google.android.material:material:1.0.1'
-
-
-
-
+    implementation 'com.github.vihtarb:tooltip:0.2.0'
+    implementation 'com.github.mukeshsolanki:android-otpview-pinview:2.1.0'
 }
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.firebase-perf'

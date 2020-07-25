@@ -38,6 +38,7 @@ import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
@@ -129,6 +130,7 @@ import com.skyfishjy.library.RippleBackground;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
+import com.tooltip.Tooltip;
 
 
 import java.util.ArrayList;
@@ -221,6 +223,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     String appTheme = "", mainSelectedKey = AppConstants.NOT_AVALABLE;
 
     static MainActivity mainActivity;
+
+
 
     public MainActivity() {
     }
@@ -645,10 +649,14 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
 
 
-
-
     }
 
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+    }
 
     public static MainActivity getInstance()
     {
@@ -1076,16 +1084,17 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
             }
         });
+
+
     }
 
     private void initialStart() {
         //PURPOSE OF USER DIRECT
+
         MainActivity.this.getIntent().putExtra("CREATED", "NO");
         MainActivity.this.getIntent().putExtra("ID", "NULL");
-
-
-        //        qrCodeBottomSheet = new QRCodeBottomSheet(MainActivity.this, currentActiveCommunityID, linkRef, true, MainActivity.this);
-//        qrCodeBottomSheet.show(getSupportFragmentManager(), qrCodeBottomSheet.getTag());
+        qrCodeBottomSheet = new QRCodeBottomSheet(MainActivity.this, currentActiveCommunityID, linkRef, true, MainActivity.this);
+        qrCodeBottomSheet.show(getSupportFragmentManager(), qrCodeBottomSheet.getTag());
 
         displayed = true;
 

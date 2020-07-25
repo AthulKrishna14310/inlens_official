@@ -9,7 +9,6 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
         android:background="?attr/colorPrimary"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
@@ -20,13 +19,11 @@
             android:id="@+id/txt1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-
-            android:textAlignment="center"
+            android:textAlignment="textStart"
             android:text="@string/new_album"
             android:background="?attr/default_dim_bg"
             android:textColor="?attr/colorPrimary"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
             android:layout_marginBottom="2dp"
 
             />
@@ -86,6 +83,7 @@
     android:layout_marginLeft="16dp"
     android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
     android:textSize="12sp"
+    android:alpha="0.7"
     android:layout_toRightOf="@id/main_horizontal_new_album_button"
     android:layout_below="@+id/create_text"
     ></TextView>
@@ -157,6 +155,7 @@
                 android:layout_below="@+id/scan_text"
                 android:id="@+id/scndetailstext"
                 android:textSize="12sp"
+                android:alpha="0.7"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
                 ></TextView>
             <ImageView

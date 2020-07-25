@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -44,7 +45,8 @@ public class UserNameInfoActivity extends AppCompatActivity {
 
     private EditText UserNameEdittext,UserEmailEdittext;
     private TextView UserNameTextview;
-    private ImageButton UserNameDoneButton , MyToolbarBackButton ;
+    private Button UserNameDoneButton  ;
+    private ImageButton  MyToolbarBackButton;
     private View MyToolbar;
     private RelativeLayout relativeLayout;
     private String Name,Email;

@@ -88,7 +88,7 @@
 
     <style name="RippleStyleWhite2">
         <item name="mrl_rippleAlpha">1.5</item>
-        <item name="mrl_rippleColor">?attr/colorSecondary</item>
+        <item name="mrl_rippleColor">?attr/colorPrimary</item>
         <item name="mrl_rippleHover">true</item>
         <item name="mrl_rippleOverlay">true</item>
     </style>

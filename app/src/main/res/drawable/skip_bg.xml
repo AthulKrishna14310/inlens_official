@@ -1,10 +1,10 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <stroke android:width="2dp"
-        android:color="?attr/colorSecondary" />
+    <stroke android:width="0dp"
+        android:color="?attr/colorPrimary" />
     <padding android:left="2dp"
         android:top="2dp"
         android:right="2dp"
         android:bottom="2dp" />
     <corners android:radius="4dp" />
-    <solid android:color="?attr/default_bg_color" />
+    <solid android:color="?attr/image_bg_color" />
 </shape>

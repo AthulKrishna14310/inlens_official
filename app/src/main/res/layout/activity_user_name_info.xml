@@ -15,8 +15,8 @@
 
     <ProgressBar
         android:id="@+id/user_email_activity_progressbar"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/user_name_toolbar"
         android:layout_marginTop="50dp"
@@ -100,16 +100,19 @@
             />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <ImageButton
+    <Button
         android:id="@+id/user_name_activity_done_button"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:src="@drawable/ic_done_all"
-        android:tint="?attr/default_bg_color"
-        android:background="@drawable/circle_primary"
-        android:padding="10dp"
-        android:layout_centerHorizontal="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableEnd="@drawable/ic_arrow_forward"
+        android:drawableTint="?attr/default_bg_color"
+        style="?attr/materialButtonStyle"
+        android:text="Proceed"
         android:layout_below="@id/user_email_activity_edittext_layout"
-        android:layout_marginTop="32dp"/>
+        android:layout_margin="16dp"
+        android:padding="10dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
+        android:textAllCaps="true"
+       />
 
 </RelativeLayout>

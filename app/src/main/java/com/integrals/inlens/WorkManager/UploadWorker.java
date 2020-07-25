@@ -140,7 +140,7 @@ public class UploadWorker extends Worker {
 
                     }*/
                 NotificationHelper helper = new NotificationHelper(context);
-                String title = "InLens Gallery Report";
+                String title = "Upload Status";
                 String message = imageUri.size() + " image(s) to upload";
                 helper.displayTitleMesageNoti(title, message);
 

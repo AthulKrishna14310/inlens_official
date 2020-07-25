@@ -64,18 +64,19 @@ public class AuthActivity extends AppCompatActivity {
 
 
     private EditText AuthEditText, AllCountryEditText, VerifyEditText;
-    private ImageButton AuthNextButton, VerifyBackButton, VerifyManualButton;
+    private ImageButton AuthNextButton, VerifyBackButton ;
+
     private TextView AuthCodeButton, CustomToastTitle, CustomToastMessage, VerifyCounter, VerifyTextView, VerifyTextViewNote;
     private InputMethodManager AuthIMM;
     private Animation FadeIn, FadeOut;
-    private LinearLayout AuthContainer;
+    private RelativeLayout AuthContainer;
     private ArrayList<CountryItem> CountryList, SearchList;
     private CountryAdapter AllAdapter, SearchAdapter;
     private RecyclerView AllCountryRecyclerView;
     private Dialog AllCountryDialog, VerificationDialog;
     private String ChoosenCode, VerificationID;
     private ProgressBar CustomToastProgressbar, VerifyProgressbar;
-    private Button VerifyGoManualButton;
+    private Button VerifyGoManualButton,VerifyManualButton;;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks Callbacks;
     private CountDownTimer countDownTimer;
     private RelativeLayout authRoot;
@@ -153,6 +154,13 @@ public class AuthActivity extends AppCompatActivity {
                     AuthContainer.setAnimation(FadeIn);
                     AuthContainer.getAnimation().start();
                     AuthContainer.setVisibility(View.VISIBLE);
+
+                    findViewById(R.id.Name).setAnimation(FadeOut);
+                    findViewById(R.id.appicon).setAnimation(FadeOut);
+
+                    findViewById(R.id.Name).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.appicon).setVisibility(View.INVISIBLE);
+
                     getDefaultCountry();
 
 
@@ -162,7 +170,7 @@ public class AuthActivity extends AppCompatActivity {
                         countDownTimer = new CountDownTimer(60000, 1000) {
 
                             public void onTick(long millisUntilFinished) {
-                                VerifyCounter.setText(String.format("Timeout in : %d s", millisUntilFinished / 1000));
+                                VerifyCounter.setText(String.format("Automatic Verification : %d s", millisUntilFinished / 1000));
                             }
 
                             public void onFinish() {
@@ -204,6 +212,7 @@ public class AuthActivity extends AppCompatActivity {
             public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
 
                 SnackShow snackShow=new SnackShow(authRoot,AuthActivity.this);
+                VerifyEditText.setText(phoneAuthCredential.getSmsCode());
                 snackShow.showSuccessSnack("Sign in successful");
                 SignInWithCredential(phoneAuthCredential);
 
@@ -416,12 +425,12 @@ public class AuthActivity extends AppCompatActivity {
         VerifyGoManualButton = VerificationDialog.findViewById(R.id.verification_manual_verify_button);
 
         VerificationDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        VerifyManualButton.setVisibility(View.GONE);
+        //VerifyManualButton.setVisibility(View.GONE);
         VerifyTextView.setText("Verifying");
-        VerifyEditText.setVisibility(View.GONE);
+        //VerifyEditText.setVisibility(View.GONE);
         VerifyProgressbar.setAnimation(AnimationUtils.loadAnimation(this, android.R.anim.fade_in));
         VerifyProgressbar.setVisibility(View.VISIBLE);
-        VerifyTextViewNote.setVisibility(View.INVISIBLE);
+        //VerifyTextViewNote.setVisibility(View.INVISIBLE);
 
         VerifyBackButton.setOnClickListener(new View.OnClickListener() {
             @Override

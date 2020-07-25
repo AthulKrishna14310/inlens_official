@@ -129,8 +129,8 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    activity.startActivity(new Intent(activity, QRCodeReader.class).putStringArrayListExtra(AppConstants.USER_ID_LIST, (ArrayList<String>) activity.getUserCommunityIdList()));
-                  }
+                    qrCodeBottomSheet.show(activity.getSupportFragmentManager(),qrCodeBottomSheet.getTag());
+                }
             });
 
         }

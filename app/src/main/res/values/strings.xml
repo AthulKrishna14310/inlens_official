@@ -4,8 +4,8 @@
     <string name="quit_cloud_album">Exit Participation</string>
 
     <string name="intruction">No photos to upload or have been queued.\n <b>Take photos</b> and tap on the <b>Notification</b>.</string>
-    <string name="qr_message"> Scan this QR CODE with InLens to add <b>other users as participants</b> to this Cloud-Album </string>
-    <string name="add_photographers"><u><b>ADD PARTICIPANTS</b></u></string>
+    <string name="qr_message"></string>
+    <string name="add_photographers">\t\tAdd Participants</string>
     <string name="initial_start_notification">Have you received Gallery notification ?</string>
     <string name="initial_start_take_photos">Now , \n \n 1. Take  photos  \n 2. Tap on notification \n 3. Select photos and upload it to your \t \t Cloud-Album</string>
     <string name="new_album">New Cloud-Album</string>
