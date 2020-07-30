@@ -4,13 +4,17 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import android.view.LayoutInflater;
@@ -291,19 +295,19 @@ public class QRCodeBottomSheet extends BottomSheetDialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        getDialog().setOnShowListener(new DialogInterface.OnShowListener() {
-//            @Override
-//            public void onShow(DialogInterface dialog) {
-//                BottomSheetDialog d = (BottomSheetDialog) dialog;
-//                CoordinatorLayout coordinatorLayout = (CoordinatorLayout) d.findViewById(R.id.qrcode_bottomsheet_wrapper);
-//                View bottomSheetInternal = d.findViewById(R.id.qrcode_bottomsheet);
-//                BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetInternal);
-//                //bottomSheetBehavior.setHidable(false);
-//                BottomSheetBehavior.from((View)coordinatorLayout.getParent()).setPeekHeight(bottomSheetInternal.getHeight());
-//                bottomSheetBehavior.setPeekHeight(bottomSheetInternal.getHeight());
-//                coordinatorLayout.getParent().requestLayout();
-//            }
-//        });
+        getDialog().setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                BottomSheetDialog d = (BottomSheetDialog) dialog;
+                CoordinatorLayout coordinatorLayout = (CoordinatorLayout) d.findViewById(R.id.qrcode_bottomsheet_wrapper);
+                View bottomSheetInternal = d.findViewById(R.id.qrcode_bottomsheet);
+                BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetInternal);
+                //bottomSheetBehavior.setHidable(false);
+                BottomSheetBehavior.from((View)coordinatorLayout.getParent()).setPeekHeight(bottomSheetInternal.getHeight());
+                bottomSheetBehavior.setPeekHeight(bottomSheetInternal.getHeight());
+                coordinatorLayout.getParent().requestLayout();
+            }
+        });
     }
 
 //    private void showSnackbarMessage(View rootView, String message) {

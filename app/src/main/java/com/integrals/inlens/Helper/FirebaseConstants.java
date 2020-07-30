@@ -29,4 +29,6 @@ public class FirebaseConstants {
 
     public static final String REPORTED ="Reported";
 
+    public static final String TEMP_ACCESS = "Temp-Access";
+    public static final String REQUESTS = "Requests";
 }
