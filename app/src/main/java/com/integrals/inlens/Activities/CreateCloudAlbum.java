@@ -32,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.work.Constraints;
@@ -46,6 +47,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
@@ -75,7 +77,7 @@ import java.util.concurrent.TimeUnit;
 
 
 public class CreateCloudAlbum extends AppCompatActivity {
-    private EditText albumTitleEditText,albumDescEditText;
+    private EditText albumTitleEditText, albumDescEditText;
     private TextView submitButton;
     private StorageReference storageReference;
     private ProgressBar uploadProgressbar;
@@ -88,24 +90,23 @@ public class CreateCloudAlbum extends AppCompatActivity {
     private String checkTimeTaken = "";
     private ImageButton createCloudAlbumBackButton;
     private Boolean eventTypeSet = false, albumDateSet = false;
-    private String createdIntent="NO";
+    private String createdIntent = "NO";
 
     FirebaseAuth firebaseAuth;
     DatabaseReference photographerRef, currentUserRef, communityRef;
     String currentUserId;
     LinearLayout rootCreateCloudAlbum;
-    private String globalID="";
+    private String globalID = "";
 
-    boolean travelBackInTime=false;
-    long startTime=0;
+    boolean travelBackInTime = false;
+    long startTime = 0;
 
     public CreateCloudAlbum() {
     }
 
 
-    String appTheme="";
-    int cf_bg_color,colorPrimary,red_inlens,cf_alert_dialogue_dim_bg;
-
+    String appTheme = "";
+    int cf_bg_color, colorPrimary, red_inlens, cf_alert_dialogue_dim_bg;
 
 
     @Override
@@ -113,42 +114,33 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
         SharedPreferences appDataPref = getSharedPreferences(AppConstants.appDataPref, Context.MODE_PRIVATE);
         final SharedPreferences.Editor appDataPrefEditor = appDataPref.edit();
-        if(appDataPref.contains(AppConstants.appDataPref_theme))
-        {
-            appTheme = appDataPref.getString(AppConstants.appDataPref_theme,AppConstants.themeLight);
-            if(appTheme.equals(AppConstants.themeLight))
-            {
+        if (appDataPref.contains(AppConstants.appDataPref_theme)) {
+            appTheme = appDataPref.getString(AppConstants.appDataPref_theme, AppConstants.themeLight);
+            if (appTheme.equals(AppConstants.themeLight)) {
                 setTheme(R.style.AppTheme);
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            }
-            else
-            {
+            } else {
                 setTheme(R.style.DarkTheme);
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             }
-        }
-        else
-        {
+        } else {
             appTheme = AppConstants.themeLight;
-            appDataPrefEditor.putString(AppConstants.appDataPref_theme,AppConstants.themeLight);
+            appDataPrefEditor.putString(AppConstants.appDataPref_theme, AppConstants.themeLight);
             appDataPrefEditor.commit();
             setTheme(R.style.AppTheme);
 
         }
 
-        if(appTheme.equals(AppConstants.themeLight))
-        {
+        if (appTheme.equals(AppConstants.themeLight)) {
             cf_bg_color = getResources().getColor(R.color.Light_cf_bg_color);
             colorPrimary = getResources().getColor(R.color.colorLightPrimary);
-            red_inlens =  getResources().getColor(R.color.Light_red_inlens);
+            red_inlens = getResources().getColor(R.color.Light_red_inlens);
             cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Light_cf_alert_dialogue_dim_bg);
 
-        }
-        else
-        {
+        } else {
             cf_bg_color = getResources().getColor(R.color.Dark_cf_bg_color);
             colorPrimary = getResources().getColor(R.color.colorDarkPrimary);
-            red_inlens =  getResources().getColor(R.color.Dark_red_inlens);
+            red_inlens = getResources().getColor(R.color.Dark_red_inlens);
             cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Dark_cf_alert_dialogue_dim_bg);
 
         }
@@ -199,11 +191,11 @@ public class CreateCloudAlbum extends AppCompatActivity {
                 dialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
                 dialog.getDatePicker().setMaxDate(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 4);
                 dialog.setOnCancelListener(dialogInterface -> {
-                    albumTime="";
+                    albumTime = "";
                     dateofCompletionCheckbox.setChecked(false);
-                    albumDateSet=false;
+                    albumDateSet = false;
                     dateofCompletionCheckbox.setText("Expiry date");
-                    TextView textView=findViewById(R.id.expiry_txt);
+                    TextView textView = findViewById(R.id.expiry_txt);
                     textView.setVisibility(View.VISIBLE);
                     textView.setText("Please select an album expiry date for your album.");
 
@@ -221,7 +213,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                     albumDateSet = true;
                     dateofCompletionCheckbox.setChecked(true);
                     dateofCompletionCheckbox.setText(albumTime);
-                    TextView textView=findViewById(R.id.expiry_txt);
+                    TextView textView = findViewById(R.id.expiry_txt);
                     textView.setVisibility(View.VISIBLE);
                     textView.setText("You can only upload images and add participants to this album till " + albumTime);
                 }
@@ -232,7 +224,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                     albumDateSet = true;
                     dateofCompletionCheckbox.setChecked(true);
 
-                    TextView textView=findViewById(R.id.expiry_txt);
+                    TextView textView = findViewById(R.id.expiry_txt);
                     textView.setVisibility(View.VISIBLE);
                     textView.setText("You can only upload images and add participants to this album till " + albumTime);
 
@@ -247,22 +239,19 @@ public class CreateCloudAlbum extends AppCompatActivity {
         submitButton.setOnClickListener(v -> {
 
             Cursor cursor = new UploadQueueDB(CreateCloudAlbum.this).getQueuedData();
-            if(cursor.getCount()>0)
-            {
+            if (cursor.getCount() > 0) {
                 provideQueueOptions(rootCreateCloudAlbum);
-            }
-            else
-            {
+            } else {
                 if (eventTypeSet && albumDateSet) {
                     if (!new PreOperationCheck().checkInternetConnectivity(getApplicationContext())) {
-                        showDialogue("No Internet. Please check your internet connection and try again", false);
+                        showDialogue("No Internet.", false);
 
                     } else {
-                        uploadNewAlbumData(travelBackInTime,startTime);
+                        uploadNewAlbumData(travelBackInTime, startTime);
 
                     }
                 } else {
-                    SnackShow snackShow=new SnackShow(rootCreateCloudAlbum,this);
+                    SnackShow snackShow = new SnackShow(rootCreateCloudAlbum, this);
                     snackShow.showErrorSnack("Please fill all the fields to create your Cloud-Album");
                 }
             }
@@ -278,7 +267,6 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
             }
         });
-
 
 
         createCloudAlbumBackButton.setOnClickListener(new View.OnClickListener() {
@@ -318,8 +306,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
         Intent travelBackInTimeIntent = getIntent();
         String typeTravelBackInTime = travelBackInTimeIntent.getType();
         String actionTravelBackInTime = travelBackInTimeIntent.getAction();
-        if(actionTravelBackInTime != null &&  actionTravelBackInTime.equals(Intent.ACTION_SEND) && typeTravelBackInTime != null && typeTravelBackInTime.startsWith("image/"))
-        {
+        if (actionTravelBackInTime != null && actionTravelBackInTime.equals(Intent.ACTION_SEND) && typeTravelBackInTime != null && typeTravelBackInTime.startsWith("image/")) {
             Uri imageUri = (Uri) travelBackInTimeIntent.getParcelableExtra(Intent.EXTRA_STREAM);
             String[] projection = {MediaStore.Images.Media.DATA};
             File imgFile = new File(getFilePathFromUri(projection, imageUri));
@@ -330,22 +317,20 @@ public class CreateCloudAlbum extends AppCompatActivity {
             try {
                 String dateformat = android.text.format.DateFormat.format("dd-MM-yyyy", new Date(System.currentTimeMillis())).toString();
                 date = (Date) formatter.parse(dateformat);
-                Log.i("travelback","time "+date);
+                Log.i("travelback", "time " + date);
                 long output = date.getTime() / 1000L;
                 String str = Long.toString(output);
                 long timestamp = Long.parseLong(str) * 1000;
-                Log.i("travelback","mgFile.lastModified() "+imgFile.lastModified());
-                Log.i("travelback","timestamp "+timestamp);
-                Log.i("travelback","dateformat "+dateformat);
-                if(imgFile.lastModified() > timestamp)
-                {
-                    travelBackInTime=true;
-                    startTime=imgFile.lastModified();
+                Log.i("travelback", "mgFile.lastModified() " + imgFile.lastModified());
+                Log.i("travelback", "timestamp " + timestamp);
+                Log.i("travelback", "dateformat " + dateformat);
+                if (imgFile.lastModified() > timestamp) {
+                    travelBackInTime = true;
+                    startTime = imgFile.lastModified();
                     SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
-                    String id = CurrentActiveCommunity.getString("id",AppConstants.NOT_AVALABLE);
-                    if(!id.equals(AppConstants.NOT_AVALABLE))
-                    {
-                        Snackbar activeAlbum =  Snackbar.make(rootCreateCloudAlbum,"Overwrite the current album?",BaseTransientBottomBar.LENGTH_INDEFINITE);
+                    String id = CurrentActiveCommunity.getString("id", AppConstants.NOT_AVALABLE);
+                    if (!id.equals(AppConstants.NOT_AVALABLE)) {
+                        Snackbar activeAlbum = Snackbar.make(rootCreateCloudAlbum, "Overwrite the current album?", BaseTransientBottomBar.LENGTH_INDEFINITE);
                         activeAlbum.setAction("Cancel", new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -354,7 +339,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                             }
                         });
                         activeAlbum.show();
-                        TextView overWriteTextView =  findViewById(R.id.overwrite_album);
+                        TextView overWriteTextView = findViewById(R.id.overwrite_album);
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -365,18 +350,16 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
 
                             }
-                        },5000);
+                        }, 5000);
                     }
-                }
-                else
-                {
-                    travelBackInTime=false;
-                    startTime=0;
+                } else {
+                    travelBackInTime = false;
+                    startTime = 0;
                     showDialogMessageInfo("Create albums with photos taken today.");
                 }
             } catch (ParseException e) {
-                Log.i("travelback","error "+e);
-                Snackbar.make(rootCreateCloudAlbum,"Some error occurred. Try again",BaseTransientBottomBar.LENGTH_SHORT).show();
+                Log.i("travelback", "error " + e);
+                Snackbar.make(rootCreateCloudAlbum, "Some error occurred. Try again", BaseTransientBottomBar.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
 
@@ -399,16 +382,17 @@ public class CreateCloudAlbum extends AppCompatActivity {
     }
 
     public void showDialogMessageError(String message) {
-        SnackShow snackShow=new SnackShow(rootCreateCloudAlbum,CreateCloudAlbum.this);
+        SnackShow snackShow = new SnackShow(rootCreateCloudAlbum, CreateCloudAlbum.this);
         snackShow.showErrorSnack(message);
     }
 
-    public void showDialogMessageSuccess( String message) {
-        SnackShow snackShow=new SnackShow(rootCreateCloudAlbum,CreateCloudAlbum.this);
+    public void showDialogMessageSuccess(String message) {
+        SnackShow snackShow = new SnackShow(rootCreateCloudAlbum, CreateCloudAlbum.this);
         snackShow.showSuccessSnack(message);
     }
+
     public void showDialogMessageInfo(String message) {
-        SnackShow snackShow=new SnackShow(rootCreateCloudAlbum,CreateCloudAlbum.this);
+        SnackShow snackShow = new SnackShow(rootCreateCloudAlbum, CreateCloudAlbum.this);
         snackShow.showInfoSnack(message);
     }
 
@@ -510,8 +494,8 @@ public class CreateCloudAlbum extends AppCompatActivity {
             if (!TextUtils.isEmpty(eventType)) {
                 eventDialog.dismiss();
             } else {
-            SnackShow snackShow=new SnackShow(rootCreateCloudAlbum,this);
-            snackShow.showErrorSnack("Please select an event type.");
+                SnackShow snackShow = new SnackShow(rootCreateCloudAlbum, this);
+                snackShow.showErrorSnack("Please select an event type.");
             }
 
         });
@@ -617,7 +601,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
     }
 
 
-    private void uploadNewAlbumData(boolean travelBackInTime,long startTime) {
+    private void uploadNewAlbumData(boolean travelBackInTime, long startTime) {
 
         final String titleValue = albumTitleEditText.getText().toString().trim();
         final String descriptionValue = albumDescEditText.getText().toString().trim();
@@ -627,32 +611,57 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
             final String newCommunityId = communityRef.push().getKey();
 
-            Map communitymap =  new HashMap();
+            String currentUserPath = FirebaseConstants.USERS + "/" + currentUserId + "/";
+            String photographerPath = FirebaseConstants.PARTICIPANTS + "/" + newCommunityId + "/";
+            String communityPath = FirebaseConstants.COMMUNITIES + "/" + newCommunityId + "/";
+
+            Map communitymap = new HashMap();
             submitButton.setEnabled(false);
             uploadProgressbar.setVisibility(View.VISIBLE);
-            globalID=newCommunityId;
-            communitymap.put(FirebaseConstants.COMMUNITYTITLE,titleValue);
-            communitymap.put(FirebaseConstants.COMMUNITYDESC,descriptionValue);
-            communitymap.put(FirebaseConstants.COMMUNITYSTATUS,"T");
-            communitymap.put(FirebaseConstants.COMMUNITYTYPE,eventType);
-            communitymap.put(FirebaseConstants.COMMUNITYENDTIME, Long.parseLong(getTimeStamp(albumTime)));
-            if(travelBackInTime)
-            {
-                communitymap.put(FirebaseConstants.COMMUNITYSTARTTIME,startTime);
+            globalID = newCommunityId;
+
+            //userRef values
+            communitymap.put(currentUserPath + FirebaseConstants.COMMUNITIES + "/" + newCommunityId, System.currentTimeMillis());
+            communitymap.put(currentUserPath + FirebaseConstants.LIVECOMMUNITYID, newCommunityId);
+
+
+//          //community values
+            communitymap.put(communityPath + FirebaseConstants.COMMUNITYADMIN, currentUserId);
+            communitymap.put(communityPath + FirebaseConstants.COMMUNITYTITLE, titleValue);
+            communitymap.put(communityPath + FirebaseConstants.COMMUNITYDESC, descriptionValue);
+            communitymap.put(communityPath + FirebaseConstants.COMMUNITYSTATUS, "T");
+            communitymap.put(communityPath + FirebaseConstants.COMMUNITYTYPE, eventType);
+            communitymap.put(communityPath + FirebaseConstants.COMMUNITYENDTIME, Long.parseLong(getTimeStamp(albumTime)));
+
+            if (travelBackInTime) {
+                communitymap.put(communityPath + FirebaseConstants.COMMUNITYSTARTTIME, startTime);
+            } else {
+                communitymap.put(communityPath + FirebaseConstants.COMMUNITYSTARTTIME, ServerValue.TIMESTAMP);
             }
-            else
-            {
-                communitymap.put(FirebaseConstants.COMMUNITYSTARTTIME,ServerValue.TIMESTAMP);
-            }
-            communitymap.put(FirebaseConstants.COMMUNITYADMIN,currentUserId);
-            communityRef.child(newCommunityId).setValue(communitymap).addOnCompleteListener(new OnCompleteListener<Void>() {
+
+//            // photographers values
+            communitymap.put(photographerPath + currentUserId, ServerValue.TIMESTAMP);
+
+            FirebaseDatabase.getInstance().getReference().updateChildren(communitymap, new DatabaseReference.CompletionListener() {
                 @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if(task.isSuccessful())
-                    {
+                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+
+                    if (databaseError != null) {
+                        uploadProgressbar.setVisibility(View.GONE);
+                        submitButton.setEnabled(true);
+                        SnackShow snackShow = new SnackShow(rootCreateCloudAlbum, CreateCloudAlbum.this);
+                        snackShow.showErrorSnack(databaseError.getMessage());
+                        Log.i("cca","error "+databaseError);
+                    } else {
+
+                        //todo
+                        // write a cloud function that deletes all requests made by this user.
+                        // Requests-->
+                        //           |-->$comid-->
+                        //                       |-->$userid
+
 
                         MainActivity.getInstance().finish();
-
                         SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
                         SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
                         ceditor.putString("id", newCommunityId);
@@ -666,80 +675,50 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         //drop table and create new one
                         new UploadQueueDB(CreateCloudAlbum.this).deleteAllData();
 
-                        photographerRef.child(newCommunityId).child(currentUserId).setValue(ServerValue.TIMESTAMP);
-                        currentUserRef.child(FirebaseConstants.COMMUNITIES).child(newCommunityId).setValue(String.valueOf(System.currentTimeMillis()));
-                        currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).setValue(newCommunityId);
                         submitButton.setEnabled(false);
                         uploadProgressbar.setVisibility(View.GONE);
 
-                        final long dy = TimeUnit.MILLISECONDS.toDays(Long.parseLong(getTimeStamp(albumTime))-System.currentTimeMillis());
-                        final long hr = TimeUnit.MILLISECONDS.toHours(Long.parseLong(getTimeStamp(albumTime))-System.currentTimeMillis())
-                                - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(Long.parseLong(getTimeStamp(albumTime))-System.currentTimeMillis()));
-                        final long min = TimeUnit.MILLISECONDS.toMinutes(Long.parseLong(getTimeStamp(albumTime))-System.currentTimeMillis())
-                                - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(Long.parseLong(getTimeStamp(albumTime))-System.currentTimeMillis()));
+                        final long dy = TimeUnit.MILLISECONDS.toDays(Long.parseLong(getTimeStamp(albumTime)) - System.currentTimeMillis());
+                        final long hr = TimeUnit.MILLISECONDS.toHours(Long.parseLong(getTimeStamp(albumTime)) - System.currentTimeMillis())
+                                - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(Long.parseLong(getTimeStamp(albumTime)) - System.currentTimeMillis()));
+                        final long min = TimeUnit.MILLISECONDS.toMinutes(Long.parseLong(getTimeStamp(albumTime)) - System.currentTimeMillis())
+                                - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(Long.parseLong(getTimeStamp(albumTime)) - System.currentTimeMillis()));
 
                         NotificationHelper helper = new NotificationHelper(getApplicationContext());
                         String notificationStr = "";
-                        if (titleValue.length() >15)
-                        {
-                            notificationStr+=titleValue.substring(0,15)+"...";
+                        if (titleValue.length() > 15) {
+                            notificationStr += titleValue.substring(0, 15) + "...";
+                        } else {
+                            notificationStr += titleValue;
                         }
-                        else
-                        {
-                            notificationStr+=titleValue;
+                        if (dy > 0) {
+                            notificationStr += ", " + (int) dy + " days";
+                        } else {
+                            notificationStr += ",";
                         }
-                        if(dy>0)
-                        {
-                            notificationStr+=", "+ (int) dy +" days";
+                        if (hr > 0) {
+                            notificationStr += " " + (int) hr + " hrs left";
                         }
-                        else
-                        {
-                            notificationStr+=",";
+                        if (hr < 1 && dy < 1) {
+                            notificationStr += " " + (int) min + " minutes left";
                         }
-                        if(hr>0)
-                        {
-                            notificationStr+=" "+(int)hr+" hrs left";
-                        }
-                        if(hr<1 && dy<1)
-                        {
-                            notificationStr+=" "+(int)min+" minutes left";
-                        }
-                        helper.displayAlbumStartNotification(notificationStr,"You are active in this Cloud-Album till "+ albumTime);
+                        helper.displayAlbumStartNotification(notificationStr, "You are active in this Cloud-Album till " + albumTime);
 
                         Handler handler = new Handler();
-                        SnackShow snackShow=new SnackShow(rootCreateCloudAlbum,CreateCloudAlbum.this);
+                        SnackShow snackShow = new SnackShow(rootCreateCloudAlbum, CreateCloudAlbum.this);
                         snackShow.showSuccessSnack("Your Cloud-Album created successfully. Enjoy your event by uploading moments together.");
                         handler.postDelayed(new Runnable() {
                             public void run() {
-                                createdIntent="YES";
-                                Log.i("travelback","createdIntent "+createdIntent);
+                                createdIntent = "YES";
+                                Log.i("travelback", "createdIntent " + createdIntent);
                                 onBackPressed();
                             }
                         }, 3000);
-
                     }
-                    else
-                    {
-                        uploadProgressbar.setVisibility(View.GONE);
-                        submitButton.setEnabled(true);
-
-
-
-                    }
-
-
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-
-                    uploadProgressbar.setVisibility(View.GONE);
-                    submitButton.setEnabled(true);
-                    SnackShow snackShow=new SnackShow(rootCreateCloudAlbum,CreateCloudAlbum.this);
-                    snackShow.showErrorSnack("Some error occurred, Please try again "+e.getMessage());
 
                 }
             });
+
 
         } else {
             uploadProgressbar.setVisibility(View.GONE);
@@ -747,7 +726,6 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
         }
     }
-
 
 
     private String getTimeStamp(String albumTime) {
@@ -796,13 +774,13 @@ public class CreateCloudAlbum extends AppCompatActivity {
     public void onBackPressed() {
 
         if (uploadProgressbar.isShown()) {
-            SnackShow snackShow=new SnackShow(rootCreateCloudAlbum,this);
+            SnackShow snackShow = new SnackShow(rootCreateCloudAlbum, this);
             snackShow.showErrorSnack("Album creation on progress. Please wait...");
         } else {
 
             Intent mainIntent = new Intent(CreateCloudAlbum.this, MainActivity.class);
-            mainIntent.putExtra("CREATED",createdIntent);
-            mainIntent.putExtra("ID",globalID);
+            mainIntent.putExtra("CREATED", createdIntent);
+            mainIntent.putExtra("ID", globalID);
             startActivity(mainIntent);
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             finish();
@@ -839,12 +817,12 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
         // Create Alert using Builder
         if (positive) {
-            SnackShow snackShow=new SnackShow(rootCreateCloudAlbum,this);
+            SnackShow snackShow = new SnackShow(rootCreateCloudAlbum, this);
             snackShow.showSuccessSnack(dialogue);
 
         } else {
-        SnackShow snackShow=new SnackShow(rootCreateCloudAlbum,this);
-        snackShow.showErrorSnack(dialogue);
+            SnackShow snackShow = new SnackShow(rootCreateCloudAlbum, this);
+            snackShow.showErrorSnack(dialogue);
         }
 
     }

@@ -20,7 +20,7 @@ import java.util.logging.Handler;
 public class AlbumEndWorker extends Worker {
 
     HandleQuit handleQuit;
-    private DatabaseReference linkRef,communityRef,currentUserRef;
+    private DatabaseReference communityRef,currentUserRef;
     private String activeCommunityId;
     Context context;
 
@@ -32,7 +32,7 @@ public class AlbumEndWorker extends Worker {
         activeCommunityId = currentActiveCommunity.getString("id",AppConstants.NOT_AVALABLE);
         currentUserRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USERS).child(FirebaseAuth.getInstance().getCurrentUser().getUid());
         communityRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.COMMUNITIES);
-        linkRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.INVITE_LINK);
+
 
     }
 
@@ -41,7 +41,7 @@ public class AlbumEndWorker extends Worker {
     public Result doWork() {
         if(!activeCommunityId.equals(AppConstants.NOT_AVALABLE))
         {
-            handleQuit = new HandleQuit(context,currentUserRef,linkRef,communityRef.child(activeCommunityId).child(FirebaseConstants.COMMUNITYSTATUS),activeCommunityId);
+            handleQuit = new HandleQuit(context,currentUserRef,communityRef.child(activeCommunityId).child(FirebaseConstants.COMMUNITYSTATUS),activeCommunityId);
             handleQuit.execute();
             return Result.success();
         }

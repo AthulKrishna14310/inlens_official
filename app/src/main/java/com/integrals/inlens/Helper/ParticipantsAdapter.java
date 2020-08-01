@@ -46,21 +46,22 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     QRCodeBottomSheet qrCodeBottomSheet;
     MainActivity activity;
     String adminId;
-    DatabaseReference participantRef,userRef,tempAccessRef,reqRef;
+    DatabaseReference participantRef, userRef, tempAccessRef, reqRef, rootRef;
     String communityId;
 
 
     public ParticipantsAdapter(List<PhotographerModel> photographersList,
-                               MainActivity activity, QRCodeBottomSheet qrcodeDialog, String adminId,DatabaseReference ref,String communityId) {
+                               MainActivity activity, QRCodeBottomSheet qrcodeDialog, String adminId, DatabaseReference ref, String communityId) {
         this.photographersList = photographersList;
         this.qrCodeBottomSheet = qrcodeDialog;
         this.activity = activity;
         this.adminId = adminId;
         participantRef = ref.child(FirebaseConstants.PARTICIPANTS).child(communityId);
+        rootRef = ref;
         reqRef = ref.child(FirebaseConstants.REQUESTS).child(communityId);
         userRef = ref.child(FirebaseConstants.USERS);
         tempAccessRef = ref.child(FirebaseConstants.TEMP_ACCESS);
-        this.communityId=communityId;
+        this.communityId = communityId;
     }
 
     @Override
@@ -111,23 +112,21 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     if (activity.getCurrentUserId().equals(adminId)) {
 
                         if (photographersList.get(position).getId().equals(adminId)) {
-                            PhotographerFragementBottomSheetAdmin photographerFragementBottomSheetAdmin = new PhotographerFragementBottomSheetAdmin(activity, photographersList.get(position),true);
+                            PhotographerFragementBottomSheetAdmin photographerFragementBottomSheetAdmin = new PhotographerFragementBottomSheetAdmin(activity, photographersList.get(position), true);
                             photographerFragementBottomSheetAdmin.show(((FragmentActivity) activity).getSupportFragmentManager(), photographerFragementBottomSheetAdmin.getTag());
 
                         } else {
-                            PhotographerFragementBottomSheetNA photographerFragementBottomSheetNA = new PhotographerFragementBottomSheetNA(activity, photographersList.get(position),true,userRef,participantRef,communityId);
+                            PhotographerFragementBottomSheetNA photographerFragementBottomSheetNA = new PhotographerFragementBottomSheetNA(activity, photographersList.get(position), true, userRef, participantRef, communityId);
                             photographerFragementBottomSheetNA.show(((FragmentActivity) activity).getSupportFragmentManager(), photographerFragementBottomSheetNA.getTag());
 
                         }
-                    }
-                    else
-                    {
+                    } else {
                         if (photographersList.get(position).getId().equals(adminId)) {
-                            PhotographerFragementBottomSheetAdmin photographerFragementBottomSheetAdmin = new PhotographerFragementBottomSheetAdmin(activity, photographersList.get(position),false);
+                            PhotographerFragementBottomSheetAdmin photographerFragementBottomSheetAdmin = new PhotographerFragementBottomSheetAdmin(activity, photographersList.get(position), false);
                             photographerFragementBottomSheetAdmin.show(((FragmentActivity) activity).getSupportFragmentManager(), photographerFragementBottomSheetAdmin.getTag());
 
                         } else {
-                            PhotographerFragementBottomSheetNA photographerFragementBottomSheetNA = new PhotographerFragementBottomSheetNA(activity, photographersList.get(position),false,userRef,participantRef,communityId);
+                            PhotographerFragementBottomSheetNA photographerFragementBottomSheetNA = new PhotographerFragementBottomSheetNA(activity, photographersList.get(position), false, userRef, participantRef, communityId);
                             photographerFragementBottomSheetNA.show(((FragmentActivity) activity).getSupportFragmentManager(), photographerFragementBottomSheetNA.getTag());
 
                         }
@@ -140,40 +139,31 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else if (holder instanceof AddParticipantsViewHolder) {
 
 
-            if(FirebaseAuth.getInstance().getCurrentUser().getUid().equals(adminId))
-            {
-                SharedPreferences reqPref =activity.getSharedPreferences(AppConstants.appDataPref, Context.MODE_PRIVATE);
-                long lastCheckedTime = Long.parseLong(reqPref.getString(AppConstants.REQUEST_LAST_CHECKED,"0"));
+            if (activity.getCurrentUserId().equals(adminId)) {
+                SharedPreferences reqPref = activity.getSharedPreferences(AppConstants.appDataPref, Context.MODE_PRIVATE);
+                long lastCheckedTime = Long.parseLong(reqPref.getString(AppConstants.REQUEST_LAST_CHECKED, "0"));
 
                 List<String> req = new ArrayList<>();
                 reqRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                        for(DataSnapshot snapshot:dataSnapshot.getChildren())
-                        {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
                             String uid = snapshot.getKey();
                             long time = Long.parseLong(dataSnapshot.child(uid).getValue().toString());
-                            if(time>lastCheckedTime)
-                            {
+                            if (time > lastCheckedTime) {
                                 req.add(uid);
                             }
                         }
-                        if(req.size()>0)
-                        {
+                        if (req.size() > 0) {
                             ((AddParticipantsViewHolder) holder).badgeTextView.setVisibility(View.VISIBLE);
-                            if(req.size()>9)
-                            {
+                            if (req.size() > 9) {
                                 ((AddParticipantsViewHolder) holder).badgeTextView.setText("9+");
-                            }
-                            else
-                            {
+                            } else {
                                 ((AddParticipantsViewHolder) holder).badgeTextView.setText(String.valueOf(req.size()));
                             }
-                        }
-                        else
-                        {
+                        } else {
                             ((AddParticipantsViewHolder) holder).badgeTextView.setVisibility(View.GONE);
                         }
                     }
@@ -184,24 +174,25 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     }
                 });
 
-            }
-            else
-            {
+            } else {
                 ((AddParticipantsViewHolder) holder).badgeTextView.setVisibility(View.GONE);
             }
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    qrCodeBottomSheet.show(activity.getSupportFragmentManager(),qrCodeBottomSheet.getTag());
-                    if(FirebaseAuth.getInstance().getCurrentUser().getUid().equals(adminId))
-                    {
+
+                    if (activity.getCurrentUserId().equals(adminId)) {
                         ((AddParticipantsViewHolder) holder).badgeTextView.setVisibility(View.GONE);
-                        SharedPreferences reqPref =activity.getSharedPreferences(AppConstants.appDataPref, Context.MODE_PRIVATE);
+                        SharedPreferences reqPref = activity.getSharedPreferences(AppConstants.appDataPref, Context.MODE_PRIVATE);
                         final SharedPreferences.Editor reqPrefEditor = reqPref.edit();
                         reqPrefEditor.putString(AppConstants.REQUEST_LAST_CHECKED, String.valueOf(System.currentTimeMillis()));
                         reqPrefEditor.commit();
+
                     }
+                    qrCodeBottomSheet.show(activity.getSupportFragmentManager(), qrCodeBottomSheet.getTag());
+
+
                 }
             });
 

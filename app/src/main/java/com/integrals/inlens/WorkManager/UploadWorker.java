@@ -105,8 +105,7 @@ public class UploadWorker extends Worker {
             if (System.currentTimeMillis() >= endTime && uploadQueueDB.getQueuedData().getCount() == 0) {
                 DatabaseReference currentUserRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USERS).child(FirebaseAuth.getInstance().getCurrentUser().getUid());
                 DatabaseReference communityRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.COMMUNITIES);
-                DatabaseReference linkRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.INVITE_LINK);
-                new HandleQuit(context, currentUserRef, linkRef, communityRef, communityID).execute();
+                new HandleQuit(context, currentUserRef, communityRef, communityID).execute();
             }
 
         } catch (Exception e) {

@@ -30,17 +30,16 @@ import java.util.UUID;
 public class HandleQuit extends AsyncTask<Void,Void,Void>
 {
 
-    private DatabaseReference linkRef,statusRef,currentUserRef;
+    private DatabaseReference statusRef,currentUserRef;
     private String activeCommunityId;
     private Context context;
     SharedPreferences CurrentActiveCommunity;
     UploadQueueDB uploadQueueDB;
 
-    public HandleQuit(Context applicationContext, DatabaseReference currentUserRef, DatabaseReference linkRef, DatabaseReference statusRef, String currentActiveCommunityID) {
+    public HandleQuit(Context applicationContext, DatabaseReference currentUserRef,DatabaseReference statusRef, String currentActiveCommunityID) {
 
         context=applicationContext;
         this.currentUserRef= currentUserRef;
-        this.linkRef=linkRef;
         this.statusRef=statusRef;
         activeCommunityId=currentActiveCommunityID;
         uploadQueueDB = new UploadQueueDB(applicationContext);
@@ -55,25 +54,6 @@ public class HandleQuit extends AsyncTask<Void,Void,Void>
     @Override
     protected Void doInBackground(Void... voids) {
 
-        linkRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                for(DataSnapshot snapshot:dataSnapshot.getChildren())
-                {
-                    if(snapshot.hasChild("id") && snapshot.child("id").equals(activeCommunityId))
-                    {
-                        linkRef.child(snapshot.getKey()).removeValue();
-                    }
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
         statusRef.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {

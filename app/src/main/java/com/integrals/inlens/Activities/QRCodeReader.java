@@ -6,19 +6,27 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.appcompat.app.AppCompatDelegate;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.crowdfire.cfalertdialog.CFAlertDialog;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.vision.barcode.Barcode;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -34,16 +42,18 @@ import com.integrals.inlens.R;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import info.androidhive.barcode.BarcodeReader;
 
 
-public class QRCodeReader extends AppCompatActivity implements BarcodeReader.BarcodeReaderListener {
+public class QRCodeReader extends AppCompatActivity {
 
     private BarcodeReader barcodeReader;
-    private DatabaseReference communityRef, userRef, participantRef;
+    private DatabaseReference communityRef, userRef, participantRef,tempAccessRef;
     String currentUserId;
     ProgressBar qrcodeReaderProgressbar;
     List<String> userCommunityIdList;
@@ -110,268 +120,97 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
         qrcodeReaderProgressbar = findViewById(R.id.qrcodeReaderProgressbar);
         currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         communityRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.COMMUNITIES);
-        userRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USERS).child(currentUserId);
+        userRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USERS);
         participantRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.PARTICIPANTS);
+        tempAccessRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.TEMP_ACCESS);
 
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        barcodeReader = (BarcodeReader) getSupportFragmentManager().findFragmentById(R.id.barcode_fragment);
-
-    }
-
-    @Override
-    public void onScanned(final Barcode barcode) {
-        barcodeReader.pauseScanning();
-        // play beep sound
-        barcodeReader.playBeep();
-        runOnUiThread(new Runnable() {
+        userRef.child(currentUserId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void run() {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                CFAlertDialog.Builder builder = new CFAlertDialog.Builder(QRCodeReader.this)
-                        .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                        .setTitle("New Community")
-                        .setIcon(R.mipmap.ic_launcher_foreground)
-                        .setDialogBackgroundColor(cf_bg_color)
-                        .setTextColor(colorPrimary)
+                if(dataSnapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID))
+                {
+                    String communityId = dataSnapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString();
+                    barcodeReader = (BarcodeReader) getSupportFragmentManager().findFragmentById(R.id.barcode_fragment);
+                    barcodeReader.setListener(new BarcodeReader.BarcodeReaderListener() {
+                        @Override
+                        public void onScanned(Barcode barcode) {
+                            barcodeReader.playBeep();
+                            addPhotographerToCommunity(barcode.displayValue,communityId);
 
-                        .setMessage("Are you sure you want to join this new community? This means quitting the previous one.")
-                        .setTextGravity(Gravity.START)
-                        .setCancelable(false)
-                        .addButton("YES",
-                                colorPrimary,
-                                cf_alert_dialogue_dim_bg,
-                                CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                                CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        addPhotographerToCommunity(barcode.displayValue);
-                                        qrcodeReaderProgressbar.setVisibility(View.VISIBLE);
-                                        dialog.dismiss();
-                                    }
-                                })
-                        .addButton("NO", red_inlens,
-                                cf_alert_dialogue_dim_bg,
-                                CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                                CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                builder.show();
-
-
-            }
-        });
-    }
-
-    @Override
-    public void onScannedMultiple(List<Barcode> barcodes) {
-
-    }
-
-    @Override
-    public void onBitmapScanned(SparseArray<Barcode> sparseArray) {
-
-    }
-
-    @Override
-    public void onScanError(String errorMessage) {
-
-    }
-
-    @Override
-    public void onCameraPermissionDenied() {
-        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
-                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                .setTitle("Camera Permission")
-                .setIcon(R.drawable.ic_info)
-                .setDialogBackgroundColor(cf_bg_color)
-                .setTextColor(colorPrimary)
-                .setMessage("InLens require camera permission to scan QR code. Please enable it and try again.")
-                .setCancelable(false)
-                .addButton("OK",
-                        colorPrimary,
-                        cf_alert_dialogue_dim_bg,
-                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                ActivityCompat.requestPermissions(QRCodeReader.this, new String[]{Manifest.permission.CAMERA},MY_PERMISSIONS_REQUEST_CAMERA);
-                                dialog.dismiss();
-
-                            }
-                        })
-                .addButton("CANCEL", red_inlens,
-                        cf_alert_dialogue_dim_bg,
-                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                Intent mainIntent = new Intent(QRCodeReader.this, MainActivity.class);
-                                mainIntent.putStringArrayListExtra(AppConstants.USER_ID_LIST, (ArrayList<String>) userCommunityIdList);
-                                startActivity(mainIntent);
-                                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                                finish();
-                                dialog.dismiss();
-
-                            }
-                        });
-
-        builder.show();
-    }
-
-
-    public void showDialogMessage(String title, String message) {
-        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
-                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                .setTitle(title)
-                .setDialogBackgroundColor(cf_bg_color)
-                .setTextColor(colorPrimary)
-                .setIcon(R.drawable.ic_check_circle_black_24dp)
-                .setMessage(message)
-
-                .setCancelable(false)
-                .addButton("OK",
-                        colorPrimary,
-                        cf_alert_dialogue_dim_bg,
-                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                onBackPressed();
-                            }
-                        });
-        builder.show();
-    }
-
-    public void showDialogInfo(String title, String message) {
-        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
-                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                .setTitle(title)
-                .setDialogBackgroundColor(cf_bg_color)
-                .setTextColor(colorPrimary)
-                .setIcon(R.drawable.ic_info)
-                .setMessage(message)
-                .setCancelable(false)
-                .addButton("OK",
-                        colorPrimary,
-                        cf_alert_dialogue_dim_bg,
-                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                Intent mainIntent = new Intent(QRCodeReader.this, MainActivity.class);
-                                mainIntent.putStringArrayListExtra(AppConstants.USER_ID_LIST, (ArrayList<String>) userCommunityIdList);
-                                startActivity(mainIntent);
-                                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                                finish();
-                                dialog.dismiss();
-                            }
-                        });
-        builder.show();
-    }
-
-    private void addPhotographerToCommunity(final String communityId) {
-
-        communityRef.child(communityId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                if (dataSnapshot.hasChild(FirebaseConstants.COMMUNITYSTATUS)) {
-                    long endtime = Long.parseLong(dataSnapshot.child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString());
-                    String titleValue = dataSnapshot.child(FirebaseConstants.COMMUNITYTITLE).getValue().toString();
-
-                    if (System.currentTimeMillis() < endtime) {
-
-                        userRef.child(FirebaseConstants.COMMUNITIES).child(communityId).setValue(ServerValue.TIMESTAMP);
-                        userRef.child(FirebaseConstants.LIVECOMMUNITYID).setValue(communityId);
-
-                        participantRef.child(communityId).child(currentUserId).setValue(ServerValue.TIMESTAMP);
-                        userCommunityIdList.add(0,communityId);
-                        showDialogMessage("New Community", "You have been added to a new community.");
-
-                        SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
-                        SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
-                        ceditor.putString("id", communityId);
-                        ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
-                        ceditor.putString("stopAt", String.valueOf(endtime));
-                        ceditor.putString("startAt", String.valueOf(System.currentTimeMillis()));
-                        ceditor.putInt("notiCount", 0);
-                        ceditor.commit();
-
-                        final long dy = TimeUnit.MILLISECONDS.toDays(endtime)-System.currentTimeMillis();
-                        final long hr = TimeUnit.MILLISECONDS.toHours(endtime) - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(endtime));
-                        final long min = TimeUnit.MILLISECONDS.toMinutes(endtime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(endtime));
-
-                        NotificationHelper helper = new NotificationHelper(getApplicationContext());
-                        String notificationStr = "";
-                        if (titleValue.length() >15)
-                        {
-                            notificationStr+=titleValue.substring(0,15)+"...";
                         }
-                        else
-                        {
-                            notificationStr+=titleValue;
+
+                        @Override
+                        public void onScannedMultiple(List<Barcode> barcodes) {
+
                         }
-                        if(dy>0)
-                        {
-                            notificationStr+=", "+ (int) dy +" days";
+
+                        @Override
+                        public void onBitmapScanned(SparseArray<Barcode> sparseArray) {
+
                         }
-                        else
-                        {
-                            notificationStr+=",";
+
+                        @Override
+                        public void onScanError(String errorMessage) {
+
                         }
-                        if(hr>0)
-                        {
-                            notificationStr+=" "+(int)hr+" hrs left";
+
+                        @Override
+                        public void onCameraPermissionDenied() {
+                            CFAlertDialog.Builder builder = new CFAlertDialog.Builder(QRCodeReader.this)
+                                    .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                                    .setTitle("Camera Permission")
+                                    .setIcon(R.drawable.ic_info)
+                                    .setDialogBackgroundColor(cf_bg_color)
+                                    .setTextColor(colorPrimary)
+                                    .setMessage("InLens require camera permission to scan QR code. Please enable it and try again.")
+                                    .setCancelable(false)
+                                    .addButton("OK",
+                                            colorPrimary,
+                                            cf_alert_dialogue_dim_bg,
+                                            CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                                            new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+
+                                                    ActivityCompat.requestPermissions(QRCodeReader.this, new String[]{Manifest.permission.CAMERA},MY_PERMISSIONS_REQUEST_CAMERA);
+                                                    dialog.dismiss();
+
+                                                }
+                                            })
+                                    .addButton("CANCEL", red_inlens,
+                                            cf_alert_dialogue_dim_bg,
+                                            CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                            CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                                            new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+
+                                                    Intent mainIntent = new Intent(QRCodeReader.this, MainActivity.class);
+                                                    mainIntent.putStringArrayListExtra(AppConstants.USER_ID_LIST, (ArrayList<String>) userCommunityIdList);
+                                                    startActivity(mainIntent);
+                                                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                                                    finish();
+                                                    dialog.dismiss();
+
+                                                }
+                                            });
+
+                            builder.show();
                         }
-                        if(hr<1 && dy<1)
-                        {
-                            notificationStr+=" "+(int)min+" minutes left";
-                        }
-                        long time = Long.parseLong(String.valueOf(endtime));
-                        CharSequence Time = DateUtils.getRelativeDateTimeString(QRCodeReader.this, time, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL);
-                        String timesubstring = Time.toString().substring(Time.length()-8);
+                    });
 
-                        Date date = new Date(time);
-                        String dateformat = DateFormat.format("dd-MM-yyyy",date).toString();
-
-                        helper.displayAlbumStartNotification(notificationStr, "You are active in this Cloud-Album till " + dateformat+", "+timesubstring);
-
-                        createIntent="YES";
-                        ID=communityId;
-
-                    } else {
-
-                        showDialogInfo("Album Inactive", "The album has expired or admin has made the album inactive.");
-
-                    }
-
-                } else {
-                    showDialogInfo("Album Inactive", "The album has expired or admin has made the album inactive.");
-
+                }
+                else
+                {
+                    Toast.makeText(QRCodeReader.this, "You are not participating in any album.", Toast.LENGTH_SHORT).show();
                 }
 
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
@@ -379,23 +218,84 @@ public class QRCodeReader extends AppCompatActivity implements BarcodeReader.Bar
     }
 
 
-    @Override
-    public void onBackPressed() {
-        if(createIntent.contentEquals("YES")) {
-            Intent mainIntent = new Intent(QRCodeReader.this, MainActivity.class);
-            mainIntent.putStringArrayListExtra(AppConstants.USER_ID_LIST, (ArrayList<String>) userCommunityIdList);
 
-            //PURPOSE OF USER DIRECT
-            mainIntent.putExtra("CREATED", createIntent);
-            mainIntent.putExtra("ID", ID);
+    private void addPhotographerToCommunity(String newUserId, final String communityId) {
 
-            startActivity(mainIntent);
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            finish();
-        }else{
-            super.onBackPressed();
-        }
+        userRef.child(newUserId).child(FirebaseConstants.NAME).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if(dataSnapshot.exists())
+                {
+                    String newUserName = dataSnapshot.getValue().toString();
+                    String userModifyPath =FirebaseConstants.USERS+"/"+newUserId+"/";
+                    String participantPath = FirebaseConstants.PARTICIPANTS+"/"+communityId+"/";
+
+                    // info:
+                    // if user is already present in an album permission is denied from the server
+                    // we can also check that manually
+                    // advantage of manual check => prevent write and delete operations on the db
+                    // disadvantage of manual check => user need to perform one network operation
+
+                    tempAccessRef.child(newUserId).child(FirebaseConstants.TEMP_ACCESS_GRANTED_UID).setValue(currentUserId).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+
+                            // info : if user creates another album, the temp access should be cleared
+                            Map addUserMap =new HashMap();
+                            addUserMap.put(userModifyPath+FirebaseConstants.LIVECOMMUNITYID,communityId);
+                            addUserMap.put(userModifyPath+FirebaseConstants.COMMUNITIES+"/"+communityId,ServerValue.TIMESTAMP);
+                            addUserMap.put(participantPath+newUserId,ServerValue.TIMESTAMP);
+                            FirebaseDatabase.getInstance().getReference().updateChildren(addUserMap, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+
+                                    // todo write cloud function to delete temp access
+
+
+                                    if(databaseError!=null)
+                                    {
+                                        tempAccessRef.child(newUserId).removeValue();
+                                        Toast.makeText(QRCodeReader.this, databaseError.getMessage()+"\nUser may already be in an album.", Toast.LENGTH_SHORT).show();
+                                    }
+                                    else
+                                    {
+                                        tempAccessRef.child(newUserId).removeValue();
+                                        Toast.makeText(QRCodeReader.this, "Added "+newUserName.split(" ")[0], Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                            Log.i("qrreader","error "+e);
+
+                        }
+                    });
+
+
+
+
+                }
+                else
+                {
+                    Toast.makeText(QRCodeReader.this, "No user found.", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
     }
+
 }
 
 
