@@ -1,7 +1,6 @@
 package com.integrals.inlens.Helper;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
@@ -19,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.android.material.button.MaterialButton;
 import com.google.firebase.database.DatabaseReference;
 import com.integrals.inlens.Activities.QRCodeReader;
 import com.integrals.inlens.MainActivity;

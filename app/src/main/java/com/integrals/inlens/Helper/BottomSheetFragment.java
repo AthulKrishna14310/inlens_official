@@ -16,6 +16,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +29,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.integrals.inlens.Activities.CreateCloudAlbum;
 import com.integrals.inlens.Activities.ReportActivity;
 import com.integrals.inlens.Activities.SplashScreenActivity;
 import com.integrals.inlens.MainActivity;
@@ -111,6 +114,22 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
         TextView AlbumBottomEndDate = view.findViewById(R.id.albumenddate);
         TextView AlbumType = view.findViewById(R.id.albumtype);
         endTimeTextView = AlbumBottomEndDate;
+
+        ImageButton editButton =view.findViewById(R.id.editDetails);
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                activity.startActivity(new Intent(activity, CreateCloudAlbum.class)
+                .putExtra("Edit","yes")
+                .putExtra("AlbumName",communityModel.getTitle())
+                .putExtra("AlbumDescription",communityModel.getDescription())
+                .putExtra("AlbumExpiry",getDate(communityModel.getEndTime()))
+                .putExtra("AlbumType",communityModel.getType())
+                );
+                activity.finish();
+
+            }
+        });
 
         AlbumTitle.setText(communityModel.getTitle());
         if (TextUtils.isEmpty(communityModel.getDescription())) {

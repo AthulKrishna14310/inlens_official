@@ -18,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.crowdfire.cfalertdialog.CFAlertDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -59,6 +60,7 @@ public class UserNameInfoActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         SharedPreferences appDataPref = getSharedPreferences(AppConstants.appDataPref, Context.MODE_PRIVATE);
         final SharedPreferences.Editor appDataPrefEditor = appDataPref.edit();
         if(appDataPref.contains(AppConstants.appDataPref_theme))
@@ -195,7 +197,15 @@ public class UserNameInfoActivity extends AppCompatActivity {
             }
         });
 
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(getIntent().getStringExtra("Edit").contentEquals("yes")){
+            UserNameDoneButton.setText("Done");
+            Toast.makeText(getApplicationContext(),"Edit Mode",Toast.LENGTH_SHORT).show();
+        }
 
     }
 

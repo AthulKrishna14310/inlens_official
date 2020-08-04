@@ -14,6 +14,7 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +26,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.integrals.inlens.Activities.CreateCloudAlbum;
 import com.integrals.inlens.Activities.ReportActivity;
 import com.integrals.inlens.Activities.SplashScreenActivity;
 import com.integrals.inlens.MainActivity;
@@ -89,7 +91,21 @@ public class BottomSheetFragment_Inactive extends BottomSheetDialogFragment {
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
+        ImageButton editButton =view.findViewById(R.id.editDetails);
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                activity.startActivity(new Intent(activity, CreateCloudAlbum.class)
+                        .putExtra("Edit","yes")
+                        .putExtra("AlbumName",communityModel.getTitle())
+                        .putExtra("AlbumDescription",communityModel.getDescription())
+                        .putExtra("AlbumExpiry",getDate(communityModel.getEndTime()))
+                        .putExtra("AlbumType",communityModel.getType())
+                );
+                activity.finish();
 
+            }
+        });
 
 
         LinearLayout linearLayout2 = view.findViewById(R.id.item_change_cover);

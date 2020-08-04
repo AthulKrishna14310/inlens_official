@@ -174,7 +174,6 @@ public class CreateCloudAlbum extends AppCompatActivity {
         createCloudAlbumBackButton = findViewById(R.id.create_cloud_album_backbutton);
 
         storageReference = FirebaseStorage.getInstance().getReference();
-
         Calendar calender = Calendar.getInstance();
         dateofCompletionCheckbox = findViewById(R.id.TimeEditText);
 
@@ -382,6 +381,27 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
         }
 
+
+
+        String str=getIntent().getStringExtra("Edit");
+        if(str.contentEquals("yes")){
+              albumTitleEditText.setText(getIntent().getStringExtra("AlbumName"));
+              albumDescEditText.setText(getIntent().getStringExtra("AlbumDescription"));
+              eventPickerCheckbox.setText(getIntent().getStringExtra("AlbumType"));
+              dateofCompletionCheckbox.setText(getIntent().getStringExtra("AlbumExpiry"));
+              dateofCompletionCheckbox.setChecked(true);
+              dateofCompletionCheckbox.setEnabled(false);
+              findViewById(R.id.date_range_button).setEnabled(false);
+              eventPickerCheckbox.setChecked(true);
+              submitButton.setText("Update");
+              TextView t=findViewById(R.id.title_head);
+              t.setText("Edit");
+              TextView textView=findViewById(R.id.expiry_txt);
+              textView.setVisibility(View.VISIBLE);
+              textView.setText("You cannot change expiry date of a album");
+
+
+        }
     }
 
     public String getFilePathFromUri(String[] projection, Uri uri) {

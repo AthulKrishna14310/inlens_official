@@ -104,6 +104,7 @@ import com.integrals.inlens.Activities.InlensGalleryActivity;
 import com.integrals.inlens.Activities.PhotoView;
 import com.integrals.inlens.Activities.QRCodeReader;
 import com.integrals.inlens.Activities.SplashScreenActivity;
+import com.integrals.inlens.Activities.UserNameInfoActivity;
 import com.integrals.inlens.Activities.WebViewActivity;
 import com.integrals.inlens.Database.UploadQueueDB;
 import com.integrals.inlens.Helper.AlbumOptionsBottomSheetFragment;
@@ -358,12 +359,12 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
                 if (item.getItemId() == R.id.profile_preference) {
-
                     // no need to check internet connection as if is given by default
-                    setCoverChange(false);
-                    setProfileChange(true);
-                    GetStartedWithNewProfileImage();
-
+                    //setCoverChange(false);
+                    //setProfileChange(true);
+                    //GetStartedWithNewProfileImage();
+                    startActivity(new Intent(MainActivity.this, UserNameInfoActivity.class)
+                    .putExtra("Edit","yes"));
                     return true;
 
                 }

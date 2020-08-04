@@ -50,6 +50,7 @@
                 android:layout_marginLeft="@dimen/underline_margin_left_create_cloud_album_activity"
                 android:layout_marginBottom="4dp"
                 android:text="Create"
+                android:id="@+id/title_head"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
                 android:textColor="?attr/colorPrimary"
                  />
@@ -189,7 +190,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginBottom="2dp"
-
+                        android:layout_marginLeft="8dp"
                         android:text="TextView"
                         android:textColor="?attr/red_cancel_icon"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
@@ -256,7 +257,10 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_margin="@dimen/done_button_margin_create_cloud_album_activity"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
         android:background="@drawable/done_btn_bg"
         android:padding="10dp">
         <TextView
