@@ -23,29 +23,35 @@
         android:indeterminateTint="?attr/colorPrimary"
         android:indeterminate="true"/>
     <RelativeLayout
-        android:layout_width="156dp"
+        android:layout_width="180dp"
         android:layout_below="@id/user_email_activity_progressbar"
         android:layout_centerHorizontal="true"
         android:id="@+id/relativeLayout"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:visibility="visible"
-        android:layout_height="156dp">
+        android:layout_height="180dp">
     <de.hdodenhof.circleimageview.CircleImageView
-        android:layout_width="140dp"
-        android:layout_height="140dp"
+        android:layout_width="164dp"
+        android:layout_height="164dp"
         android:id="@+id/profilepic_update"
         android:layout_centerInParent="true"
-        android:src="@drawable/ic_account_circle"
+
+        android:src="@drawable/ic_account_circle_black_24dp"
        />
 
-    <ImageView
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="100dp"
-        android:background="@drawable/circle_profile"
-        android:foreground="?selectableItemBackgroundBorderless"
-        android:padding="8dp"
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="108dp"
+        app:icon="@drawable/ic_edit"
+        android:layout_marginRight="4dp"
+        app:iconTint="?attr/colorPrimary"
+        android:backgroundTint="?attr/default_bg_color"
+        style="@style/Widget.MaterialComponents.FloatingActionButton"
+        app:backgroundTint="?attr/colorPrimary"
+        android:src="@drawable/ic_edit"
+        android:id="@+id/user_image_select"
         android:layout_alignParentRight="true"
-        android:src="@drawable/ic_add_a_photo_24dp"
         android:tint="?attr/colorPrimary" />
     </RelativeLayout>
     <TextView
@@ -134,9 +140,12 @@
         android:drawableTint="?attr/default_bg_color"
         style="?attr/materialButtonStyle"
         android:text="Proceed"
-        android:layout_below="@id/user_email_activity_edittext_layout"
-        android:layout_margin="16dp"
-        android:padding="10dp"
+        android:elevation="0dp"
+        android:alpha="0.8"
+        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_alignParentBottom="true"
+        android:padding="12dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
         android:textAllCaps="true"
        />

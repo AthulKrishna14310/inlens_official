@@ -113,42 +113,33 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
         SharedPreferences appDataPref = getSharedPreferences(AppConstants.appDataPref, Context.MODE_PRIVATE);
         final SharedPreferences.Editor appDataPrefEditor = appDataPref.edit();
-        if(appDataPref.contains(AppConstants.appDataPref_theme))
-        {
-            appTheme = appDataPref.getString(AppConstants.appDataPref_theme,AppConstants.themeLight);
-            if(appTheme.equals(AppConstants.themeLight))
-            {
+        if (appDataPref.contains(AppConstants.appDataPref_theme)) {
+            appTheme = appDataPref.getString(AppConstants.appDataPref_theme, AppConstants.themeLight);
+            if (appTheme.equals(AppConstants.themeLight)) {
                 setTheme(R.style.AppTheme);
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            }
-            else
-            {
+            } else {
                 setTheme(R.style.DarkTheme);
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             }
-        }
-        else
-        {
+        } else {
             appTheme = AppConstants.themeLight;
-            appDataPrefEditor.putString(AppConstants.appDataPref_theme,AppConstants.themeLight);
+            appDataPrefEditor.putString(AppConstants.appDataPref_theme, AppConstants.themeLight);
             appDataPrefEditor.commit();
             setTheme(R.style.AppTheme);
 
         }
 
-        if(appTheme.equals(AppConstants.themeLight))
-        {
+        if (appTheme.equals(AppConstants.themeLight)) {
             cf_bg_color = getResources().getColor(R.color.Light_cf_bg_color);
             colorPrimary = getResources().getColor(R.color.colorLightPrimary);
-            red_inlens =  getResources().getColor(R.color.Light_red_inlens);
+            red_inlens = getResources().getColor(R.color.Light_red_inlens);
             cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Light_cf_alert_dialogue_dim_bg);
 
-        }
-        else
-        {
+        } else {
             cf_bg_color = getResources().getColor(R.color.Dark_cf_bg_color);
             colorPrimary = getResources().getColor(R.color.colorDarkPrimary);
-            red_inlens =  getResources().getColor(R.color.Dark_red_inlens);
+            red_inlens = getResources().getColor(R.color.Dark_red_inlens);
             cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Dark_cf_alert_dialogue_dim_bg);
 
         }
@@ -198,11 +189,11 @@ public class CreateCloudAlbum extends AppCompatActivity {
                 dialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
                 dialog.getDatePicker().setMaxDate(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 4);
                 dialog.setOnCancelListener(dialogInterface -> {
-                    albumTime="";
+                    albumTime = "";
                     dateofCompletionCheckbox.setChecked(false);
-                    albumDateSet=false;
+                    albumDateSet = false;
                     dateofCompletionCheckbox.setText("Expiry date");
-                    TextView textView=findViewById(R.id.expiry_txt);
+                    TextView textView = findViewById(R.id.expiry_txt);
                     textView.setVisibility(View.VISIBLE);
                     textView.setText("Please select an album expiry date for your album.");
 
@@ -220,7 +211,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                     albumDateSet = true;
                     dateofCompletionCheckbox.setChecked(true);
                     dateofCompletionCheckbox.setText(albumTime);
-                    TextView textView=findViewById(R.id.expiry_txt);
+                    TextView textView = findViewById(R.id.expiry_txt);
                     textView.setVisibility(View.VISIBLE);
                     textView.setText("You can only upload images and add participants to this album till " + albumTime);
                 }
@@ -231,7 +222,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                     albumDateSet = true;
                     dateofCompletionCheckbox.setChecked(true);
 
-                    TextView textView=findViewById(R.id.expiry_txt);
+                    TextView textView = findViewById(R.id.expiry_txt);
                     textView.setVisibility(View.VISIBLE);
                     textView.setText("You can only upload images and add participants to this album till " + albumTime);
 
@@ -246,22 +237,19 @@ public class CreateCloudAlbum extends AppCompatActivity {
         submitButton.setOnClickListener(v -> {
 
             Cursor cursor = new UploadQueueDB(CreateCloudAlbum.this).getQueuedData();
-            if(cursor.getCount()>0)
-            {
+            if (cursor.getCount() > 0) {
                 provideQueueOptions(rootCreateCloudAlbum);
-            }
-            else
-            {
+            } else {
                 if (eventTypeSet && albumDateSet) {
                     if (!new PreOperationCheck().checkInternetConnectivity(getApplicationContext())) {
                         showDialogue("No Internet. Please check your internet connection and try again", false);
 
                     } else {
-                        uploadNewAlbumData(travelBackInTime,startTime);
+                        uploadNewAlbumData(travelBackInTime, startTime);
 
                     }
                 } else {
-                    SnackShow snackShow=new SnackShow(rootCreateCloudAlbum,this);
+                    SnackShow snackShow = new SnackShow(rootCreateCloudAlbum, this);
                     snackShow.showErrorSnack("Please fill all the fields to create your Cloud-Album");
                 }
             }
@@ -277,7 +265,6 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
             }
         });
-
 
 
         createCloudAlbumBackButton.setOnClickListener(new View.OnClickListener() {
@@ -317,8 +304,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
         Intent travelBackInTimeIntent = getIntent();
         String typeTravelBackInTime = travelBackInTimeIntent.getType();
         String actionTravelBackInTime = travelBackInTimeIntent.getAction();
-        if(actionTravelBackInTime != null &&  actionTravelBackInTime.equals(Intent.ACTION_SEND) && typeTravelBackInTime != null && typeTravelBackInTime.startsWith("image/"))
-        {
+        if (actionTravelBackInTime != null && actionTravelBackInTime.equals(Intent.ACTION_SEND) && typeTravelBackInTime != null && typeTravelBackInTime.startsWith("image/")) {
             Uri imageUri = (Uri) travelBackInTimeIntent.getParcelableExtra(Intent.EXTRA_STREAM);
             String[] projection = {MediaStore.Images.Media.DATA};
             File imgFile = new File(getFilePathFromUri(projection, imageUri));
@@ -329,22 +315,20 @@ public class CreateCloudAlbum extends AppCompatActivity {
             try {
                 String dateformat = android.text.format.DateFormat.format("dd-MM-yyyy", new Date(System.currentTimeMillis())).toString();
                 date = (Date) formatter.parse(dateformat);
-                Log.i("travelback","time "+date);
+                Log.i("travelback", "time " + date);
                 long output = date.getTime() / 1000L;
                 String str = Long.toString(output);
                 long timestamp = Long.parseLong(str) * 1000;
-                Log.i("travelback","mgFile.lastModified() "+imgFile.lastModified());
-                Log.i("travelback","timestamp "+timestamp);
-                Log.i("travelback","dateformat "+dateformat);
-                if(imgFile.lastModified() > timestamp)
-                {
-                    travelBackInTime=true;
-                    startTime=imgFile.lastModified();
+                Log.i("travelback", "mgFile.lastModified() " + imgFile.lastModified());
+                Log.i("travelback", "timestamp " + timestamp);
+                Log.i("travelback", "dateformat " + dateformat);
+                if (imgFile.lastModified() > timestamp) {
+                    travelBackInTime = true;
+                    startTime = imgFile.lastModified();
                     SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
-                    String id = CurrentActiveCommunity.getString("id",AppConstants.NOT_AVALABLE);
-                    if(!id.equals(AppConstants.NOT_AVALABLE))
-                    {
-                        Snackbar activeAlbum =  Snackbar.make(rootCreateCloudAlbum,"Overwrite the current album?",BaseTransientBottomBar.LENGTH_INDEFINITE);
+                    String id = CurrentActiveCommunity.getString("id", AppConstants.NOT_AVALABLE);
+                    if (!id.equals(AppConstants.NOT_AVALABLE)) {
+                        Snackbar activeAlbum = Snackbar.make(rootCreateCloudAlbum, "Overwrite the current album?", BaseTransientBottomBar.LENGTH_INDEFINITE);
                         activeAlbum.setAction("Cancel", new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -353,7 +337,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                             }
                         });
                         activeAlbum.show();
-                        TextView overWriteTextView =  findViewById(R.id.overwrite_album);
+                        TextView overWriteTextView = findViewById(R.id.overwrite_album);
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -364,42 +348,44 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
 
                             }
-                        },5000);
+                        }, 5000);
                     }
-                }
-                else
-                {
-                    travelBackInTime=false;
-                    startTime=0;
+                } else {
+                    travelBackInTime = false;
+                    startTime = 0;
                     showDialogMessageInfo("Create albums with photos taken today.");
                 }
             } catch (ParseException e) {
-                Log.i("travelback","error "+e);
-                Snackbar.make(rootCreateCloudAlbum,"Some error occurred. Try again",BaseTransientBottomBar.LENGTH_SHORT).show();
+                Log.i("travelback", "error " + e);
+                Snackbar.make(rootCreateCloudAlbum, "Some error occurred. Try again", BaseTransientBottomBar.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
 
         }
 
 
+        try {
+            String str = getIntent().getStringExtra("Edit");
+            if (str.contentEquals("yes")) {
+                albumTitleEditText.setText(getIntent().getStringExtra("AlbumName"));
+                albumDescEditText.setText(getIntent().getStringExtra("AlbumDescription"));
+                eventPickerCheckbox.setText(getIntent().getStringExtra("AlbumType"));
+                dateofCompletionCheckbox.setText(getIntent().getStringExtra("AlbumExpiry"));
+                dateofCompletionCheckbox.setChecked(true);
+                dateofCompletionCheckbox.setEnabled(false);
+                findViewById(R.id.date_range_button).setEnabled(false);
+                eventPickerCheckbox.setChecked(true);
+                submitButton.setText("Update");
+                TextView t = findViewById(R.id.title_head);
+                t.setText("Edit");
+                TextView textView = findViewById(R.id.expiry_txt);
+                textView.setVisibility(View.VISIBLE);
+                textView.setText("You cannot change expiry date of a album");
 
-        String str=getIntent().getStringExtra("Edit");
-        if(str.contentEquals("yes")){
-              albumTitleEditText.setText(getIntent().getStringExtra("AlbumName"));
-              albumDescEditText.setText(getIntent().getStringExtra("AlbumDescription"));
-              eventPickerCheckbox.setText(getIntent().getStringExtra("AlbumType"));
-              dateofCompletionCheckbox.setText(getIntent().getStringExtra("AlbumExpiry"));
-              dateofCompletionCheckbox.setChecked(true);
-              dateofCompletionCheckbox.setEnabled(false);
-              findViewById(R.id.date_range_button).setEnabled(false);
-              eventPickerCheckbox.setChecked(true);
-              submitButton.setText("Update");
-              TextView t=findViewById(R.id.title_head);
-              t.setText("Edit");
-              TextView textView=findViewById(R.id.expiry_txt);
-              textView.setVisibility(View.VISIBLE);
-              textView.setText("You cannot change expiry date of a album");
 
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
 
         }
     }

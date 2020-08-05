@@ -1,7 +1,6 @@
 package com.integrals.inlens.Activities;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -19,8 +18,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.crowdfire.cfalertdialog.CFAlertDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,7 +31,6 @@ import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.Helper.PreOperationCheck;
 import com.integrals.inlens.Helper.SnackShow;
 import com.integrals.inlens.R;
-
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -196,16 +192,28 @@ public class UserNameInfoActivity extends AppCompatActivity {
 
             }
         });
-
+       TextView t= findViewById(R.id.user_name_toolbar).findViewById(R.id.mytoolbar_textview);
+       t.setText("User Profile");
+       findViewById(R.id.user_image_select).setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View view) {
+               Toast.makeText(getApplicationContext(),"User image selected",Toast.LENGTH_SHORT).show();
+           }
+       });
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        if(getIntent().getStringExtra("Edit").contentEquals("yes")){
-            UserNameDoneButton.setText("Done");
-            Toast.makeText(getApplicationContext(),"Edit Mode",Toast.LENGTH_SHORT).show();
+        try {
+            if(getIntent().getStringExtra("Edit").contentEquals("yes")){
+                UserNameDoneButton.setText("Done");
+                Toast.makeText(getApplicationContext(),"Edit Mode",Toast.LENGTH_SHORT).show();
+            }
+        }catch (NullPointerException e){
+            e.printStackTrace();
         }
+
 
     }
 

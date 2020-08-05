@@ -160,10 +160,10 @@
                             android:layout_centerInParent="true"
                             android:layout_marginLeft="50dp"
                             android:layout_marginRight="40dp"
-                            android:text="Expiry date"
+                            android:text="Expiry"
                             android:alpha="0.8"
                             android:textColor="?attr/colorSecondary"
-                            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
 
                             />
 
@@ -211,7 +211,7 @@
                             android:text="Event type"
                             android:alpha="0.8"
                             android:textColor="?attr/colorSecondary"
-                            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                             />
 
                         <ImageButton
@@ -221,7 +221,6 @@
                             android:layout_marginStart="@dimen/image_button_margin_create_cloud_album"
                             android:layout_marginTop="@dimen/image_button_margin_create_cloud_album"
                             android:layout_marginEnd="@dimen/image_button_margin_create_cloud_album"
-
                             android:layout_marginBottom="@dimen/image_button_margin_create_cloud_album"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:src="@drawable/ic_event_type"
