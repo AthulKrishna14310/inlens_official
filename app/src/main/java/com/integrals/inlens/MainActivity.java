@@ -642,6 +642,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
 
 
+
     }
 
 
@@ -852,74 +853,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
-
-        communitiesListener = currentUserRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                userCommunityIdList = new ArrayList<>();
-                if (dataSnapshot.hasChild(FirebaseConstants.COMMUNITIES)) {
-                    for (DataSnapshot snapshot : dataSnapshot.child(FirebaseConstants.COMMUNITIES).getChildren()) {
-                        userCommunityIdList.add(snapshot.getKey());
-                    }
-                    Collections.sort(userCommunityIdList, Collections.reverseOrder());
-
-                }
-                if (dataSnapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID)) {
-                    mainAddPhotosFab.show();
-                    String activeAlbum = dataSnapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString();
-                    userCommunityIdList.remove(activeAlbum);
-                    userCommunityIdList.add(0,activeAlbum);
-                    getCloudAlbumData(userCommunityIdList);
-                } else {
-                    mainAddPhotosFab.hide();
-                    getCloudAlbumData(userCommunityIdList);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
-
-
-        communitiesListener = currentUserRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                userCommunityIdList = new ArrayList<>();
-                if (dataSnapshot.hasChild(FirebaseConstants.COMMUNITIES)) {
-                    for (DataSnapshot snapshot : dataSnapshot.child(FirebaseConstants.COMMUNITIES).getChildren()) {
-                        userCommunityIdList.add(snapshot.getKey());
-                    }
-                    Collections.sort(userCommunityIdList, Collections.reverseOrder());
-
-                }
-                if (dataSnapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID)) {
-                    mainAddPhotosFab.show();
-                    String activeAlbum = dataSnapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString();
-                    userCommunityIdList.remove(activeAlbum);
-                    userCommunityIdList.add(0,activeAlbum);
-                    getCloudAlbumData(userCommunityIdList);
-                } else {
-                    mainAddPhotosFab.hide();
-                    getCloudAlbumData(userCommunityIdList);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
 
         // FIXME has to update decryption and  encryption.
 
@@ -928,14 +863,57 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
         // get live community id and check if album  is active or the app should quit the user from the album
         // if the album status is true the we  can start the service from the getServerTime async task only if the end time has not been reached;
-        userRefListenerForActiveAlbum = readFirebaseData.readData(currentUserRef, new FirebaseRead() {
+
+        userRefListenerForActiveAlbum = new ValueEventListener() {
             @Override
-            public void onSuccess(DataSnapshot snapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                // navigation drawer items should be updated.
+                userCommunityIdList = new ArrayList<>();
+                MainHorizontalRecyclerview.removeAllViews();
+                if (dataSnapshot.hasChild(FirebaseConstants.COMMUNITIES)) {
+                    for (DataSnapshot snapshot : dataSnapshot.child(FirebaseConstants.COMMUNITIES).getChildren()) {
+                        userCommunityIdList.add(snapshot.getKey());
 
-                String name = snapshot.child("Name").getValue().toString();
-                String email = snapshot.child("Email").getValue().toString();
+                        communityRef.child(snapshot.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                Log.i("MainLog","val "+dataSnapshot.child("admin").getValue().toString());
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                Log.i("MainLog","val "+databaseError);
+                                Log.i("MainLog","val "+communityRef.child(snapshot.getKey()).getRef());
+
+                            }
+                        });
+//                        Log.i("MainLog","com keys "+snapshot.getKey());
+                    }
+                    Collections.sort(userCommunityIdList, Collections.reverseOrder());
+
+                }
+                else
+                {
+//                    Log.i("MainLog","no communities inside users community node");
+                    Snackbar.make(rootForMainActivity,"0 cloud albums",BaseTransientBottomBar.LENGTH_SHORT).show();
+                }
+                if (dataSnapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID)) {
+                    mainAddPhotosFab.show();
+                    String activeAlbum = dataSnapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString();
+                    userCommunityIdList.remove(activeAlbum);
+                    userCommunityIdList.add(0,activeAlbum);
+                    getCloudAlbumData(userCommunityIdList);
+                } else {
+                    mainAddPhotosFab.hide();
+                    getCloudAlbumData(userCommunityIdList);
+                }
+
+
+
+                String name = dataSnapshot.child("Name").getValue().toString();
+                String email = dataSnapshot.child("Email").getValue().toString();
 
                 TextView navEmailTextView = navigationView.getHeaderView(0).findViewById(R.id.headerEmailX);
                 TextView navNameTextView = navigationView.getHeaderView(0).findViewById(R.id.headerNameX);
@@ -945,9 +923,9 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 navNameTextView.setText(name);
 
 
-                if (snapshot.hasChild("Profile_picture")) {
+                if (dataSnapshot.hasChild("Profile_picture")) {
 
-                    String imageUrl = snapshot.child("Profile_picture").getValue().toString();
+                    String imageUrl = dataSnapshot.child("Profile_picture").getValue().toString();
 
                     Glide.with(getApplicationContext()).load(imageUrl).into(navProfileImageView);
 
@@ -955,9 +933,9 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                 SharedPreferences LastShownNotificationInfo = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
 
-                if (snapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID)) {
+                if (dataSnapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID)) {
 
-                    currentActiveCommunityID = snapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString();
+                    currentActiveCommunityID = dataSnapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString();
                     if (!LastShownNotificationInfo.contains("id")) {
                         SharedPreferences.Editor editor = LastShownNotificationInfo.edit();
                         editor.putString("id", currentActiveCommunityID);
@@ -973,21 +951,22 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
 
                     // make the start and stop services in navigation drawer visible
-
-                    communityRefListenerForActiveAlbum = readFirebaseData.readData(communityRef.child(currentActiveCommunityID), new FirebaseRead() {
+                    communityRefListenerForActiveAlbum = new ValueEventListener() {
                         @Override
-                        public void onSuccess(DataSnapshot snapshot) {
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                             // optimization 1 resulted in this error, everytime the album is quit even if the album is inactive
                             // so first check the album  has status status;
                             if(snapshot.hasChild(FirebaseConstants.COMMUNITYADMIN))
                             {
-                                if(snapshot.child(FirebaseConstants.COMMUNITYADMIN).toString().equals(getCurrentUserId()))
+
+                                if(snapshot.child(FirebaseConstants.COMMUNITYADMIN).getValue().toString().equals(getCurrentUserId()))
                                 {
                                     qrCodeBottomSheet = new QRCodeBottomSheet( rootForMainActivity,currentActiveCommunityID, FirebaseDatabase.getInstance().getReference(), false,MainActivity.this, true);
                                 }
                                 else
                                 {
+
                                     qrCodeBottomSheet = new QRCodeBottomSheet( rootForMainActivity,currentActiveCommunityID, FirebaseDatabase.getInstance().getReference(), false,MainActivity.this, false);
                                 }
                             }
@@ -1067,16 +1046,15 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                         }
 
                         @Override
-                        public void onStart() {
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                        }
-
-                        @Override
-                        public void onFailure(DatabaseError databaseError) {
+                            Log.i("MainLog","second outermost "+databaseError);
 
 
                         }
-                    });
+                    };
+                    communityRef.child(currentActiveCommunityID).addValueEventListener(communityRefListenerForActiveAlbum);
+
                 } else {
                     currentActiveCommunityID = AppConstants.NOT_AVALABLE;
                 }
@@ -1084,15 +1062,14 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             }
 
             @Override
-            public void onStart() {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                Log.i("MainLog","outermost "+databaseError);
+
 
             }
-
-            @Override
-            public void onFailure(DatabaseError databaseError) {
-
-            }
-        });
+        };
+        currentUserRef.addValueEventListener(userRefListenerForActiveAlbum);
 
 
     }
@@ -1130,6 +1107,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 public void onSuccess(DataSnapshot snapshot) {
 
                     if (userCommunityIdList.size() > 0) {
+                        MainHorizontalRecyclerview.removeAllViews();
                         findViewById(R.id.photoText).setVisibility(View.VISIBLE);
                         findViewById(R.id.photographers).setVisibility(View.VISIBLE);
                         //  findViewById(R.id.linePhotographer).setVisibility(View.VISIBLE);
@@ -1309,7 +1287,10 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                     else
                     {
                         Uri deeplink = pendingDynamicLinkData.getLink();
-                        String communityRefLinkId = deeplink.toString().replace("https://inlens.com=", "");
+                        String communityRefLinkId = deeplink.getQueryParameter("comId");
+                        String adminId = deeplink.getQueryParameter("adminId");
+                        String time = deeplink.getQueryParameter("time");
+                        Log.i("decryptMain","data link "+communityRefLinkId+" admin "+adminId+" time "+time);
 
                         if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
 
@@ -1671,19 +1652,19 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                     //todo : permission is denied for other users. Change db structure for public and private data.
 
-                    photographerRef.child(snapshot.getKey()).child("Name").addListenerForSingleValueEvent(new ValueEventListener() {
+                    photographerRef.child(snapshot.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot userSnapshot) {
 
                             Log.i("participant", "getting user info " + snapshot.getKey());
 
                             String name = AppConstants.NOT_AVALABLE, imgurl = AppConstants.NOT_AVALABLE, email = AppConstants.NOT_AVALABLE;
-                            if (userSnapshot.exists()) {
+                            if (userSnapshot.hasChild("Name")) {
                                 if (currentUserId.equals(snapshot.getKey())) {
                                     name = "You";
 
                                 } else {
-                                    name = userSnapshot.getValue().toString();
+                                    name = userSnapshot.child("Name").getValue().toString();
                                 }
 
                             }
@@ -1850,11 +1831,17 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
 
 
-                        Log.i("quit", "url" + photographerList.get(0).getImgUrl() + "getId" + photographerList.get(0).getId() + "getName" + photographerList.get(0).getName());
+//                        Log.i("quit", "url" + photographerList.get(0).getImgUrl() + "getId" + photographerList.get(0).getId() + "getName" + photographerList.get(0).getName());
 
-                        if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
-                            photographerList.remove(0);
-                            participantsAdapter.notifyDataSetChanged();
+                        try {
+                            if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
+                                photographerList.remove(0);
+                                participantsAdapter.notifyDataSetChanged();
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Log.i("mainException","line 1838 ");
                         }
                         //SetDefaultView();
 
@@ -1977,10 +1964,16 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                         SnackShow snackShow=new SnackShow(rootForMainActivity,MainActivity.this);
                                                         snackShow.showSuccessSnack("Successfully exited from your Cloud-Album. ");
 
-                                                        if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
-                                                            photographerList.remove(0);
-                                                            participantsAdapter.notifyDataSetChanged();
-                                                        }
+                                                       try {
+                                                           if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
+                                                               photographerList.remove(0);
+                                                               participantsAdapter.notifyDataSetChanged();
+                                                           }
+                                                       }
+                                                       catch (Exception e)
+                                                       {
+                                                           Log.i("Exception","error "+e+"line 1941");
+                                                       }
                                                         //SetDefaultView();
 
                                                     } else {

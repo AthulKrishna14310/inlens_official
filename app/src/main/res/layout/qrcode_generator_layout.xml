@@ -1,80 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/qrcode_bottomsheet_wrapper">
+    android:id="@+id/qrcode_bottomsheet_wrapper"
+    android:orientation="vertical">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/qrcode_bottomsheet"
-        android:layout_width="match_parent"
-        app:cardBackgroundColor="?attr/default_dim_bg"
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        android:layout_margin="16dp"
         >
 
-        <RelativeLayout
+        <TextView
+            android:id="@+id/textView"
             android:layout_width="wrap_content"
+            android:drawableLeft="@drawable/ic_group_add"
+            android:drawableTint="?attr/colorPrimary"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:textAlignment="textStart"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+            android:text="@string/add_photographers"
+            android:textColor="?attr/colorPrimary"
+            />
+
+        <ImageButton
+            android:id="@+id/QR_dialog_closebtn"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/circle"
+            android:backgroundTint="?attr/colorSecondary"
+            android:src="@drawable/ic_closedialog"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/QR_Display"
+            android:layout_width="230dp"
+            android:layout_height="230dp"
+            android:layout_below="@id/textViewAlbumQR"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="5dp"
+            android:visibility="gone"
+            android:layout_marginTop="15dp" />
+
+        <TextView
+            android:id="@+id/textViewAlbumQR"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/QR_dialog_closebtn"
+            android:layout_alignParentStart="true"
+            android:textAlignment="textStart"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:visibility="gone"
+            android:text="@string/qr_message"
+            android:textColor="?attr/colorPrimary"
+            />
+
+        <LinearLayout
+            android:id="@+id/layout_add_options_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_below="@id/QR_Display"
             >
 
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
-                android:drawableLeft="@drawable/ic_group_add"
-                android:drawableTint="?attr/colorPrimary"
-                android:layout_height="wrap_content"
-                android:textAlignment="textStart"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-                android:text="@string/add_photographers"
-                android:textColor="?attr/colorPrimary"
-                />
-
-            <ImageButton
-                android:id="@+id/QR_dialog_closebtn"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="4dp"
-                android:background="@drawable/circle"
-                android:backgroundTint="?attr/colorSecondary"
-                android:src="@drawable/ic_closedialog"
-                android:visibility="invisible" />
-
-
-            <ImageView
-                android:id="@+id/QR_Display"
-                android:layout_width="230dp"
-                android:layout_height="230dp"
-                android:layout_below="@id/textViewAlbumQR"
-                android:layout_centerHorizontal="true"
-                android:layout_margin="5dp"
-                android:visibility="gone"
-                android:layout_marginTop="15dp" />
-
-            <TextView
-                android:id="@+id/textViewAlbumQR"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/QR_dialog_closebtn"
-                android:layout_alignParentStart="true"
-                android:textAlignment="textStart"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-                android:visibility="gone"
-                android:text="@string/qr_message"
-                android:textColor="?attr/colorPrimary"
-                />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:id="@+id/layouttbtn"
-                android:layout_below="@id/QR_Display"
                 android:layout_marginTop="8dp"
                 android:layout_height="wrap_content">
+
                 <Button
                     android:id="@+id/ScanButton"
                     android:layout_width="match_parent"
@@ -112,21 +114,26 @@
                     />
 
             </LinearLayout>
-            <Button
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/req_recyclerview"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="CANCEL"
-                style="?attr/materialButtonOutlinedStyle"
-                android:id="@+id/cancelButton"
-                android:padding="16dp"
-                android:layout_below="@+id/layouttbtn"
-                />
+                android:layout_height="wrap_content"/>
 
-        </RelativeLayout>
+        </LinearLayout>
 
 
-    </androidx.cardview.widget.CardView>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CANCEL"
+            style="?attr/materialButtonOutlinedStyle"
+            android:id="@+id/cancelButton"
+            android:padding="16dp"
+            android:layout_below="@+id/layout_add_options_button"
+            />
+
+    </RelativeLayout>
 
 
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>
