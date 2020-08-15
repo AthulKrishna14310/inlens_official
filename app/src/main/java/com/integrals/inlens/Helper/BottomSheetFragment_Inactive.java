@@ -101,6 +101,7 @@ public class BottomSheetFragment_Inactive extends BottomSheetDialogFragment {
                         .putExtra("AlbumDescription",communityModel.getDescription())
                         .putExtra("AlbumExpiry",getDate(communityModel.getEndTime()))
                         .putExtra("AlbumType",communityModel.getType())
+                        .putExtra("Id",communityModel.getCommunityID())
                 );
                 activity.finish();
 

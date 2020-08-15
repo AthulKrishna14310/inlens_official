@@ -155,11 +155,6 @@ public class AuthActivity extends AppCompatActivity {
                     AuthContainer.getAnimation().start();
                     AuthContainer.setVisibility(View.VISIBLE);
 
-                    findViewById(R.id.Name).setAnimation(FadeOut);
-                    findViewById(R.id.appicon).setAnimation(FadeOut);
-
-                    findViewById(R.id.Name).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.appicon).setVisibility(View.INVISIBLE);
 
                     getDefaultCountry();
 

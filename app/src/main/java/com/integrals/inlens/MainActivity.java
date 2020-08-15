@@ -363,8 +363,9 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                     //setCoverChange(false);
                     //setProfileChange(true);
                     //GetStartedWithNewProfileImage();
-                    startActivity(new Intent(MainActivity.this, UserNameInfoActivity.class)
-                    .putExtra("Edit","yes"));
+                    Intent i= new Intent(MainActivity.this, UserNameInfoActivity.class);
+                    i.putExtra("Edit","yes");
+                    startActivity(i);
                     return true;
 
                 }
@@ -1942,7 +1943,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         String key = snapshot.getKey();
                         String by = AppConstants.NOT_AVALABLE, time = AppConstants.NOT_AVALABLE, uri = AppConstants.NOT_AVALABLE;
-
+                        String thumb=AppConstants.NOT_AVALABLE;
                         if (snapshot.hasChild("by")) {
                             by = snapshot.child("by").getValue().toString();
                         }
@@ -1951,6 +1952,9 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                         }
                         if (snapshot.hasChild("uri")) {
                             uri = snapshot.child("uri").getValue().toString();
+                        }
+                        if(snapshot.hasChild("thumb_uri")){
+                            thumb=snapshot.child("thumb_uri").getValue().toString();
                         }
                         if (!getPostKeys(_postImageList).contains(key)) {
                             _postImageList.add(new PostModel(key, uri, time, by));
@@ -1973,7 +1977,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                         mainVerticalAdapter.notifyDataSetChanged();
 
                     } else {
-                        postImageList.add(new PostModel(AppConstants.NOT_AVALABLE, AppConstants.NOT_AVALABLE, AppConstants.NOT_AVALABLE, AppConstants.NOT_AVALABLE));
+                        postImageList.add(new PostModel(AppConstants.NOT_AVALABLE,AppConstants.NOT_AVALABLE, AppConstants.NOT_AVALABLE, AppConstants.NOT_AVALABLE));
                         GridLayoutManager gridLayoutManager = new GridLayoutManager(MainActivity.this, 1);
                         MainVerticalRecyclerView.setLayoutManager(gridLayoutManager);
                         mainVerticalAdapter.notifyDataSetChanged();
@@ -2886,28 +2890,28 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                     });
 
                     viewHolder.PostProgressbar.setVisibility(View.VISIBLE);
-                    Glide.with(activity)
-                            .load(PostList.get(position).getUri())
-                            .apply(reqOpt)
-                            .listener(new RequestListener<Drawable>() {
-                                @Override
-                                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                    viewHolder.PostProgressbar.setVisibility(View.GONE);
-                                    viewHolder.postRefresButton.setVisibility(View.VISIBLE);
-                                    return false;
-                                }
 
-                                @Override
-                                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                                    viewHolder.PostProgressbar.setVisibility(View.GONE);
-                                    viewHolder.postRefresButton.setVisibility(View.GONE);
-                                    return false;
-                                }
+                        Glide.with(activity)
+                                .load(PostList.get(position).getUri())
+                                .apply(reqOpt)
+                                .listener(new RequestListener<Drawable>() {
+                                    @Override
+                                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                        viewHolder.PostProgressbar.setVisibility(View.GONE);
+                                        viewHolder.postRefresButton.setVisibility(View.VISIBLE);
+                                        return false;
+                                    }
 
-                            })
-                            .into(viewHolder.PostImageView);
+                                    @Override
+                                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                        viewHolder.PostProgressbar.setVisibility(View.GONE);
+                                        viewHolder.postRefresButton.setVisibility(View.GONE);
+                                        return false;
+                                    }
 
-                    holder.itemView.setOnClickListener(new View.OnClickListener() {
+                                })
+                                .into(viewHolder.PostImageView);
+                        holder.itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
 

@@ -104,7 +104,7 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Activities.UserNameInfoActivity"
-            android:windowSoftInputMode="adjustResize" />
+             />
     </application>
 
 </manifest>

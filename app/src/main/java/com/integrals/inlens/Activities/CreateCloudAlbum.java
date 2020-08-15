@@ -42,6 +42,7 @@ import androidx.work.WorkManager;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
@@ -380,7 +381,56 @@ public class CreateCloudAlbum extends AppCompatActivity {
                 t.setText("Edit");
                 TextView textView = findViewById(R.id.expiry_txt);
                 textView.setVisibility(View.VISIBLE);
-                textView.setText("You cannot change expiry date of a album");
+                textView.setText("You cannot change expiry date of an album");
+                submitButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        uploadProgressbar.setVisibility(View.VISIBLE);
+                        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("Communities").child(getIntent().getStringExtra("Id"));
+                        mDatabase.child("title").setValue(albumTitleEditText.getText().toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                mDatabase.child("description").setValue(albumDescEditText.getText().toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        mDatabase.child("type").setValue(eventPickerCheckbox.getText().toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                               showDialogMessageSuccess("Successfully updated your Cloud-Album data");
+                                                uploadProgressbar.setVisibility(View.GONE);
+                                                onBackPressed();
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                showDialogMessageError("Failed "+e.getMessage());
+                                                uploadProgressbar.setVisibility(View.GONE);
+
+                                            }
+                                        });;
+
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        showDialogMessageError("Failed "+e.getMessage());
+                                        uploadProgressbar.setVisibility(View.GONE);
+
+                                    }
+                                });;
+
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                showDialogMessageError("Failed "+e.getMessage());
+                                uploadProgressbar.setVisibility(View.GONE);
+
+                            }
+                        });
+
+                    }
+                });
 
 
             }
