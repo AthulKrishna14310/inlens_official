@@ -41,6 +41,7 @@ import com.google.firebase.dynamiclinks.DynamicLink;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.dynamiclinks.ShortDynamicLink;
 import com.integrals.inlens.Activities.QRCodeReader;
+import com.integrals.inlens.BuildConfig;
 import com.integrals.inlens.MainActivity;
 import com.integrals.inlens.Models.PhotographerModel;
 import com.integrals.inlens.R;
@@ -370,8 +371,8 @@ public class QRCodeBottomSheet extends BottomSheetDialogFragment {
                 .setLink(Uri.parse(link))
                 .setDomainUriPrefix("https://inlens.page.link")
                 .setAndroidParameters(
-                        new DynamicLink.AndroidParameters.Builder("com.integrals.inlens")
-                                .setMinimumVersion(125)
+                        new DynamicLink.AndroidParameters.Builder(BuildConfig.APPLICATION_ID)
+                                .setMinimumVersion(10)
                                 .build())
                 .buildShortDynamicLink()
                 .addOnSuccessListener(new OnSuccessListener<ShortDynamicLink>() {
