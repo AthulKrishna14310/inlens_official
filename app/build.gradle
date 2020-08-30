@@ -30,7 +30,6 @@ android {
 }
 
 
-
 ext {
     bottomSheetsLibraryVersion = "1.0.0"
 }
@@ -82,7 +81,10 @@ dependencies {
     implementation 'com.github.matecode:Snacky:1.1.5'
     implementation 'com.github.vihtarb:tooltip:0.2.0'
     implementation 'com.github.mukeshsolanki:android-otpview-pinview:2.1.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'

@@ -38,7 +38,6 @@ import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
@@ -47,7 +46,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -83,7 +81,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
@@ -101,10 +98,9 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.integrals.inlens.Activities.CreateCloudAlbum;
 import com.integrals.inlens.Activities.InlensGalleryActivity;
-import com.integrals.inlens.Activities.PhotoView;
-import com.integrals.inlens.Activities.QRCodeReader;
 import com.integrals.inlens.Activities.SplashScreenActivity;
 import com.integrals.inlens.Activities.WebViewActivity;
+import com.integrals.inlens.Activities.kotlin.PhotoViewActivity;
 import com.integrals.inlens.Database.UploadQueueDB;
 import com.integrals.inlens.Helper.AlbumOptionsBottomSheetFragment;
 import com.integrals.inlens.Helper.AppConstants;
@@ -130,7 +126,6 @@ import com.skyfishjy.library.RippleBackground;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
-import com.tooltip.Tooltip;
 
 
 import java.util.ArrayList;
@@ -2910,7 +2905,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                         @Override
                         public void onClick(View view) {
 
-                            Intent i = new Intent(MainActivity.this, PhotoView.class);
+                            Intent i = new Intent(MainActivity.this, PhotoViewActivity.class);
                             i.putParcelableArrayListExtra("data", (ArrayList<? extends Parcelable>) PostList);
                             i.putExtra("position", position);
                             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
