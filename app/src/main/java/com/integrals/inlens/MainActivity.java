@@ -338,7 +338,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         readFirebaseData = new ReadFirebaseData();
 
         //album options dialog
-        optionsBottomSheetFragment = new AlbumOptionsBottomSheetFragment(MainActivity.this);
+        optionsBottomSheetFragment = new AlbumOptionsBottomSheetFragment(MainActivity.this,FirebaseDatabase.getInstance());
 
         //dialogBuilder
         cfBuilder = new CFAlertDialog.Builder(MainActivity.this);
@@ -900,8 +900,15 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                     Snackbar.make(rootForMainActivity,"0 cloud albums",BaseTransientBottomBar.LENGTH_SHORT).show();
                 }
                 if (dataSnapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID)) {
-                    if((qrCodeBottomSheet!=null&&qrCodeBottomSheet.isVisible()) || optionsBottomSheetFragment.isVisible())
+
+                    if(qrCodeBottomSheet.isVisible()|| optionsBottomSheetFragment.isVisible())
+
+
+                    // notification to be done via cloud function
+                    if((qrCodeBottomSheet!=null && qrCodeBottomSheet.isVisible()))
+
                     {
+                        SplashScreenActivity.getInstance().finish();
                         startActivity(new Intent(MainActivity.this,SplashScreenActivity.class));
                         finish();
                     }

@@ -39,6 +39,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     static final int DELAY_IN_MILLIS = 1000;
     String appTheme = "";
 
+    static SplashScreenActivity splashScreenActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,10 +67,17 @@ public class SplashScreenActivity extends AppCompatActivity {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_splash_screen);
 
+        splashScreenActivity=this;
+
         firebaseAuth = FirebaseAuth.getInstance();
         CheckUserAuthentication();
 
 
+    }
+
+    public static SplashScreenActivity getInstance()
+    {
+        return splashScreenActivity;
     }
 
     private void CheckUserAuthentication() {
