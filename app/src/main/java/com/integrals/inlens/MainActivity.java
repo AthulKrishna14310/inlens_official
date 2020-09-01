@@ -338,7 +338,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         readFirebaseData = new ReadFirebaseData();
 
         //album options dialog
-        optionsBottomSheetFragment = new AlbumOptionsBottomSheetFragment(MainActivity.this,FirebaseDatabase.getInstance());
+        optionsBottomSheetFragment = new AlbumOptionsBottomSheetFragment(MainActivity.this);
 
         //dialogBuilder
         cfBuilder = new CFAlertDialog.Builder(MainActivity.this);
@@ -901,15 +901,9 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 }
                 if (dataSnapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID)) {
 
-                    if(qrCodeBottomSheet.isVisible()|| optionsBottomSheetFragment.isVisible())
-
-
-                    // notification to be done via cloud function
-                    if((qrCodeBottomSheet!=null && qrCodeBottomSheet.isVisible()))
-
-                    {
-                        SplashScreenActivity.getInstance().finish();
-                        startActivity(new Intent(MainActivity.this,SplashScreenActivity.class));
+                    if((qrCodeBottomSheet!=null && qrCodeBottomSheet.isVisible())|| optionsBottomSheetFragment.isVisible()) {
+                        //TODO Notification
+                        startActivity(new Intent(MainActivity.this, SplashScreenActivity.class));
                         finish();
                     }
                     else
