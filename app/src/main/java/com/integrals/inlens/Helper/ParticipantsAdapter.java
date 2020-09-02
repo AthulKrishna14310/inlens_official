@@ -144,7 +144,7 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 long lastCheckedTime = Long.parseLong(reqPref.getString(AppConstants.REQUEST_LAST_CHECKED, "0"));
 
                 List<String> req = new ArrayList<>();
-                reqRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                reqRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
