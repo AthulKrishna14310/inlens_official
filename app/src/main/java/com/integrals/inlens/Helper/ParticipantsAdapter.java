@@ -143,10 +143,11 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 SharedPreferences reqPref = activity.getSharedPreferences(AppConstants.appDataPref, Context.MODE_PRIVATE);
                 long lastCheckedTime = Long.parseLong(reqPref.getString(AppConstants.REQUEST_LAST_CHECKED, "0"));
 
-                List<String> req = new ArrayList<>();
                 reqRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        
+                        List<String> req = new ArrayList<>();
 
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
@@ -157,6 +158,9 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             }
                         }
                         if (req.size() > 0) {
+
+                            Log.i("participantsAda","size of reqs "+ req.size());
+
                             ((AddParticipantsViewHolder) holder).badgeTextView.setVisibility(View.VISIBLE);
                             if (req.size() > 9) {
                                 ((AddParticipantsViewHolder) holder).badgeTextView.setText("9+");
