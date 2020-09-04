@@ -231,7 +231,7 @@ public class QRCodeBottomSheet extends BottomSheetDialogFragment {
         @Override
         public void onBindViewHolder(@NonNull RequestedUserAdapter.RequestedUserViewHolder holder, int position) {
 
-            holder.reqUserNameTextView.setText(participantList.get(position).getName());
+            holder.reqUserNameTextView.setText(" "+participantList.get(position).getName()+" requested to join your album.");
 
             holder.denyReqBtn.setOnClickListener(new View.OnClickListener() {
                 @Override

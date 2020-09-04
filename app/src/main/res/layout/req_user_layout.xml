@@ -2,6 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
+    android:layout_margin="8dp"
+    android:padding="8dp"
+    android:background="@drawable/req_user_drawable"
     android:layout_height="wrap_content">
 
 
@@ -9,13 +12,20 @@
         android:id="@+id/req_user_name_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_gravity="start"
         android:text="User Name"
-        android:textSize="16sp"
+        android:drawablePadding="8dp"
+        android:drawableLeft="@drawable/ic_message"
+        android:drawableTint="?attr/action_secondary"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
         android:orientation="horizontal">
 
         <Button
@@ -23,18 +33,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Accept"
+            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
             android:layout_weight="1"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="8dp"
             android:layout_marginEnd="10dp"/>
 
         <Button
             android:id="@+id/req_user_reject_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:text="Reject"
+            android:textColor="?attr/red_inlens"
             android:layout_weight="1"
             android:layout_marginStart="10dp"
-            android:layout_marginEnd="20dp"/>
+            android:layout_marginEnd="8dp"/>
 
     </LinearLayout>
 

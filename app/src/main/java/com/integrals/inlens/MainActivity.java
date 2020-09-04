@@ -1179,11 +1179,16 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                         mainHorizontalAdapter.notifyDataSetChanged();
                     } else {
-                        if (communityDataList.size() < 1) {
-                            communityDataList.add(_communityDataList.get(0));
+                        try {
+                            if (communityDataList.size() < 1) {
+                                communityDataList.add(_communityDataList.get(0));
+                            }
+                            appBarLayout.setExpanded(true, true);
+                            mainHorizontalAdapter.notifyDataSetChanged();
+
+                        }catch (IndexOutOfBoundsException e){
+                            e.getMessage();
                         }
-                        appBarLayout.setExpanded(true, true);
-                        mainHorizontalAdapter.notifyDataSetChanged();
 
                     }
 
@@ -1202,6 +1207,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             });
         } catch (NullPointerException e) {
             Log.i("MainActivity", "getCloudAlbumData " + e);
+        } catch (IndexOutOfBoundsException e){
+            e.getMessage();
         }
     }
 
@@ -1405,8 +1412,9 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 }
                 else
                 {
-                    Toast.makeText(MainActivity.this, "Request send.", Toast.LENGTH_SHORT).show();
-                }
+                    new SnackShow(rootForMainActivity,MainActivity.this)
+                            .showInfoSnack("Request sent , Please wait till admin accepts you.");
+               }
 
             }
         });

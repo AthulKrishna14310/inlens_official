@@ -20,6 +20,7 @@ import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.crowdfire.cfalertdialog.CFAlertDialog;
@@ -36,6 +37,7 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.FirebaseConstants;
+import com.integrals.inlens.Helper.SnackShow;
 import com.integrals.inlens.MainActivity;
 import com.integrals.inlens.Notification.NotificationHelper;
 import com.integrals.inlens.R;
@@ -58,7 +60,7 @@ public class QRCodeReader extends AppCompatActivity {
     ProgressBar qrcodeReaderProgressbar;
     List<String> userCommunityIdList;
     static final int MY_PERMISSIONS_REQUEST_CAMERA=459;
-
+    RelativeLayout relativeLayout;
 
     private String createIntent="NO";
     private String ID="";
@@ -70,6 +72,7 @@ public class QRCodeReader extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        relativeLayout=findViewById(R.id.rlQR);
         SharedPreferences appDataPref = getSharedPreferences(AppConstants.appDataPref, Context.MODE_PRIVATE);
         final SharedPreferences.Editor appDataPrefEditor = appDataPref.edit();
         if(appDataPref.contains(AppConstants.appDataPref_theme))
@@ -135,8 +138,8 @@ public class QRCodeReader extends AppCompatActivity {
                     barcodeReader.setListener(new BarcodeReader.BarcodeReaderListener() {
                         @Override
                         public void onScanned(Barcode barcode) {
-                            barcodeReader.playBeep();
-                            addPhotographerToCommunity(barcode.displayValue,communityId);
+
+                            addPhotographerToCommunity(barcode.displayValue,communityId,barcodeReader);
 
                         }
 
@@ -214,12 +217,18 @@ public class QRCodeReader extends AppCompatActivity {
 
             }
         });
+        findViewById(R.id.closeBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
     }
 
 
 
-    private void addPhotographerToCommunity(String newUserId, final String communityId) {
+    private void addPhotographerToCommunity(String newUserId, final String communityId,BarcodeReader barcodeReader) {
 
         userRef.child(newUserId).child(FirebaseConstants.NAME).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -261,7 +270,9 @@ public class QRCodeReader extends AppCompatActivity {
                                     else
                                     {
                                         tempAccessRef.child(newUserId).removeValue();
-                                        Toast.makeText(QRCodeReader.this, "Added "+newUserName.split(" ")[0], Toast.LENGTH_SHORT).show();
+                                         new SnackShow(relativeLayout,QRCodeReader.this)
+                                                    .showSuccessSnack(" "+newUserName.split(" ")[0]+" can now upload photos to your album");
+                                        barcodeReader.playBeep();
                                     }
                                 }
                             });

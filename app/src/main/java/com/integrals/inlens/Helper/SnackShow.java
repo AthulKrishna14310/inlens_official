@@ -3,6 +3,8 @@ package com.integrals.inlens.Helper;
 import android.app.Activity;
 import android.view.View;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import de.mateware.snacky.Snacky;
 
 
@@ -23,7 +25,7 @@ public class SnackShow {
     public void showSuccessSnack(String message){
         Snacky.builder()
                 .setActivity(context)
-                .setMaxLines(1)
+                .setMaxLines(2)
                 .success().setText(message)
                 .show();
 
@@ -32,6 +34,7 @@ public class SnackShow {
         Snacky.builder()
                 .setActivity(context)
                 .info().setText(message)
+                .setDuration(Snackbar.LENGTH_LONG)
                 .show();
 
     }
