@@ -901,6 +901,14 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 }
                 if (dataSnapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID)) {
 
+                    String activeAlbum = dataSnapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString();
+                    if(!currentActiveCommunityID.equals(activeAlbum) || currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE))
+                    {
+                        startActivity(new Intent(MainActivity.this,SplashScreenActivity.class));
+                        finish();
+                    }
+
+
                     if((qrCodeBottomSheet!=null && qrCodeBottomSheet.isVisible())|| optionsBottomSheetFragment.isVisible()) {
                         //TODO Notification
                         startActivity(new Intent(MainActivity.this, SplashScreenActivity.class));
@@ -909,7 +917,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                     else
                     {
                         mainAddPhotosFab.show();
-                        String activeAlbum = dataSnapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString();
                         userCommunityIdList.remove(activeAlbum);
                         userCommunityIdList.add(0,activeAlbum);
                         getCloudAlbumData(userCommunityIdList);
