@@ -59,7 +59,7 @@ public class HandleQuit extends AsyncTask<Void,Void,Void>
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
 
-                    currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).removeValue();
+                    currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).setValue(AppConstants.NOT_AVALABLE);
 
                     Cursor cursor = uploadQueueDB.getQueuedData();
                     if(cursor.getCount()==0)

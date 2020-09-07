@@ -84,6 +84,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -171,7 +172,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     DatabaseReference currentUserRef, communityRef, participantRef, postRef;
     FirebaseAuth firebaseAuth;
     String currentUserId;
-    ValueEventListener userRefListenerForActiveAlbum, communityRefListenerForActiveAlbum, coummunityUserAddListener, communitiesDataListener, postRefListener, participantRefListener, communitiesListener;
+    ValueEventListener  communityRefListenerForActiveAlbum, coummunityUserAddListener, communitiesDataListener, postRefListener, participantRefListener, communitiesListener;
+    ChildEventListener userRefListenerForActiveAlbum;
     ReadFirebaseData readFirebaseData;
     ArrayList<String> userCommunityIdList;
     MainHorizontalAdapter mainHorizontalAdapter;
@@ -863,162 +865,53 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
         // get live community id and check if album  is active or the app should quit the user from the album
         // if the album status is true the we  can start the service from the getServerTime async task only if the end time has not been reached;
-
-        userRefListenerForActiveAlbum = new ValueEventListener() {
+        DatabaseReference _currentUserRef = currentUserRef;
+        _currentUserRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                userCommunityIdList = new ArrayList<>();
-                MainHorizontalRecyclerview.removeAllViews();
-                if (dataSnapshot.hasChild(FirebaseConstants.COMMUNITIES)) {
-                    for (DataSnapshot snapshot : dataSnapshot.child(FirebaseConstants.COMMUNITIES).getChildren()) {
-                        userCommunityIdList.add(snapshot.getKey());
+                Log.i("onDataChange", "dataSnapshot "+dataSnapshot);
 
-                        communityRef.child(snapshot.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                                Log.i("MainLog","val "+dataSnapshot.child("admin").getValue().toString());
-
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-                                Log.i("MainLog","val "+databaseError);
-                                Log.i("MainLog","val "+communityRef.child(snapshot.getKey()).getRef());
-
-                            }
-                        });
-//                        Log.i("MainLog","com keys "+snapshot.getKey());
-                    }
-                    Collections.sort(userCommunityIdList, Collections.reverseOrder());
-
-                }
-                else
-                {
-//                    Log.i("MainLog","no communities inside users community node");
-                    Snackbar.make(rootForMainActivity,"0 cloud albums",BaseTransientBottomBar.LENGTH_SHORT).show();
-                }
-                if (dataSnapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID)) {
-
-                    String activeAlbum = dataSnapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString();
-                    if(!currentActiveCommunityID.equals(activeAlbum) || currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE))
-                    {
-                        startActivity(new Intent(MainActivity.this,SplashScreenActivity.class));
-                        finish();
-                    }
-
-
-                    if((qrCodeBottomSheet!=null && qrCodeBottomSheet.isVisible())|| optionsBottomSheetFragment.isVisible()) {
-                        //TODO Notification
-                        startActivity(new Intent(MainActivity.this, SplashScreenActivity.class));
-                        finish();
-                    }
-                    else
-                    {
-                        mainAddPhotosFab.show();
-                        userCommunityIdList.remove(activeAlbum);
-                        userCommunityIdList.add(0,activeAlbum);
-                        getCloudAlbumData(userCommunityIdList);
-                    }
-
-                } else {
-                    mainAddPhotosFab.hide();
-                    getCloudAlbumData(userCommunityIdList);
-                }
-
-
-
-                String name = dataSnapshot.child("Name").getValue().toString();
-                String email = dataSnapshot.child("Email").getValue().toString();
-
-                TextView navEmailTextView = navigationView.getHeaderView(0).findViewById(R.id.headerEmailX);
-                TextView navNameTextView = navigationView.getHeaderView(0).findViewById(R.id.headerNameX);
-                CircleImageView navProfileImageView = navigationView.getHeaderView(0).findViewById(R.id.headerImageView);
-
-                navEmailTextView.setText(email);
-                navNameTextView.setText(name);
-
-
-                if (dataSnapshot.hasChild("Profile_picture")) {
-
-                    String imageUrl = dataSnapshot.child("Profile_picture").getValue().toString();
-
-                    Glide.with(getApplicationContext()).load(imageUrl).into(navProfileImageView);
-
-                }
-
-                SharedPreferences LastShownNotificationInfo = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
-
-                if (dataSnapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID)) {
-
+                if (dataSnapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID)  && !dataSnapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString().equals(AppConstants.NOT_AVALABLE)) {
                     currentActiveCommunityID = dataSnapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString();
-                    if (!LastShownNotificationInfo.contains("id")) {
-                        SharedPreferences.Editor editor = LastShownNotificationInfo.edit();
-                        editor.putString("id", currentActiveCommunityID);
-                        editor.commit();
-                    }
-
-
-                    // make the add photo fab visible
                     if (isConnectedToNet()) {
                         mainAddPhotosFab.show();
-
                     }
+                    if(userCommunityIdList!=null && userCommunityIdList.size()>1)
+                    {
+                        MainHorizontalRecyclerview.removeAllViews();
+                        if(!currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE))
+                        {
+                            userCommunityIdList.add(0,currentActiveCommunityID);
 
-
-                    // make the start and stop services in navigation drawer visible
-                    communityRefListenerForActiveAlbum = new ValueEventListener() {
+                        }
+                        getCloudAlbumData(userCommunityIdList);
+                    }
+                    communityRef.child(currentActiveCommunityID).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                            // optimization 1 resulted in this error, everytime the album is quit even if the album is inactive
-                            // so first check the album  has status status;
-                            if(snapshot.hasChild(FirebaseConstants.COMMUNITYADMIN))
+                            if (snapshot.hasChild(FirebaseConstants.COMMUNITYSTATUS))
                             {
-
-                                if(snapshot.child(FirebaseConstants.COMMUNITYADMIN).getValue().toString().equals(getCurrentUserId()))
-                                {
-                                    qrCodeBottomSheet = new QRCodeBottomSheet( rootForMainActivity,currentActiveCommunityID, FirebaseDatabase.getInstance().getReference(), false,MainActivity.this, true);
-                                }
-                                else
-                                {
-
-                                    qrCodeBottomSheet = new QRCodeBottomSheet( rootForMainActivity,currentActiveCommunityID, FirebaseDatabase.getInstance().getReference(), false,MainActivity.this, false);
-                                }
-                            }
-                            else
-                            {
-                                qrCodeBottomSheet = new QRCodeBottomSheet(rootForMainActivity, currentActiveCommunityID, FirebaseDatabase.getInstance().getReference(), false,MainActivity.this, false);
-                            }
-
-                            try {
-                                String qrIntent = getIntent().getStringExtra("CREATED");
-                                String id = getIntent().getStringExtra("ID");
-                                Log.i("travelback","qrIntent"+qrIntent);
-                                if ((!qrIntent.isEmpty()) && (!id.isEmpty())) {
-                                    Log.i("travelback","qrIntent id non empty");
-
-                                    if (qrIntent.contentEquals("YES")) {
-                                        if (!displayed) {
-
-                                            //PURPOSE OF USER DIRECT
-                                            initialStart();
-
-                                        }
-                                    }
-                                }
-                            } catch (NullPointerException e) {
-                                e.printStackTrace();
-                            }
-
-                            if (snapshot.hasChild(FirebaseConstants.COMMUNITYSTATUS)) {
-
-
                                 String status = snapshot.child(FirebaseConstants.COMMUNITYSTATUS).getValue().toString();
-                                if (status.equals("T") && snapshot.hasChild(FirebaseConstants.COMMUNITYENDTIME)) {
-                                    long endtime = Long.parseLong(snapshot.child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString());
-                                    if (System.currentTimeMillis() >= endtime) {
+                                if (status.equals("T") && snapshot.hasChild(FirebaseConstants.COMMUNITYENDTIME))
+                                {
+                                    SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
+                                    ceditor.putString("id", currentActiveCommunityID);
+                                    String endtime = snapshot.child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString();
+                                    ceditor.putString("stopAt", endtime);
+
+                                    if (snapshot.hasChild(FirebaseConstants.COMMUNITYSTARTTIME)) {
+                                        String starttime = snapshot.child(FirebaseConstants.COMMUNITYSTARTTIME).getValue().toString();
+                                        ceditor.putString("startAt", starttime);
+                                        ceditor.putString("time", starttime);
+                                    } else {
+                                        ceditor.putString("startAt", String.valueOf(System.currentTimeMillis()));
+                                        ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
+                                    }
+                                    ceditor.commit();
+                                    if (System.currentTimeMillis() >= Long.parseLong(endtime)) {
                                         quitCloudAlbum(true);
 
                                     } else {
@@ -1047,33 +940,70 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                     .build();
 
                                             WorkManager.getInstance(MainActivity.this).enqueueUniquePeriodicWork(AppConstants.PHOTO_SCAN_WORK, ExistingPeriodicWorkPolicy.REPLACE, periodicWorkRequest);
-                                            SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
-                                            SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
-                                            ceditor.putString("scanWorkerId", String.valueOf(periodicWorkRequest.getId()));
-                                            ceditor.commit();
+
+                                            SharedPreferences CurrentActiveCommunityPref = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
+                                            SharedPreferences.Editor comeditor = CurrentActiveCommunityPref.edit();
+                                            comeditor.putString("scanWorkerId", String.valueOf(periodicWorkRequest.getId()));
+                                            comeditor.commit();
                                         }
                                     }
-                                } else {
+                                }
+                                else {
                                     // stop the necessary services
                                     WorkManager.getInstance().cancelAllWorkByTag(AppConstants.PHOTO_SCAN_WORK);
 
                                 }
+
                             }
+
+
 
                         }
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                            Log.i("MainLog","second outermost "+databaseError);
-
-
                         }
-                    };
-                    communityRef.child(currentActiveCommunityID).addValueEventListener(communityRefListenerForActiveAlbum);
+                    });
 
-                } else {
-                    currentActiveCommunityID = AppConstants.NOT_AVALABLE;
+                }
+                else
+                {
+                    mainAddPhotosFab.hide();
+                }
+                if (dataSnapshot.hasChild(FirebaseConstants.COMMUNITIES)) {
+                    userCommunityIdList = new ArrayList<>();
+                    MainHorizontalRecyclerview.removeAllViews();
+                    if (dataSnapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID) && !dataSnapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString().equals(AppConstants.NOT_AVALABLE)) {
+                        userCommunityIdList.add(dataSnapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString());
+                    }
+                    for (DataSnapshot snapshot : dataSnapshot.child(FirebaseConstants.COMMUNITIES).getChildren()) {
+                        userCommunityIdList.add(snapshot.getKey());
+                    }
+                    Log.i("sortingArray", "datachange ");
+                    Collections.sort(userCommunityIdList, Collections.reverseOrder());
+                    userCommunityIdList.remove(currentActiveCommunityID);
+                    if(!currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE))
+                    {
+                        userCommunityIdList.add(0, currentActiveCommunityID);
+                    }
+                    getCloudAlbumData(userCommunityIdList);
+                }
+                if (dataSnapshot.hasChild(FirebaseConstants.EMAIL)) {
+                    String email = dataSnapshot.child(FirebaseConstants.EMAIL).getValue().toString();
+                    TextView navEmailTextView = navigationView.getHeaderView(0).findViewById(R.id.headerEmailX);
+                    navEmailTextView.setText(email);
+                }
+                if (dataSnapshot.hasChild(FirebaseConstants.NAME)) {
+                    String name = dataSnapshot.child(FirebaseConstants.NAME).getValue().toString();
+                    TextView navNameTextView = navigationView.getHeaderView(0).findViewById(R.id.headerNameX);
+                    navNameTextView.setText(name);
+                }
+                if (dataSnapshot.hasChild(FirebaseConstants.PROFILEPICTURE)) {
+                    CircleImageView navProfileImageView = navigationView.getHeaderView(0).findViewById(R.id.headerImageView);
+                    String imageUrl = dataSnapshot.child(FirebaseConstants.PROFILEPICTURE).getValue().toString();
+                    Glide.with(getApplicationContext()).load(imageUrl).into(navProfileImageView);
+
                 }
 
             }
@@ -1081,12 +1011,126 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                Log.i("MainLog","outermost "+databaseError);
+            }
+        });
 
+        userRefListenerForActiveAlbum = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                if (dataSnapshot.getKey().equals(FirebaseConstants.LIVECOMMUNITYID) &&  dataSnapshot.getValue().toString() !=null  && !dataSnapshot.getValue().toString().equals(AppConstants.NOT_AVALABLE)) {
+
+                    String activeId = dataSnapshot.getValue().toString();
+                    communityRef.child(activeId).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
+                            SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
+                            ceditor.putString("id", dataSnapshot.getValue().toString());
+
+                            if (dataSnapshot.hasChild(FirebaseConstants.COMMUNITYENDTIME)) {
+                                String endtime = dataSnapshot.child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString();
+                                ceditor.putString("stopAt", endtime);
+                            }
+                            if (dataSnapshot.hasChild(FirebaseConstants.COMMUNITYSTARTTIME)) {
+                                String starttime = dataSnapshot.child(FirebaseConstants.COMMUNITYSTARTTIME).getValue().toString();
+                                ceditor.putString("startAt", starttime);
+                                ceditor.putString("time", starttime);
+                            } else {
+                                ceditor.putString("startAt", String.valueOf(System.currentTimeMillis()));
+                                ceditor.putString("time", String.valueOf(System.currentTimeMillis()));
+                            }
+                            ceditor.putInt("notiCount", 0);
+                            ceditor.remove(AppConstants.IS_NOTIFIED);
+                            ceditor.commit();
+                            startActivity(new Intent(MainActivity.this, SplashScreenActivity.class));
+                            overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_in);
+                            finish();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+                }
+                else if(dataSnapshot.getKey().equals(FirebaseConstants.LIVECOMMUNITYID) && dataSnapshot.getValue().toString().equals(AppConstants.NOT_AVALABLE))
+                {
+                    if(photographerList.get(0).getEmail().equals("add")&&photographerList.get(0).getId().equals("add")&&photographerList.get(0).getImgUrl().equals("add")&&photographerList.get(0).getName().equals("add"))
+                    {
+                        photographerList.remove(0);
+                        participantsAdapter.notifyItemRemoved(0);
+                    }
+                }
+                else if (dataSnapshot.getKey().equals(FirebaseConstants.COMMUNITIES)) {
+
+                    startActivity(new Intent(MainActivity.this, SplashScreenActivity.class));
+                    overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_in);
+                    finish();
+                }
+                if (dataSnapshot.getKey().equals("Email")) {
+                    String email = dataSnapshot.child("Email").getValue().toString();
+                    TextView navEmailTextView = navigationView.getHeaderView(0).findViewById(R.id.headerEmailX);
+                    navEmailTextView.setText(email);
+                }
+
+                if (dataSnapshot.getKey().equals("Name")) {
+                    String name = dataSnapshot.child("Name").getValue().toString();
+                    TextView navNameTextView = navigationView.getHeaderView(0).findViewById(R.id.headerNameX);
+                    navNameTextView.setText(name);
+                }
+
+                if (dataSnapshot.getKey().equals("Profile_picture")) {
+
+                    CircleImageView navProfileImageView = navigationView.getHeaderView(0).findViewById(R.id.headerImageView);
+                    String imageUrl = dataSnapshot.child("Profile_picture").getValue().toString();
+                    Glide.with(getApplicationContext()).load(imageUrl).into(navProfileImageView);
+
+                }
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.getKey().equals(FirebaseConstants.LIVECOMMUNITYID) ) {
+
+                    currentActiveCommunityID=AppConstants.NOT_AVALABLE;
+                    mainAddPhotosFab.hide();
+                }
+                if (dataSnapshot.getKey().equals(FirebaseConstants.COMMUNITIES)) {
+
+                    userCommunityIdList = new ArrayList<>();
+                    MainHorizontalRecyclerview.removeAllViews();
+                    if (dataSnapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID)  && !dataSnapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString().equals(AppConstants.NOT_AVALABLE)) {
+                        userCommunityIdList.add(dataSnapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString());
+                    }
+                    for (DataSnapshot snapshot : dataSnapshot.child(FirebaseConstants.COMMUNITIES).getChildren()) {
+                        userCommunityIdList.add(snapshot.getKey());
+                    }
+                    Collections.sort(userCommunityIdList, Collections.reverseOrder());
+                    getCloudAlbumData(userCommunityIdList);
+                }
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         };
-        currentUserRef.addValueEventListener(userRefListenerForActiveAlbum);
+        currentUserRef.addChildEventListener(userRefListenerForActiveAlbum);
 
 
     }
@@ -1815,12 +1859,12 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND, WindowManager.LayoutParams.FLAG_DIM_BEHIND);
             getWindow().setDimAmount(0.75f);
 
-            communityRef.child(currentActiveCommunityID).child(FirebaseConstants.COMMUNITYSTATUS).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            communityRef.child(currentActiveCommunityID).child(FirebaseConstants.COMMUNITYSTATUS).setValue(AppConstants.NOT_AVALABLE).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
 
-                        currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).removeValue();
+                        currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).setValue(AppConstants.NOT_AVALABLE);
                         currentActiveCommunityID = AppConstants.NOT_AVALABLE;
 
                         SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
@@ -1957,7 +2001,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                 @Override
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     if (task.isSuccessful()) {
-                                                        currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).removeValue();
+                                                        currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).setValue(AppConstants.NOT_AVALABLE);
                                                         currentActiveCommunityID = AppConstants.NOT_AVALABLE;
                                                         mainAddPhotosFab.hide();
                                                         SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
@@ -2022,7 +2066,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                 }
                                             });
                                         } else {
-                                            currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).setValue(AppConstants.NOT_AVALABLE).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override
                                                 public void onComplete(@NonNull Task<Void> task) {
 
