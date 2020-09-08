@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -101,6 +102,7 @@ import com.integrals.inlens.Activities.InlensGalleryActivity;
 import com.integrals.inlens.Activities.PhotoView;
 import com.integrals.inlens.Activities.SplashScreenActivity;
 import com.integrals.inlens.Activities.WebViewActivity;
+import com.integrals.inlens.AsynchTasks.HandleQuit;
 import com.integrals.inlens.Database.UploadQueueDB;
 import com.integrals.inlens.Helper.AlbumOptionsBottomSheetFragment;
 import com.integrals.inlens.Helper.AppConstants;
@@ -119,6 +121,7 @@ import com.integrals.inlens.Interface.FirebaseRead;
 import com.integrals.inlens.Models.CommunityModel;
 import com.integrals.inlens.Models.PhotographerModel;
 import com.integrals.inlens.Models.PostModel;
+import com.integrals.inlens.Notification.NotificationHelper;
 import com.integrals.inlens.WorkManager.AlbumScanWorker;
 import com.integrals.inlens.WorkManager.UploadWorker;
 import com.skyfishjy.library.RippleBackground;
@@ -129,6 +132,7 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -153,7 +157,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     private static boolean COVER_CHANGE = false, PROFILE_CHANGE = false;
     private NavigationView navigationView;
     private DrawerLayout rootForMainActivity;
-    private boolean displayed = false;
 
     private RecyclerView MainHorizontalRecyclerview, MainVerticalRecyclerView;
 
@@ -169,10 +172,10 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
     ExtendedFloatingActionButton mainAddPhotosFab;
 
-    DatabaseReference currentUserRef, communityRef, participantRef, postRef;
+    DatabaseReference currentUserRef, communityRef, participantRef, postRef,_currentUserRef;
     FirebaseAuth firebaseAuth;
     String currentUserId;
-    ValueEventListener  communityRefListenerForActiveAlbum, coummunityUserAddListener, communitiesDataListener, postRefListener, participantRefListener, communitiesListener;
+    ValueEventListener  userRefValueEventListenerForActiveAlbum,communityRefListenerForActiveAlbum, communityUserAddListener, communitiesDataListener, postRefListener, participantRefListener;
     ChildEventListener userRefListenerForActiveAlbum;
     ReadFirebaseData readFirebaseData;
     ArrayList<String> userCommunityIdList;
@@ -220,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
     static MainActivity mainActivity;
 
-
+    String newComIDForIntent=AppConstants.NOT_AVALABLE;
 
     public MainActivity() {
     }
@@ -251,7 +254,10 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         setContentView(R.layout.activity_main);
 
         mainActivity = this;
-        
+
+        newComIDForIntent = getIntent().getStringExtra(AppConstants.NEW_COMMUNITY_ID);
+
+
         // to calculate screen width
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -333,6 +339,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         currentUserId = firebaseAuth.getCurrentUser().getUid();
 
         currentUserRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USERS).child(currentUserId);
+        _currentUserRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USERS).child(currentUserId);
         communityRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.COMMUNITIES);
         participantRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.PARTICIPANTS);
         postRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.POSTS);
@@ -851,45 +858,48 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             editor.commit();
         }
 
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        // FIXME has to update decryption and  encryption.
-
         decryptDeepLink();
 
-
+        // to show new Album Dialog
         // get live community id and check if album  is active or the app should quit the user from the album
         // if the album status is true the we  can start the service from the getServerTime async task only if the end time has not been reached;
-        DatabaseReference _currentUserRef = currentUserRef;
-        _currentUserRef.addValueEventListener(new ValueEventListener() {
+        userRefValueEventListenerForActiveAlbum = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                Log.i("onDataChange", "dataSnapshot "+dataSnapshot);
+                Log.i("testAlbum", "onDataChange: ");
 
                 if (dataSnapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID)  && !dataSnapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString().equals(AppConstants.NOT_AVALABLE)) {
                     currentActiveCommunityID = dataSnapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString();
                     if (isConnectedToNet()) {
                         mainAddPhotosFab.show();
                     }
-                    if(userCommunityIdList!=null && userCommunityIdList.size()>1)
-                    {
-                        MainHorizontalRecyclerview.removeAllViews();
-                        if(!currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE))
-                        {
-                            userCommunityIdList.add(0,currentActiveCommunityID);
-
-                        }
-                        getCloudAlbumData(userCommunityIdList);
-                    }
                     communityRef.child(currentActiveCommunityID).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                            if(snapshot.hasChild(FirebaseConstants.COMMUNITYADMIN))
+                            {
+
+                                if(snapshot.child(FirebaseConstants.COMMUNITYADMIN).getValue().toString().equals(getCurrentUserId()))
+                                {
+                                    qrCodeBottomSheet = new QRCodeBottomSheet( rootForMainActivity,currentActiveCommunityID, FirebaseDatabase.getInstance().getReference(), false,MainActivity.this, true);
+                                }
+                                else
+                                {
+
+                                    qrCodeBottomSheet = new QRCodeBottomSheet( rootForMainActivity,currentActiveCommunityID, FirebaseDatabase.getInstance().getReference(), false,MainActivity.this, false);
+                                }
+                            }
+                            else
+                            {
+                                qrCodeBottomSheet = new QRCodeBottomSheet(rootForMainActivity, currentActiveCommunityID, FirebaseDatabase.getInstance().getReference(), false,MainActivity.this, false);
+                            }
+
+                            if(newComIDForIntent !=null && !newComIDForIntent.equals(AppConstants.NOT_AVALABLE))
+                            {
+                                showInitDialog();
+                            }
 
                             if (snapshot.hasChild(FirebaseConstants.COMMUNITYSTATUS))
                             {
@@ -969,23 +979,19 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 }
                 else
                 {
+                    currentActiveCommunityID=AppConstants.NOT_AVALABLE;
                     mainAddPhotosFab.hide();
                 }
                 if (dataSnapshot.hasChild(FirebaseConstants.COMMUNITIES)) {
                     userCommunityIdList = new ArrayList<>();
                     MainHorizontalRecyclerview.removeAllViews();
-                    if (dataSnapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID) && !dataSnapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString().equals(AppConstants.NOT_AVALABLE)) {
-                        userCommunityIdList.add(dataSnapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString());
-                    }
                     for (DataSnapshot snapshot : dataSnapshot.child(FirebaseConstants.COMMUNITIES).getChildren()) {
                         userCommunityIdList.add(snapshot.getKey());
                     }
-                    Log.i("sortingArray", "datachange ");
+                    Log.i("sortingArray", "datachange "+userCommunityIdList);
                     Collections.sort(userCommunityIdList, Collections.reverseOrder());
-                    userCommunityIdList.remove(currentActiveCommunityID);
-                    if(!currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE))
-                    {
-                        userCommunityIdList.add(0, currentActiveCommunityID);
+                    if (dataSnapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID) && !dataSnapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString().equals(AppConstants.NOT_AVALABLE)) {
+                        userCommunityIdList.add(dataSnapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString());
                     }
                     getCloudAlbumData(userCommunityIdList);
                 }
@@ -1012,7 +1018,9 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        };
+
+        _currentUserRef.addValueEventListener(userRefValueEventListenerForActiveAlbum);
 
         userRefListenerForActiveAlbum = new ChildEventListener() {
             @Override
@@ -1022,6 +1030,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                Log.i("testAlbum", "onChildChanged: ");
 
                 if (dataSnapshot.getKey().equals(FirebaseConstants.LIVECOMMUNITYID) &&  dataSnapshot.getValue().toString() !=null  && !dataSnapshot.getValue().toString().equals(AppConstants.NOT_AVALABLE)) {
 
@@ -1033,6 +1043,41 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                             SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
                             SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
                             ceditor.putString("id", dataSnapshot.getValue().toString());
+                            if(dataSnapshot.hasChild(FirebaseConstants.COMMUNITYTITLE) && dataSnapshot.hasChild(FirebaseConstants.COMMUNITYENDTIME))
+                            {
+                                String titleValue =  dataSnapshot.child(FirebaseConstants.COMMUNITYTITLE).getValue().toString();
+                                String endtime = dataSnapshot.child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString();
+
+                                final long dy = TimeUnit.MILLISECONDS.toDays(Long.parseLong(endtime) - System.currentTimeMillis());
+                                final long hr = TimeUnit.MILLISECONDS.toHours(Long.parseLong(endtime) - System.currentTimeMillis())
+                                        - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(Long.parseLong(endtime) - System.currentTimeMillis()));
+                                final long min = TimeUnit.MILLISECONDS.toMinutes(Long.parseLong(endtime) - System.currentTimeMillis())
+                                        - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(Long.parseLong(endtime) - System.currentTimeMillis()));
+
+
+                                NotificationHelper helper = new NotificationHelper(getApplicationContext());
+                                String notificationStr = "";
+                                if (titleValue.length() > 15) {
+                                    notificationStr += titleValue.substring(0, 15) + "...";
+                                } else {
+                                    notificationStr += titleValue;
+                                }
+                                if (dy > 0) {
+                                    notificationStr += ", " + (int) dy + " days";
+                                } else {
+                                    notificationStr += ",";
+                                }
+                                if (hr > 0) {
+                                    notificationStr += " " + (int) hr + " hrs left";
+                                }
+                                if (hr < 1 && dy < 1) {
+                                    notificationStr += " " + (int) min + " minutes left";
+                                }
+                                Date date = new Date(Long.parseLong(endtime));
+                                String dateformat = DateFormat.format("dd-MM-yyyy", date).toString();
+                                helper.displayAlbumStartNotification(notificationStr, "You are active in this Cloud-Album till " + dateformat);
+
+                            }
 
                             if (dataSnapshot.hasChild(FirebaseConstants.COMMUNITYENDTIME)) {
                                 String endtime = dataSnapshot.child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString();
@@ -1049,7 +1094,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                             ceditor.putInt("notiCount", 0);
                             ceditor.remove(AppConstants.IS_NOTIFIED);
                             ceditor.commit();
-                            startActivity(new Intent(MainActivity.this, SplashScreenActivity.class));
+                            startActivity(new Intent(MainActivity.this, SplashScreenActivity.class).putExtra(AppConstants.NEW_COMMUNITY_ID,activeId));
                             overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_in);
                             finish();
                         }
@@ -1063,6 +1108,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 }
                 else if(dataSnapshot.getKey().equals(FirebaseConstants.LIVECOMMUNITYID) && dataSnapshot.getValue().toString().equals(AppConstants.NOT_AVALABLE))
                 {
+                    currentActiveCommunityID=AppConstants.NOT_AVALABLE;
+                    new HandleQuit(MainActivity.this, currentUserRef, communityRef, currentActiveCommunityID).execute();
                     if(photographerList.get(0).getEmail().equals("add")&&photographerList.get(0).getId().equals("add")&&photographerList.get(0).getImgUrl().equals("add")&&photographerList.get(0).getName().equals("add"))
                     {
                         photographerList.remove(0);
@@ -1132,17 +1179,21 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         };
         currentUserRef.addChildEventListener(userRefListenerForActiveAlbum);
 
-
     }
 
-    private void initialStart() {
-        //PURPOSE OF USER DIRECT
 
-        MainActivity.this.getIntent().putExtra("CREATED", "NO");
-        MainActivity.this.getIntent().putExtra("ID", "NULL");
-//        qrCodeBottomSheet = new QRCodeBottomSheet( currentActiveCommunityID, linkRef, true, MainActivity.this, false);
-        qrCodeBottomSheet.show(getSupportFragmentManager(), qrCodeBottomSheet.getTag());
-        displayed = true;
+    private void showInitDialog() {
+
+        if(qrCodeBottomSheet!=null && !qrCodeBottomSheet.isVisible() && !qrCodeBottomSheet.isInLayout() && !newComIDForIntent.equals(AppConstants.NOT_AVALABLE))
+        {
+            qrCodeBottomSheet.show(getSupportFragmentManager(),qrCodeBottomSheet.getTag());
+            newComIDForIntent=AppConstants.NOT_AVALABLE;
+        }
+        else
+        {
+            Log.i("qrCodeBottomSheet", "showInitDialog: else ");
+
+        }
 
     }
 
@@ -1293,8 +1344,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         if (userRefListenerForActiveAlbum != null) {
             currentUserRef.removeEventListener(userRefListenerForActiveAlbum);
         }
-        if (coummunityUserAddListener != null) {
-            currentUserRef.removeEventListener(coummunityUserAddListener);
+        if (communityUserAddListener != null) {
+            currentUserRef.removeEventListener(communityUserAddListener);
         }
         if (communitiesDataListener != null) {
             communityRef.removeEventListener(communitiesDataListener);
@@ -1305,7 +1356,9 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         if (participantRefListener != null) {
             participantRef.removeEventListener(participantRefListener);
         }
-
+        if (userRefValueEventListenerForActiveAlbum != null) {
+            _currentUserRef.removeEventListener(userRefValueEventListenerForActiveAlbum);
+        }
 
     }
 
@@ -1854,86 +1907,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
         if (forceQuit) {
 
-            progressBar.setVisibility(View.VISIBLE);
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND, WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-            getWindow().setDimAmount(0.75f);
-
-            communityRef.child(currentActiveCommunityID).child(FirebaseConstants.COMMUNITYSTATUS).setValue(AppConstants.NOT_AVALABLE).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-
-                        currentUserRef.child(FirebaseConstants.LIVECOMMUNITYID).setValue(AppConstants.NOT_AVALABLE);
-                        currentActiveCommunityID = AppConstants.NOT_AVALABLE;
-
-                        SharedPreferences CurrentActiveCommunity = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
-                        SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
-                        ceditor.remove("id");
-                        ceditor.remove("time");
-                        ceditor.remove("stopAt");
-                        ceditor.remove("startAt");
-                        ceditor.remove("notiCount");
-                        ceditor.commit();
-
-                        mainAddPhotosFab.hide();
-                        String scanWorkId = CurrentActiveCommunity.getString("scanWorkerId", AppConstants.NOT_AVALABLE);
-                        String albumEndWorkId = CurrentActiveCommunity.getString("albumendWorkerId", AppConstants.NOT_AVALABLE);
-                        if (scanWorkId.equals(AppConstants.NOT_AVALABLE)) {
-                            WorkManager.getInstance().cancelUniqueWork(AppConstants.PHOTO_SCAN_WORK);
-                        } else {
-                            WorkManager.getInstance().cancelWorkById(UUID.fromString(scanWorkId));
-                        }
-                        if (albumEndWorkId.equals(AppConstants.NOT_AVALABLE)) {
-                            WorkManager.getInstance().cancelAllWork();
-                        } else {
-                            WorkManager.getInstance().cancelWorkById(UUID.fromString(albumEndWorkId));
-                        }
-
-                        progressBar.setVisibility(View.GONE);
-                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-                        getWindow().setDimAmount(0);
-
-                        SnackShow snackShow=new SnackShow(rootForMainActivity,MainActivity.this);
-                        snackShow.showSuccessSnack("Successfully exited from your Cloud-Album. ");
-
-
-
-//                        Log.i("quit", "url" + photographerList.get(0).getImgUrl() + "getId" + photographerList.get(0).getId() + "getName" + photographerList.get(0).getName());
-
-                        try {
-                            if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
-                                photographerList.remove(0);
-                                participantsAdapter.notifyDataSetChanged();
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            Log.i("mainException","line 1838 ");
-                        }
-                        //SetDefaultView();
-
-                    } else {
-                        //SetDefaultView();
-                        progressBar.setVisibility(View.GONE);
-                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-                        getWindow().setDimAmount(0);
-                        showDialogQuitUnsuccess();
-                    }
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    progressBar.setVisibility(View.GONE);
-                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-                    getWindow().setDimAmount(0);
-                    showDialogQuitUnsuccess();
-
-                }
-            });
+            new HandleQuit(MainActivity.this, currentUserRef, communityRef, currentActiveCommunityID).execute();
 
         } else {
             showAlbumQuitPrompt("Exit Participation ?", "Are you sure you want to exit the participation in current Cloud-Album. You won't able to upload photos to this album again.",
@@ -2446,7 +2420,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
-
 
     }
 

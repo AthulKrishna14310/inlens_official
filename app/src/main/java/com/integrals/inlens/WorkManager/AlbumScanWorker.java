@@ -1,6 +1,8 @@
 package com.integrals.inlens.WorkManager;
 
 import android.content.Context;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import androidx.work.Worker;
@@ -23,7 +25,7 @@ public class AlbumScanWorker extends Worker {
         if(scannerTask!=null)
         {
             scannerTask.execute();
-            //Log.i(AppConstants.PHOTO_SCAN_WORK,"Work Executed");
+            Log.i("inlensWorker","Work Executed");
             return Result.success();
         }
         else

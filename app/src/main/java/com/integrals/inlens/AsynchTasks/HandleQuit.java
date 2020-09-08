@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import androidx.annotation.NonNull;
+
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.work.Constraints;
@@ -40,7 +42,7 @@ public class HandleQuit extends AsyncTask<Void,Void,Void>
 
         context=applicationContext;
         this.currentUserRef= currentUserRef;
-        this.statusRef=statusRef;
+        this.statusRef=statusRef.child(currentActiveCommunityID).child(FirebaseConstants.COMMUNITYSTATUS);
         activeCommunityId=currentActiveCommunityID;
         uploadQueueDB = new UploadQueueDB(applicationContext);
     }
@@ -64,6 +66,9 @@ public class HandleQuit extends AsyncTask<Void,Void,Void>
                     Cursor cursor = uploadQueueDB.getQueuedData();
                     if(cursor.getCount()==0)
                     {
+
+                        Log.i("inlensWorker", "services stopped");
+
                         SharedPreferences.Editor ceditor = CurrentActiveCommunity.edit();
                         ceditor.remove("id");
                         ceditor.remove("time");

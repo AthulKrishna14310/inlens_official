@@ -33,4 +33,7 @@ public class AppConstants {
     public static final String SQLITE_COLUMN_FIELD_ID="name";
     public static final String SQLITE_COLUMN_FIELD_URI="uri";
     public static final String SQLITE_COLUMN_FIELD_QUEUED_TIME ="queuedAt";
+
+    // create intent id
+    public static final String NEW_COMMUNITY_ID="newComID";
 }

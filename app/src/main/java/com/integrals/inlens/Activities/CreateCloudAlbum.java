@@ -90,13 +90,12 @@ public class CreateCloudAlbum extends AppCompatActivity {
     private String checkTimeTaken = "";
     private ImageButton createCloudAlbumBackButton;
     private Boolean eventTypeSet = false, albumDateSet = false;
-    private String createdIntent = "NO";
 
     FirebaseAuth firebaseAuth;
     DatabaseReference photographerRef, currentUserRef, communityRef;
     String currentUserId;
     LinearLayout rootCreateCloudAlbum;
-    private String globalID = "";
+    private String globalID = AppConstants.NOT_AVALABLE;
 
     boolean travelBackInTime = false;
     long startTime = 0;
@@ -704,16 +703,16 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         }
                         helper.displayAlbumStartNotification(notificationStr, "You are active in this Cloud-Album till " + albumTime);
 
-                        Handler handler = new Handler();
                         SnackShow snackShow = new SnackShow(rootCreateCloudAlbum, CreateCloudAlbum.this);
                         snackShow.showSuccessSnack("Your Cloud-Album created successfully. Enjoy your event by uploading moments together.");
-                        handler.postDelayed(new Runnable() {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
                             public void run() {
-                                createdIntent = "YES";
-                                Log.i("travelback", "createdIntent " + createdIntent);
+
                                 onBackPressed();
+
                             }
-                        }, 3000);
+                        },3000);
                     }
 
                 }
@@ -779,8 +778,10 @@ public class CreateCloudAlbum extends AppCompatActivity {
         } else {
 
             Intent mainIntent = new Intent(CreateCloudAlbum.this, MainActivity.class);
-            mainIntent.putExtra("CREATED", createdIntent);
-            mainIntent.putExtra("ID", globalID);
+            if(!globalID.equals(AppConstants.NOT_AVALABLE))
+            {
+                mainIntent.putExtra(AppConstants.NEW_COMMUNITY_ID, globalID);
+            }
             startActivity(mainIntent);
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             finish();

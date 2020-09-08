@@ -81,19 +81,16 @@ public class QRCodeBottomSheet extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        String appTheme;
         SharedPreferences themePref = activity.getSharedPreferences(AppConstants.appDataPref, Context.MODE_PRIVATE);
         if (themePref.contains(AppConstants.appDataPref_theme)) {
             if (themePref.getString(AppConstants.appDataPref_theme, AppConstants.themeLight).equals(AppConstants.themeLight)) {
                 themeId = R.style.AppTheme;
-                appTheme = AppConstants.themeLight;
                 ContextWrapper contextWrapper = new ContextWrapper(activity);
                 contextWrapper.setTheme(R.style.AppTheme);
                 qrCodeView = inflater.cloneInContext(contextWrapper).inflate(R.layout.qrcode_generator_layout, container, false);
 
             } else {
                 themeId = R.style.DarkTheme;
-                appTheme = AppConstants.themeDark;
                 ContextWrapper contextWrapper = new ContextWrapper(activity);
                 contextWrapper.setTheme(R.style.DarkTheme);
                 qrCodeView = inflater.cloneInContext(contextWrapper).inflate(R.layout.qrcode_generator_layout, container, false);
@@ -101,7 +98,6 @@ public class QRCodeBottomSheet extends BottomSheetDialogFragment {
             }
         } else {
             themeId = R.style.AppTheme;
-            appTheme = AppConstants.themeLight;
             ContextWrapper contextWrapper = new ContextWrapper(activity);
             contextWrapper.setTheme(R.style.AppTheme);
             qrCodeView = inflater.cloneInContext(contextWrapper).inflate(R.layout.qrcode_generator_layout, container, false);

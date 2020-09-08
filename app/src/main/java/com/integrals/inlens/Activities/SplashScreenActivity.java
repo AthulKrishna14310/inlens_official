@@ -40,6 +40,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     String appTheme = "";
 
     static SplashScreenActivity splashScreenActivity;
+    String id = AppConstants.NOT_AVALABLE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +70,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 
         splashScreenActivity=this;
 
+
         firebaseAuth = FirebaseAuth.getInstance();
         CheckUserAuthentication();
 
@@ -82,12 +84,18 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     private void CheckUserAuthentication() {
 
+        id=getIntent().getStringExtra(AppConstants.NEW_COMMUNITY_ID);
+
         if (firebaseAuth.getCurrentUser() != null) {
 
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     Intent mainIntent = new Intent(SplashScreenActivity.this, MainActivity.class);
+                    if(id!=null && !id.equals(AppConstants.NOT_AVALABLE))
+                    {
+                        mainIntent.putExtra(AppConstants.NEW_COMMUNITY_ID,id);
+                    }
                     startActivity(mainIntent);
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                     finish();
