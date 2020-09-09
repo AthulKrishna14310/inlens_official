@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activities.PhoneAuth">
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
+        android:textColor="?attr/colorPrimary"
+        android:text="Sign in"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="24dp"
+        android:id="@+id/title" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title"
+        >
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_centerVertical="true"
+            android:background="?attr/image_bg_color"
+            />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentRight="true"
+
+            android:layout_marginRight="32dp"
+            android:layout_centerVertical="true"
+            app:icon="@drawable/ic_arrow_forward"
+            app:iconTint="?attr/default_bg_color"
+            app:backgroundTint="?attr/colorPrimary"/>
+
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/signintxtlayout"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="80dp"
+        android:layout_below="@id/title"
+        android:orientation="vertical"
+        >
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        android:textColor="?attr/colorPrimary"
+        android:text="Phone Number"
+        android:id="@+id/signintxt"
+
+
+        />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="?attr/colorPrimary"
+            android:layout_alignParentBottom="true"
+            />
+    </LinearLayout>
+<com.google.android.material.textfield.TextInputLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/phoneauth_edit_layout"
+    android:layout_marginLeft="16dp"
+    app:boxBackgroundMode="filled"
+
+
+    android:layout_marginRight="16dp"
+    android:layout_marginBottom="0dp"
+    android:backgroundTint="?attr/default_bg_color"
+    android:layout_below="@+id/signintxtlayout"
+
+    >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        >
+
+        <com.hbb20.CountryCodePicker
+            android:id="@+id/ccp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:ccp_countryPreference="in"
+            app:ccp_showPhoneCode="true"
+            app:ccp_showFlag="true"
+            app:ccp_showFullName="true"
+            />
+
+        <EditText
+            android:id="@+id/editText_carrierNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint=""
+            android:background="?attr/image_bg_color"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:inputType="phone"
+            android:drawableStart="@drawable/ic_phone"
+            android:layout_below="@+id/ccp"
+            android:drawablePadding="16dp"
+            android:padding="16dp"
+            android:singleLine="true" />
+    </RelativeLayout>
+
+</com.google.android.material.textfield.TextInputLayout>
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:layout_alignParentBottom="true"
+    android:layout_marginBottom="16dp"
+    android:orientation="vertical"
+    >
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_weight="1"
+        android:layout_gravity="center_horizontal"
+        android:src="@mipmap/ic_launcher"
+        ></ImageView>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="By Team-InLens"
+        android:textColor="?attr/colorPrimary"
+        android:alpha="0.8"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        ></TextView>
+
+</LinearLayout>
+
+</RelativeLayout>

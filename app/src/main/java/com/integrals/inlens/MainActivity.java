@@ -101,6 +101,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.integrals.inlens.Activities.CreateCloudAlbum;
 import com.integrals.inlens.Activities.InlensGalleryActivity;
+import com.integrals.inlens.Activities.PhoneAuth;
 import com.integrals.inlens.Activities.PhotoView;
 import com.integrals.inlens.Activities.QRCodeReader;
 import com.integrals.inlens.Activities.SplashScreenActivity;
@@ -649,7 +650,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             }
         });
 
-
+        // This is to be deleted
+        startActivity(new Intent(MainActivity.this, PhoneAuth.class));
 
     }
 
