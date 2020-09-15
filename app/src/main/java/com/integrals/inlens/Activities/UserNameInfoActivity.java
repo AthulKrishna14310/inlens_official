@@ -34,6 +34,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.integrals.inlens.Helper.AppConstants;
@@ -57,7 +58,7 @@ public class UserNameInfoActivity extends AppCompatActivity {
 
     private EditText UserNameEdittext,UserEmailEdittext;
     private TextView UserNameTextview;
-    private Button UserNameDoneButton  ;
+    private ImageButton UserNameDoneButton  ;
     private ImageButton  MyToolbarBackButton;
     private View MyToolbar;
     private RelativeLayout relativeLayout;
@@ -107,20 +108,20 @@ public class UserNameInfoActivity extends AppCompatActivity {
         CheckUserAuthentication();
         VariablesInit();
         relativeLayout=findViewById(R.id.root_user_name_info);
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 if(dataSnapshot.hasChild(FirebaseConstants.NAME))
                 {
                     Name = dataSnapshot.child(FirebaseConstants.NAME).getValue().toString();
-                    UserNameEdittext.append(Name);
+                    UserNameEdittext.setText(Name);
 
                 }
                 if(dataSnapshot.hasChild(FirebaseConstants.EMAIL))
                 {
                     Email = dataSnapshot.child(FirebaseConstants.EMAIL).getValue().toString();
-                    UserEmailEdittext.append(Email);
+                    UserEmailEdittext.setText(Email);
                 }
 
                 if(dataSnapshot.hasChild(FirebaseConstants.PROFILEPICTURE))
@@ -129,6 +130,7 @@ public class UserNameInfoActivity extends AppCompatActivity {
                     Glide.with(getApplicationContext()).load(ProfilePicUri).into(profileImageView);
 
                 }
+                UserNameDoneButton.setVisibility(View.VISIBLE);
                 userInfoProgressbar.setVisibility(View.INVISIBLE);
 
             }
@@ -137,6 +139,7 @@ public class UserNameInfoActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
                 userInfoProgressbar.setVisibility(View.INVISIBLE);
+                UserNameDoneButton.setVisibility(View.VISIBLE);
 
             }
         });
@@ -261,12 +264,15 @@ public class UserNameInfoActivity extends AppCompatActivity {
                                                        public void onComplete(@NonNull Task<Void> task) {
                                                            if (task.isSuccessful()) {
                                                                {
-
                                                                    showDialogMessageSuccess("Successfully uploaded your profile picture.");
-
+                                                                   userInfoProgressbar.setVisibility(View.INVISIBLE);
+                                                                   UserNameDoneButton.setVisibility(View.VISIBLE);
                                                                }
                                                            } else {
                                                                showDialogMessageError("DB:"+task.getException().getMessage());
+                                                               userInfoProgressbar.setVisibility(View.INVISIBLE);
+                                                               UserNameDoneButton.setVisibility(View.VISIBLE);
+
                                                            }
 
                                                        }
@@ -276,15 +282,28 @@ public class UserNameInfoActivity extends AppCompatActivity {
                                        @Override
                                        public void onFailure(@NonNull Exception e) {
                                            showDialogMessageError(""+e.getMessage());
+                                           userInfoProgressbar.setVisibility(View.INVISIBLE);
+                                           UserNameDoneButton.setVisibility(View.VISIBLE);
 
                                        }
                                    });
 
                                }
-                           }).addOnFailureListener(new OnFailureListener() {
+                           }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                       @Override
+                       public void onProgress(@NonNull UploadTask.TaskSnapshot taskSnapshot) {
+                           UserNameDoneButton.setVisibility(View.INVISIBLE);
+                           userInfoProgressbar.setVisibility(View.VISIBLE);
+                           double progress = (taskSnapshot.getBytesTransferred()/taskSnapshot.getTotalByteCount());
+                           userInfoProgressbar.setProgress((int)progress);
+                       }
+                   }).addOnFailureListener(new OnFailureListener() {
                        @Override
                        public void onFailure(@NonNull Exception e) {
                            showDialogMessageError(""+e.getMessage());
+                           userInfoProgressbar.setVisibility(View.INVISIBLE);
+                           UserNameDoneButton.setVisibility(View.VISIBLE);
+
                        }
                    });
 
@@ -316,9 +335,8 @@ public class UserNameInfoActivity extends AppCompatActivity {
         super.onStart();
         try {
             if(getIntent().getStringExtra("Edit").contentEquals("yes")){
-                UserNameDoneButton.setText("Done");
+                UserNameDoneButton.setVisibility(View.VISIBLE);
                 MyToolbarBackButton.setVisibility(View.VISIBLE);
-
                 MyToolbarBackButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -371,7 +389,7 @@ public class UserNameInfoActivity extends AppCompatActivity {
 
         if(Auth.getCurrentUser() == null)
         {
-            startActivity(new Intent(UserNameInfoActivity.this, AuthActivity.class));
+            startActivity(new Intent(UserNameInfoActivity.this, PhoneAuth.class));
             overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
             finish();
         }

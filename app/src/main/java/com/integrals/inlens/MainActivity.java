@@ -650,8 +650,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             }
         });
 
-        // This is to be deleted
-        startActivity(new Intent(MainActivity.this, PhoneAuth.class));
 
     }
 

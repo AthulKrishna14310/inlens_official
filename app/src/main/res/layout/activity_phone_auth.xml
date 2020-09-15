@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/phoneAuth"
     tools:context=".Activities.PhoneAuth">
     <com.google.android.material.textview.MaterialTextView
         android:layout_width="wrap_content"
@@ -20,10 +21,20 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/title"
         >
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/colorPrimaryLight"
+            android:text="Collaborate Shared Cloud-Albums \nwith your loved ones."
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+            android:id="@+id/featureText"
+            android:layout_marginLeft="16dp"
+            android:textAllCaps="false"
+            />
         <View
             android:layout_width="match_parent"
             android:layout_height="4dp"
-            android:layout_centerVertical="true"
+            android:layout_below="@id/featureText"
             android:background="?attr/image_bg_color"
             />
 
@@ -31,14 +42,12 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_alignParentRight="true"
-
-            android:layout_marginRight="32dp"
+            android:id="@+id/auth_next_button"
+            android:layout_marginRight="16dp"
             android:layout_centerVertical="true"
             app:icon="@drawable/ic_arrow_forward"
             app:iconTint="?attr/default_bg_color"
             app:backgroundTint="?attr/colorPrimary"/>
-
-
     </RelativeLayout>
 
     <LinearLayout
@@ -102,7 +111,9 @@
             android:id="@+id/editText_carrierNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint=""
+            android:hint="##########"
+            android:maxLength="10"
+            android:letterSpacing="0.5"
             android:background="?attr/image_bg_color"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             android:inputType="phone"
@@ -134,7 +145,8 @@
         android:layout_height="wrap_content"
         android:text="By Team-InLens"
         android:textColor="?attr/colorPrimary"
-        android:alpha="0.8"
+        android:alpha="1"
+
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
         ></TextView>
 
