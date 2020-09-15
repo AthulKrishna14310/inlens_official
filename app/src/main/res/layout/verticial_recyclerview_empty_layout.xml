@@ -6,10 +6,11 @@
 
     <ImageView
         android:id="@+id/vertical_recyclerview_empty_layout_imageview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_note"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/ic_photo_library"
         android:tint="?attr/colorPrimary"
+        android:alpha="0.5"
         android:layout_centerInParent="true"
         />
 
@@ -18,8 +19,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/vertical_recyclerview_empty_layout_imageview"
         android:layout_centerHorizontal="true"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+
+        android:layout_margin="16dp"
+        android:alpha="0.5"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:textColor="?attr/colorPrimary"
-        android:text="No photos yet..." />
+        android:text="No Photos uploaded." />
 
 </RelativeLayout>
