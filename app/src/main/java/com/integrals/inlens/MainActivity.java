@@ -1186,8 +1186,13 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                         mainHorizontalAdapter.notifyDataSetChanged();
                     } else {
                         if (communityDataList.size() < 1) {
-                            communityDataList.add(_communityDataList.get(0));
-                        }
+                            try {
+                                communityDataList.add(_communityDataList.get(0));
+
+                             }catch (IndexOutOfBoundsException e){
+                                e.getMessage();
+                            }
+                            }
                         appBarLayout.setExpanded(true, true);
                         mainHorizontalAdapter.notifyDataSetChanged();
 
@@ -1359,7 +1364,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                     .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
                                                     .setTitle("New Community")
                                                     .setIcon(R.mipmap.ic_launcher_foreground)
-                                                    .setMessage("Are you sure you want to join this new community? This means quitting the previous one.")
+                                                    .setMessage("Are you sure you want to join this new community? This means leaving the previous one.")
                                                     .setTextGravity(Gravity.START)
                                                     .setDialogBackgroundColor(cf_bg_color)
                                                     .setTextColor(colorPrimary)
@@ -1815,7 +1820,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                         .setTextColor(colorPrimary)
                         .setMessage("You have to leave the currently active album before creating a new album.")
                         .setCancelable(true)
-                        .addButton("EXIT PARTICIPATION",
+                        .addButton("LEAVE ALBUM",
                                 red_inlens,
                                 cf_alert_dialogue_dim_bg,
                                 CFAlertDialog.CFAlertActionStyle.DEFAULT,
@@ -1892,7 +1897,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                         .setMessage("You have to leave the currently active album before creating a new album.")
                         .setCancelable(true)
 
-                        .addButton("QUIT CLOUD-ALBUM",
+                        .addButton("LEAVE ALBUM",
                                 red_inlens,
                                 cf_alert_dialogue_dim_bg,
                                 CFAlertDialog.CFAlertActionStyle.DEFAULT,
@@ -2241,7 +2246,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             });
 
         } else {
-            showAlbumQuitPrompt("Exit Participation ?", "Are you sure you want to exit the participation in current Cloud-Album. You won't able to upload photos to this album again.",
+            showAlbumQuitPrompt("Leave album ?", "Are you sure you want to leave the current album. You won't able to upload photos to this album again.",
                     "NO ",
                     "YES ");
 
@@ -2454,7 +2459,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
     private void showDialogQuitUnsuccess() {
         SnackShow snackShow=new SnackShow(rootForMainActivity,MainActivity.this);
-        snackShow.showErrorSnack("Unable to quit the Cloud-Album , Please try again later.");
+        snackShow.showErrorSnack("Unable to leave the Cloud-Album , Please try again later.");
     }
 
     @Override
