@@ -21,11 +21,10 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:tint="?attr/colorPrimary"
-            android:src="@drawable/ic_account_circle"
-            app:civ_border_color="?attr/default_dim_bg"
-            app:civ_border_overlay="true"
-            app:civ_fill_color="?attr/default_dim_bg"
-            app:civ_border_width="1dp" />
+            app:civ_fill_color="?attr/default_bg_color"
+            android:src="@drawable/ic_account_circle_black_24dp"
+
+             />
          <LinearLayout android:gravity="center"
              android:orientation="vertical"
              android:layout_width="match_parent"

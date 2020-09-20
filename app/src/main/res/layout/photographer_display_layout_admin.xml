@@ -10,7 +10,7 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_marginLeft="16dp"
-
+        android:backgroundTint="?attr/default_dim_bg"
         android:layout_marginTop="16dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="16dp"
@@ -21,9 +21,9 @@
             android:id="@+id/imageView_photographer"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_member_card"
-            android:tint="?attr/colorSecondary" />
+            android:tint="?attr/default_dim_bg"
+            android:src="@drawable/ic_account_circle_black_24dp"
+            />
 
         <ProgressBar
             android:id="@+id/photographer_progressbar"
@@ -87,7 +87,7 @@
             android:textAlignment="center"
             android:textAllCaps="true"
             android:textColor="?attr/colorPrimary"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
 
             >
 
