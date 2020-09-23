@@ -30,6 +30,7 @@
             android:id="@+id/featureText"
             android:layout_marginLeft="16dp"
             android:textAllCaps="false"
+            android:visibility="invisible"
             />
         <View
             android:layout_width="match_parent"
