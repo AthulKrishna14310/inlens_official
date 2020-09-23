@@ -1764,7 +1764,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 participantsAdapter = new ParticipantsAdapter(photographerList, MainActivity.this, qrCodeBottomSheet, communityModel.getAdmin(), FirebaseDatabase.getInstance().getReference(), communityID);
                 ParticipantsRecyclerView.setAdapter(participantsAdapter);
 
-                if (currentActiveCommunityID.equals(communityID) && !CurrentActiveCommunity.contains(AppConstants.IS_NOTIFIED)) {
+                if (currentActiveCommunityID.equals(communityID) && !CurrentActiveCommunity.contains(AppConstants.IS_NOTIFIED) && communityModel.getAdmin().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                     photographerList.add(new PhotographerModel("add", "add", "add", "add"));
                 }
 
