@@ -15,42 +15,59 @@
       },
       "oauth_client": [
         {
-          "client_id": "140518233719-1g133m9sppnjvj9dee6usg7l7nrls3sa.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAiTEyqDOSY-eVOhCliR6jwJ9wCL_4SMPo"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:140518233719:android:b8a0c9326004a782",
-        "android_client_info": {
-          "package_name": "integrals.inlens"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "140518233719-vav76egspr1rc53drd3ok2o77g2547tc.apps.googleusercontent.com",
+          "client_id": "140518233719-r8h208hr1cnii4hqk030qek5l221152a.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "integrals.inlens",
-            "certificate_hash": "5c33440c467951d157be24f30180a311fbf6e483"
+            "package_name": "com.integrals.inlens",
+            "certificate_hash": "79f92cb6fc3633344d6b7fb8b4cfbea386f34952"
+          }
+        },
+        {
+          "client_id": "140518233719-hsv112nda6am4cbh775pf2pc9j9hfthm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.integrals.inlens",
+            "certificate_hash": "5130dc2c6b3cdfff1c6823c452c298c842bca7d2"
+          }
+        },
+        {
+          "client_id": "140518233719-gkhegmu5fitspl05m08be7jho6rit385.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.integrals.inlens",
+            "certificate_hash": "34c314a4e6a3fcf092ee3a868df1ee6b0e2eccbd"
+          }
+        },
+        {
+          "client_id": "140518233719-79ajf338p9go5qip3f5m49ir88dqqr9e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.integrals.inlens",
+            "certificate_hash": "3484c249ad75dcd2b178b08786eb8141a72ff3eb"
+          }
+        },
+        {
+          "client_id": "140518233719-jm7rvshkt3hod5iqrv9ok3ftsisc9ppo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.integrals.inlens",
+            "certificate_hash": "aaa24c39cb558f80976040bfe9866e06162e154a"
+          }
+        },
+        {
+          "client_id": "140518233719-i309qnkl9ntv2koemhomiln6rqrrs82i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.integrals.inlens",
+            "certificate_hash": "a52aaaa50412b9f31c02a7ec66c5e651cbf1eb5f"
+          }
+        },
+        {
+          "client_id": "140518233719-g0ph4ri3jivrvtcuvu0gsdiq9dts9h74.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.integrals.inlens",
+            "certificate_hash": "e7bca013974772a869d1ab7db6b5aaf231398f14"
           }
         },
         {
@@ -64,20 +81,20 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 2,
           "other_platform_oauth_client": [
             {
               "client_id": "140518233719-1g133m9sppnjvj9dee6usg7l7nrls3sa.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "140518233719-55qb6qgu72r2hevpv0rfk96eookjsb7d.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "vf.ios.inlens"
+              }
             }
           ]
-        },
-        "ads_service": {
-          "status": 2
         }
       }
     }

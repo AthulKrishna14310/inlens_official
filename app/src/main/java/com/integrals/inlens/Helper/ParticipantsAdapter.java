@@ -4,7 +4,10 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -16,7 +19,14 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
 import com.integrals.inlens.Activities.QRCodeReader;
 import com.integrals.inlens.MainActivity;
 import com.integrals.inlens.Models.PhotographerModel;
@@ -36,19 +46,22 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     QRCodeBottomSheet qrCodeBottomSheet;
     MainActivity activity;
     String adminId;
-    DatabaseReference participantRef,userRef;
+    DatabaseReference participantRef, userRef, tempAccessRef, reqRef, rootRef;
     String communityId;
 
 
     public ParticipantsAdapter(List<PhotographerModel> photographersList,
-                               MainActivity activity, QRCodeBottomSheet qrcodeDialog, String adminId,DatabaseReference ref,String communityId) {
+                               MainActivity activity, QRCodeBottomSheet qrcodeDialog, String adminId, DatabaseReference ref, String communityId) {
         this.photographersList = photographersList;
         this.qrCodeBottomSheet = qrcodeDialog;
         this.activity = activity;
         this.adminId = adminId;
         participantRef = ref.child(FirebaseConstants.PARTICIPANTS).child(communityId);
+        rootRef = ref;
+        reqRef = ref.child(FirebaseConstants.REQUESTS).child(communityId);
         userRef = ref.child(FirebaseConstants.USERS);
-        this.communityId=communityId;
+        tempAccessRef = ref.child(FirebaseConstants.TEMP_ACCESS);
+        this.communityId = communityId;
     }
 
     @Override
@@ -99,23 +112,21 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     if (activity.getCurrentUserId().equals(adminId)) {
 
                         if (photographersList.get(position).getId().equals(adminId)) {
-                            PhotographerFragementBottomSheetAdmin photographerFragementBottomSheetAdmin = new PhotographerFragementBottomSheetAdmin(activity, photographersList.get(position),true);
+                            PhotographerFragementBottomSheetAdmin photographerFragementBottomSheetAdmin = new PhotographerFragementBottomSheetAdmin(activity, photographersList.get(position), true);
                             photographerFragementBottomSheetAdmin.show(((FragmentActivity) activity).getSupportFragmentManager(), photographerFragementBottomSheetAdmin.getTag());
 
                         } else {
-                            PhotographerFragementBottomSheetNA photographerFragementBottomSheetNA = new PhotographerFragementBottomSheetNA(activity, photographersList.get(position),true,userRef,participantRef,communityId);
+                            PhotographerFragementBottomSheetNA photographerFragementBottomSheetNA = new PhotographerFragementBottomSheetNA(activity, photographersList.get(position), true, userRef, participantRef, communityId);
                             photographerFragementBottomSheetNA.show(((FragmentActivity) activity).getSupportFragmentManager(), photographerFragementBottomSheetNA.getTag());
 
                         }
-                    }
-                    else
-                    {
+                    } else {
                         if (photographersList.get(position).getId().equals(adminId)) {
-                            PhotographerFragementBottomSheetAdmin photographerFragementBottomSheetAdmin = new PhotographerFragementBottomSheetAdmin(activity, photographersList.get(position),false);
+                            PhotographerFragementBottomSheetAdmin photographerFragementBottomSheetAdmin = new PhotographerFragementBottomSheetAdmin(activity, photographersList.get(position), false);
                             photographerFragementBottomSheetAdmin.show(((FragmentActivity) activity).getSupportFragmentManager(), photographerFragementBottomSheetAdmin.getTag());
 
                         } else {
-                            PhotographerFragementBottomSheetNA photographerFragementBottomSheetNA = new PhotographerFragementBottomSheetNA(activity, photographersList.get(position),false,userRef,participantRef,communityId);
+                            PhotographerFragementBottomSheetNA photographerFragementBottomSheetNA = new PhotographerFragementBottomSheetNA(activity, photographersList.get(position), false, userRef, participantRef, communityId);
                             photographerFragementBottomSheetNA.show(((FragmentActivity) activity).getSupportFragmentManager(), photographerFragementBottomSheetNA.getTag());
 
                         }
@@ -126,10 +137,66 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
 
         } else if (holder instanceof AddParticipantsViewHolder) {
+
+
+            if (activity.getCurrentUserId().equals(adminId)) {
+                SharedPreferences reqPref = activity.getSharedPreferences(AppConstants.appDataPref, Context.MODE_PRIVATE);
+                long lastCheckedTime = Long.parseLong(reqPref.getString(AppConstants.REQUEST_LAST_CHECKED, "0"));
+
+                reqRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        
+                        List<String> req = new ArrayList<>();
+
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                            String uid = snapshot.getKey();
+                            long time = Long.parseLong(dataSnapshot.child(uid).getValue().toString());
+                            if (time > lastCheckedTime) {
+                                req.add(uid);
+                            }
+                        }
+                        if (req.size() > 0) {
+
+                            Log.i("participantsAda","size of reqs "+ req.size());
+
+                            ((AddParticipantsViewHolder) holder).badgeTextView.setVisibility(View.VISIBLE);
+                            if (req.size() > 9) {
+                                ((AddParticipantsViewHolder) holder).badgeTextView.setText("9+");
+                            } else {
+                                ((AddParticipantsViewHolder) holder).badgeTextView.setText(String.valueOf(req.size()));
+                            }
+                        } else {
+                            ((AddParticipantsViewHolder) holder).badgeTextView.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+            } else {
+                ((AddParticipantsViewHolder) holder).badgeTextView.setVisibility(View.GONE);
+            }
+
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    qrCodeBottomSheet.show(activity.getSupportFragmentManager(),qrCodeBottomSheet.getTag());
+
+                    if (activity.getCurrentUserId().equals(adminId)) {
+                        ((AddParticipantsViewHolder) holder).badgeTextView.setVisibility(View.GONE);
+                        SharedPreferences reqPref = activity.getSharedPreferences(AppConstants.appDataPref, Context.MODE_PRIVATE);
+                        final SharedPreferences.Editor reqPrefEditor = reqPref.edit();
+                        reqPrefEditor.putString(AppConstants.REQUEST_LAST_CHECKED, String.valueOf(System.currentTimeMillis()));
+                        reqPrefEditor.commit();
+
+                    }
+                    qrCodeBottomSheet.show(activity.getSupportFragmentManager(), qrCodeBottomSheet.getTag());
+
+
                 }
             });
 
@@ -162,8 +229,12 @@ class ParticipantsViewHolder extends RecyclerView.ViewHolder {
 
 class AddParticipantsViewHolder extends RecyclerView.ViewHolder {
 
+    TextView badgeTextView;
+
     public AddParticipantsViewHolder(View itemView) {
         super(itemView);
+
+        badgeTextView = itemView.findViewById(R.id.member_add_badge_textview);
 
     }
 }

@@ -22,6 +22,10 @@ public class AppConstants {
     public static final String themeLight="light";
     public static final String themeDark="dark";
 
+    //for checking last notified
+
+    public static final String REQUEST_PREF="Request.Pref";
+    public static final String REQUEST_LAST_CHECKED="lastChecked";
 
     // SQLite Database public constants
     public static final String SQLITE_DB_NAME="userImages.db";
@@ -29,4 +33,7 @@ public class AppConstants {
     public static final String SQLITE_COLUMN_FIELD_ID="name";
     public static final String SQLITE_COLUMN_FIELD_URI="uri";
     public static final String SQLITE_COLUMN_FIELD_QUEUED_TIME ="queuedAt";
+
+    // create intent id
+    public static final String NEW_COMMUNITY_ID="newComID";
 }

@@ -23,10 +23,17 @@ public class FirebaseConstants {
     public static final String POSTBY ="by";
     public static final String POSTTIME ="time";
     public static final String POSTURL ="uri";
+    public static final String POST_THUMBNAIL_URL ="thumbUri";
     public static final String POSTS ="posts";
-    public static final String INVITE_LINK ="Invites";
     public static final String COMMUNITIES_STORAGE ="Albums";
+    public static final String COMMUNITIES_ORIGINAL_STORAGE ="Original";
+    public static final String COMMUNITIES_THUMBNAIL_STORAGE ="Thumbnail";
 
     public static final String REPORTED ="Reported";
 
+    public static final String TEMP_ACCESS = "Temp-Access";
+    public static final String TEMP_ACCESS_GRANTED_UID = "grantedUid";
+    public static final String TEMP_ACCESS_GRANTED_COMID = "comId";
+
+    public static final String REQUESTS = "Requests";
 }

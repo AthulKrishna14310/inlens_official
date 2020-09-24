@@ -29,6 +29,7 @@
         <activity android:name=".Activities.WebViewActivity" />
         <activity
             android:name=".Activities.SplashScreenActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -68,6 +69,14 @@
                 <data
                     android:host="inlens.com"
                     android:scheme="https" />
+
+                <data
+                    android:host="inlens.page.link"
+                    android:scheme="http" />
+                <data
+                    android:host="inlens.page.link"
+                    android:scheme="https" />
+
             </intent-filter>
         </activity>
         <activity

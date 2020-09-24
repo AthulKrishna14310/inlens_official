@@ -1,6 +1,7 @@
 package com.integrals.inlens.WorkManager;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -9,6 +10,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -34,6 +36,7 @@ import com.integrals.inlens.AsynchTasks.HandleQuit;
 import com.integrals.inlens.Database.UploadQueueDB;
 import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.FirebaseConstants;
+import com.integrals.inlens.Helper.WebpCompressor;
 import com.integrals.inlens.Models.GalleryImageModel;
 import com.integrals.inlens.Notification.NotificationHelper;
 import com.integrals.inlens.Notification.NotificationOreo;
@@ -105,8 +108,7 @@ public class UploadWorker extends Worker {
             if (System.currentTimeMillis() >= endTime && uploadQueueDB.getQueuedData().getCount() == 0) {
                 DatabaseReference currentUserRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.USERS).child(FirebaseAuth.getInstance().getCurrentUser().getUid());
                 DatabaseReference communityRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.COMMUNITIES);
-                DatabaseReference linkRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.INVITE_LINK);
-                new HandleQuit(context, currentUserRef, linkRef, communityRef, communityID).execute();
+                new HandleQuit(context, currentUserRef, communityRef, communityID).execute();
             }
 
         } catch (Exception e) {
@@ -169,6 +171,435 @@ public class UploadWorker extends Worker {
 
         File imgFile = new File(uri);
         if (imgFile.exists()) {
+
+            try
+            {
+                String originalImageUri = new WebpCompressor(Uri.fromFile(new File(uri)),context).compressedImageUrl();
+                String thumbnailImageUri =  new WebpCompressor(Uri.fromFile(new File(uri)),context).thumbnailCompressedImageUrl();
+
+//                Log.i("uploadWorker","originalImageUri "+originalImageUri);
+//                Log.i("uploadWorker","thumbnailImageUri "+thumbnailImageUri);
+//
+
+                if (originalImageUri != null && thumbnailImageUri != null) {
+
+                    String fileName = FirebaseAuth.getInstance().getCurrentUser().getUid() + "_uploaded_" + Uri.fromFile(imgFile).getLastPathSegment().toLowerCase();
+
+                    StorageReference originalFilePath = storageRef.child(communityID).child(FirebaseConstants.COMMUNITIES_ORIGINAL_STORAGE).child(fileName);
+                    StorageReference thumbnailFilePath = storageRef.child(communityID).child(FirebaseConstants.COMMUNITIES_THUMBNAIL_STORAGE).child(fileName);
+
+                    thumbnailFilePath.putFile(Uri.fromFile(new File(thumbnailImageUri))).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                            thumbnailFilePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri thumburi) {
+
+                                    String thumbnailUri = thumburi.toString();
+                                    uploadTask = originalFilePath.putFile(Uri.fromFile(new File(originalImageUri)));
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+                                        NotificationOreo helper = new NotificationOreo(context);
+                                        Notification.Builder builderOreo = helper.getNotificationBuilder("Cloud Album Upload", "Starting upload to cloud album");
+                                        helper.getManager().notify(Integer.parseInt(id.substring(id.length() - 4)), builderOreo.build());
+
+                                        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                            @Override
+                                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                                                originalFilePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                    @Override
+                                                    public void onSuccess(Uri downloadUri) {
+
+                                                        final String downloadUrl = String.valueOf(downloadUri);
+                                                        Log.i("uploading", "url " + downloadUrl);
+                                                        Map uploadmap = new HashMap();
+                                                        uploadmap.put(FirebaseConstants.POSTURL, downloadUrl);
+                                                        uploadmap.put(FirebaseConstants.POSTBY, FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                                        uploadmap.put(FirebaseConstants.POSTTIME, createdTime);
+                                                        uploadmap.put(FirebaseConstants.POST_THUMBNAIL_URL,thumbnailUri);
+
+                                                        postRef.child(communityID).child(fileName.replaceAll("[^a-zA-Z0-9]", "")).setValue(uploadmap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                if (task.isSuccessful()) {
+
+                                                                    imgUploaded++;
+//                                            allCommunityImages.get(imgPosition).setQueued(false);
+                                                                    String fileName = Uri.fromFile(new File(uri)).getLastPathSegment();
+                                                                    UploadQueueDB uploadQueueDB = new UploadQueueDB(getApplicationContext());
+                                                                    boolean result = uploadQueueDB.deleteData(fileName);
+                                                                    Log.i("uploading", "deleted " + fileName + " result " + result);
+
+
+                                                                    if (imgUploaded == queuedImages.size()) {
+                                                                        helper.getManager().cancelAll();
+                                                                        NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
+                                                                        String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). ";
+                                                                        notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
+                                                                    } else if (failedCount > 0 && imgUploaded + failedCount == queuedImages.size()) {
+                                                                        helper.getManager().cancelAll();
+                                                                        NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
+                                                                        String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). Remaining photos will be uploaded later.";
+                                                                        notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
+
+                                                                    } else {
+                                                                        queuedImages.get(imgPosition).setQueued(false);
+                                                                        SharedPreferences notificationPref = context.getSharedPreferences(AppConstants.NOTIFICATION_PREF, Context.MODE_PRIVATE);
+                                                                        String repeatId = notificationPref.getString("id", String.valueOf(System.currentTimeMillis()));
+                                                                        if (id.equals(repeatId)) {
+                                                                            uploadToFirebase(queuedImages, id);
+
+                                                                        } else {
+                                                                            helper.getManager().cancel(Integer.parseInt(id.substring(id.length() - 4)));
+                                                                        }
+                                                                    }
+
+
+                                                                } else {
+
+                                                                    failedCount++;
+//                                            allCommunityImages.get(imgPosition).setQueued(false);
+
+
+                                                                    if (imgUploaded == queuedImages.size()) {
+                                                                        helper.getManager().cancelAll();
+                                                                        NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
+                                                                        String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). ";
+                                                                        notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
+                                                                    } else if (failedCount > 0 && imgUploaded + failedCount == queuedImages.size()) {
+                                                                        helper.getManager().cancelAll();
+                                                                        NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
+                                                                        String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). Remaining photos will be uploaded later.";
+                                                                        notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
+
+                                                                    } else {
+                                                                        queuedImages.get(imgPosition).setQueued(false);
+                                                                        SharedPreferences notificationPref = context.getSharedPreferences(AppConstants.NOTIFICATION_PREF, Context.MODE_PRIVATE);
+                                                                        String repeatId = notificationPref.getString("id", String.valueOf(System.currentTimeMillis()));
+                                                                        if (id.equals(repeatId)) {
+                                                                            uploadToFirebase(queuedImages, id);
+
+                                                                        } else {
+                                                                            helper.getManager().cancel(Integer.parseInt(id.substring(id.length() - 4)));
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        });
+
+                                                    }
+                                                });
+
+                                            }
+                                        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                                            @Override
+                                            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+
+                                                int PROGRESS_CURRENT = (int) ((100.0 * ((double) (taskSnapshot.getBytesTransferred()))) / ((double) taskSnapshot.getTotalByteCount()));
+                                                Log.i("imguploader", "progress of " + imgUploaded + " : " + PROGRESS_CURRENT);
+
+                                                int uploadingCount = imgUploaded + 1;
+
+                                                builderOreo.setContentText("Uploading photo " + uploadingCount + " of " + queuedImages.size()).setProgress(100, PROGRESS_CURRENT, false);
+                                                helper.getManager().notify(Integer.parseInt(id.substring(id.length() - 4)), builderOreo.build());
+
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+
+                                                failedCount++;
+
+//                        allCommunityImages.get(imgPosition).setQueued(false);
+
+
+                                                if (imgUploaded == queuedImages.size()) {
+                                                    helper.getManager().cancelAll();
+                                                    NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
+                                                    String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). ";
+                                                    notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
+                                                } else if (failedCount > 0 && imgUploaded + failedCount == queuedImages.size()) {
+                                                    helper.getManager().cancelAll();
+                                                    NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
+                                                    String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). ";
+                                                    notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
+
+                                                } else {
+                                                    queuedImages.get(imgPosition).setQueued(false);
+                                                    SharedPreferences notificationPref = context.getSharedPreferences(AppConstants.NOTIFICATION_PREF, Context.MODE_PRIVATE);
+                                                    String repeatId = notificationPref.getString("id", String.valueOf(System.currentTimeMillis()));
+                                                    if (id.equals(repeatId)) {
+                                                        uploadToFirebase(queuedImages, id);
+
+                                                    } else {
+                                                        helper.getManager().cancel(Integer.parseInt(id.substring(id.length() - 4)));
+                                                    }
+                                                }
+                                            }
+                                        });
+
+
+                                    } else {
+                                        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+                                        final NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), id.substring(id.length()-4));
+                                        builder.setContentTitle("Cloud Album Upload")
+                                                .setContentText("Starting upload to cloud album")
+                                                .setProgress(100, 0, true)
+                                                .setSmallIcon(R.drawable.ic_notification)
+                                                .setPriority(NotificationCompat.DEFAULT_ALL);
+
+                                        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                            @Override
+                                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                                                originalFilePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                    @Override
+                                                    public void onSuccess(Uri downloadUri) {
+
+                                                        final String downloadUrl = String.valueOf(downloadUri);
+                                                        Log.i("uploading", "url " + downloadUrl);
+                                                        String pushid = postRef.child(communityID).push().getKey();
+                                                        Map uploadmap = new HashMap();
+                                                        uploadmap.put(FirebaseConstants.POSTURL, downloadUrl);
+                                                        uploadmap.put(FirebaseConstants.POSTBY, FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                                        uploadmap.put(FirebaseConstants.POSTTIME, createdTime);
+                                                        uploadmap.put(FirebaseConstants.POST_THUMBNAIL_URL,thumbnailUri);
+
+                                                        postRef.child(communityID).child(fileName.replaceAll("[^a-zA-Z0-9]", "")).setValue(uploadmap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                if (task.isSuccessful()) {
+
+
+                                                                    imgUploaded++;
+//                                            allCommunityImages.get(imgPosition).setQueued(false);
+                                                                    String fileName = Uri.fromFile(new File(uri)).getLastPathSegment();
+                                                                    UploadQueueDB uploadQueueDB = new UploadQueueDB(getApplicationContext());
+                                                                    boolean result = uploadQueueDB.deleteData(fileName);
+                                                                    Log.i("uploading", "deleted " + fileName + " result " + result);
+
+
+                                                                    if (imgUploaded == queuedImages.size()) {
+                                                                        notificationManager.cancel(Integer.parseInt(id.substring(id.length()-4)));
+                                                                        NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
+                                                                        String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). ";
+                                                                        notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
+                                                                    } else if (failedCount > 0 && imgUploaded + failedCount == queuedImages.size()) {
+                                                                        notificationManager.cancel(Integer.parseInt(id.substring(id.length()-4)));
+                                                                        NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
+                                                                        String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). Remaining photos will be uploaded later.";
+                                                                        notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
+
+                                                                    } else {
+                                                                        queuedImages.get(imgPosition).setQueued(false);
+                                                                        SharedPreferences notificationPref = context.getSharedPreferences(AppConstants.NOTIFICATION_PREF, Context.MODE_PRIVATE);
+                                                                        String repeatId = notificationPref.getString("id", String.valueOf(System.currentTimeMillis()));
+                                                                        if (id.equals(repeatId)) {
+                                                                            uploadToFirebase(queuedImages, id);
+
+                                                                        } else {
+                                                                            notificationManager.cancel(Integer.parseInt(id.substring(id.length() - 4)));
+                                                                        }
+                                                                    }
+
+                                                                } else {
+
+                                                                    failedCount++;
+//                                            allCommunityImages.get(imgPosition).setQueued(false);
+
+
+                                                                    if (imgUploaded == queuedImages.size()) {
+                                                                        notificationManager.cancel(Integer.parseInt(id.substring(id.length()-4)));
+                                                                        NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
+                                                                        String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). ";
+                                                                        notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
+                                                                    } else if (failedCount > 0 && imgUploaded + failedCount == queuedImages.size()) {
+                                                                        notificationManager.cancel(Integer.parseInt(id.substring(id.length()-4)));
+                                                                        NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
+                                                                        String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). Remaining photos will be uploaded later.";
+                                                                        notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
+
+                                                                    } else {
+                                                                        queuedImages.get(imgPosition).setQueued(false);
+                                                                        SharedPreferences notificationPref = context.getSharedPreferences(AppConstants.NOTIFICATION_PREF, Context.MODE_PRIVATE);
+                                                                        String repeatId = notificationPref.getString("id", String.valueOf(System.currentTimeMillis()));
+                                                                        if (id.equals(repeatId)) {
+                                                                            uploadToFirebase(queuedImages, id);
+
+                                                                        } else {
+                                                                            notificationManager.cancel(Integer.parseInt(id.substring(id.length() - 4)));
+                                                                        }
+                                                                    }
+
+                                                                }
+                                                            }
+                                                        });
+
+                                                    }
+                                                });
+
+                                            }
+                                        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                                            @Override
+                                            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+
+                                                int PROGRESS_CURRENT = (int) ((100.0 * ((double) (taskSnapshot.getBytesTransferred()))) / ((double) taskSnapshot.getTotalByteCount()));
+                                                Log.i("imguploader", "progress of " + imgUploaded + " : " + PROGRESS_CURRENT);
+
+                                                int uploadingCount = imgUploaded + 1;
+
+                                                builder.setContentText("Uploading photo " + uploadingCount + " of " + queuedImages.size()).setProgress(100, PROGRESS_CURRENT, false);
+                                                notificationManager.notify(Integer.parseInt(id.substring(id.length()-4)), builder.build());
+
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+
+                                                failedCount++;
+
+//                        allCommunityImages.get(imgPosition).setQueued(false);
+
+
+                                                if (imgUploaded == queuedImages.size()) {
+                                                    notificationManager.cancel(Integer.parseInt(id.substring(id.length()-4)));
+                                                    NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
+                                                    String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). ";
+                                                    notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
+                                                } else if (failedCount > 0 && imgUploaded + failedCount == queuedImages.size()) {
+                                                    notificationManager.cancel(Integer.parseInt(id.substring(id.length()-4)));
+                                                    NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
+                                                    String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). ";
+                                                    notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
+
+                                                } else {
+                                                    queuedImages.get(imgPosition).setQueued(false);
+                                                    SharedPreferences notificationPref = context.getSharedPreferences(AppConstants.NOTIFICATION_PREF, Context.MODE_PRIVATE);
+                                                    String repeatId = notificationPref.getString("id", String.valueOf(System.currentTimeMillis()));
+                                                    if (id.equals(repeatId)) {
+                                                        uploadToFirebase(queuedImages, id);
+
+                                                    } else {
+                                                        notificationManager.cancel(Integer.parseInt(id.substring(id.length() - 4)));
+                                                    }
+                                                }
+                                            }
+                                        });
+
+                                    }
+
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+
+                                    Log.i("uploadWorker","ex "+e);
+                                    Toast.makeText(context, "Failed to upload one photo.", Toast.LENGTH_SHORT).show();
+                                    failedCount++;
+                                    NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+                                    if (imgUploaded == queuedImages.size()) {
+                                        manager.cancelAll();
+                                        NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
+                                        String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). ";
+                                        notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
+                                    } else if (failedCount > 0 && imgUploaded + failedCount == queuedImages.size()) {
+                                        manager.cancelAll();
+                                        NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
+                                        String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). ";
+                                        notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
+
+                                    } else {
+                                        queuedImages.get(imgPosition).setQueued(false);
+                                        SharedPreferences notificationPref = context.getSharedPreferences(AppConstants.NOTIFICATION_PREF, Context.MODE_PRIVATE);
+                                        String repeatId = notificationPref.getString("id", String.valueOf(System.currentTimeMillis()));
+                                        if (id.equals(repeatId)) {
+                                            uploadToFirebase(queuedImages, id);
+
+                                        } else {
+                                            manager.cancel(Integer.parseInt(id.substring(id.length() - 4)));
+                                        }
+                                    }
+                                }
+                            });
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                            Log.i("uploadWorker","outer ex "+e);
+                            Toast.makeText(context, "Failed to upload one photo.", Toast.LENGTH_SHORT).show();
+                            failedCount++;
+                            NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+                            if (imgUploaded == queuedImages.size()) {
+                                manager.cancelAll();
+                                NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
+                                String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). ";
+                                notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
+                            } else if (failedCount > 0 && imgUploaded + failedCount == queuedImages.size()) {
+                                manager.cancelAll();
+                                NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
+                                String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). ";
+                                notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
+
+                            } else {
+                                queuedImages.get(imgPosition).setQueued(false);
+                                SharedPreferences notificationPref = context.getSharedPreferences(AppConstants.NOTIFICATION_PREF, Context.MODE_PRIVATE);
+                                String repeatId = notificationPref.getString("id", String.valueOf(System.currentTimeMillis()));
+                                if (id.equals(repeatId)) {
+                                    uploadToFirebase(queuedImages, id);
+
+                                } else {
+                                    manager.cancel(Integer.parseInt(id.substring(id.length() - 4)));
+                                }
+                            }
+                        }
+                    });;
+
+
+
+                }
+            }
+            catch (NullPointerException e)
+            {
+
+//                Toast.makeText(context, "Failed to upload one photo.", Toast.LENGTH_SHORT).show();
+                Log.i("uploadWorker","Exception "+e.toString());
+                failedCount++;
+
+
+                NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+                if (imgUploaded == queuedImages.size()) {
+                    manager.cancelAll();
+                    NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
+                    String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). ";
+                    notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
+                } else if (failedCount > 0 && imgUploaded + failedCount == queuedImages.size()) {
+                    manager.cancelAll();
+                    NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
+                    String message = "Uploaded " + imgUploaded + " out of " + queuedImages.size() + " photo(s). ";
+                    notificationHelper.displayTitleMesageNoti("Photos Uploaded", message);
+
+                } else {
+                    queuedImages.get(imgPosition).setQueued(false);
+                    SharedPreferences notificationPref = context.getSharedPreferences(AppConstants.NOTIFICATION_PREF, Context.MODE_PRIVATE);
+                    String repeatId = notificationPref.getString("id", String.valueOf(System.currentTimeMillis()));
+                    if (id.equals(repeatId)) {
+                        uploadToFirebase(queuedImages, id);
+
+                    } else {
+                        manager.cancel(Integer.parseInt(id.substring(id.length() - 4)));
+                    }
+                }
+            }
+
+
+            /*
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             Bitmap bitmapAfterCompression = compressUploadFile(imgFile);
             if (bitmapAfterCompression != null) {
@@ -471,6 +902,8 @@ public class UploadWorker extends Worker {
 
 
             }
+             */
+
         }
 
 
