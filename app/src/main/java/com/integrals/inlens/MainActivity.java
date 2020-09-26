@@ -675,8 +675,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             @Override
             public void onClick(View view) {
 
-                AlertDialog.Builder queuedOptionsDialog = new AlertDialog.Builder(MainActivity.this);
-                queuedOptionsDialog.setMessage("Upload queued images to create or  join new album. Please select one the following options.")
+                androidx.appcompat.app.AlertDialog.Builder queuedOptionsDialog =  new androidx.appcompat.app.AlertDialog.Builder(MainActivity.this);
+                queuedOptionsDialog.setMessage("Some images that you selected are not uploaded , they're still on queue.")
                         .setPositiveButton("Upload now", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
