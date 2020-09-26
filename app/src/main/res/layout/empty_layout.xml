@@ -22,9 +22,9 @@
         android:layout_margin="16dp"
         android:textAlignment="textStart"
         android:alpha="0.6"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:textColor="?attr/colorPrimary"
-        android:text="> Whenever you take photos , tap on your notification to upload those (demo below)." />
+        android:text=">Take photos with any app. \n\n>To upload just tap on notification \n(demo below)" />
 
 
     <ImageView
@@ -46,7 +46,7 @@
        android:layout_height="wrap_content"
        android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
        android:layout_alignParentBottom="true"
-       android:text="Open Camera "
+       android:text="Take photos"
        android:padding="12dp"
        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
        android:layout_marginLeft="16dp"

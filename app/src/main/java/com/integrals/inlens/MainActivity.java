@@ -643,7 +643,12 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 if (checkIfImagesAreQueued()) {
                     provideQueueOptions(rootForMainActivity);
                 } else {
-                    optionsBottomSheetFragment.show(((FragmentActivity) MainActivity.this).getSupportFragmentManager(), optionsBottomSheetFragment.getTag());
+                    if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
+                        optionsBottomSheetFragment.show(((FragmentActivity) MainActivity.this).getSupportFragmentManager(), optionsBottomSheetFragment.getTag());
+                     }
+                    else{
+                        showLeaveAlert();
+                    }
                 }
 
 
@@ -1812,48 +1817,63 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 finish();
             } else {
 
-                CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
-                        .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                        .setTitle("Album Active")
-                        .setIcon(R.drawable.ic_info)
-                        .setDialogBackgroundColor(cf_bg_color)
-                        .setTextColor(colorPrimary)
-                        .setMessage("You have to leave the currently active album before creating a new album.")
-                        .setCancelable(true)
-                        .addButton("LEAVE ALBUM",
-                                red_inlens,
-                                cf_alert_dialogue_dim_bg,
-                                CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                                CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                        quitCloudAlbum(false);
-                                    }
-                                })
-
-                        .addButton("CANCEL",
-                                colorPrimary,
-                                cf_alert_dialogue_dim_bg,
-                                CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                                CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-
-                                    }
-
-                                });
-                builder.show();
 
             }
         }
 
 
     }
+    public void showLeaveAlert(){
+        int cf_bg_color, colorPrimary, red_inlens, cf_alert_dialogue_dim_bg;
+        if (appTheme.equals(AppConstants.themeLight)) {
+            cf_bg_color = getResources().getColor(R.color.Light_cf_bg_color);
+            colorPrimary = getResources().getColor(R.color.colorLightPrimary);
+            red_inlens = getResources().getColor(R.color.Light_red_inlens);
+            cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Light_cf_alert_dialogue_dim_bg);
+        } else {
+            cf_bg_color = getResources().getColor(R.color.Dark_cf_bg_color);
+            colorPrimary = getResources().getColor(R.color.colorDarkPrimary);
+            red_inlens = getResources().getColor(R.color.Dark_red_inlens);
+            cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Dark_cf_alert_dialogue_dim_bg);
 
+        }
+        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
+                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                .setTitle("Album Active")
+                .setIcon(R.drawable.ic_info)
+                .setDialogBackgroundColor(cf_bg_color)
+                .setTextColor(colorPrimary)
+                .setMessage("You have to leave the currently active album before creating a new album.")
+                .setCancelable(true)
+                .addButton("LEAVE ALBUM",
+                        red_inlens,
+                        cf_alert_dialogue_dim_bg,
+                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                quitCloudAlbum(false);
+                            }
+                        })
+
+                .addButton("CANCEL",
+                        colorPrimary,
+                        cf_alert_dialogue_dim_bg,
+                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+
+                            }
+
+                        });
+        builder.show();
+
+    }
     public ArrayList<String> getUserCommunityIdList() {
         return userCommunityIdList;
     }
