@@ -12,12 +12,8 @@
     <string name="added_participants_can_also_collaborate_by_upload_their_recent_images_to_your_album">Added participants can also collaborate by uploading their recent images into your album.</string>
     <string name="add_participants_to_your_album">Add participants</string>
     <string name="send_invite_link">SEND INVITE LINK</string>
-<<<<<<< HEAD
     <string name="scan_your_participant_s_qr_code">Scan your participant\'s QR Code</string>
-=======
-
     <string name="title_activity_photo_view">PhotoViewActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
->>>>>>> photoview-kotlin
 </resources>
