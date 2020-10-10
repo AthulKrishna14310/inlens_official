@@ -16,7 +16,7 @@
     <color name="Dark_cf_bg_color">@color/Dark_default_dim_bg</color>
     <color name="Dark_default_dim_bg">#262626</color>
     <color name="Dark_red_300">#e57373</color>
-    <color name="Dark_cf_alert_dialogue_dim_bg" >#363636</color>
+    <color name="Dark_cf_alert_dialogue_dim_bg">#363636</color>
     <color name="Dark_image_bg_color">@color/Dark_cf_alert_dialogue_dim_bg</color>
     <color name="Dark_border">@color/Dark_default_dim_bg</color>
     <color name="Dark_action_secondary">#e1bee7</color>
@@ -65,8 +65,10 @@
 
     <color name="bright_foreground_disabled_material_dark">#80ffffff</color>
     <color name="bright_foreground_disabled_material_light">#80000000</color>
-    <color name="bright_foreground_inverse_material_dark">@color/bright_foreground_material_light</color>
-    <color name="bright_foreground_inverse_material_light">@color/bright_foreground_material_dark</color>
+    <color name="bright_foreground_inverse_material_dark">@color/bright_foreground_material_light
+    </color>
+    <color name="bright_foreground_inverse_material_light">@color/bright_foreground_material_dark
+    </color>
     <color name="bright_foreground_material_dark">@android:color/white</color>
     <color name="bright_foreground_material_light">@android:color/black</color>
     <color name="button_material_dark">#ff5a595b</color>
@@ -149,6 +151,8 @@
     <color name="tooltip_background_light">#e6ffffff</color>
     <color name="transparent">#00ffffff</color>
     <color name="shade_bg">#3C000000</color>
+
+    <color name="black_overlay">#66000000</color>
 
 
 </resources>

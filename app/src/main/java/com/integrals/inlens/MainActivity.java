@@ -99,7 +99,9 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.integrals.inlens.Activities.CreateCloudAlbum;
 import com.integrals.inlens.Activities.InlensGalleryActivity;
-import com.integrals.inlens.Activities.PhotoView;
+import com.integrals.inlens.Activities.SplashScreenActivity;
+import com.integrals.inlens.Activities.WebViewActivity;
+import com.integrals.inlens.Activities.kotlin.PhotoViewActivity;
 import com.integrals.inlens.Activities.SplashScreenActivity;
 import com.integrals.inlens.Activities.WebViewActivity;
 import com.integrals.inlens.AsynchTasks.HandleQuit;
@@ -2585,7 +2587,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                         @Override
                         public void onClick(View view) {
 
-                            Intent i = new Intent(MainActivity.this, PhotoView.class);
+                            Intent i = new Intent(MainActivity.this, PhotoViewActivity.class);
                             i.putParcelableArrayListExtra("data", (ArrayList<? extends Parcelable>) PostList);
                             i.putExtra("position", position);
                             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
