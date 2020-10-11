@@ -120,7 +120,7 @@ public class PhotographerFragementBottomSheetNA extends BottomSheetDialogFragmen
         }else {
             progressBar.setVisibility(View.GONE);
             Glide.with(context)
-                    .load(context.getDrawable(R.drawable.ic_member_card))
+                    .load(context.getDrawable(R.drawable.ic_account_circle_black_24dp))
                     .into(userImageview);
         }
         TextView nameTextView,emailTextView,removeLayoutTextView;

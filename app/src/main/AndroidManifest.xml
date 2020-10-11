@@ -29,6 +29,9 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_photo_view"
             android:theme="@style/FullscreenTheme"></activity>
+        <activity android:name=".Activities.VerificationActivity"></activity>
+
+        <activity android:name=".Activities.PhoneAuth" />
         <activity android:name=".Activities.ReportActivity" />
         <activity android:name=".Activities.WebViewActivity" />
         <activity
@@ -113,9 +116,7 @@
         <activity
             android:name=".Activities.AuthActivity"
             android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".Activities.UserNameInfoActivity"
-            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".Activities.UserNameInfoActivity" />
     </application>
 
 </manifest>

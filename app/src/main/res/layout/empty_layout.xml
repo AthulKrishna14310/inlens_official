@@ -4,31 +4,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
    >
-
+    <TextView
+        android:layout_width="match_parent"
+        android:id="@+id/xct"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:textAlignment="center"
+        android:alpha="0.6"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        android:textColor="?attr/colorPrimary"
+        android:text="@string/instructions" />
     <TextView
         android:layout_width="match_parent"
         android:id="@+id/yxt"
+        android:layout_below="@+id/xct"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:textAlignment="textStart"
         android:alpha="0.6"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:textColor="?attr/colorPrimary"
-        android:text=">  Open any camera app to take photos." />
+        android:text=">Take photos with any app. \n\n>To upload just tap on notification \n(demo below)" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:id="@+id/yxt1"
-        android:layout_below="@id/yxt"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:textAlignment="textStart"
-        android:alpha="0.6"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-        android:textColor="?attr/colorPrimary"
-        android:text=">  Tap notification." />
+
     <ImageView
-        android:layout_below="@id/yxt1"
+        android:layout_below="@id/yxt"
         android:layout_width="match_parent"
         android:layout_height="360dp"
         android:id="@+id/imgView"
@@ -46,12 +46,14 @@
        android:layout_height="wrap_content"
        android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
        android:layout_alignParentBottom="true"
-       android:text="Open Camera"
-       android:padding="16dp"
-       style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+       android:text="Take photos"
+       android:padding="12dp"
+       style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
        android:layout_marginLeft="16dp"
        android:layout_marginRight="16dp"
        android:layout_marginTop="4dp"
+       android:drawableTint="?attr/default_bg_color"
+       android:drawableEnd="@drawable/ic_arrow_forward"
        android:id="@+id/CloseButtonTextView"
        />
 </RelativeLayout>

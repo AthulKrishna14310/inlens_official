@@ -8,12 +8,25 @@
     android:background="?attr/default_dim_bg">
 
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:background="?attr/default_dim_bg"
         >
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:id="@+id/editDetails"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="8dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_edit"
+            android:tint="?attr/colorPrimary"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            />
 
         <TextView
             android:id="@+id/AlbumTitleBottom"
@@ -21,9 +34,9 @@
             android:layout_height="wrap_content"
             android:maxLines="1"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp"
             android:background="?attr/default_dim_bg"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             android:text="Album Header"

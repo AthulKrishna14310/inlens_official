@@ -63,7 +63,6 @@
                 android:itemBackground="?attr/image_bg_color"
                 android:textColor="?attr/colorPrimary"
                 app:itemCount="6"
-
                 android:layout_centerHorizontal="true"
                 app:lineColor="?attr/colorPrimary"
                 app:viewType="line"

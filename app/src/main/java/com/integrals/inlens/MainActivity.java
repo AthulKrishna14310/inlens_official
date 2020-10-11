@@ -99,7 +99,10 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.integrals.inlens.Activities.CreateCloudAlbum;
 import com.integrals.inlens.Activities.InlensGalleryActivity;
+import com.integrals.inlens.Activities.PhoneAuth;
+import com.integrals.inlens.Activities.QRCodeReader;
 import com.integrals.inlens.Activities.SplashScreenActivity;
+import com.integrals.inlens.Activities.UserNameInfoActivity;
 import com.integrals.inlens.Activities.WebViewActivity;
 import com.integrals.inlens.Activities.kotlin.PhotoViewActivity;
 import com.integrals.inlens.Activities.SplashScreenActivity;
@@ -362,12 +365,13 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
                 if (item.getItemId() == R.id.profile_preference) {
-
                     // no need to check internet connection as if is given by default
-                    setCoverChange(false);
-                    setProfileChange(true);
-                    GetStartedWithNewProfileImage();
-
+                    //setCoverChange(false);
+                    //setProfileChange(true);
+                    //GetStartedWithNewProfileImage();
+                    Intent i= new Intent(MainActivity.this, UserNameInfoActivity.class);
+                    i.putExtra("Edit","yes");
+                    startActivity(i);
                     return true;
 
                 }
@@ -644,15 +648,17 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 if (checkIfImagesAreQueued()) {
                     provideQueueOptions(rootForMainActivity);
                 } else {
-                    optionsBottomSheetFragment.show(((FragmentActivity) MainActivity.this).getSupportFragmentManager(), optionsBottomSheetFragment.getTag());
+                    if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
+                        optionsBottomSheetFragment.show(((FragmentActivity) MainActivity.this).getSupportFragmentManager(), optionsBottomSheetFragment.getTag());
+                     }
+                    else{
+                        showLeaveAlert();
+                    }
                 }
 
 
             }
         });
-
-
-
 
     }
 
@@ -673,8 +679,8 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             @Override
             public void onClick(View view) {
 
-                AlertDialog.Builder queuedOptionsDialog = new AlertDialog.Builder(MainActivity.this);
-                queuedOptionsDialog.setMessage("Upload queued images to create or  join new album. Please select one the following options.")
+                androidx.appcompat.app.AlertDialog.Builder queuedOptionsDialog =  new androidx.appcompat.app.AlertDialog.Builder(MainActivity.this);
+                queuedOptionsDialog.setMessage("Some images that you selected are not uploaded , they're still on queue.")
                         .setPositiveButton("Upload now", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -1556,48 +1562,63 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 finish();
             } else {
 
-                CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
-                        .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
-                        .setTitle("Album Active")
-                        .setIcon(R.drawable.ic_info)
-                        .setDialogBackgroundColor(cf_bg_color)
-                        .setTextColor(colorPrimary)
-                        .setMessage("You have to leave the currently active album before creating a new album.")
-                        .setCancelable(true)
-                        .addButton("EXIT PARTICIPATION",
-                                red_inlens,
-                                cf_alert_dialogue_dim_bg,
-                                CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                                CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                        quitCloudAlbum(false);
-                                    }
-                                })
-
-                        .addButton("CANCEL",
-                                colorPrimary,
-                                cf_alert_dialogue_dim_bg,
-                                CFAlertDialog.CFAlertActionStyle.DEFAULT,
-                                CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-
-                                    }
-
-                                });
-                builder.show();
 
             }
         }
 
 
     }
+    public void showLeaveAlert(){
+        int cf_bg_color, colorPrimary, red_inlens, cf_alert_dialogue_dim_bg;
+        if (appTheme.equals(AppConstants.themeLight)) {
+            cf_bg_color = getResources().getColor(R.color.Light_cf_bg_color);
+            colorPrimary = getResources().getColor(R.color.colorLightPrimary);
+            red_inlens = getResources().getColor(R.color.Light_red_inlens);
+            cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Light_cf_alert_dialogue_dim_bg);
+        } else {
+            cf_bg_color = getResources().getColor(R.color.Dark_cf_bg_color);
+            colorPrimary = getResources().getColor(R.color.colorDarkPrimary);
+            red_inlens = getResources().getColor(R.color.Dark_red_inlens);
+            cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Dark_cf_alert_dialogue_dim_bg);
 
+        }
+        CFAlertDialog.Builder builder = new CFAlertDialog.Builder(this)
+                .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                .setTitle("Album Active")
+                .setIcon(R.drawable.ic_info)
+                .setDialogBackgroundColor(cf_bg_color)
+                .setTextColor(colorPrimary)
+                .setMessage("You have to leave the currently active album before creating a new album.")
+                .setCancelable(true)
+                .addButton("LEAVE ALBUM",
+                        red_inlens,
+                        cf_alert_dialogue_dim_bg,
+                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                quitCloudAlbum(false);
+                            }
+                        })
+
+                .addButton("CANCEL",
+                        colorPrimary,
+                        cf_alert_dialogue_dim_bg,
+                        CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                        CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+
+                            }
+
+                        });
+        builder.show();
+
+    }
     public ArrayList<String> getUserCommunityIdList() {
         return userCommunityIdList;
     }
@@ -1641,7 +1662,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                         .setMessage("You have to leave the currently active album before creating a new album.")
                         .setCancelable(true)
 
-                        .addButton("QUIT CLOUD-ALBUM",
+                        .addButton("LEAVE ALBUM",
                                 red_inlens,
                                 cf_alert_dialogue_dim_bg,
                                 CFAlertDialog.CFAlertActionStyle.DEFAULT,
@@ -1692,7 +1713,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         String key = snapshot.getKey();
                         String by = AppConstants.NOT_AVALABLE, time = AppConstants.NOT_AVALABLE, uri = AppConstants.NOT_AVALABLE;
-
+                        String thumb=AppConstants.NOT_AVALABLE;
                         if (snapshot.hasChild("by")) {
                             by = snapshot.child("by").getValue().toString();
                         }
@@ -1701,6 +1722,9 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                         }
                         if (snapshot.hasChild("uri")) {
                             uri = snapshot.child("uri").getValue().toString();
+                        }
+                        if(snapshot.hasChild("thumb_uri")){
+                            thumb=snapshot.child("thumb_uri").getValue().toString();
                         }
                         if (!getPostKeys(_postImageList).contains(key)) {
                             _postImageList.add(new PostModel(key, uri, time, by));
@@ -1723,7 +1747,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                         mainVerticalAdapter.notifyDataSetChanged();
 
                     } else {
-                        postImageList.add(new PostModel(AppConstants.NOT_AVALABLE, AppConstants.NOT_AVALABLE, AppConstants.NOT_AVALABLE, AppConstants.NOT_AVALABLE));
+                        postImageList.add(new PostModel(AppConstants.NOT_AVALABLE,AppConstants.NOT_AVALABLE, AppConstants.NOT_AVALABLE, AppConstants.NOT_AVALABLE));
                         GridLayoutManager gridLayoutManager = new GridLayoutManager(MainActivity.this, 1);
                         MainVerticalRecyclerView.setLayoutManager(gridLayoutManager);
                         mainVerticalAdapter.notifyDataSetChanged();
@@ -1912,7 +1936,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             new HandleQuit(MainActivity.this, currentUserRef, communityRef, currentActiveCommunityID).execute();
 
         } else {
-            showAlbumQuitPrompt("Exit Participation ?", "Are you sure you want to exit the participation in current Cloud-Album. You won't able to upload photos to this album again.",
+            showAlbumQuitPrompt("Leave album ?", "Are you sure you want to leave the current album. You won't able to upload photos to this album again.",
                     "NO ",
                     "YES ");
 
@@ -2127,7 +2151,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
     private void showDialogQuitUnsuccess() {
         SnackShow snackShow=new SnackShow(rootForMainActivity,MainActivity.this);
-        snackShow.showErrorSnack("Unable to quit the Cloud-Album , Please try again later.");
+        snackShow.showErrorSnack("Unable to leave the Cloud-Album , Please try again later.");
     }
 
     @Override
@@ -2562,28 +2586,28 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                     });
 
                     viewHolder.PostProgressbar.setVisibility(View.VISIBLE);
-                    Glide.with(activity)
-                            .load(PostList.get(position).getUri())
-                            .apply(reqOpt)
-                            .listener(new RequestListener<Drawable>() {
-                                @Override
-                                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                    viewHolder.PostProgressbar.setVisibility(View.GONE);
-                                    viewHolder.postRefresButton.setVisibility(View.VISIBLE);
-                                    return false;
-                                }
 
-                                @Override
-                                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                                    viewHolder.PostProgressbar.setVisibility(View.GONE);
-                                    viewHolder.postRefresButton.setVisibility(View.GONE);
-                                    return false;
-                                }
+                        Glide.with(activity)
+                                .load(PostList.get(position).getUri())
+                                .apply(reqOpt)
+                                .listener(new RequestListener<Drawable>() {
+                                    @Override
+                                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                        viewHolder.PostProgressbar.setVisibility(View.GONE);
+                                        viewHolder.postRefresButton.setVisibility(View.VISIBLE);
+                                        return false;
+                                    }
 
-                            })
-                            .into(viewHolder.PostImageView);
+                                    @Override
+                                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                        viewHolder.PostProgressbar.setVisibility(View.GONE);
+                                        viewHolder.postRefresButton.setVisibility(View.GONE);
+                                        return false;
+                                    }
 
-                    holder.itemView.setOnClickListener(new View.OnClickListener() {
+                                })
+                                .into(viewHolder.PostImageView);
+                        holder.itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
 

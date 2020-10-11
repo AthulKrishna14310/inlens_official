@@ -39,6 +39,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.balysv:material-ripple:1.0.2'
 
+    implementation 'com.hbb20:ccp:2.4.0'
     implementation 'com.alespero:expandable-cardview:0.8'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.google.android.material:material:1.1.0'
@@ -86,5 +87,6 @@ dependencies {
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'com.google.firebase.crashlytics'
+
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'

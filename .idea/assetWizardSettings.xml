@@ -240,8 +240,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="e53935" />
-                            <entry key="outputName" value="ic_message" />
+                            <entry key="color" value="e53935" />                           
+                            <entry key="outputName" value="ic_photo_library" />
+
                             <entry key="sourceFile" value="$USER_HOME$/C:\Users\deljo" />
                           </map>
                         </option>

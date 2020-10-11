@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">InLens</string>
     <string name="photographer">Participants</string>
-    <string name="quit_cloud_album">Exit Participation</string>
+    <string name="quit_cloud_album">Leave album</string>
 
     <string name="intruction">No photos to upload or have been queued.\n <b>Take photos</b> and tap on the <b>Notification</b>.</string>
     <string name="qr_message"></string>
@@ -16,4 +16,6 @@
     <string name="title_activity_photo_view">PhotoViewActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+
+    <string name="instructions"><u>Instructions</u></string>
 </resources>

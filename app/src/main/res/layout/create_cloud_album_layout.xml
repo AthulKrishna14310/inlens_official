@@ -19,7 +19,7 @@
             android:id="@+id/UploadProgress"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:indeterminateTint="?attr/colorSecondary"
+            android:indeterminateTint="?attr/colorPrimary"
             android:layout_alignParentRight="true"
             android:layout_marginTop="8dp"
             android:layout_marginRight="16dp"
@@ -50,6 +50,7 @@
                 android:layout_marginLeft="@dimen/underline_margin_left_create_cloud_album_activity"
                 android:layout_marginBottom="4dp"
                 android:text="Create"
+                android:id="@+id/title_head"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
                 android:textColor="?attr/colorPrimary"
                  />
@@ -78,7 +79,7 @@
                         android:id="@+id/textView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Enter the Shared Cloud-Album informations for this event"
+                        android:text="Enter the Shared Cloud-Album information for your event"
                         android:textColor="?attr/colorPrimary"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                         />
@@ -91,15 +92,13 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/user_name_activity_edittext_layout"
                         android:layout_marginTop="24dp"
-                        app:boxBackgroundMode="outline"
+                        app:boxBackgroundMode="filled"
                         app:boxCornerRadiusTopEnd="4dp"
                         app:boxCornerRadiusBottomEnd="4dp"
                         app:boxCornerRadiusBottomStart="4dp"
                         app:boxCornerRadiusTopStart="4dp"
-                        app:boxStrokeColor="?attr/colorSecondary"
-                        app:boxStrokeWidth="1dp"
-                        app:boxBackgroundColor="?attr/default_dim_bg"
                         android:padding="4dp"
+                        app:boxBackgroundColor="?attr/image_bg_color"
                         app:hintEnabled="true"
                         >
 
@@ -120,16 +119,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/user_name_activity_edittext_layout"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="8dp"
                         app:hintEnabled="true"
-                        app:boxBackgroundMode="outline"
+                        app:boxBackgroundColor="?attr/image_bg_color"
+                        app:boxBackgroundMode="filled"
                         app:boxCornerRadiusTopEnd="4dp"
                         app:boxCornerRadiusBottomEnd="4dp"
                         app:boxCornerRadiusBottomStart="4dp"
                         app:boxCornerRadiusTopStart="4dp"
-                        app:boxStrokeColor="?attr/colorSecondary"
-                        app:boxStrokeWidth="1dp"
-                        app:boxBackgroundColor="?attr/default_dim_bg"
                         android:padding="4dp"
 
                         >
@@ -150,7 +147,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="@dimen/spacing_large">
+                        android:background="?attr/image_bg_color"
+                        android:layout_marginTop="12dp">
 
                         <androidx.appcompat.widget.AppCompatCheckBox
                             android:id="@+id/TimeEditText"
@@ -159,10 +157,11 @@
                             android:layout_centerInParent="true"
                             android:layout_marginLeft="50dp"
                             android:layout_marginRight="40dp"
-                            android:text="Expiry date"
+                            android:text="Expiry"
+
                             android:alpha="0.8"
                             android:textColor="?attr/colorSecondary"
-                            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
 
                             />
 
@@ -189,7 +188,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginBottom="2dp"
-
+                        android:layout_marginLeft="8dp"
                         android:text="TextView"
                         android:textColor="?attr/red_cancel_icon"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
@@ -198,7 +197,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="8dp">
+                        android:background="?attr/image_bg_color"
+                        android:layout_marginTop="12dp">
 
                         <androidx.appcompat.widget.AppCompatCheckBox
                             android:id="@+id/EventTypeText"
@@ -207,10 +207,11 @@
                             android:layout_centerInParent="true"
                             android:layout_marginLeft="50dp"
                             android:layout_marginRight="40dp"
+
                             android:text="Event type"
                             android:alpha="0.8"
                             android:textColor="?attr/colorSecondary"
-                            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                             />
 
                         <ImageButton
@@ -220,7 +221,6 @@
                             android:layout_marginStart="@dimen/image_button_margin_create_cloud_album"
                             android:layout_marginTop="@dimen/image_button_margin_create_cloud_album"
                             android:layout_marginEnd="@dimen/image_button_margin_create_cloud_album"
-
                             android:layout_marginBottom="@dimen/image_button_margin_create_cloud_album"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:src="@drawable/ic_event_type"
@@ -251,23 +251,19 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <com.balysv.materialripple.MaterialRippleLayout
-        style="@style/RippleStyleWhite"
-        android:layout_width="fill_parent"
+    <Button
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="@dimen/done_button_margin_create_cloud_album_activity"
-        android:background="@drawable/done_btn_bg"
-        android:padding="10dp">
-        <TextView
-            android:id="@+id/DoneButtonTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="DONE"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-            android:textColor="?attr/colorPrimary"
-             />
-    </com.balysv.materialripple.MaterialRippleLayout>
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:textColor="?attr/colorPrimary"
+        android:id="@+id/DoneButtonTextView"
+        android:text="Done"
+        android:drawableEnd="@drawable/ic_check_black_24dp"
+        android:drawableTint="?attr/colorPrimary"
+        android:backgroundTint="?attr/image_bg_color"
+        android:padding="16dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"/>
 </LinearLayout>
 

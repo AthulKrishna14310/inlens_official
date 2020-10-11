@@ -156,7 +156,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
         storageRef = FirebaseStorage.getInstance().getReference().child(FirebaseConstants.COMMUNITIES_STORAGE);
         galleryBackButton = findViewById(R.id.gallery_toolbar).findViewById(R.id.mytoolbar_back_button);
         galleyHeaderTextView = findViewById(R.id.gallery_toolbar).findViewById(R.id.mytoolbar_textview);
-        galleyHeaderTextView.setText("Recent Images");
+        galleyHeaderTextView.setText("Select photos to upload.");
         dirSelectionButton = findViewById(R.id.gallery_toolbar).findViewById(R.id.mytoolbar_dir_options);
 
         galleryBackButton.setOnClickListener(new View.OnClickListener() {
@@ -679,6 +679,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
 
             } else if (viewType == VIEW_TYPE_EMPTY) {
                 View view = LayoutInflater.from(context).inflate(R.layout.empty_layout, parent, false);
+                galleyHeaderTextView.setText("No Images to upload.");
                 view.findViewById(R.id.CloseButtonTextView).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -1001,7 +1002,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                     gallerySwipeRefresh.setRefreshing(false);
 
                 }
-            }, 2000);
+            }, 1500);
 
         }
     }

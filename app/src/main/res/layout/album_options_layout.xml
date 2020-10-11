@@ -13,16 +13,16 @@
         android:layout_height="wrap_content"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
         >
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="?attr/default_dim_bg">
 
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="?attr/colorPrimary"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginRight="16dp"
@@ -34,6 +34,7 @@
                     android:layout_height="wrap_content"
                     android:textAlignment="textStart"
                     android:text="@string/new_album"
+                    android:layout_centerHorizontal="true"
                     android:background="?attr/default_dim_bg"
                     android:textColor="?attr/colorPrimary"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
@@ -56,9 +57,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:foreground="?attr/selectableItemBackgroundBorderless"
-                    android:background="?attr/cf_bg_color"
+                    android:background="@drawable/relative_bg"
                     android:orientation="vertical"
-                    android:padding="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="8dp"
+                    android:padding="12dp"
                     >
 
 
@@ -104,21 +108,18 @@
 
                 </RelativeLayout>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_margin="1dp"
-                    android:layout_above="@id/option_scan_layout"
-                    android:background="?attr/colorPrimary"
-                    android:alpha="0.8"/>
+
                 <RelativeLayout
                     android:id="@+id/option_scan_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/option_create_layout"
                     android:layout_gravity="center_horizontal"
-                    android:padding="16dp"
-                    android:background="?attr/cf_bg_color"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="8dp"
+                    android:padding="12dp"
+                    android:background="@drawable/relative_bg"
                     android:layout_weight="1"
                     android:foreground="?attr/selectableItemBackgroundBorderless"
                     android:orientation="vertical"
@@ -141,7 +142,7 @@
                             android:scaleType="center"
 
                             android:tint="?attr/default_dim_bg"
-                            android:src="@drawable/ic_qr_inlens" />
+                            android:src="@drawable/ic_group_add" />
 
                     </RelativeLayout>
 
@@ -170,7 +171,10 @@
                         android:textSize="12sp"
                         android:alpha="0.7"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-                        ></TextView>
+                        >
+
+                    </TextView>
+
                     <ImageView
                         android:id="@+id/QR_Display"
                         android:layout_width="230dp"
@@ -178,18 +182,16 @@
                         android:layout_below="@id/scndetailstext"
                         android:layout_centerHorizontal="true"
                         android:layout_margin="8dp"
-
                         android:layout_marginTop="15dp" />
                 </RelativeLayout>
 
 
             </RelativeLayout>
 
+
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
 
-
-
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
+

@@ -155,31 +155,26 @@ public class AuthActivity extends AppCompatActivity {
                     AuthContainer.getAnimation().start();
                     AuthContainer.setVisibility(View.VISIBLE);
 
-                    findViewById(R.id.Name).setAnimation(FadeOut);
-                    findViewById(R.id.appicon).setAnimation(FadeOut);
-
-                    findViewById(R.id.Name).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.appicon).setVisibility(View.INVISIBLE);
 
                     getDefaultCountry();
 
 
                 } else if (AuthCodeButton.isShown() && AuthEditText.isShown() && !TextUtils.isEmpty(AuthEditText.getText().toString())) {
                     if (!TextUtils.isEmpty(ChoosenCode)) {
-                        PhoneAuthProvider.getInstance().verifyPhoneNumber(ChoosenCode + AuthEditText.getText().toString(), 60, TimeUnit.SECONDS, AuthActivity.this, Callbacks);
-                        countDownTimer = new CountDownTimer(60000, 1000) {
-
-                            public void onTick(long millisUntilFinished) {
-                                VerifyCounter.setText(String.format("Automatic Verification : %d s", millisUntilFinished / 1000));
-                            }
-
-                            public void onFinish() {
-                                VerifyCounter.setText("Please wait.");
-                                EnableManualVerification();
-                            }
-
-                        }.start();
-                        VerificationDialog.show();
+//                        PhoneAuthProvider.getInstance().verifyPhoneNumber(ChoosenCode + AuthEditText.getText().toString(), 60, TimeUnit.SECONDS, AuthActivity.this, Callbacks);
+//                        countDownTimer = new CountDownTimer(60000, 1000) {
+//
+//                            public void onTick(long millisUntilFinished) {
+//                                VerifyCounter.setText(String.format("Automatic Verification : %d s", millisUntilFinished / 1000));
+//                            }
+//
+//                            public void onFinish() {
+//                                VerifyCounter.setText("Please wait.");
+//                                EnableManualVerification();
+//                            }
+//
+//                        }.start();
+//                        VerificationDialog.show();
                     } else {
                         SnackShow snackShow=new SnackShow(authRoot,AuthActivity.this);
                         snackShow.showErrorSnack("Please select your country code");

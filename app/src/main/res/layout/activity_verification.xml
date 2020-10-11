@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/verify_layout"
+    tools:context=".Activities.PhoneAuth">
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
+        android:textColor="?attr/colorPrimary"
+        android:text="Verify"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="24dp"
+        android:id="@+id/title" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title"
+        >
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Time out"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+            android:id="@+id/timeoutText"
+            android:layout_marginLeft="16dp"
+
+            />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_centerVertical="true"
+            android:background="?attr/image_bg_color"
+            android:id="@+id/view"
+            />
+
+        <RelativeLayout
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="16dp"
+            android:layout_centerVertical="true"
+            android:elevation="8dp"
+            android:background="@drawable/circle_primary">
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_forward"
+                android:tint="?attr/default_bg_color"
+                android:layout_centerInParent="true"
+                android:backgroundTint="?attr/colorPrimary"
+                android:id="@+id/forward"
+                android:background="?selectableItemBackgroundBorderless"
+                />
+            <ProgressBar
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:indeterminateTint="?attr/image_bg_color"
+                android:layout_centerInParent="true"
+                android:id="@+id/progress_circular"
+                />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/signintxtlayout"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="80dp"
+        android:layout_below="@id/title"
+        android:orientation="vertical"
+        >
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:textColor="?attr/colorPrimary"
+            android:text="Please enter the otp"
+            android:id="@+id/signintxt"
+            android:layout_gravity="center_horizontal"
+
+
+            />
+
+    </LinearLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/phoneauth_edit_layout"
+        android:layout_marginLeft="16dp"
+        app:boxBackgroundMode="filled"
+
+
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="0dp"
+        android:backgroundTint="?attr/default_bg_color"
+        android:layout_below="@+id/signintxtlayout"
+
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            >
+            <com.mukesh.OtpView
+                android:id="@+id/verification_edittext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                app:itemHeight="48dp"
+                android:focusedByDefault="true"
+                app:itemWidth="48dp"
+                android:hint="******"
+                android:layout_centerHorizontal="true"
+                android:itemBackground="?attr/default_bg_color"
+                app:hideLineWhenFilled="true"
+                app:itemCount="6"
+                app:lineColor="?attr/colorPrimary"
+                app:viewType="line"
+
+                />
+        </RelativeLayout>
+
+    </com.google.android.material.textfield.TextInputLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dp"
+        android:orientation="vertical"
+        >
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_horizontal"
+            android:src="@mipmap/ic_launcher"
+            ></ImageView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="By Team-InLens"
+            android:textColor="?attr/colorPrimary"
+            android:alpha="1"
+
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+            ></TextView>
+
+    </LinearLayout>
+
+</RelativeLayout>

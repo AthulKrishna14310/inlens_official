@@ -14,7 +14,18 @@
         android:orientation="vertical"
         android:background="?attr/default_dim_bg"
         >
-
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:id="@+id/editDetails"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="8dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_edit"
+            android:tint="?attr/colorPrimary"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            />
         <TextView
             android:id="@+id/AlbumTitleBottom"
             android:layout_width="match_parent"
