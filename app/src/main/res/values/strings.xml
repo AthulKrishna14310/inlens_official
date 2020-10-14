@@ -17,5 +17,6 @@
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
 
-    <string name="instructions"><u>Instructions</u></string>
+    <string name="instructions_head"><b>Instructions</b></string>
+    <string name="instruction">>You can upload photos taken <b>after album creation</b>. \n\n\n>After taking photos, <b>share directly</b> from your gallery <b><u>or</u></b> just <b>tap notification</b></string>
 </resources>

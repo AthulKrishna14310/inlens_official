@@ -10,10 +10,11 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:textAlignment="center"
+        android:fontFamily="@font/product_sans"
         android:alpha="0.6"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
         android:textColor="?attr/colorPrimary"
-        android:text="@string/instructions" />
+        android:text="@string/instructions_head" />
     <TextView
         android:layout_width="match_parent"
         android:id="@+id/yxt"
@@ -22,22 +23,22 @@
         android:layout_margin="16dp"
         android:textAlignment="textStart"
         android:alpha="0.6"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
         android:textColor="?attr/colorPrimary"
-        android:text=">Take photos with any app. \n\n>To upload just tap on notification \n(demo below)" />
+        android:text="@string/instruction" />
 
 
-    <ImageView
-        android:layout_below="@id/yxt"
-        android:layout_width="match_parent"
-        android:layout_height="360dp"
-        android:id="@+id/imgView"
-        android:alpha="0.5"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_tuts_foreground"
-        ></ImageView>
+<!--    <ImageView-->
+<!--        android:layout_below="@id/yxt"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="360dp"-->
+<!--        android:id="@+id/imgView"-->
+<!--        android:alpha="0.5"-->
+<!--        android:layout_marginLeft="16dp"-->
+<!--        android:layout_marginRight="16dp"-->
+<!--        android:scaleType="fitCenter"-->
+<!--        android:src="@drawable/ic_tuts_foreground"-->
+<!--        ></ImageView>-->
 
 
 
@@ -46,7 +47,7 @@
        android:layout_height="wrap_content"
        android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
        android:layout_alignParentBottom="true"
-       android:text="Take photos"
+       android:text="Start Taking  photos"
        android:padding="12dp"
        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
        android:layout_marginLeft="16dp"

@@ -22,6 +22,7 @@
             android:layout_height="wrap_content"
             android:textAlignment="textStart"
             android:layout_marginBottom="8dp"
+            android:fontFamily="@font/product_sans"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             android:text="@string/add_photographers"
             android:textColor="?attr/colorPrimary"

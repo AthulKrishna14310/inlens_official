@@ -39,6 +39,7 @@
         android:maxLines="1"
         android:textColor="?attr/colorSecondary"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/product_sans"
         android:text="Photographer Name" />
 
     <TextView

@@ -5,7 +5,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@color/grey_5"
-    android:backgroundTint="?attr/default_bg_color"
+    android:backgroundTint="?attr/default_dim_bg"
     android:orientation="vertical">
 
 
@@ -13,23 +13,40 @@
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:layout_weight="1.0"
-        android:background="?attr/default_bg_color">
-
-        <ProgressBar
-            android:id="@+id/UploadProgress"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:indeterminateTint="?attr/colorPrimary"
+        android:background="?attr/default_dim_bg">
+        <RelativeLayout
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="16dp"
             android:layout_alignParentRight="true"
-            android:layout_marginTop="8dp"
             android:layout_marginRight="16dp"
-            android:visibility="invisible" />
+            android:elevation="8dp"
+            android:background="@drawable/circle_primary">
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_check_black_24dp"
+                android:tint="?attr/default_bg_color"
+                android:layout_centerInParent="true"
+                android:backgroundTint="?attr/colorPrimary"
+                android:id="@+id/DoneButtonTextView"
+                android:background="?selectableItemBackgroundBorderless"
+                />
+            <ProgressBar
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:indeterminateTint="?attr/image_bg_color"
+                android:layout_centerInParent="true"
+                android:id="@+id/UploadProgress"
+                />
+        </RelativeLayout>
+
         <ImageButton
             android:id="@+id/create_cloud_album_backbutton"
             android:layout_width="@dimen/back_button_size_create_cloud_album_activity"
             android:layout_height="@dimen/back_button_size_create_cloud_album_activity"
             android:layout_marginLeft="@dimen/back_button_margin_left_create_cloud_album_activity"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:layout_marginBottom="@dimen/back_button_margin_bottom_create_cloud_album"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_arrow_back"
@@ -38,11 +55,11 @@
 
         <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:layout_marginTop="52dp"
             android:background="?attr/default_bg_color"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="24dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -50,6 +67,7 @@
                 android:layout_marginLeft="@dimen/underline_margin_left_create_cloud_album_activity"
                 android:layout_marginBottom="4dp"
                 android:text="Create"
+                android:fontFamily="@font/product_sans"
                 android:id="@+id/title_head"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
                 android:textColor="?attr/colorPrimary"
@@ -119,7 +137,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/user_name_activity_edittext_layout"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="24dp"
                         app:hintEnabled="true"
                         app:boxBackgroundColor="?attr/image_bg_color"
                         app:boxBackgroundMode="filled"
@@ -148,7 +166,7 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="center_horizontal"
                         android:background="?attr/image_bg_color"
-                        android:layout_marginTop="12dp">
+                        android:layout_marginTop="24dp">
 
                         <androidx.appcompat.widget.AppCompatCheckBox
                             android:id="@+id/TimeEditText"
@@ -198,7 +216,7 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="center_horizontal"
                         android:background="?attr/image_bg_color"
-                        android:layout_marginTop="12dp">
+                        android:layout_marginTop="24dp">
 
                         <androidx.appcompat.widget.AppCompatCheckBox
                             android:id="@+id/EventTypeText"
@@ -251,19 +269,6 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:textColor="?attr/colorPrimary"
-        android:id="@+id/DoneButtonTextView"
-        android:text="Done"
-        android:drawableEnd="@drawable/ic_check_black_24dp"
-        android:drawableTint="?attr/colorPrimary"
-        android:backgroundTint="?attr/image_bg_color"
-        android:padding="16dp"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"/>
+
 </LinearLayout>
 

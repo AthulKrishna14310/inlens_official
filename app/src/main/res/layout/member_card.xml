@@ -37,7 +37,7 @@
             android:maxLength="9"
             android:text="username"
             android:textColor="?attr/colorSecondary"
-            android:textSize="8sp"
+            android:textSize="10sp"
             android:visibility="visible" />
     </RelativeLayout>
 

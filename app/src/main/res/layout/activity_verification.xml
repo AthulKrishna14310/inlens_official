@@ -15,6 +15,7 @@
         android:text="Verify"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="24dp"
+        android:fontFamily="@font/product_sans"
         android:id="@+id/title" />
     <RelativeLayout
         android:layout_width="match_parent"

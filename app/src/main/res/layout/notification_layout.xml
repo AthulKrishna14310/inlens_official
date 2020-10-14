@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="64dp"
-    android:background="@color/Light_default_dim_bg">
+    android:background="@color/transparent">
 <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="12dp"
@@ -50,13 +50,13 @@
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="56dp"
-
-        android:text="Open your Gallery"
-        android:textColor="@color/colorLightPrimary"
         android:layout_below="@id/titleLayout"
+
+        android:layout_marginLeft="56dp"
+        android:fontFamily="sans-serif"
+        android:text="Open your Gallery"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-       />
+        android:textColor="@color/colorLightPrimary" />
 
     <TextView
         android:id="@+id/description"

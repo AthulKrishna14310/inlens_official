@@ -19,7 +19,7 @@ import com.integrals.inlens.R;
 
 public class NotificationHelper {
     private Context context;
-    private RemoteViews notificationLayout;
+    //private RemoteViews notificationLayout;
 
     int notificationIdAlbumEnd =7908,
             notificationIdAlbumPhoto =7907,
@@ -30,7 +30,7 @@ public class NotificationHelper {
 
     public NotificationHelper(Context context) {
         this.context = context;
-        notificationLayout = new RemoteViews(context.getPackageName(), R.layout.notification_layout);
+        //notificationLayout = new RemoteViews(context.getPackageName(), R.layout.notification_layout);
     }
 
     public void displayRecentImageNotification(int count,int notiCount){
@@ -43,8 +43,7 @@ public class NotificationHelper {
 
         NotificationManager notificationManager= (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancelAll();
-        notificationLayout.setTextViewText(R.id.title,"Open Gallery");
-        notificationLayout.setTextViewText(R.id.description,"You have "+count+" new photos to upload to your album.");
+
 
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) {
             String channelID = "ID_503";
@@ -65,7 +64,8 @@ public class NotificationHelper {
             notificationManager.createNotificationChannel(notificationChannel);
 
             Notification.Builder notificationBuilder = new Notification.Builder(context, channelID)
-                    .setCustomContentView(notificationLayout)
+                    .setContentText("You have "+count+" new photos to upload to your album.")
+                    .setContentTitle("Upload Photos")
                     .setSmallIcon(R.drawable.ic_notification)
                     .setAutoCancel(true)
                     .setContentIntent(contentIntent);
@@ -78,7 +78,9 @@ public class NotificationHelper {
         {
             NotificationCompat.Builder builder=new NotificationCompat.Builder(context);
             builder.setSmallIcon(R.drawable.ic_notification)
-                    .setContent(notificationLayout)
+                    .setContentText("You have "+count+" new photos to upload to your album.")
+                    .setContentTitle("Upload Photos")
+                    .setSmallIcon(R.drawable.ic_notification)
                     .setAutoCancel(true)
                     .setContentIntent(contentIntent);
 
@@ -184,8 +186,6 @@ public class NotificationHelper {
         NotificationManager notificationManager=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancelAll();
 
-        notificationLayout.setTextViewText(R.id.title,title);
-        notificationLayout.setTextViewText(R.id.description,desc);
 
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) {
             String channelID = "ID_505";
@@ -194,7 +194,9 @@ public class NotificationHelper {
             Notification.Builder notificationBuilder = new Notification.Builder(context, channelID)
                     .setContentTitle(title)
                     .setOngoing(true)
-                    .setCustomContentView(notificationLayout)
+                    .setContentText(desc)
+                    .setContentTitle(title)
+                    .setSmallIcon(R.drawable.ic_notification)
                     .setContentIntent(contentIntent)
                     .setSmallIcon(R.drawable.ic_notification)
                     .setAutoCancel(false);
@@ -215,7 +217,7 @@ public class NotificationHelper {
             builder.setSmallIcon(R.drawable.ic_notification)
                     .setContentTitle(title)
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
-                    .setContent(notificationLayout)
+                    .setContentText(desc)
                     .setAutoCancel(false)
                     .setOngoing(true)
                     .setContentIntent(contentIntent);

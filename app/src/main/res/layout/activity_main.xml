@@ -54,7 +54,7 @@
                                 android:layout_marginRight="10dp"
                                 android:layout_marginBottom="10dp"
                                 android:background="?attr/default_bg_color"
-                                android:fontFamily="@font/base_font"
+
                                 android:text="Albums"
                                 android:visibility="gone"
                                 android:textColor="?attr/colorPrimary"
@@ -87,6 +87,7 @@
                                     android:background="?attr/default_bg_color"
                                     android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                                     android:text="Participants"
+                                    android:fontFamily="@font/product_sans"
                                     android:textColor="?attr/colorPrimary"
                                     />
 
@@ -115,6 +116,7 @@
                             android:background="?attr/default_bg_color"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                             android:text="Photos"
+                            android:fontFamily="@font/product_sans"
                             android:textColor="?attr/colorPrimary"
                             android:visibility="gone" />
 
@@ -153,6 +155,7 @@
                                     android:background="?attr/default_dim_bg"
                                     android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                                     android:text="Shared Albums"
+                                    android:fontFamily="@font/product_sans"
                                     android:textColor="?attr/colorPrimary"
                                      />
 
@@ -254,6 +257,7 @@
                 app:elevation="8dp"
                 android:layout_gravity="right|bottom"
                 android:visibility="visible"
+                android:fontFamily="@font/product_sans"
                 android:text="Upload"
                 android:backgroundTint="?attr/image_bg_color"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
