@@ -185,7 +185,7 @@
                                     android:layout_marginBottom="5dp"
                                     android:tint="?attr/colorPrimary"
                                     android:background="?selectableItemBackgroundBorderless"
-                                    android:src="@drawable/ic_add_album" />
+                                    android:src="@drawable/ic_add_memberdp" />
 
                             </RelativeLayout>
 

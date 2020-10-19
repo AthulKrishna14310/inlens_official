@@ -22,7 +22,7 @@
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
+                android:layout_gravity="start"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginRight="16dp"
@@ -34,11 +34,12 @@
                     android:layout_height="wrap_content"
                     android:textAlignment="textStart"
                     android:text="@string/new_album"
-                    android:layout_centerHorizontal="true"
+                    android:textAllCaps="true"
+
                     android:background="?attr/default_dim_bg"
                     android:textColor="?attr/colorPrimary"
                     android:fontFamily="@font/product_sans"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                     android:layout_marginBottom="2dp"
 
                     />
@@ -49,67 +50,34 @@
                 android:id="@+id/mainAlbumMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:background="@color/transparent"
                 android:orientation="horizontal">
-
-                <RelativeLayout
-                    android:id="@+id/option_create_layout"
+                <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:foreground="?attr/selectableItemBackgroundBorderless"
-                    android:background="@drawable/relative_bg"
-                    android:orientation="vertical"
+                    android:drawableLeft="@drawable/ic_add_box_black_24dp"
+                    android:drawableTint="?attr/colorPrimary"
+                    android:text="INSTANT Album"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:padding="16dp"
+                    android:textAllCaps="true"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
-                    android:layout_marginTop="8dp"
-                    android:padding="12dp"
-                    >
-
-
-                    <ImageButton
-                        android:id="@+id/main_horizontal_new_album_button"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:layout_gravity="left"
-
-                        android:background="@drawable/circle_primary"
-                        android:elevation="1dp"
-                        android:scaleType="center"
-                        android:src="@drawable/ic_collections"
-                        android:tint="?attr/default_dim_bg"
-
-                        />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_toRightOf="@+id/main_horizontal_new_album_button"
-                        android:layout_marginLeft="16dp"
-                        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                        android:text="Create"
-                        android:fontFamily="@font/product_sans"
-                        android:id="@+id/create_text"
-                        android:textAlignment="center"
-                        android:textColor="?attr/colorPrimary"
-                        />
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="Create your Shared Cloud-Album for an event"
-                        android:textColor="?attr/colorPrimary"
-                        android:layout_marginLeft="16dp"
-                        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-                        android:textSize="12sp"
-                        android:alpha="0.7"
-                        android:layout_toRightOf="@id/main_horizontal_new_album_button"
-                        android:layout_below="@+id/create_text"
-                        ></TextView>
-
-
-                </RelativeLayout>
-
+                    android:id="@+id/option_create_layout_instant"
+                    />
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_photo_library"
+                    android:drawableTint="?attr/colorPrimary"
+                    android:text="DETAILED ALBUM"
+                    android:layout_below="@+id/option_create_layout_instant"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:padding="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:id="@+id/option_create_layout"
+                    />
 
                 <RelativeLayout
                     android:id="@+id/option_scan_layout"
@@ -119,46 +87,41 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
-                    android:layout_marginTop="8dp"
-                    android:padding="12dp"
+                    android:layout_marginTop="4dp"
+
                     android:background="@drawable/relative_bg"
                     android:layout_weight="1"
                     android:foreground="?attr/selectableItemBackgroundBorderless"
                     android:orientation="vertical"
                     >
 
-                    <RelativeLayout
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="left"
-                        android:id="@+id/scanlayout"
 
-                        android:background="@drawable/circle_primary">
 
                         <ImageButton
                             android:id="@+id/main_horizontal_scan_button"
                             android:layout_width="48dp"
                             android:layout_height="48dp"
-                            android:layout_centerInParent="true"
-                            android:background="#00FFFFFF"
-                            android:scaleType="center"
+                            android:layout_alignParentLeft="true"
 
-                            android:tint="?attr/default_dim_bg"
+                            android:scaleType="center"
+                            android:backgroundTint="?attr/default_dim_bg"
+                            android:tint="?attr/colorPrimary"
                             android:src="@drawable/ic_group_add" />
 
-                    </RelativeLayout>
+
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_toRightOf="@+id/scanlayout"
                         android:layout_marginLeft="16dp"
-                        android:layout_gravity="center_horizontal"
                         android:text="Join"
+                        android:layout_centerHorizontal="true"
                         android:id="@+id/scan_text"
-                        android:fontFamily="@font/product_sans"
+                        android:textAllCaps="true"
+                        android:padding="8dp"
+                        android:layout_margin="4dp"
                         android:textAlignment="center"
-                        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
                         android:textColor="?attr/colorPrimary"
                         />
                     <TextView
@@ -168,11 +131,11 @@
                         android:text="Show this QR-code to get admitted into an Album"
                         android:textColor="?attr/colorPrimary"
                         android:layout_marginLeft="16dp"
-                        android:layout_toRightOf="@id/scanlayout"
+                        android:layout_toRightOf="@id/main_horizontal_scan_button"
                         android:layout_below="@+id/scan_text"
                         android:id="@+id/scndetailstext"
                         android:textSize="12sp"
-                        android:alpha="0.7"
+                        android:layout_margin="4dp"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
                         >
 
