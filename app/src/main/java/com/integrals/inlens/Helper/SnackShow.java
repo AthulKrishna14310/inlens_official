@@ -3,6 +3,7 @@ package com.integrals.inlens.Helper;
 import android.app.Activity;
 import android.view.View;
 
+import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
 import de.mateware.snacky.Snacky;
@@ -17,25 +18,15 @@ public class SnackShow {
         this.context=context;
     }
     public void showErrorSnack(String message){
-        Snacky.builder()
-                .setActivity(context)
-                .error().setText(message)
-                .show();
+        Snackbar.make(view,message, Snackbar.LENGTH_LONG).show();
+
     }
     public void showSuccessSnack(String message){
-        Snacky.builder()
-                .setActivity(context)
-                .setMaxLines(2)
-                .success().setText(message)
-                .show();
+        Snackbar.make(view,message, Snackbar.LENGTH_LONG).show();
 
     }
     public void showInfoSnack(String message){
-        Snacky.builder()
-                .setActivity(context)
-                .info().setText(message)
-                .setDuration(Snackbar.LENGTH_LONG)
-                .show();
+        Snackbar.make(view,message, Snackbar.LENGTH_LONG).show();
 
     }
 }

@@ -12,7 +12,7 @@
         android:textAlignment="center"
         android:fontFamily="@font/product_sans"
         android:alpha="0.6"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
         android:textColor="?attr/colorPrimary"
         android:text="@string/instructions_head" />
     <TextView
