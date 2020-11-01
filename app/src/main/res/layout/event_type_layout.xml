@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:text="Select Event Type"
-        android:fontFamily="@font/product_sans"
+        android:fontFamily="@font/montserrat"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
         android:textColor="?attr/colorPrimary"
         android:layout_marginBottom="10dp"

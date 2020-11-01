@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -34,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 
 public class VerificationActivity extends AppCompatActivity {
     private OtpView otpView;
+    private Button resendOTP;
     private String phoneNumber="";
     private String countryCode="";
     private TextView verifyCounter;
@@ -76,7 +78,8 @@ public class VerificationActivity extends AppCompatActivity {
         countryCode=getIntent().getStringExtra("Country");
         phoneNumber=getIntent().getStringExtra("Phone");
         progressBar.setVisibility(View.INVISIBLE);
-
+        resendOTP=findViewById(R.id.resend_otp);
+        resendOTP.setVisibility(View.INVISIBLE);
     }
 
 
@@ -90,8 +93,6 @@ public class VerificationActivity extends AppCompatActivity {
             public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
 
                 verified=true;
-                SnackShow snackShow=new SnackShow(verifyLayout,VerificationActivity.this);
-                snackShow.showSuccessSnack("Sign in successful");
                 otpView.setText(phoneAuthCredential.getSmsCode());
                 signInWithCredential(phoneAuthCredential);
 
@@ -133,6 +134,8 @@ public class VerificationActivity extends AppCompatActivity {
                 verifyCounter.setText("Please type your otp manually.");
                 progressBar.setVisibility(View.INVISIBLE);
                 forwardButton.setVisibility(View.VISIBLE);
+                resendOTP.setVisibility(View.VISIBLE);
+
             }
 
         }.start();
@@ -157,6 +160,13 @@ public class VerificationActivity extends AppCompatActivity {
             }
         });
 
+        // TO-DO check Code Quality
+        resendOTP.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                recreate();
+            }
+        });
     }
 
     private void signInWithCredential(PhoneAuthCredential phoneAuthCredential) {

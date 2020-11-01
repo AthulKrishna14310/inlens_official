@@ -38,7 +38,7 @@
 
                     android:background="?attr/default_dim_bg"
                     android:textColor="?attr/colorPrimary"
-                    android:fontFamily="@font/product_sans"
+                    android:fontFamily="@font/montserrat"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                     android:layout_marginBottom="2dp"
 

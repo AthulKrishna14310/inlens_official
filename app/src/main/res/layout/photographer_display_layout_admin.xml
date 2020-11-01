@@ -43,7 +43,7 @@
         android:layout_toRightOf="@id/imageView_photographer_card"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
         android:maxLines="1"
-        android:fontFamily="@font/product_sans"
+        android:fontFamily="@font/montserrat"
         android:text="Photographer Name"
         android:textColor="?attr/colorSecondary"
         />

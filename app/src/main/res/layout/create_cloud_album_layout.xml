@@ -67,7 +67,7 @@
                 android:layout_marginLeft="@dimen/underline_margin_left_create_cloud_album_activity"
                 android:layout_marginBottom="4dp"
                 android:text="Create"
-                android:fontFamily="@font/product_sans"
+                android:fontFamily="@font/montserrat"
                 android:id="@+id/title_head"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
                 android:textColor="?attr/colorPrimary"
@@ -115,7 +115,7 @@
                         app:boxCornerRadiusBottomEnd="4dp"
                         app:boxCornerRadiusBottomStart="4dp"
                         app:boxCornerRadiusTopStart="4dp"
-                        android:padding="4dp"
+                        android:padding="1dp"
                         app:boxBackgroundColor="?attr/image_bg_color"
                         app:hintEnabled="true"
                         >
@@ -127,7 +127,7 @@
                             android:hint="Title"
                             android:inputType="text"
                             android:textColor="?attr/colorSecondary"
-                            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                             />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -145,7 +145,7 @@
                         app:boxCornerRadiusBottomEnd="4dp"
                         app:boxCornerRadiusBottomStart="4dp"
                         app:boxCornerRadiusTopStart="4dp"
-                        android:padding="4dp"
+                        android:padding="1dp"
 
                         >
 
@@ -156,7 +156,7 @@
                             android:hint="Description"
                             android:inputType="text"
                             android:textColor="?attr/colorSecondary"
-                            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                              />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -175,7 +175,7 @@
                             android:layout_centerInParent="true"
                             android:layout_marginLeft="50dp"
                             android:layout_marginRight="40dp"
-                            android:text="Expiry"
+                            android:text="Event end time"
 
                             android:alpha="0.8"
                             android:textColor="?attr/colorSecondary"
@@ -190,7 +190,7 @@
                             android:layout_centerVertical="true"
                             android:layout_marginStart="@dimen/image_button_margin_create_cloud_album"
                             android:layout_marginTop="@dimen/image_button_margin_create_cloud_album"
-                            android:layout_marginEnd="@dimen/image_button_margin_create_cloud_album"
+                            android:layout_marginEnd="6dp"
 
                             android:layout_marginBottom="@dimen/image_button_margin_create_cloud_album"
                             android:background="?attr/selectableItemBackgroundBorderless"
@@ -225,7 +225,6 @@
                             android:layout_centerInParent="true"
                             android:layout_marginLeft="50dp"
                             android:layout_marginRight="40dp"
-
                             android:text="Event type"
                             android:alpha="0.8"
                             android:textColor="?attr/colorSecondary"

@@ -1524,9 +1524,42 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 }
                 else
                 {
-                    new SnackShow(rootForMainActivity,MainActivity.this)
-                            .showInfoSnack("Request sent , Please wait till admin accepts you.");
-               }
+                    int cf_bg_color, colorPrimary, red_inlens, cf_alert_dialogue_dim_bg;
+                    if (appTheme.equals(AppConstants.themeLight)) {
+                        cf_bg_color = getResources().getColor(R.color.Light_cf_bg_color);
+                        colorPrimary = getResources().getColor(R.color.colorLightPrimary);
+                        red_inlens = getResources().getColor(R.color.Light_red_inlens);
+                        cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Light_cf_alert_dialogue_dim_bg);
+                    } else {
+                        cf_bg_color = getResources().getColor(R.color.Dark_cf_bg_color);
+                        colorPrimary = getResources().getColor(R.color.colorDarkPrimary);
+                        red_inlens = getResources().getColor(R.color.Dark_red_inlens);
+                        cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Dark_cf_alert_dialogue_dim_bg);
+
+                    }
+                    CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
+                            .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                            .setTitle("Request Sent")
+                            .setIcon(R.drawable.ic_info)
+                            .setDialogBackgroundColor(cf_bg_color)
+                            .setTextColor(colorPrimary)
+                            .setMessage("Request sent. Please wait till admin accepts you.")
+                            .setCancelable(true)
+                            .addButton("OK",
+                                    red_inlens,
+                                    cf_alert_dialogue_dim_bg,
+                                    CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                    CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                    builder.show();
+
+
+                }
 
             }
         });
@@ -2031,7 +2064,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                         getWindow().setDimAmount(0);
 
                                                         SnackShow snackShow=new SnackShow(rootForMainActivity,MainActivity.this);
-                                                        snackShow.showSuccessSnack("Successfully exited from your Cloud-Album. ");
+                                                        snackShow.showSuccessSnack("Successfully left. ");
 
                                                        try {
                                                            if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
@@ -2093,7 +2126,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                         getWindow().setDimAmount(0);
 
                                                         SnackShow snackShow=new SnackShow(rootForMainActivity,MainActivity.this);
-                                                        snackShow.showSuccessSnack("Successfully exited from your Cloud-Album. ");
+                                                        snackShow.showSuccessSnack("Successfully left. ");
 
 
                                                         if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
@@ -2256,7 +2289,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                                         participantsAdapter.notifyItemChanged(i);
                                                                     }
                                                                 }
-                                                                showDialogMessageSuccess("Successfully uploaded your profile picture.");
 
                                                             }
                                                         } else {
@@ -2295,7 +2327,12 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     private void uploadCoverPhoto(Uri imageUri) {
 
         // MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.VISIBLE);
-        showDialogMessageInfo("Uploading the cover photo. Please wait.");
+        //showDialogMessageInfo("Uploading the cover photo. Please wait.");
+
+        ProgressBar progressBar = findViewById(R.id.mainloadingpbar);
+        progressBar.setVisibility(View.VISIBLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
         if (!TextUtils.isEmpty(PostKeyForEdit) && imageUri != null) {
 
             StorageReference
@@ -2321,12 +2358,19 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                    public void onComplete(@NonNull Task<Void> task) {
                                        if (task.isSuccessful()) {
                                            //MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-                                           showDialogMessageSuccess("Successfully uploaded the cover photo.");
+                                           //showDialogMessageSuccess("Successfully uploaded the cover photo.");
+                                           progressBar.setVisibility(View.GONE);
+                                           getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                           getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                                           getWindow().setDimAmount(0);
                                            communityDataList.get(position).setCoverImage(uri.toString());
                                            mainHorizontalAdapter.notifyItemChanged(position);
                                        } else {
                                            // MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-                                           showDialogMessageError("Failed to uploaded the cover photo. Please try again.");
+                                           progressBar.setVisibility(View.GONE);
+                                           getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                           getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                                           getWindow().setDimAmount(0);
 
                                        }
                                    }
@@ -2336,7 +2380,10 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                        }).addOnFailureListener(new OnFailureListener() {
                            @Override
                            public void onFailure(@NonNull Exception e) {
-                               showDialogMessageError("Failed to uploaded the cover photo. Please try again.");
+                               progressBar.setVisibility(View.GONE);
+                               getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                               getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                               getWindow().setDimAmount(0);
 
                            }
                        });
@@ -2344,7 +2391,10 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                     } else {
                         //MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-                        showDialogMessageError("Failed to uploaded the cover photo. Please try again.");
+                        progressBar.setVisibility(View.GONE);
+                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                        getWindow().setDimAmount(0);
 
 
                     }
@@ -2354,13 +2404,19 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     //MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-                    showDialogMessageError("Failed to uploaded the cover photo. Please try again.");
+                    progressBar.setVisibility(View.GONE);
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                    getWindow().setDimAmount(0);
                 }
             });
 
         } else {
             // MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-            showDialogMessageError("Failed to uploaded the cover photo. Please try again.");
+            progressBar.setVisibility(View.GONE);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+            getWindow().setDimAmount(0);
         }
 
 

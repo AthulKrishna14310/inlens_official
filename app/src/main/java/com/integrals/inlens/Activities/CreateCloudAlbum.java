@@ -398,7 +398,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                                         mDatabase.child("type").setValue(eventPickerCheckbox.getText().toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
-                                               showDialogMessageSuccess("Successfully updated your Cloud-Album data");
+                                               //showDialogMessageSuccess("Successfully updated your Cloud-Album data");
                                                 uploadProgressbar.setVisibility(View.GONE);
                                                 submitButton.setVisibility(View.VISIBLE);
                                                 onBackPressed();
@@ -758,7 +758,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         new UploadQueueDB(CreateCloudAlbum.this).deleteAllData();
 
                         submitButton.setEnabled(false);
-                        submitButton.setVisibility(View.INVISIBLE);
+                        submitButton.setVisibility(View.VISIBLE);
                         uploadProgressbar.setVisibility(View.GONE);
 
                         final long dy = TimeUnit.MILLISECONDS.toDays(Long.parseLong(getTimeStamp(albumTime)) - System.currentTimeMillis());
@@ -787,8 +787,6 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         }
                         helper.displayAlbumStartNotification(notificationStr, "You are active in this Cloud-Album till " + albumTime);
 
-                        SnackShow snackShow = new SnackShow(rootCreateCloudAlbum, CreateCloudAlbum.this);
-                        snackShow.showSuccessSnack("Your Cloud-Album created successfully. Enjoy your event by uploading moments together.");
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -796,7 +794,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                                 onBackPressed();
 
                             }
-                        },3000);
+                        },2000);
                     }
 
                 }

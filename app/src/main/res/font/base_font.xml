@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <font-family xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <font android:font="@font/product_sans"
+    <font android:font="@font/montserrat"
         android:fontStyle="normal">
 
     </font>

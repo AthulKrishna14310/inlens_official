@@ -140,77 +140,77 @@ public class PhotographerFragementBottomSheetNA extends BottomSheetDialogFragmen
         else
         {
 
-            AlertDialog.Builder removeDialog = new AlertDialog.Builder(context);
-            removeDialog.setMessage("Are you sure you want to remove "+photographerModel.getName()+" from this album?");
-            removeDialog.setTitle("Removing User");
-            removeDialog.setCancelable(true);
-
-
-            removeDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-
-                    userRef.child(photographerModel.getId()).child(FirebaseConstants.LIVECOMMUNITYID).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-
-                            if(dataSnapshot.exists())
-                            {
-                                String currentLiveCommunityId = dataSnapshot.getValue().toString();
-                                //Log.i("comid","live "+currentLiveCommunityId);
-                                //Log.i("comid","id "+communityId);
-
-                                if(currentLiveCommunityId.equals(communityId))
-                                {
-                                    userRef.child(photographerModel.getId()).child(FirebaseConstants.LIVECOMMUNITYID).removeValue();
-                                }
-                            }
-
-                            userRef.child(photographerModel.getId()).child(FirebaseConstants.COMMUNITIES).child(communityId).removeValue();
-                            photographersRef.child(photographerModel.getId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-
-                                    if(task.isSuccessful())
-                                    {
-                                        Toast.makeText(context, "User removed.", Toast.LENGTH_SHORT).show();
-                                        dismiss();
-                                    }
-                                    else
-                                    {
-                                        Toast.makeText(context, "Failed to remove user.", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-
-
-
-                }
-            });
-            removeDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    dialogInterface.dismiss();
-                }
-            });
-
-
-            removeLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    removeDialog.show();
-
-                }
-            });
+//            AlertDialog.Builder removeDialog = new AlertDialog.Builder(context);
+//            removeDialog.setMessage("Are you sure you want to remove "+photographerModel.getName()+" from this album?");
+//            removeDialog.setTitle("Removing User");
+//            removeDialog.setCancelable(true);
+//
+//
+//            removeDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialogInterface, int i) {
+//
+//                    userRef.child(photographerModel.getId()).child(FirebaseConstants.LIVECOMMUNITYID).addListenerForSingleValueEvent(new ValueEventListener() {
+//                        @Override
+//                        public void onDataChange(DataSnapshot dataSnapshot) {
+//
+//                            if(dataSnapshot.exists())
+//                            {
+//                                String currentLiveCommunityId = dataSnapshot.getValue().toString();
+//                                //Log.i("comid","live "+currentLiveCommunityId);
+//                                //Log.i("comid","id "+communityId);
+//
+//                                if(currentLiveCommunityId.equals(communityId))
+//                                {
+//                                    userRef.child(photographerModel.getId()).child(FirebaseConstants.LIVECOMMUNITYID).removeValue();
+//                                }
+//                            }
+//
+//                            userRef.child(photographerModel.getId()).child(FirebaseConstants.COMMUNITIES).child(communityId).removeValue();
+//                            photographersRef.child(photographerModel.getId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                @Override
+//                                public void onComplete(@NonNull Task<Void> task) {
+//
+//                                    if(task.isSuccessful())
+//                                    {
+//                                        Toast.makeText(context, "User removed.", Toast.LENGTH_SHORT).show();
+//                                        dismiss();
+//                                    }
+//                                    else
+//                                    {
+//                                        Toast.makeText(context, "Failed to remove user.", Toast.LENGTH_SHORT).show();
+//                                    }
+//                                }
+//                            });
+//
+//                        }
+//
+//                        @Override
+//                        public void onCancelled(DatabaseError databaseError) {
+//
+//                        }
+//                    });
+//
+//
+//
+//                }
+//            });
+//            removeDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialogInterface, int i) {
+//                    dialogInterface.dismiss();
+//                }
+//            });
+//
+//
+//            removeLayout.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//
+//                    removeDialog.show();
+//
+//                }
+//            });
         }
 
         return view;

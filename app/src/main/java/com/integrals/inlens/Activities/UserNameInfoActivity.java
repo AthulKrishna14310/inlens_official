@@ -241,7 +241,7 @@ public class UserNameInfoActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
                        CropImage.ActivityResult result = CropImage.getActivityResult(data);
                if (resultCode == RESULT_OK) {
-                   showDialogMessageInfo("Uploading profile picture. Please wait...");
+                   //showDialogMessageInfo("Uploading profile picture. Please wait...");
                    Uri resultUri = result.getUri();
                    final String current_u_i_d = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -264,7 +264,7 @@ public class UserNameInfoActivity extends AppCompatActivity {
                                                        public void onComplete(@NonNull Task<Void> task) {
                                                            if (task.isSuccessful()) {
                                                                {
-                                                                   showDialogMessageSuccess("Successfully uploaded your profile picture.");
+                                                                   //showDialogMessageSuccess("Successfully uploaded your profile picture.");
                                                                    userInfoProgressbar.setVisibility(View.INVISIBLE);
                                                                    UserNameDoneButton.setVisibility(View.VISIBLE);
                                                                }
@@ -322,14 +322,6 @@ public class UserNameInfoActivity extends AppCompatActivity {
         snackShow.showErrorSnack(message);
     }
 
-    public void showDialogMessageSuccess(String message) {
-        SnackShow snackShow=new SnackShow(relativeLayout,UserNameInfoActivity.this);
-        snackShow.showSuccessSnack(message);
-    }
-    public void showDialogMessageInfo(String message) {
-        SnackShow snackShow=new SnackShow(relativeLayout,UserNameInfoActivity.this);
-        snackShow.showInfoSnack(message);
-    }
     @Override
     protected void onStart() {
         super.onStart();

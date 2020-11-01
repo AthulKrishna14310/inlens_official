@@ -7,16 +7,17 @@
     android:layout_height="match_parent"
     android:id="@+id/verify_layout"
     tools:context=".Activities.PhoneAuth">
+
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
-        android:textColor="?attr/colorPrimary"
-        android:text="Verify"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="24dp"
-        android:fontFamily="@font/product_sans"
-        android:id="@+id/title" />
+        android:fontFamily="@font/montserrat"
+        android:text="Verify"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
+        android:textColor="?attr/colorPrimary" />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -68,16 +69,26 @@
 
     </RelativeLayout>
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/signintxtlayout"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="40dp"
         android:layout_below="@id/title"
         android:orientation="vertical"
         >
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_margin="16dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/ic_verify_otp"
+            android:backgroundTint="?attr/colorPrimary"
+            android:layout_below="@+id/view"
+            />
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -91,6 +102,7 @@
             />
 
     </LinearLayout>
+
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -126,6 +138,18 @@
                 app:lineColor="?attr/colorPrimary"
                 app:viewType="line"
 
+                />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="RESEND OTP"
+                android:id="@+id/resend_otp"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+                android:layout_marginTop="32dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_below="@id/verification_edittext"
+                android:layout_alignParentRight="true"
                 />
         </RelativeLayout>
 

@@ -131,11 +131,9 @@ public class AuthActivity extends AppCompatActivity {
         AuthNextButton = findViewById(R.id.auth_next_button);
         AuthContainer = findViewById(R.id.auth_container);
 
-
         AuthIMM = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         FadeIn = AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in);
         FadeOut = AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_out);
-
         AuthNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -215,6 +213,7 @@ public class AuthActivity extends AppCompatActivity {
 
             @Override
             public void onVerificationFailed(FirebaseException e) {
+
 
                 /*
                 VerifyTextViewNote.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(),android.R.anim.fade_out));

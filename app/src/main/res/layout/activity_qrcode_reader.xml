@@ -30,7 +30,7 @@
        android:textSize="20sp"
        android:layout_marginTop="40dp"
        android:id="@+id/title"
-       android:fontFamily="@font/product_sans"
+       android:fontFamily="@font/montserrat"
        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
        android:text="@string/scan_your_participant_s_qr_code"
        android:textColor="?attr/colorPrimary"
