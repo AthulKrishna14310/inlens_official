@@ -100,6 +100,7 @@
         android:padding="4dp"
         android:singleLine="true"
         android:text="Two Line"
+        android:textStyle="bold"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
 
         android:textColor="?attr/colorSecondary" />

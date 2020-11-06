@@ -39,7 +39,7 @@
                     android:background="?attr/default_dim_bg"
                     android:textColor="?attr/colorPrimary"
                     android:fontFamily="@font/montserrat"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                     android:layout_marginBottom="2dp"
 
                     />
@@ -57,10 +57,11 @@
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ic_add_box_black_24dp"
                     android:drawableTint="?attr/colorPrimary"
-                    android:text="INSTANT Album"
+                    android:text="Instant Album"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:padding="16dp"
-                    android:textAllCaps="true"
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
                     android:id="@+id/option_create_layout_instant"
@@ -68,9 +69,11 @@
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/ic_photo_library"
+                    android:drawableLeft="@drawable/ic_baseline_photo_album"
                     android:drawableTint="?attr/colorPrimary"
-                    android:text="DETAILED ALBUM"
+                    android:text="Detailed Album"
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                     android:layout_below="@+id/option_create_layout_instant"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:padding="16dp"
@@ -89,6 +92,7 @@
                     android:layout_marginRight="16dp"
                     android:layout_marginTop="4dp"
                     android:layout_marginBottom="4dp"
+
                     android:background="@drawable/relative_bg"
                     android:layout_weight="1"
                     android:foreground="?attr/selectableItemBackgroundBorderless"
@@ -117,11 +121,11 @@
                         android:text="Join"
                         android:layout_centerHorizontal="true"
                         android:id="@+id/scan_text"
-                        android:textAllCaps="true"
+                        android:textAllCaps="false"
                         android:padding="8dp"
                         android:layout_margin="4dp"
                         android:textAlignment="center"
-                        android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                         android:textColor="?attr/colorPrimary"
                         />
                     <TextView
@@ -134,7 +138,6 @@
                         android:layout_toRightOf="@id/main_horizontal_scan_button"
                         android:layout_below="@+id/scan_text"
                         android:id="@+id/scndetailstext"
-                        android:textSize="12sp"
                         android:layout_margin="4dp"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
                         >

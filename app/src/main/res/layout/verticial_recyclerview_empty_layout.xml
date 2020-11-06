@@ -25,6 +25,7 @@
         android:alpha="0.5"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:textColor="?attr/colorPrimary"
+        android:textStyle="bold"
         android:text="No Photos uploaded." />
 
 </RelativeLayout>

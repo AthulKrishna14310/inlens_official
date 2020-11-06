@@ -23,15 +23,91 @@ public class SnackShow {
         this.context=context;
     }
     public void showErrorSnack(String message){
-        Snackbar.make(view,message, Snackbar.LENGTH_LONG).show();
+        String appTheme;
+
+        SharedPreferences appDataPref = context.getSharedPreferences(AppConstants.appDataPref, Context.MODE_PRIVATE);
+        if(appDataPref.contains(AppConstants.appDataPref_theme))
+        {
+            appTheme = appDataPref.getString(AppConstants.appDataPref_theme,AppConstants.themeLight);
+            if(appTheme.equals(AppConstants.themeLight))
+            {
+                Snackbar.make(view,message, Snackbar.LENGTH_LONG)
+                        .setBackgroundTint(context.getColor(R.color.Dark_image_bg_color))
+                        .setText(message)
+                        .setTextColor(context.getColor(R.color.Dark_red_cancel_icon))
+
+                        .show();
+
+            }
+            else  if(appTheme.equals(AppConstants.themeDark))
+            {
+                Snackbar.make(view,message, Snackbar.LENGTH_LONG)
+                        .setBackgroundTint(context.getColor(R.color.colorDarkPrimary))
+                        .setText(message)
+                        .setTextColor(context.getColor(R.color.quantum_googred700))
+                        .show();
+
+            }
+        }
+
+
+
 
     }
     public void showSuccessSnack(String message){
-        Snackbar.make(view,message, Snackbar.LENGTH_LONG).show();
+        String appTheme;
+
+        SharedPreferences appDataPref = context.getSharedPreferences(AppConstants.appDataPref, Context.MODE_PRIVATE);
+        if(appDataPref.contains(AppConstants.appDataPref_theme))
+        {
+            appTheme = appDataPref.getString(AppConstants.appDataPref_theme,AppConstants.themeLight);
+            if(appTheme.equals(AppConstants.themeLight))
+            {
+                Snackbar.make(view,message, Snackbar.LENGTH_LONG)
+                        .setBackgroundTint(context.getColor(R.color.Dark_image_bg_color))
+                        .setText(message)
+                        .setTextColor(context.getColor(R.color.colorDarkPrimary))
+                        .show();
+            }
+            else  if(appTheme.equals(AppConstants.themeDark))
+            {
+                Snackbar.make(view,message, Snackbar.LENGTH_LONG)
+                        .setBackgroundTint(context.getColor(R.color.colorDarkPrimary))
+                        .setText(message)
+                        .setTextColor(context.getColor(R.color.colorLightPrimary))
+                        .show();
+
+            }
+        }
+
+
 
     }
     public void showInfoSnack(String message){
-        Snackbar.make(view,message, Snackbar.LENGTH_LONG).show();
+        String appTheme;
 
+        SharedPreferences appDataPref = context.getSharedPreferences(AppConstants.appDataPref, Context.MODE_PRIVATE);
+        if(appDataPref.contains(AppConstants.appDataPref_theme))
+        {
+            appTheme = appDataPref.getString(AppConstants.appDataPref_theme,AppConstants.themeLight);
+            if(appTheme.equals(AppConstants.themeLight))
+            {
+                Snackbar.make(view,message, Snackbar.LENGTH_LONG)
+                        .setBackgroundTint(context.getColor(R.color.Dark_image_bg_color))
+                        .setText(message)
+                        .setTextColor(context.getColor(R.color.colorDarkPrimary))
+                        .show();
+
+            }
+            else  if(appTheme.equals(AppConstants.themeDark))
+            {
+                Snackbar.make(view,message, Snackbar.LENGTH_LONG)
+                        .setBackgroundTint(context.getColor(R.color.colorDarkPrimary))
+                        .setText(message)
+                        .setTextColor(context.getColor(R.color.colorLightPrimary))
+                        .show();
+
+            }
+        }
     }
 }

@@ -38,6 +38,7 @@
             android:layout_marginEnd="16dp"
             android:background="?attr/default_dim_bg"
             android:text="Album Header"
+            android:textStyle="bold"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             android:textColor="?attr/colorSecondary"/>
 
@@ -70,7 +71,7 @@
                 android:id="@+id/AlbumDescriptionBottom"
                 android:layout_height="wrap_content"
                 android:text="Album subtitle"
-
+                android:textStyle="bold"
                 android:layout_marginTop="6dp"
                 android:background="?attr/default_dim_bg"
                 android:layout_marginBottom="6dp"
@@ -226,11 +227,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="Change cover PHOTO"
+                android:text="Change Cover Photo"
                 android:textColor="?attr/colorSecondary"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:background="?attr/default_dim_bg"
-                android:textAllCaps="true"
                 android:layout_marginStart="16dp"
 
 
@@ -264,8 +264,7 @@
                 android:textColor="?attr/colorSecondary"
 
                 android:background="?attr/default_dim_bg"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-                android:textAllCaps="true"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:layout_marginStart="16dp"
 
 
@@ -295,9 +294,8 @@
                 android:layout_gravity="center_vertical"
                 android:text="Delete Album"
                 android:textColor="?attr/colorSecondary"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:background="?attr/default_dim_bg"
-                android:textAllCaps="true"
                 android:layout_marginStart="16dp"
 
 

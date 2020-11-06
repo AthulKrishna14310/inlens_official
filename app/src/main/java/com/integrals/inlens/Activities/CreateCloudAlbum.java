@@ -291,7 +291,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         year, month, day
                 );
                 dialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
-                dialog.getDatePicker().setMaxDate(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 4);
+                dialog.getDatePicker().setMaxDate(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 13);
                 dialog.show();
             }
         });
@@ -785,8 +785,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         if (hr < 1 && dy < 1) {
                             notificationStr += " " + (int) min + " minutes left";
                         }
-                        helper.displayAlbumStartNotification(notificationStr, "You are active in this Cloud-Album till " + albumTime);
-
+                        helper.displayAlbumStartNotification(notificationStr, "Take your photos and tap here to upload");
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {

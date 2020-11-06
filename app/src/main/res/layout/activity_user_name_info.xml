@@ -21,6 +21,7 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:visibility="visible"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
         android:layout_height="180dp">
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="164dp"
@@ -78,16 +79,19 @@
         app:boxBackgroundColor="?attr/image_bg_color"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        app:counterMaxLength="20"
+        app:counterEnabled="true"
 
         >
     <com.google.android.material.textfield.TextInputEditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textStyle="normal"
-
+        android:textColor="?attr/colorPrimary"
         android:hint="Type your name"
         android:inputType="text"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        android:maxLength="20"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:id="@+id/user_name_activity_edittext"
         />
     </com.google.android.material.textfield.TextInputLayout>
@@ -100,6 +104,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/user_name_activity_edittext_layout"
         app:hintEnabled="true"
+        app:counterMaxLength="30"
+        app:counterEnabled="true"
         app:boxBackgroundMode="filled"
         app:boxBackgroundColor="?attr/image_bg_color"
         app:boxCornerRadiusTopEnd="4dp"
@@ -115,8 +121,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
-            android:hint="Type your Email"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:hint="About"
+            android:maxLength="30"
+            android:textColor="?attr/colorPrimary"
+            android:text="Hi , I am New to InLens"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
             android:id="@+id/user_email_activity_edittext"
             />
     </com.google.android.material.textfield.TextInputLayout>

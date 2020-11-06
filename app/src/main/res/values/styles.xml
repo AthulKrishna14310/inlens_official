@@ -27,8 +27,7 @@
         <item name="image_bg_color">@color/Light_image_bg_color</item>
         <item name="action_menu">@color/Light_actionMenuTextColor</item>
         <item name="otpViewStyle">@style/OtpWidget.OtpView</item>
-        <item name="android:fontFamily">@font/open_sans</item>
-    </style>
+     </style>
 
     <style name="DarkTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:windowLightStatusBar">false</item>
@@ -54,7 +53,6 @@
         <item name="info_icon_color">@color/Dark_info_icon_color</item>
         <item name="image_bg_color">@color/Dark_image_bg_color</item>
         <item name="action_menu">@color/Dark_actionMenuTextColor</item>
-        <item name="android:fontFamily">@font/open_sans</item>
         <item name="otpViewStyle">@style/OtpWidget.OtpView</item>
 
     </style>
@@ -139,6 +137,10 @@
 
     <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
         <item name="android:background">@color/black_overlay</item>
+    </style>
+
+    <style name="tooltip" parent="AppTheme">
+
     </style>
 
 </resources>
