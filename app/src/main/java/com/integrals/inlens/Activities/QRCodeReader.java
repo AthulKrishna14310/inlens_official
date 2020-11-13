@@ -214,7 +214,7 @@ public class QRCodeReader extends AppCompatActivity {
         findViewById(R.id.closeBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onBackPressed();
+                finish();
             }
         });
 

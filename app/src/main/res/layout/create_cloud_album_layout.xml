@@ -100,9 +100,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Enter the Shared Cloud-Album information for your event"
-                        android:textColor="?attr/colorPrimary"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-                        />
+                        android:textColor="?attr/colorPrimary" />
 
 
 
@@ -215,6 +214,7 @@
                         android:layout_marginBottom="2dp"
                         android:layout_marginLeft="8dp"
                         android:text="TextView"
+                        android:textSize="12sp"
                         android:textColor="?attr/red_cancel_icon"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
                         android:visibility="gone" />
@@ -223,7 +223,7 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="center_horizontal"
                         android:background="?attr/image_bg_color"
-                        android:layout_marginTop="16dp">
+                        android:layout_marginTop="24dp">
 
                         <androidx.appcompat.widget.AppCompatCheckBox
                             android:id="@+id/EventTypeText"
@@ -269,10 +269,11 @@
 <TextView
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:text="Your albums are private and secure"
+    android:text="Your albums are private and secured"
     android:layout_gravity="center_horizontal"
-    android:layout_marginTop="24dp"
+    android:layout_marginTop="32dp"
     android:alpha="0.5"
+
     android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
     android:drawableTop="@drawable/ic_privacy_policy"
     android:textColor="?attr/colorPrimary"

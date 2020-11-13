@@ -69,9 +69,12 @@ public class AlbumOptionsBottomSheetFragment extends BottomSheetDialogFragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
 
         View  albumOptionsView;
+
         SharedPreferences themePref = activity.getSharedPreferences(AppConstants.appDataPref, Context.MODE_PRIVATE);
         if(themePref.contains(AppConstants.appDataPref_theme))
         {
@@ -138,8 +141,12 @@ public class AlbumOptionsBottomSheetFragment extends BottomSheetDialogFragment {
             e.printStackTrace();
         }
 
+
         return albumOptionsView;
+
     }
+
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {

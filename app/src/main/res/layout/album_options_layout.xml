@@ -4,7 +4,8 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?attr/default_dim_bg"
-    android:id="@+id/album_options_bottomsheet_wrapper">
+    android:id="@+id/album_options_bottomsheet_wrapper"
+    >
 
     <androidx.cardview.widget.CardView
         android:id="@+id/album_options_bottomsheet_cardview"
@@ -61,7 +62,7 @@
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:padding="16dp"
                     android:textAllCaps="false"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
                     android:id="@+id/option_create_layout_instant"
@@ -73,7 +74,7 @@
                     android:drawableTint="?attr/colorPrimary"
                     android:text="Detailed Album"
                     android:textAllCaps="false"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                     android:layout_below="@+id/option_create_layout_instant"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:padding="16dp"
@@ -125,7 +126,7 @@
                         android:padding="8dp"
                         android:layout_margin="4dp"
                         android:textAlignment="center"
-                        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                         android:textColor="?attr/colorPrimary"
                         />
                     <TextView

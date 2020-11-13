@@ -38,6 +38,7 @@ import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LayoutAnimationController;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -575,9 +576,13 @@ public class MainActivity extends AppCompatActivity implements
         MainVerticalRecyclerView.setHasFixedSize(true);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
         MainVerticalRecyclerView.setLayoutManager(gridLayoutManager);
+
         mainVerticalAdapter = new MainVerticalAdapter(MainVerticalRecyclerView, MainActivity.this, postImageList, currentUserId);
         mainVerticalAdapter.setHasStableIds(true);
+
+
         MainVerticalRecyclerView.setAdapter(mainVerticalAdapter);
+
 
         MainVerticalRecyclerView.addOnScrollListener(new CustomVerticalRecyclerViewScrollListener() {
             @Override

@@ -21,7 +21,7 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:visibility="visible"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="16dp"
         android:layout_height="180dp">
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="164dp"
@@ -112,7 +112,7 @@
         app:boxCornerRadiusBottomEnd="4dp"
         app:boxCornerRadiusBottomStart="4dp"
         app:boxCornerRadiusTopStart="4dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="8dp"
 
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
@@ -129,6 +129,39 @@
             android:id="@+id/user_email_activity_edittext"
             />
     </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:id="@+id/phone_activity_edittext_layout"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/user_email_activity_edittext_layout"
+        app:hintEnabled="true"
+        app:boxBackgroundMode="filled"
+        app:boxCornerRadiusTopEnd="4dp"
+        app:boxCornerRadiusBottomEnd="4dp"
+        app:boxCornerRadiusBottomStart="4dp"
+        app:boxCornerRadiusTopStart="4dp"
+        app:boxBackgroundColor="?attr/image_bg_color"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+
+
+        >
+        <com.google.android.material.textfield.TextInputEditText
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="normal"
+            android:textColor="?attr/colorPrimary"
+            android:enabled="false"
+            android:hint="Phone Number"
+            android:inputType="text"
+            android:maxLength="20"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:id="@+id/phone_activity_edittext"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
 
     <RelativeLayout
         android:layout_width="56dp"

@@ -222,8 +222,9 @@ public class UserNameInfoActivity extends AppCompatActivity {
             }
         });
 
-
-
+        String phoneNumber=FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber();
+        EditText editText=findViewById(R.id.phone_activity_edittext);
+        editText.setText(phoneNumber);
     }
 
     @Override
