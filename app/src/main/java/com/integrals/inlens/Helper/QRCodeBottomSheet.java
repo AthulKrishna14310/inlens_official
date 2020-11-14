@@ -192,7 +192,7 @@ public class QRCodeBottomSheet extends BottomSheetDialogFragment {
             @Override
             public void onClick(View v) {
                 dismiss();
-                showSnackbarMessage(rootView,"Preparing community");
+                showSnackbarMessage(rootView,"Preparing your link");
                 shareInviteLink(currentActiveCommunityId);
 
             }

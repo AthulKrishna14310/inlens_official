@@ -27,7 +27,6 @@ import com.crowdfire.cfalertdialog.CFAlertDialog;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.vision.barcode.Barcode;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -39,15 +38,11 @@ import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.Helper.SnackShow;
 import com.integrals.inlens.MainActivity;
-import com.integrals.inlens.Notification.NotificationHelper;
 import com.integrals.inlens.R;
-
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import info.androidhive.barcode.BarcodeReader;
 
@@ -67,7 +62,6 @@ public class QRCodeReader extends AppCompatActivity {
 
     String appTheme="";
     int cf_bg_color,colorPrimary,red_inlens,cf_alert_dialogue_dim_bg;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,15 +214,14 @@ public class QRCodeReader extends AppCompatActivity {
         findViewById(R.id.closeBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onBackPressed();
+                finish();
             }
         });
 
     }
 
-
-
-    private void addPhotographerToCommunity(String newUserId, final String communityId,BarcodeReader barcodeReader) {
+    private void addPhotographerToCommunity(String newUserId, final String communityId,BarcodeReader barcodeReader)
+    {
 
         userRef.child(newUserId).child(FirebaseConstants.NAME).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

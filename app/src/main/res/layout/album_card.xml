@@ -12,9 +12,7 @@
     android:alpha="1"
     android:background="@drawable/card_bg"
     app:cardBackgroundColor="?attr/default_bg_color"
-    android:clickable="true"
-    android:foreground="?android:attr/selectableItemBackground"
-    app:cardCornerRadius="2dp"
+    app:cardCornerRadius="4dp"
     app:cardElevation="0dp"
 
 
@@ -23,10 +21,10 @@
     <Button
         android:id="@+id/indication_button"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="3dp"
         android:layout_below="@id/album_card_textview"
+        android:layout_marginTop="110dp"
         android:background="@drawable/indicator_bg"
-        android:layout_gravity="bottom"
         android:visibility="invisible"></Button>
 
     <androidx.cardview.widget.CardView
@@ -48,7 +46,6 @@
             android:layout_gravity="center"
             android:background="?selectableItemBackgroundBorderless"
             android:src="@drawable/ic_more_vert_black_24dp"
-
             android:tint="?attr/colorSecondary"
             />
 
@@ -60,7 +57,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/card_bg"
-        android:clickable="true"
+
         android:layout_margin="0dp"
         android:orientation="vertical">
 
@@ -76,8 +73,6 @@
             android:id="@+id/albumcard_image_view"
             android:layout_width="match_parent"
             android:layout_height="112dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
             android:scaleType="centerCrop"
             app:srcCompat="@drawable/ic_photo_size"
             tools:ignore="VectorDrawableCompat" />
@@ -95,12 +90,12 @@
         android:layout_gravity="bottom"
         android:layout_marginTop="112dp"
         android:background="?attr/default_bg_color"
+        android:fontFamily="@font/open_sans"
         android:maxLines="1"
         android:padding="4dp"
         android:singleLine="true"
         android:text="Two Line"
-        android:textColor="?attr/colorSecondary"
+        android:textStyle="bold"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-
-         />
+        android:textColor="?attr/colorSecondary" />
 </androidx.cardview.widget.CardView>

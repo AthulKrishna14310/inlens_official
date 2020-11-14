@@ -684,7 +684,7 @@ public class InlensGalleryActivity extends AppCompatActivity implements Director
                     @Override
                     public void onClick(View view) {
                         NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
-                        notificationHelper.displayAlbumStartNotification("Go to Gallery.", "After taking photos tap here to upload.");
+                        notificationHelper.displayAlbumStartNotification("Upload directly.", "After taking photos tap here to upload.");
                         Intent cameraIntent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
                         startActivity(cameraIntent);
                         finishAffinity();

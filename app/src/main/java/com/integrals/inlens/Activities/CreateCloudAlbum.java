@@ -90,7 +90,7 @@ import java.util.concurrent.TimeUnit;
 
 public class CreateCloudAlbum extends AppCompatActivity {
     private EditText albumTitleEditText, albumDescEditText;
-    private TextView submitButton;
+    private ImageButton submitButton;
     private StorageReference storageReference;
     private ProgressBar uploadProgressbar;
     private CheckBox dateofCompletionCheckbox;
@@ -171,8 +171,9 @@ public class CreateCloudAlbum extends AppCompatActivity {
         eventPickerCheckbox = findViewById(R.id.EventTypeText);
         albumTitleEditText = (EditText) findViewById(R.id.AlbumTitleEditText);
         albumDescEditText = (EditText) findViewById(R.id.AlbumDescriptionEditText);
-        submitButton = (TextView) findViewById(R.id.DoneButtonTextView);
+        submitButton =  findViewById(R.id.DoneButtonTextView);
         uploadProgressbar = (ProgressBar) findViewById(R.id.UploadProgress);
+        uploadProgressbar.setVisibility(View.INVISIBLE);
         createCloudAlbumBackButton = findViewById(R.id.create_cloud_album_backbutton);
 
         storageReference = FirebaseStorage.getInstance().getReference();
@@ -301,7 +302,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         year, month, day
                 );
                 dialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
-                dialog.getDatePicker().setMaxDate(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 4);
+                dialog.getDatePicker().setMaxDate(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 13);
                 dialog.show();
             }
         });
@@ -388,7 +389,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                 dateofCompletionCheckbox.setEnabled(false);
                 findViewById(R.id.date_range_button).setEnabled(false);
                 eventPickerCheckbox.setChecked(true);
-                submitButton.setText("Update");
+                //submitButton.setText("Update");
                 TextView t = findViewById(R.id.title_head);
                 t.setText("Edit");
                 TextView textView = findViewById(R.id.expiry_txt);
@@ -397,6 +398,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                 submitButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        submitButton.setVisibility(View.INVISIBLE);
                         uploadProgressbar.setVisibility(View.VISIBLE);
                         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("Communities").child(getIntent().getStringExtra("Id"));
                         mDatabase.child("title").setValue(albumTitleEditText.getText().toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -408,8 +410,9 @@ public class CreateCloudAlbum extends AppCompatActivity {
                                         mDatabase.child("type").setValue(eventPickerCheckbox.getText().toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
-                                               showDialogMessageSuccess("Successfully updated your Cloud-Album data");
+                                               //showDialogMessageSuccess("Successfully updated your Cloud-Album data");
                                                 uploadProgressbar.setVisibility(View.GONE);
+                                                submitButton.setVisibility(View.VISIBLE);
                                                 onBackPressed();
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
@@ -417,6 +420,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                                             public void onFailure(@NonNull Exception e) {
                                                 showDialogMessageError("Failed "+e.getMessage());
                                                 uploadProgressbar.setVisibility(View.GONE);
+                                                submitButton.setVisibility(View.VISIBLE);
 
                                             }
                                         });;
@@ -427,6 +431,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                                     public void onFailure(@NonNull Exception e) {
                                         showDialogMessageError("Failed "+e.getMessage());
                                         uploadProgressbar.setVisibility(View.GONE);
+                                        submitButton.setVisibility(View.VISIBLE);
 
                                     }
                                 });;
@@ -437,6 +442,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                             public void onFailure(@NonNull Exception e) {
                                 showDialogMessageError("Failed "+e.getMessage());
                                 uploadProgressbar.setVisibility(View.GONE);
+                                submitButton.setVisibility(View.VISIBLE);
 
                             }
                         });
@@ -684,7 +690,9 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
             Map communitymap = new HashMap();
             submitButton.setEnabled(false);
+            submitButton.setVisibility(View.INVISIBLE);
             uploadProgressbar.setVisibility(View.VISIBLE);
+
             globalID = newCommunityId;
 
             //userRef values
@@ -715,6 +723,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
                     if (databaseError != null) {
                         uploadProgressbar.setVisibility(View.GONE);
+                        submitButton.setVisibility(View.VISIBLE);
                         submitButton.setEnabled(true);
                         SnackShow snackShow = new SnackShow(rootCreateCloudAlbum, CreateCloudAlbum.this);
                         snackShow.showErrorSnack(databaseError.getMessage());
@@ -743,6 +752,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         new UploadQueueDB(CreateCloudAlbum.this).deleteAllData();
 
                         submitButton.setEnabled(false);
+                        submitButton.setVisibility(View.VISIBLE);
                         uploadProgressbar.setVisibility(View.GONE);
 
                         final long dy = TimeUnit.MILLISECONDS.toDays(Long.parseLong(getTimeStamp(albumTime)) - System.currentTimeMillis());
@@ -769,10 +779,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                         if (hr < 1 && dy < 1) {
                             notificationStr += " " + (int) min + " minutes left";
                         }
-                        helper.displayAlbumStartNotification(notificationStr, "You are active in this Cloud-Album till " + albumTime);
-
-                        SnackShow snackShow = new SnackShow(rootCreateCloudAlbum, CreateCloudAlbum.this);
-                        snackShow.showSuccessSnack("Your Cloud-Album created successfully. Enjoy your event by uploading moments together.");
+                        helper.displayAlbumStartNotification(notificationStr, "Take your photos and tap here to upload");
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -780,7 +787,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                                 onBackPressed();
 
                             }
-                        },3000);
+                        },2000);
                     }
 
                 }
@@ -789,6 +796,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
         } else {
             uploadProgressbar.setVisibility(View.GONE);
+            submitButton.setVisibility(View.VISIBLE);
             submitButton.setEnabled(true);
 
         }

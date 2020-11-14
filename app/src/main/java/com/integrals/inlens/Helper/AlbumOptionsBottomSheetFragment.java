@@ -18,6 +18,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -32,7 +33,8 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 @SuppressLint("ValidFragment")
 public class AlbumOptionsBottomSheetFragment extends BottomSheetDialogFragment {
-    RelativeLayout scanLayout,createLayout;
+    Button createLayout;
+    RelativeLayout scanLayout;
     ImageButton scanImageButton,createImageButton;
     ImageView imageQR;
     Activity activity;
@@ -67,9 +69,12 @@ public class AlbumOptionsBottomSheetFragment extends BottomSheetDialogFragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
 
         View  albumOptionsView;
+
         SharedPreferences themePref = activity.getSharedPreferences(AppConstants.appDataPref, Context.MODE_PRIVATE);
         if(themePref.contains(AppConstants.appDataPref_theme))
         {
@@ -99,15 +104,14 @@ public class AlbumOptionsBottomSheetFragment extends BottomSheetDialogFragment {
         scanLayout = albumOptionsView.findViewById(R.id.option_scan_layout);
         createLayout = albumOptionsView.findViewById(R.id.option_create_layout);
         scanImageButton = albumOptionsView.findViewById(R.id.main_horizontal_scan_button);
-        createImageButton = albumOptionsView.findViewById(R.id.main_horizontal_new_album_button);
         imageQR=albumOptionsView.findViewById(R.id.QR_Display);
 
         scanLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                scanCallback.scanQR();
-                dismissDialog.dismissDialog();
+                //scanCallback.scanQR();
+                //dismissDialog.dismissDialog();
 
             }
         });
@@ -125,13 +129,7 @@ public class AlbumOptionsBottomSheetFragment extends BottomSheetDialogFragment {
                 dismissDialog.dismissDialog();
             }
         });
-        createImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                createCallback.createAlbum();
-                dismissDialog.dismissDialog();
-            }
-        });
+
         final MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
         BitMatrix bitMatrix = null;
         try {
@@ -143,8 +141,12 @@ public class AlbumOptionsBottomSheetFragment extends BottomSheetDialogFragment {
             e.printStackTrace();
         }
 
+
         return albumOptionsView;
+
     }
+
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {

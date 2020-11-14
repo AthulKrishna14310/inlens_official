@@ -2,8 +2,10 @@
     android:shape="rectangle">
 <corners android:radius="4dp"
     />
-<stroke android:color="@color/switch_thumb_normal_material_dark"
-    android:width="0.5dp"
+<stroke android:color="@color/material_grey_600"
+
+
+    android:width="0.2dp"
 
     />
 

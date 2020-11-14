@@ -22,6 +22,7 @@
             android:layout_height="wrap_content"
             android:textAlignment="textStart"
             android:layout_marginBottom="8dp"
+            android:fontFamily="@font/montserrat"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             android:text="@string/add_photographers"
             android:textColor="?attr/colorPrimary"
@@ -87,15 +88,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:drawableTop="@drawable/ic_qr_inlens"
+                    android:drawableTop="@drawable/ic_baseline_qr_code_scanner_24"
                     android:drawableTint="?attr/colorPrimary"
                     style="?attr/materialButtonOutlinedStyle"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                     android:padding="9dp"
                     android:maxLines="1"
                     android:elevation="0dp"
                     android:layout_margin="10dp"
                     android:text="Scan QR Code"
+                    android:textAllCaps="false"
                     android:textColor="?attr/colorPrimary"
                     />
                 <Button
@@ -111,9 +113,9 @@
                     style="?attr/materialButtonOutlinedStyle"
                     android:drawableTop="@drawable/ic_link"
                     android:drawableTint="?attr/colorPrimary"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                     android:padding="11dp"
-
+                    android:textAllCaps="false"
                     android:text="Send Invite Link"
                     android:textColor="?attr/colorPrimary"
                     />
@@ -128,10 +130,12 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="CANCEL"
+            android:text="Cancel"
             style="?attr/materialButtonOutlinedStyle"
             android:id="@+id/cancelButton"
             android:padding="16dp"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:textAllCaps="false"
             android:layout_below="@+id/layout_add_options_button"
             />
 

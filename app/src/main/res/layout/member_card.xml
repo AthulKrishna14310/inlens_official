@@ -23,7 +23,9 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:src="@drawable/ic_account_circle_24dp"
-            android:tint="?attr/colorSecondary"
+            android:tint="@color/grey_40"
+            android:layout_centerHorizontal="true"
+
             />
 
         <TextView
@@ -34,10 +36,11 @@
             android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
             android:layout_centerHorizontal="true"
             android:textAlignment="center"
-            android:maxLength="9"
+            android:maxLength="10"
+            android:textStyle="bold"
             android:text="username"
             android:textColor="?attr/colorSecondary"
-            android:textSize="8sp"
+            android:textSize="12sp"
             android:visibility="visible" />
     </RelativeLayout>
 

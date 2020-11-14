@@ -9,8 +9,9 @@
     android:background="?attr/default_bg_color"
     tools:context=".Activities.QRCodeReader">
     <ImageButton
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:layout_marginRight="16dp"
         android:id="@+id/closeBtn"
         android:layout_alignParentRight="true"
@@ -28,7 +29,9 @@
        android:paddingStart="16dp"
        android:textSize="20sp"
        android:layout_marginTop="40dp"
+       android:textStyle="bold"
        android:id="@+id/title"
+       android:fontFamily="@font/montserrat"
        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
        android:text="@string/scan_your_participant_s_qr_code"
        android:textColor="?attr/colorPrimary"
@@ -39,8 +42,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_below="@id/title"
-        android:textSize="12sp"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
         android:text="@string/added_participants_can_also_collaborate_by_upload_their_recent_images_to_your_album"
         android:textColor="?attr/colorPrimary"
         />

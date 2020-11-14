@@ -36,6 +36,7 @@
                  android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
                  android:text="James Pratterson"
+                 android:fontFamily="@font/montserrat"
                  android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                  android:textColor="?attr/default_dim_bg"
                 />
@@ -50,7 +51,7 @@
                     android:layout_height="@dimen/spacing_mlarge"
                     android:layout_marginRight="@dimen/spacing_medium"
                     android:tint="?attr/default_dim_bg"
-                    android:src="@drawable/ic_email_black_24dp"/>
+                    android:src="@drawable/ic_about"/>
 
                 <TextView
                     android:id="@+id/headerEmailX"

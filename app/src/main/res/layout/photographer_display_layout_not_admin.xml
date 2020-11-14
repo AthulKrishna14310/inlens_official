@@ -39,6 +39,7 @@
         android:maxLines="1"
         android:textColor="?attr/colorSecondary"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat"
         android:text="Photographer Name" />
 
     <TextView
@@ -48,6 +49,9 @@
         android:layout_below="@id/name_photographer"
         android:layout_toRightOf="@id/imageView_photographer_card"
         android:text="photographers@mail.com"
+        android:drawableStart="@drawable/ic_about"
+        android:drawablePadding="8dp"
+        android:drawableTint="?attr/colorSecondary"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
         android:textColor="?attr/colorSecondary"
         >
@@ -66,6 +70,7 @@
         android:layout_below="@id/divider"
         android:id="@+id/remove_layout"
         android:padding="16dp"
+        android:visibility="gone"
         android:background="?attr/default_dim_bg"
         android:clickable="true"
         android:foreground="?attr/selectableItemBackgroundBorderless"

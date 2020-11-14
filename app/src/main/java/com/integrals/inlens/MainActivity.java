@@ -15,6 +15,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -37,6 +38,8 @@ import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LayoutAnimationController;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
@@ -75,11 +78,15 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.crowdfire.cfalertdialog.CFAlertDialog;
+
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
@@ -135,6 +142,7 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -150,7 +158,9 @@ import static com.integrals.inlens.Helper.AppConstants.MY_PERMISSIONS_REQUEST_RE
 import static com.integrals.inlens.Helper.AppConstants.MY_PERMISSIONS_REQUEST_START_WORKMANAGER;
 
 
-public class MainActivity extends AppCompatActivity implements AlbumOptionsBottomSheetFragment.IScanCallback, AlbumOptionsBottomSheetFragment.ICreateCallback, AlbumOptionsBottomSheetFragment.IDismissDialog {
+public class MainActivity extends AppCompatActivity implements
+        AlbumOptionsBottomSheetFragment.IScanCallback, AlbumOptionsBottomSheetFragment.ICreateCallback,
+        AlbumOptionsBottomSheetFragment.IDismissDialog {
 
 
     private String currentActiveCommunityID = AppConstants.NOT_AVALABLE;
@@ -162,21 +172,13 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     private static boolean COVER_CHANGE = false, PROFILE_CHANGE = false;
     private NavigationView navigationView;
     private DrawerLayout rootForMainActivity;
-
     private RecyclerView MainHorizontalRecyclerview, MainVerticalRecyclerView;
-
-
     private BroadcastReceiver br;
     private RelativeLayout NoInternetView;
     private TextView NoInternetTextView;
-
-
     RecyclerView ParticipantsRecyclerView;
     LinearLayout expandableCardView;
-
-
     ExtendedFloatingActionButton mainAddPhotosFab;
-
     DatabaseReference currentUserRef, communityRef, participantRef, postRef,_currentUserRef;
     FirebaseAuth firebaseAuth;
     String currentUserId;
@@ -257,6 +259,10 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+
+
 
         mainActivity = this;
 
@@ -504,7 +510,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         MainHorizontalRecyclerview.addOnScrollListener(new CustomHorizontalRecyclerViewScrollListener() {
             @Override
             public void loadMore() {
-
                 LinearLayoutManager manager = (LinearLayoutManager) MainHorizontalRecyclerview.getLayoutManager();
                 int visibleItemCount = manager.getChildCount();
                 int totalItemCount = manager.getItemCount();
@@ -513,8 +518,10 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 if (isLoading) {
 
                     if ((visibleItemCount + lastVisiblesItems) >= totalItemCount) {
+
                         isLoading = false;
-                        if (communityDataList.size() < _communityDataList.size() || communityDataList.get(communityDataList.size() - 1) == null) {
+                        if (communityDataList.size() < _communityDataList.size() ||
+                                communityDataList.get(communityDataList.size() - 1) == null) {
                             isLoading = true;
                             new Handler().postDelayed(new Runnable() {
                                 @Override
@@ -569,9 +576,13 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         MainVerticalRecyclerView.setHasFixedSize(true);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
         MainVerticalRecyclerView.setLayoutManager(gridLayoutManager);
+
         mainVerticalAdapter = new MainVerticalAdapter(MainVerticalRecyclerView, MainActivity.this, postImageList, currentUserId);
         mainVerticalAdapter.setHasStableIds(true);
+
+
         MainVerticalRecyclerView.setAdapter(mainVerticalAdapter);
+
 
         MainVerticalRecyclerView.addOnScrollListener(new CustomVerticalRecyclerViewScrollListener() {
             @Override
@@ -621,6 +632,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                             postImageList.add(_postImageList.get(i));
                                             MainVerticalRecyclerView.getAdapter().notifyItemInserted(i);
                                         } catch (IndexOutOfBoundsException e) {
+
                                         }
 
                                     }
@@ -636,8 +648,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
             }
         });
-
-
 
 
         findViewById(R.id.plus_button).setOnClickListener(new View.OnClickListener() {
@@ -660,7 +670,84 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             }
         });
 
+
+
+
+        //For Displaying tap target view...
+//        if (appTheme.equals(AppConstants.themeLight)) {
+//            TapTargetView.showFor(MainActivity.this,
+//                    TapTarget.forView(findViewById(R.id.plus_button),
+//                            "Tap to add new album","")
+//                            .outerCircleColor(R.color.grey_10)
+//                            .outerCircleAlpha(0.45f)
+//                            .targetCircleColor(R.color.colorLightPrimary)
+//                            .titleTextSize(20)
+//                            .titleTextColor(R.color.colorLightPrimary)
+//                            .textColor(R.color.colorLightPrimary)
+//                            .textTypeface(Typeface.DEFAULT_BOLD)
+//                            .dimColor(R.color.grey_500)
+//                            .drawShadow(true)
+//                            .cancelable(true)
+//                            .tintTarget(false)
+//                            .transparentTarget(true)
+//                            .targetRadius(20),
+//                    new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+//                        @Override
+//                        public void onTargetClick(TapTargetView view) {
+//                            super.onTargetClick(view);
+//                            if (checkIfImagesAreQueued()) {
+//                                provideQueueOptions(rootForMainActivity);
+//                            } else {
+//                                if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
+//                                    optionsBottomSheetFragment.show(((FragmentActivity) MainActivity.this).getSupportFragmentManager(), optionsBottomSheetFragment.getTag());
+//                                }
+//                                else{
+//                                    showLeaveAlert();
+//                                }
+//                            }
+//                        }
+//                    });
+//        } else {
+//            TapTargetView.showFor(MainActivity.this,
+//                    TapTarget.forView(findViewById(R.id.plus_button),
+//                            "Tap to add new album","")
+//                            .outerCircleColor(R.color.grey_10)
+//                            .outerCircleAlpha(0.45f)
+//                            .targetCircleColor(R.color.colorDarkPrimary)
+//                            .titleTextSize(20)
+//                            .titleTextColor(R.color.colorDarkPrimaryDark)
+//                            .textColor(R.color.colorDarkPrimaryDark)
+//                            .textTypeface(Typeface.DEFAULT_BOLD)
+//                            .dimColor(R.color.grey_500)
+//                            .drawShadow(true)
+//                            .cancelable(true)
+//                            .tintTarget(false)
+//                            .transparentTarget(true)
+//                            .targetRadius(20),
+//                    new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+//                        @Override
+//                        public void onTargetClick(TapTargetView view) {
+//                            super.onTargetClick(view);
+//                            if (checkIfImagesAreQueued()) {
+//                                provideQueueOptions(rootForMainActivity);
+//                            } else {
+//                                if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
+//                                    optionsBottomSheetFragment.show(((FragmentActivity) MainActivity.this).getSupportFragmentManager(), optionsBottomSheetFragment.getTag());
+//                                }
+//                                else{
+//                                    showLeaveAlert();
+//                                }
+//                            }
+//                        }
+//                    });
+//        }
+
+
+
+
+
     }
+
 
 
     @Override
@@ -859,6 +946,93 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     @Override
     protected void onStart() {
         super.onStart();
+
+
+        //todo we have to check if user has zero album
+        //todo now its done if new install excecute the given code
+        SharedPreferences sharedPreferences=getSharedPreferences("IsTapShown.pref",Context.MODE_PRIVATE);
+        String result=sharedPreferences.getString("isShown","NO");
+        if(result.contentEquals("NO")){
+            SharedPreferences.Editor e=sharedPreferences.edit();
+            if (appTheme.equals(AppConstants.themeLight)) {
+                TapTargetView.showFor(MainActivity.this,
+                        TapTarget.forView(findViewById(R.id.plus_button),
+                            "Tap to add new album","")
+                                .outerCircleColor(R.color.grey_10)
+                                .outerCircleAlpha(0.45f)
+                                .targetCircleColor(R.color.colorLightPrimary)
+                                .titleTextSize(20)
+                                .titleTextColor(R.color.colorLightPrimary)
+                                .textColor(R.color.colorLightPrimary)
+                                .textTypeface(Typeface.DEFAULT_BOLD)
+                                .dimColor(R.color.grey_500)
+                                .drawShadow(true)
+                                .cancelable(true)
+                                .tintTarget(false)
+                                .transparentTarget(true)
+                                .targetRadius(20),
+                                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                                @Override
+                                public void onTargetClick(TapTargetView view) {
+                                super.onTargetClick(view);
+                                if (checkIfImagesAreQueued()) {
+                                provideQueueOptions(rootForMainActivity);
+                               } else {
+                                if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
+                                    optionsBottomSheetFragment.show(((FragmentActivity) MainActivity.this).getSupportFragmentManager(), optionsBottomSheetFragment.getTag());
+                                }
+                                else{
+                                    showLeaveAlert();
+                                }
+                            }
+                        }
+                    });
+            } else {
+                        TapTargetView.showFor(MainActivity.this,
+                        TapTarget.forView(findViewById(R.id.plus_button),
+                            "Tap to add new album","")
+                            .outerCircleColor(R.color.grey_10)
+                            .outerCircleAlpha(0.45f)
+                            .targetCircleColor(R.color.colorDarkPrimary)
+                            .titleTextSize(20)
+                            .titleTextColor(R.color.colorDarkPrimaryDark)
+                            .textColor(R.color.colorDarkPrimaryDark)
+                            .textTypeface(Typeface.DEFAULT_BOLD)
+                            .dimColor(R.color.grey_500)
+                            .drawShadow(true)
+                            .cancelable(true)
+                            .tintTarget(false)
+                            .transparentTarget(true)
+                            .targetRadius(20),
+                        new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                        @Override
+                        public void onTargetClick(TapTargetView view) {
+                            super.onTargetClick(view);
+                            if (checkIfImagesAreQueued()) {
+                                provideQueueOptions(rootForMainActivity);
+                            } else {
+                                if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
+                                    optionsBottomSheetFragment.show(((FragmentActivity) MainActivity.this).getSupportFragmentManager(), optionsBottomSheetFragment.getTag());
+                                }
+                                else{
+                                    showLeaveAlert();
+                                }
+                            }
+                        }
+                    });
+                    }
+                    e.putString("isShown","YES");
+                    e.apply();
+
+        }else{
+
+        }
+
+
+
+
+
+
         SharedPreferences LastShownNotificationInfo = getSharedPreferences(AppConstants.CURRENT_COMMUNITY_PREF, Context.MODE_PRIVATE);
         if (!LastShownNotificationInfo.contains("time")) {
             SharedPreferences.Editor editor = LastShownNotificationInfo.edit();
@@ -868,9 +1042,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
         decryptDeepLink();
 
-        // to show new Album Dialog
-        // get live community id and check if album  is active or the app should quit the user from the album
-        // if the album status is true the we  can start the service from the getServerTime async task only if the end time has not been reached;
         userRefValueEventListenerForActiveAlbum = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -996,11 +1167,16 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                     for (DataSnapshot snapshot : dataSnapshot.child(FirebaseConstants.COMMUNITIES).getChildren()) {
                         userCommunityIdList.add(snapshot.getKey());
                     }
+
                     Log.i("sortingArray", "datachange "+userCommunityIdList);
                     Collections.sort(userCommunityIdList, Collections.reverseOrder());
                     if (dataSnapshot.hasChild(FirebaseConstants.LIVECOMMUNITYID) && !dataSnapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString().equals(AppConstants.NOT_AVALABLE)) {
                         userCommunityIdList.add(dataSnapshot.child(FirebaseConstants.LIVECOMMUNITYID).getValue().toString());
                     }
+
+
+
+
                     getCloudAlbumData(userCommunityIdList);
                 }
                 if (dataSnapshot.hasChild(FirebaseConstants.EMAIL)) {
@@ -1083,9 +1259,9 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                 }
                                 Date date = new Date(Long.parseLong(endtime));
                                 String dateformat = DateFormat.format("dd-MM-yyyy", date).toString();
-                                helper.displayAlbumStartNotification(notificationStr, "You are active in this Cloud-Album till " + dateformat);
+                                helper.displayAlbumStartNotification(notificationStr, "Tap here to upload recent photos directly");
 
-                            }
+                              }
 
                             if (dataSnapshot.hasChild(FirebaseConstants.COMMUNITYENDTIME)) {
                                 String endtime = dataSnapshot.child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString();
@@ -1187,7 +1363,11 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
         };
         currentUserRef.addChildEventListener(userRefListenerForActiveAlbum);
 
+
+
+
     }
+
 
 
     private void showInitDialog() {
@@ -1209,10 +1389,11 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     private void getCloudAlbumData(ArrayList<String> userCommunityIdList) {
 
 
+
         try {
             if (userCommunityIdList.size() == 0) {
                 expandableCardView.setVisibility(View.GONE);
-            } else {
+               } else {
                 expandableCardView.setVisibility(View.VISIBLE);
             }
 
@@ -1226,14 +1407,24 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 @Override
                 public void onSuccess(DataSnapshot snapshot) {
 
+
+
                     if (userCommunityIdList.size() > 0) {
+
+
                         MainHorizontalRecyclerview.removeAllViews();
                         findViewById(R.id.photoText).setVisibility(View.VISIBLE);
                         findViewById(R.id.photographers).setVisibility(View.VISIBLE);
-                        //  findViewById(R.id.linePhotographer).setVisibility(View.VISIBLE);
+
+
 
                         for (String communityId : userCommunityIdList) {
-                            String admin = AppConstants.NOT_AVALABLE, coverimage = AppConstants.NOT_AVALABLE, description = AppConstants.NOT_AVALABLE, endtime = AppConstants.NOT_AVALABLE, starttime = AppConstants.NOT_AVALABLE, status = AppConstants.NOT_AVALABLE, title = AppConstants.NOT_AVALABLE, type = AppConstants.NOT_AVALABLE;
+                            String admin = AppConstants.NOT_AVALABLE,
+                                    coverimage = AppConstants.NOT_AVALABLE,
+                                    description = AppConstants.NOT_AVALABLE,
+                                    endtime = AppConstants.NOT_AVALABLE,
+                                    starttime = AppConstants.NOT_AVALABLE,
+                                    status = AppConstants.NOT_AVALABLE, title = AppConstants.NOT_AVALABLE, type = AppConstants.NOT_AVALABLE;
                             boolean isReported = false;
 
                             if (snapshot.child(communityId).hasChild(FirebaseConstants.COMMUNITYADMIN)) {
@@ -1288,6 +1479,11 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                         }
 
                         mainHorizontalAdapter.notifyDataSetChanged();
+
+                    }else if(userCommunityIdList.size()==0){
+
+
+
                     } else {
                         try {
                             if (communityDataList.size() < 1) {
@@ -1298,11 +1494,12 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                         }catch (IndexOutOfBoundsException e){
                             e.getMessage();
+
+                            //todo Please do a code review
+
                         }
 
                     }
-
-
                 }
 
                 @Override
@@ -1317,8 +1514,10 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
             });
         } catch (NullPointerException e) {
             Log.i("MainActivity", "getCloudAlbumData " + e);
+
         } catch (IndexOutOfBoundsException e){
             e.getMessage();
+
         }
     }
 
@@ -1524,9 +1723,42 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 }
                 else
                 {
-                    new SnackShow(rootForMainActivity,MainActivity.this)
-                            .showInfoSnack("Request sent , Please wait till admin accepts you.");
-               }
+                    int cf_bg_color, colorPrimary, red_inlens, cf_alert_dialogue_dim_bg;
+                    if (appTheme.equals(AppConstants.themeLight)) {
+                        cf_bg_color = getResources().getColor(R.color.Light_cf_bg_color);
+                        colorPrimary = getResources().getColor(R.color.colorLightPrimary);
+                        red_inlens = getResources().getColor(R.color.Light_red_inlens);
+                        cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Light_cf_alert_dialogue_dim_bg);
+                    } else {
+                        cf_bg_color = getResources().getColor(R.color.Dark_cf_bg_color);
+                        colorPrimary = getResources().getColor(R.color.colorDarkPrimary);
+                        red_inlens = getResources().getColor(R.color.Dark_red_inlens);
+                        cf_alert_dialogue_dim_bg = getResources().getColor(R.color.Dark_cf_alert_dialogue_dim_bg);
+
+                    }
+                    CFAlertDialog.Builder builder = new CFAlertDialog.Builder(MainActivity.this)
+                            .setDialogStyle(CFAlertDialog.CFAlertStyle.BOTTOM_SHEET)
+                            .setTitle("Request Sent")
+                            .setIcon(R.drawable.ic_info)
+                            .setDialogBackgroundColor(cf_bg_color)
+                            .setTextColor(colorPrimary)
+                            .setMessage("Request sent. Please wait till admin accepts you.")
+                            .setCancelable(true)
+                            .addButton("OK",
+                                    red_inlens,
+                                    cf_alert_dialogue_dim_bg,
+                                    CFAlertDialog.CFAlertActionStyle.DEFAULT,
+                                    CFAlertDialog.CFAlertActionAlignment.JUSTIFIED,
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                    builder.show();
+
+
+                }
 
             }
         });
@@ -2031,7 +2263,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                         getWindow().setDimAmount(0);
 
                                                         SnackShow snackShow=new SnackShow(rootForMainActivity,MainActivity.this);
-                                                        snackShow.showSuccessSnack("Successfully exited from your Cloud-Album. ");
+                                                        snackShow.showSuccessSnack("Successfully left. ");
 
                                                        try {
                                                            if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
@@ -2093,7 +2325,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                         getWindow().setDimAmount(0);
 
                                                         SnackShow snackShow=new SnackShow(rootForMainActivity,MainActivity.this);
-                                                        snackShow.showSuccessSnack("Successfully exited from your Cloud-Album. ");
+                                                        snackShow.showSuccessSnack("Successfully left. ");
 
 
                                                         if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
@@ -2256,7 +2488,6 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                                                         participantsAdapter.notifyItemChanged(i);
                                                                     }
                                                                 }
-                                                                showDialogMessageSuccess("Successfully uploaded your profile picture.");
 
                                                             }
                                                         } else {
@@ -2295,7 +2526,12 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     private void uploadCoverPhoto(Uri imageUri) {
 
         // MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.VISIBLE);
-        showDialogMessageInfo("Uploading the cover photo. Please wait.");
+        //showDialogMessageInfo("Uploading the cover photo. Please wait.");
+
+        ProgressBar progressBar = findViewById(R.id.mainloadingpbar);
+        progressBar.setVisibility(View.VISIBLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
         if (!TextUtils.isEmpty(PostKeyForEdit) && imageUri != null) {
 
             StorageReference
@@ -2321,12 +2557,19 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                                    public void onComplete(@NonNull Task<Void> task) {
                                        if (task.isSuccessful()) {
                                            //MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-                                           showDialogMessageSuccess("Successfully uploaded the cover photo.");
+                                           //showDialogMessageSuccess("Successfully uploaded the cover photo.");
+                                           progressBar.setVisibility(View.GONE);
+                                           getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                           getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                                           getWindow().setDimAmount(0);
                                            communityDataList.get(position).setCoverImage(uri.toString());
                                            mainHorizontalAdapter.notifyItemChanged(position);
                                        } else {
                                            // MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-                                           showDialogMessageError("Failed to uploaded the cover photo. Please try again.");
+                                           progressBar.setVisibility(View.GONE);
+                                           getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                           getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                                           getWindow().setDimAmount(0);
 
                                        }
                                    }
@@ -2336,7 +2579,10 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                        }).addOnFailureListener(new OnFailureListener() {
                            @Override
                            public void onFailure(@NonNull Exception e) {
-                               showDialogMessageError("Failed to uploaded the cover photo. Please try again.");
+                               progressBar.setVisibility(View.GONE);
+                               getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                               getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                               getWindow().setDimAmount(0);
 
                            }
                        });
@@ -2344,7 +2590,10 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
 
                     } else {
                         //MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-                        showDialogMessageError("Failed to uploaded the cover photo. Please try again.");
+                        progressBar.setVisibility(View.GONE);
+                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                        getWindow().setDimAmount(0);
 
 
                     }
@@ -2354,13 +2603,19 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     //MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-                    showDialogMessageError("Failed to uploaded the cover photo. Please try again.");
+                    progressBar.setVisibility(View.GONE);
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                    getWindow().setDimAmount(0);
                 }
             });
 
         } else {
             // MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-            showDialogMessageError("Failed to uploaded the cover photo. Please try again.");
+            progressBar.setVisibility(View.GONE);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+            getWindow().setDimAmount(0);
         }
 
 
@@ -2922,6 +3177,7 @@ public class MainActivity extends AppCompatActivity implements AlbumOptionsBotto
     public String getCurrentUserId() {
         return currentUserId;
     }
+
 
 
 }

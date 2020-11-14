@@ -1,14 +1,14 @@
 <resources>
     <string name="app_name">InLens</string>
     <string name="photographer">Participants</string>
-    <string name="quit_cloud_album">Leave album</string>
+    <string name="quit_cloud_album">Leave Album</string>
 
     <string name="intruction">No photos to upload or have been queued.\n <b>Take photos</b> and tap on the <b>Notification</b>.</string>
     <string name="qr_message"></string>
     <string name="add_photographers">\t\tAdd Participants</string>
     <string name="initial_start_notification">Have you received Gallery notification ?</string>
     <string name="initial_start_take_photos">Now , \n \n 1. Take  photos  \n 2. Tap on notification \n 3. Select photos and upload it to your \t \t Cloud-Album</string>
-    <string name="new_album">New Cloud-Album</string>
+    <string name="new_album">New </string>
     <string name="added_participants_can_also_collaborate_by_upload_their_recent_images_to_your_album">Added participants can also collaborate by uploading their recent images into your album.</string>
     <string name="add_participants_to_your_album">Add participants</string>
     <string name="send_invite_link">SEND INVITE LINK</string>
@@ -17,5 +17,6 @@
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
 
-    <string name="instructions"><u>Instructions</u></string>
+    <string name="instructions_head"><u>Instructions</u></string>
+    <string name="instruction">>You can upload all photos taken <u><b>after album creation</b></u>. \n\n\n>After taking photos, <u><b>share directly</b></u> from your gallery or just tap <u><b>on notification</b></u></string>
 </resources>

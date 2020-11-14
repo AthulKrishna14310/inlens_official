@@ -24,7 +24,7 @@
             android:layout_marginTop="8dp"
             android:padding="8dp"
             android:src="@drawable/ic_edit"
-            android:tint="?attr/colorPrimary"
+            android:tint="?attr/action_secondary"
             android:background="?attr/selectableItemBackgroundBorderless"
             />
 
@@ -33,9 +33,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLines="1"
+            android:fontFamily="@font/montserrat"
             android:layout_marginStart="16dp"
             android:layout_marginBottom="16dp"
             android:layout_marginEnd="16dp"
+            android:textStyle="bold"
             android:layout_marginTop="8dp"
             android:background="?attr/default_dim_bg"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
@@ -71,6 +73,7 @@
                 android:layout_height="wrap_content"
                 android:text="Album subtitle"
                 android:layout_marginTop="6dp"
+                android:textStyle="bold"
                 android:background="?attr/default_dim_bg"
                 android:layout_marginBottom="6dp"
                 android:layout_marginStart="16dp"
@@ -173,7 +176,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="?attr/default_dim_bg"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                     android:gravity="center"
                     android:inputType="text"
                     android:text="end"
@@ -223,11 +226,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="Change cover PHOTO"
+                android:text="Change Cover Photo"
                 android:textColor="?attr/colorSecondary"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:background="?attr/default_dim_bg"
-                android:textAllCaps="true"
                 android:layout_marginStart="16dp"
 
 
@@ -257,10 +259,9 @@
                 android:layout_gravity="center_vertical"
                 android:text="@string/quit_cloud_album"
                 android:textColor="?attr/colorSecondary"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:background="?attr/default_dim_bg"
 
-                android:textAllCaps="true"
                 android:layout_marginStart="16dp"
 
                 />
@@ -292,9 +293,8 @@
                 android:layout_gravity="center_vertical"
                 android:text="Report Abuse"
                 android:textColor="?attr/colorSecondary"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:background="?attr/default_dim_bg"
-                android:textAllCaps="true"
                 android:layout_marginStart="16dp"
 
 

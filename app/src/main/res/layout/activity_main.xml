@@ -52,9 +52,7 @@
                                 android:layout_marginLeft="16dp"
                                 android:layout_marginTop="10dp"
                                 android:layout_marginRight="10dp"
-                                android:layout_marginBottom="10dp"
                                 android:background="?attr/default_bg_color"
-                                android:fontFamily="@font/base_font"
                                 android:text="Albums"
                                 android:visibility="gone"
                                 android:textColor="?attr/colorPrimary"
@@ -73,7 +71,6 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:orientation="vertical"
-                                android:layout_marginBottom="6dp"
                                 android:visibility="gone"
                                 >
 
@@ -81,12 +78,13 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginLeft="16dp"
-                                    android:layout_marginTop="10dp"
                                     android:layout_marginRight="10dp"
                                     android:layout_marginBottom="10dp"
                                     android:background="?attr/default_bg_color"
                                     android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                                     android:text="Participants"
+                                    android:textStyle="bold"
+                                    android:fontFamily="@font/montserrat"
                                     android:textColor="?attr/colorPrimary"
                                     />
 
@@ -109,12 +107,15 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
-                            android:layout_marginTop="10dp"
                             android:layout_marginRight="10dp"
+                            android:layout_marginTop="10dp"
                             android:layout_marginBottom="10dp"
                             android:background="?attr/default_bg_color"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                             android:text="Photos"
+
+                            android:textStyle="bold"
+                            android:fontFamily="@font/montserrat"
                             android:textColor="?attr/colorPrimary"
                             android:visibility="gone" />
 
@@ -144,15 +145,16 @@
                                 android:id="@+id/mainactivity_actionbar_relativelayout"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:background="?attr/default_dim_bg">
+                                android:background="?attr/default_bg_color">
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_centerInParent="true"
-                                    android:background="?attr/default_dim_bg"
                                     android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                                     android:text="Shared Albums"
+                                    android:textStyle="bold"
+                                    android:fontFamily="@font/montserrat"
                                     android:textColor="?attr/colorPrimary"
                                      />
 
@@ -179,11 +181,11 @@
                                     android:layout_marginLeft="5dp"
                                     android:layout_marginTop="5dp"
                                     android:layout_marginRight="16dp"
+                                    android:tooltipText="Tap to add new album"
                                     android:layout_marginBottom="5dp"
                                     android:tint="?attr/colorPrimary"
                                     android:background="?selectableItemBackgroundBorderless"
-                                    android:src="@drawable/ic_add_album" />
-
+                                    android:src="@drawable/ic_add_memberdp" />
                             </RelativeLayout>
 
                             <RelativeLayout
@@ -254,7 +256,9 @@
                 app:elevation="8dp"
                 android:layout_gravity="right|bottom"
                 android:visibility="visible"
+                android:fontFamily="@font/montserrat"
                 android:text="Upload"
+                android:textStyle="bold"
                 android:backgroundTint="?attr/image_bg_color"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:textAllCaps="false"/>

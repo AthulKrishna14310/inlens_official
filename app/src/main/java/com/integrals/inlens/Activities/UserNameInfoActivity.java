@@ -3,7 +3,6 @@ package com.integrals.inlens.Activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,14 +12,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -41,28 +38,25 @@ import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.FirebaseConstants;
 import com.integrals.inlens.Helper.PreOperationCheck;
 import com.integrals.inlens.Helper.SnackShow;
-import com.integrals.inlens.MainActivity;
 
 import com.integrals.inlens.R;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class UserNameInfoActivity extends AppCompatActivity {
 
     private DatabaseReference userRef;
     private FirebaseAuth Auth;
 
-    private EditText UserNameEdittext,UserEmailEdittext;
+    private EditText UserNameEdittext, UserAbout;
     private TextView UserNameTextview;
     private ImageButton UserNameDoneButton  ;
     private ImageButton  MyToolbarBackButton;
     private View MyToolbar;
     private RelativeLayout relativeLayout;
-    private String Name,Email;
+    private String Name, About;
 
     private ProgressBar userInfoProgressbar;
 
@@ -120,8 +114,8 @@ public class UserNameInfoActivity extends AppCompatActivity {
                 }
                 if(dataSnapshot.hasChild(FirebaseConstants.EMAIL))
                 {
-                    Email = dataSnapshot.child(FirebaseConstants.EMAIL).getValue().toString();
-                    UserEmailEdittext.setText(Email);
+                    About = dataSnapshot.child(FirebaseConstants.EMAIL).getValue().toString();
+                    UserAbout.setText(About);
                 }
 
                 if(dataSnapshot.hasChild(FirebaseConstants.PROFILEPICTURE))
@@ -164,9 +158,9 @@ public class UserNameInfoActivity extends AppCompatActivity {
 
 
                 Name = UserNameEdittext.getText().toString();
-                Email = UserEmailEdittext.getText().toString();
+                About = UserAbout.getText().toString();
 
-                if(!TextUtils.isEmpty(Name) && !TextUtils.isEmpty(Email) && isEmailValid(Email))
+                if(!TextUtils.isEmpty(Name) && !TextUtils.isEmpty(About))
                 {
                     PreOperationCheck check = new PreOperationCheck();
                     check.hideSoftKeyboard(UserNameInfoActivity.this,UserNameEdittext);
@@ -179,7 +173,7 @@ public class UserNameInfoActivity extends AppCompatActivity {
                             if(task.isSuccessful())
                             {
 
-                                userRef.child("Email").setValue(Email);
+                                userRef.child("Email").setValue(About);
                                 startActivity(new Intent(UserNameInfoActivity.this, SplashScreenActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK).putStringArrayListExtra(AppConstants.USER_ID_LIST, (ArrayList<String>) new ArrayList<String>()));
                                 overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                                 finish();
@@ -202,7 +196,7 @@ public class UserNameInfoActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    if(TextUtils.isEmpty(Name) && TextUtils.isEmpty(Email))
+                    if(TextUtils.isEmpty(Name) && TextUtils.isEmpty(About))
                     {
                         showDialogMessage("Fields Missing","Please type in your username and email.");
                     }
@@ -210,15 +204,11 @@ public class UserNameInfoActivity extends AppCompatActivity {
                     {
                         showDialogMessage("Name Missing","Please type in your username");
                     }
-                    else if(TextUtils.isEmpty(Email))
+                    else if(TextUtils.isEmpty(About))
                     {
                         showDialogMessage("Email Missing","Please type in your email");
                     }
-                    else if(!isEmailValid(Email))
-                    {
-                        showDialogMessage("Invalid Email","Please type in your valid email again ");
 
-                    }
 
                     else
                     {
@@ -232,8 +222,9 @@ public class UserNameInfoActivity extends AppCompatActivity {
             }
         });
 
-
-
+        String phoneNumber=FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber();
+        EditText editText=findViewById(R.id.phone_activity_edittext);
+        editText.setText(phoneNumber);
     }
 
     @Override
@@ -241,7 +232,7 @@ public class UserNameInfoActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
                        CropImage.ActivityResult result = CropImage.getActivityResult(data);
                if (resultCode == RESULT_OK) {
-                   showDialogMessageInfo("Uploading profile picture. Please wait...");
+                   //showDialogMessageInfo("Uploading profile picture. Please wait...");
                    Uri resultUri = result.getUri();
                    final String current_u_i_d = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -264,7 +255,7 @@ public class UserNameInfoActivity extends AppCompatActivity {
                                                        public void onComplete(@NonNull Task<Void> task) {
                                                            if (task.isSuccessful()) {
                                                                {
-                                                                   showDialogMessageSuccess("Successfully uploaded your profile picture.");
+                                                                   //showDialogMessageSuccess("Successfully uploaded your profile picture.");
                                                                    userInfoProgressbar.setVisibility(View.INVISIBLE);
                                                                    UserNameDoneButton.setVisibility(View.VISIBLE);
                                                                }
@@ -322,14 +313,6 @@ public class UserNameInfoActivity extends AppCompatActivity {
         snackShow.showErrorSnack(message);
     }
 
-    public void showDialogMessageSuccess(String message) {
-        SnackShow snackShow=new SnackShow(relativeLayout,UserNameInfoActivity.this);
-        snackShow.showSuccessSnack(message);
-    }
-    public void showDialogMessageInfo(String message) {
-        SnackShow snackShow=new SnackShow(relativeLayout,UserNameInfoActivity.this);
-        snackShow.showInfoSnack(message);
-    }
     @Override
     protected void onStart() {
         super.onStart();
@@ -368,7 +351,7 @@ public class UserNameInfoActivity extends AppCompatActivity {
         UserNameEdittext = findViewById(R.id.user_name_activity_edittext);
         UserNameDoneButton = findViewById(R.id.user_name_activity_done_button);
         UserNameTextview = findViewById(R.id.user_name_activity_textview);
-        UserEmailEdittext= findViewById(R.id.user_email_activity_edittext);
+        UserAbout = findViewById(R.id.user_email_activity_edittext);
         userInfoProgressbar = findViewById(R.id.user_email_activity_progressbar);
         profileImageView = findViewById(R.id.profilepic_update);
         heading = findViewById(R.id.user_name_toolbar).findViewById(R.id.mytoolbar_textview);
@@ -395,10 +378,5 @@ public class UserNameInfoActivity extends AppCompatActivity {
         }
 
     }
-    public static boolean isEmailValid(String email) {
-        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
-        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
-    }
+
 }
