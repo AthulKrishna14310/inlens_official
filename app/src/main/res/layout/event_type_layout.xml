@@ -5,32 +5,56 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="20dp"
     android:background="?attr/default_dim_bg"
-    android:layout_margin="16dp"
-    android:layout_alignParentBottom="true">
+    android:padding="16dp"
+    >
 
-    <ImageButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/event_done_btn"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="end"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="@drawable/circle"
-        android:backgroundTint="?attr/colorPrimary"
-        android:tint="?attr/default_bg_color"
-        android:src="@drawable/ic_closedialog" />
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="16dp"
+        android:text="DONE"
+        android:drawableRight="@drawable/ic_check_black_24dp"
+        android:drawableTint="?attr/colorPrimary"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        android:textColor="?attr/colorPrimary"
+        />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="Select Event Tags"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Select an Event Tag"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
         android:textColor="?attr/colorPrimary"
         android:layout_gravity="center_horizontal"/>
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/event_chipgroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:singleSelection="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
 
+        android:layout_marginTop="16dp">
+    </com.google.android.material.chip.ChipGroup>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="OR"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        android:textColor="?attr/colorPrimary"
+        android:layout_gravity="center_horizontal"/>
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:id="@+id/event_input_edittext_wrapper"
@@ -50,20 +74,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textStyle="normal"
-            android:hint="Add custom tags"
+            android:hint="Add a Custom Tag"
             android:inputType="text"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
             android:id="@+id/event_input_edittext"
             />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/event_chipgroup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="10dp">
-    </com.google.android.material.chip.ChipGroup>
+
 
 </LinearLayout>

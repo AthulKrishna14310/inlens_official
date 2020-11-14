@@ -48,8 +48,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -540,7 +542,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
     private void EventDialogInit() {
 
-        eventDialog = new Dialog(this, android.R.style.Theme_Light_NoTitleBar);
+        eventDialog = new Dialog(CreateCloudAlbum.this);
         eventDialog.setCancelable(true);
         eventDialog.setCanceledOnTouchOutside(false);
         eventDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -556,7 +558,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
         TextInputEditText newTagsTextInputLayout = eventDialog.findViewById(R.id.event_input_edittext);
 
-        final ImageButton EventTypeDone = eventDialog.findViewById(R.id.event_done_btn);
+        final MaterialButton EventTypeDone = eventDialog.findViewById(R.id.event_done_btn);
         ChipGroup chipGroup = eventDialog.findViewById(R.id.event_chipgroup);
         List<String> defaultEvents =new ArrayList<>();
         defaultEvents.add("wedding");
@@ -618,8 +620,8 @@ public class CreateCloudAlbum extends AppCompatActivity {
                 for(Integer id:ids)
                 {
                     Chip chip = chipGroup.findViewById(id);
-                    eventType+=chip.getText()+" ";
-
+                    eventType=chip.getText()+" ";
+                    eventPickerCheckbox.setText(eventType);
                 }
                 eventType.trim();
                 eventDialog.dismiss();
