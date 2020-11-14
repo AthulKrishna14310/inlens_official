@@ -28,12 +28,16 @@ public class AppConstants {
     public static final String REQUEST_LAST_CHECKED="lastChecked";
 
     // SQLite Database public constants
-    public static final String SQLITE_DB_NAME="userImages.db";
-    public static final String SQLITE_TABLE_NAME="userImagesTable";
-    public static final String SQLITE_COLUMN_FIELD_ID="name";
-    public static final String SQLITE_COLUMN_FIELD_URI="uri";
-    public static final String SQLITE_COLUMN_FIELD_QUEUED_TIME ="queuedAt";
+    public static final String UPLOAD_SQLITE_DB_NAME ="userImages.db";
+    public static final String UPLOAD_SQLITE_TABLE_NAME ="userImagesTable";
+    public static final String UPLOAD_SQLITE_COLUMN_FIELD_ID ="name";
+    public static final String UPLOAD_SQLITE_COLUMN_FIELD_URI ="uri";
+    public static final String UPLOAD_SQLITE_COLUMN_FIELD_QUEUED_TIME ="queuedAt";
 
+    // sqlite for tags
+    public static final String TAGS_SQLITE_DB_NAME ="Tags.db";
+    public static final String TAGS_SQLITE_TABLE_NAME ="userTagsTable";
+    public static final String TAGS_SQLITE_COLUMN_FIELD_ID ="TAGS";
     // create intent id
     public static final String NEW_COMMUNITY_ID="newComID";
 }

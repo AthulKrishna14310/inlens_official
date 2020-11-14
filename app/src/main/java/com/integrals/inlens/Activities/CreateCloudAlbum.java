@@ -16,11 +16,14 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -45,8 +48,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -54,6 +62,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.integrals.inlens.Database.TagsQueueDB;
 import com.integrals.inlens.Database.UploadQueueDB;
 import com.integrals.inlens.Helper.AppConstants;
 import com.integrals.inlens.Helper.FirebaseConstants;
@@ -63,6 +72,8 @@ import com.integrals.inlens.MainActivity;
 import com.integrals.inlens.Notification.NotificationHelper;
 import com.integrals.inlens.R;
 import com.integrals.inlens.WorkManager.UploadWorker;
+
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -156,7 +167,6 @@ public class CreateCloudAlbum extends AppCompatActivity {
         photographerRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.PARTICIPANTS);
         communityRef = FirebaseDatabase.getInstance().getReference().child(FirebaseConstants.COMMUNITIES);
 
-        EventDialogInit();
 
         eventPickerCheckbox = findViewById(R.id.EventTypeText);
         albumTitleEditText = (EditText) findViewById(R.id.AlbumTitleEditText);
@@ -263,6 +273,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 eventPickerCheckbox.setChecked(false);
+                EventDialogInit();
                 eventDialog.show();
 
             }
@@ -299,6 +310,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 eventPickerCheckbox.setChecked(false);
+                EventDialogInit();
                 eventDialog.show();
             }
         });
@@ -536,7 +548,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
     private void EventDialogInit() {
 
-        eventDialog = new Dialog(this, android.R.style.Theme_Light_NoTitleBar);
+        eventDialog = new Dialog(CreateCloudAlbum.this);
         eventDialog.setCancelable(true);
         eventDialog.setCanceledOnTouchOutside(false);
         eventDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -544,137 +556,119 @@ public class CreateCloudAlbum extends AppCompatActivity {
         eventDialog.getWindow().getAttributes().windowAnimations = R.style.BottomUpSlideDialogAnimation;
 
         Window EventDialogwindow = eventDialog.getWindow();
-        EventDialogwindow.setGravity(Gravity.BOTTOM);
+        EventDialogwindow.setGravity(Gravity.CENTER);
         EventDialogwindow.setLayout(GridLayout.LayoutParams.MATCH_PARENT, GridLayout.LayoutParams.WRAP_CONTENT);
         EventDialogwindow.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         EventDialogwindow.setDimAmount(0.75f);
 
-        final Button EventWedding = eventDialog.findViewById(R.id.event_type_wedding_btn);
-        final Button EventCeremony = eventDialog.findViewById(R.id.event_type_ceremony_btn);
-        final Button EventOthers = eventDialog.findViewById(R.id.event_type_others_btn);
-        final Button EventParty = eventDialog.findViewById(R.id.event_type_party_btn);
-        final Button EventTravel = eventDialog.findViewById(R.id.event_type_travel_btn);
-        final Button EventHangout = eventDialog.findViewById(R.id.event_type_hangouts_btn);
-        final TextView SelectedEvent = eventDialog.findViewById(R.id.selected_event_type);
 
-        SelectedEvent.setText("Selected Event Type : " + eventType);
+        TextInputEditText newTagsTextInputLayout = eventDialog.findViewById(R.id.event_input_edittext);
 
-        final ImageButton EventTypeDone = eventDialog.findViewById(R.id.event_done_btn);
-
-        if (!TextUtils.isEmpty(eventType)) {
-            EventTypeDone.setVisibility(View.VISIBLE);
-        } else {
-            EventTypeDone.setVisibility(View.INVISIBLE);
-
+        final MaterialButton EventTypeDone = eventDialog.findViewById(R.id.event_done_btn);
+        ChipGroup chipGroup = eventDialog.findViewById(R.id.event_chipgroup);
+        List<String> defaultEvents =new ArrayList<>();
+        defaultEvents.add("wedding");
+        defaultEvents.add("hangouts");
+        defaultEvents.add("ceremony");
+        defaultEvents.add("others");
+        defaultEvents.add("party");
+        defaultEvents.add("travel");
+        List<String> tagEvents=new ArrayList<>();
+        tagEvents.addAll(defaultEvents);
+        TagsQueueDB tagsQueue = new TagsQueueDB(CreateCloudAlbum.this);
+        Cursor tagsCoursor = tagsQueue.getQueuedData();
+        if(tagsCoursor.getCount()>0)
+        {
+            while (tagsCoursor.moveToNext())
+            {
+                String tag=tagsCoursor.getString(0);
+                if(tag.length()>0)
+                {
+                    tagEvents.add(tag);
+                }
+                else
+                {
+                    tagsQueue.deleteData(tag);
+                }
+            }
         }
 
-        EventTypeDone.setOnClickListener(view -> {
+        View.OnClickListener removeChipListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Chip c= (Chip) view;
+                tagsQueue.deleteData(c.getText().toString());
+                chipGroup.removeView(view);
+            }
+        };
 
-            if (!TextUtils.isEmpty(eventType)) {
+        for(String event:tagEvents )
+        {
+            Chip chip = (Chip) LayoutInflater.from(this).inflate(R.layout.chip,null);
+            chip.setText(event);
+            if(!defaultEvents.contains(event))
+            {
+                chip.setOnCloseIconClickListener(removeChipListener);
+            }
+            else
+            {
+                chip.setCloseIconVisible(false);
+            }
+            chipGroup.addView(chip);
+        }
+
+
+
+
+        EventTypeDone.setOnClickListener(view -> {
+            List<Integer> ids = chipGroup.getCheckedChipIds();
+            if (ids.size()>0) {
+                for(Integer id:ids)
+                {
+                    Chip chip = chipGroup.findViewById(id);
+                    eventType=chip.getText()+" ";
+                    eventPickerCheckbox.setText(eventType);
+                }
+                eventType.trim();
                 eventDialog.dismiss();
+                eventTypeSet=true;
+                eventPickerCheckbox.setChecked(true);
             } else {
                 SnackShow snackShow = new SnackShow(rootCreateCloudAlbum, this);
-                snackShow.showErrorSnack("Please select an event type.");
+                snackShow.showErrorSnack("Please select at least one tag.");
             }
 
         });
 
-        EventCeremony.setOnClickListener(view -> {
-
-            EventCeremony.setTextColor(cf_bg_color);
-            eventType = "Ceremony";
-            SelectedEvent.setText("Selected Event Type : " + eventType);
-            if (!TextUtils.isEmpty(eventType)) {
-                EventTypeDone.setVisibility(View.VISIBLE);
-                eventTypeSet = true;
-                eventPickerCheckbox.setChecked(true);
-                eventPickerCheckbox.setText(eventType);
-                eventDialog.dismiss();
-            } else {
-                EventTypeDone.setVisibility(View.GONE);
-
+        newTagsTextInputLayout.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
+                if ((actionId == EditorInfo.IME_ACTION_SEARCH
+                        || actionId == EditorInfo.IME_ACTION_DONE
+                        || event.getAction() == KeyEvent.ACTION_DOWN
+                        && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) && newTagsTextInputLayout.getText().toString().length()>0) {
+                    TagsQueueDB tagsQueueDB = new TagsQueueDB(CreateCloudAlbum.this);
+                    if(tagsQueueDB.insertData(newTagsTextInputLayout.getText().toString().toLowerCase()))
+                    {
+                        Chip chip = (Chip) LayoutInflater.from(CreateCloudAlbum.this).inflate(R.layout.chip,null);
+                        chip.setText(newTagsTextInputLayout.getText().toString().toLowerCase());
+                        chip.setOnCloseIconClickListener(removeChipListener);
+                        chip.setChecked(true);
+                        chipGroup.addView(chip);
+                    }
+                    newTagsTextInputLayout.setText("");
+                    tagsQueueDB.close();
+                    return true;
+                }
+                else if(newTagsTextInputLayout.getText().toString().length()==0)
+                {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(newTagsTextInputLayout.getWindowToken(),0);
+                }
+                return false;
             }
         });
 
-        EventWedding.setOnClickListener(view -> {
-
-            eventType = "Wedding";
-            SelectedEvent.setText("Selected Event Type : " + eventType);
-            if (!TextUtils.isEmpty(eventType)) {
-                EventTypeDone.setVisibility(View.VISIBLE);
-                eventTypeSet = true;
-                eventPickerCheckbox.setChecked(true);
-                eventPickerCheckbox.setText(eventType);
-                eventDialog.dismiss();
-            } else {
-                EventTypeDone.setVisibility(View.GONE);
-
-            }
-        });
-
-        EventOthers.setOnClickListener(view -> {
-
-            eventType = "Others";
-            SelectedEvent.setText("Selected Event Type : " + eventType);
-            if (!TextUtils.isEmpty(eventType)) {
-                EventTypeDone.setVisibility(View.VISIBLE);
-                eventTypeSet = true;
-                eventPickerCheckbox.setChecked(true);
-                eventPickerCheckbox.setText(eventType);
-                eventDialog.dismiss();
-            } else {
-                EventTypeDone.setVisibility(View.GONE);
-
-            }
-        });
-
-        EventParty.setOnClickListener(view -> {
-
-            eventType = "Party";
-            SelectedEvent.setText("Selected Event Type : " + eventType);
-            if (!TextUtils.isEmpty(eventType)) {
-                EventTypeDone.setVisibility(View.VISIBLE);
-                eventTypeSet = true;
-                eventPickerCheckbox.setChecked(true);
-                eventPickerCheckbox.setText(eventType);
-                eventDialog.dismiss();
-            } else {
-                EventTypeDone.setVisibility(View.GONE);
-
-            }
-        });
-
-        EventTravel.setOnClickListener(view -> {
-
-            eventType = "Travel";
-            SelectedEvent.setText("Selected Event Type : " + eventType);
-            if (!TextUtils.isEmpty(eventType)) {
-                EventTypeDone.setVisibility(View.VISIBLE);
-                eventTypeSet = true;
-                eventPickerCheckbox.setChecked(true);
-                eventPickerCheckbox.setText(eventType);
-                eventDialog.dismiss();
-            } else {
-                EventTypeDone.setVisibility(View.GONE);
-
-            }
-        });
-
-        EventHangout.setOnClickListener(view -> {
-
-            eventType = "Hangouts";
-            SelectedEvent.setText("Selected Event Type : " + eventType);
-            if (!TextUtils.isEmpty(eventType)) {
-                EventTypeDone.setVisibility(View.VISIBLE);
-                eventTypeSet = true;
-                eventPickerCheckbox.setChecked(true);
-                eventPickerCheckbox.setText(eventType);
-                eventDialog.dismiss();
-            } else {
-                EventTypeDone.setVisibility(View.GONE);
-
-            }
-        });
 
 
     }
