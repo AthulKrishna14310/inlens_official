@@ -35,8 +35,7 @@
                     android:layout_height="wrap_content"
                     android:textAlignment="textStart"
                     android:text="@string/new_album"
-                    android:textAllCaps="true"
-
+                    android:textStyle="bold"
                     android:background="?attr/default_dim_bg"
                     android:textColor="?attr/colorPrimary"
                     android:fontFamily="@font/montserrat"

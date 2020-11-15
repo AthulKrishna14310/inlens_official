@@ -297,7 +297,7 @@ public class MainActivity extends AppCompatActivity implements
                 else
                 {
                     //Expanded
-                   mainAddPhotosFab.extend();
+                    mainAddPhotosFab.extend();
 
                 }
             }
@@ -660,7 +660,7 @@ public class MainActivity extends AppCompatActivity implements
                 } else {
                     if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
                         optionsBottomSheetFragment.show(((FragmentActivity) MainActivity.this).getSupportFragmentManager(), optionsBottomSheetFragment.getTag());
-                     }
+                    }
                     else{
                         showLeaveAlert();
                     }
@@ -957,7 +957,7 @@ public class MainActivity extends AppCompatActivity implements
             if (appTheme.equals(AppConstants.themeLight)) {
                 TapTargetView.showFor(MainActivity.this,
                         TapTarget.forView(findViewById(R.id.plus_button),
-                            "Tap to add new album","")
+                                "Tap to add new album","")
                                 .outerCircleColor(R.color.grey_10)
                                 .outerCircleAlpha(0.45f)
                                 .targetCircleColor(R.color.colorLightPrimary)
@@ -971,58 +971,58 @@ public class MainActivity extends AppCompatActivity implements
                                 .tintTarget(false)
                                 .transparentTarget(true)
                                 .targetRadius(20),
-                                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
-                                @Override
-                                public void onTargetClick(TapTargetView view) {
+                        new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                            @Override
+                            public void onTargetClick(TapTargetView view) {
                                 super.onTargetClick(view);
                                 if (checkIfImagesAreQueued()) {
-                                provideQueueOptions(rootForMainActivity);
-                               } else {
-                                if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
-                                    optionsBottomSheetFragment.show(((FragmentActivity) MainActivity.this).getSupportFragmentManager(), optionsBottomSheetFragment.getTag());
-                                }
-                                else{
-                                    showLeaveAlert();
+                                    provideQueueOptions(rootForMainActivity);
+                                } else {
+                                    if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
+                                        optionsBottomSheetFragment.show(((FragmentActivity) MainActivity.this).getSupportFragmentManager(), optionsBottomSheetFragment.getTag());
+                                    }
+                                    else{
+                                        showLeaveAlert();
+                                    }
                                 }
                             }
-                        }
-                    });
+                        });
             } else {
-                        TapTargetView.showFor(MainActivity.this,
+                TapTargetView.showFor(MainActivity.this,
                         TapTarget.forView(findViewById(R.id.plus_button),
-                            "Tap to add new album","")
-                            .outerCircleColor(R.color.grey_10)
-                            .outerCircleAlpha(0.45f)
-                            .targetCircleColor(R.color.colorDarkPrimary)
-                            .titleTextSize(20)
-                            .titleTextColor(R.color.colorDarkPrimaryDark)
-                            .textColor(R.color.colorDarkPrimaryDark)
-                            .textTypeface(Typeface.DEFAULT_BOLD)
-                            .dimColor(R.color.grey_500)
-                            .drawShadow(true)
-                            .cancelable(true)
-                            .tintTarget(false)
-                            .transparentTarget(true)
-                            .targetRadius(20),
+                                "Tap to add new album","")
+                                .outerCircleColor(R.color.grey_10)
+                                .outerCircleAlpha(0.45f)
+                                .targetCircleColor(R.color.colorDarkPrimary)
+                                .titleTextSize(20)
+                                .titleTextColor(R.color.colorDarkPrimaryDark)
+                                .textColor(R.color.colorDarkPrimaryDark)
+                                .textTypeface(Typeface.DEFAULT_BOLD)
+                                .dimColor(R.color.grey_500)
+                                .drawShadow(true)
+                                .cancelable(true)
+                                .tintTarget(false)
+                                .transparentTarget(true)
+                                .targetRadius(20),
                         new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
-                        @Override
-                        public void onTargetClick(TapTargetView view) {
-                            super.onTargetClick(view);
-                            if (checkIfImagesAreQueued()) {
-                                provideQueueOptions(rootForMainActivity);
-                            } else {
-                                if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
-                                    optionsBottomSheetFragment.show(((FragmentActivity) MainActivity.this).getSupportFragmentManager(), optionsBottomSheetFragment.getTag());
-                                }
-                                else{
-                                    showLeaveAlert();
+                            @Override
+                            public void onTargetClick(TapTargetView view) {
+                                super.onTargetClick(view);
+                                if (checkIfImagesAreQueued()) {
+                                    provideQueueOptions(rootForMainActivity);
+                                } else {
+                                    if (currentActiveCommunityID.equals(AppConstants.NOT_AVALABLE)) {
+                                        optionsBottomSheetFragment.show(((FragmentActivity) MainActivity.this).getSupportFragmentManager(), optionsBottomSheetFragment.getTag());
+                                    }
+                                    else{
+                                        showLeaveAlert();
+                                    }
                                 }
                             }
-                        }
-                    });
-                    }
-                    e.putString("isShown","YES");
-                    e.apply();
+                        });
+            }
+            e.putString("isShown","YES");
+            e.apply();
 
         }else{
 
@@ -1261,7 +1261,7 @@ public class MainActivity extends AppCompatActivity implements
                                 String dateformat = DateFormat.format("dd-MM-yyyy", date).toString();
                                 helper.displayAlbumStartNotification(notificationStr, "Tap here to upload recent photos directly");
 
-                              }
+                            }
 
                             if (dataSnapshot.hasChild(FirebaseConstants.COMMUNITYENDTIME)) {
                                 String endtime = dataSnapshot.child(FirebaseConstants.COMMUNITYENDTIME).getValue().toString();
@@ -1393,7 +1393,7 @@ public class MainActivity extends AppCompatActivity implements
         try {
             if (userCommunityIdList.size() == 0) {
                 expandableCardView.setVisibility(View.GONE);
-               } else {
+            } else {
                 expandableCardView.setVisibility(View.VISIBLE);
             }
 
@@ -2265,16 +2265,16 @@ public class MainActivity extends AppCompatActivity implements
                                                         SnackShow snackShow=new SnackShow(rootForMainActivity,MainActivity.this);
                                                         snackShow.showSuccessSnack("Successfully left. ");
 
-                                                       try {
-                                                           if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
-                                                               photographerList.remove(0);
-                                                               participantsAdapter.notifyDataSetChanged();
-                                                           }
-                                                       }
-                                                       catch (Exception e)
-                                                       {
-                                                           Log.i("Exception","error "+e+"line 1941");
-                                                       }
+                                                        try {
+                                                            if (photographerList.get(0).getImgUrl().equals("add") && photographerList.get(0).getId().equals("add") && photographerList.get(0).getName().equals("add")) {
+                                                                photographerList.remove(0);
+                                                                participantsAdapter.notifyDataSetChanged();
+                                                            }
+                                                        }
+                                                        catch (Exception e)
+                                                        {
+                                                            Log.i("Exception","error "+e+"line 1941");
+                                                        }
                                                         //SetDefaultView();
 
                                                     } else {
@@ -2509,7 +2509,7 @@ public class MainActivity extends AppCompatActivity implements
                         }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                          showDialogMessageError(""+e.getMessage());
+                        showDialogMessageError(""+e.getMessage());
                     }
                 });
 
@@ -2545,47 +2545,47 @@ public class MainActivity extends AppCompatActivity implements
 
                     if (task.isSuccessful()) {
 
-                       FilePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                           @Override
-                           public void onSuccess(Uri uri) {
-                               FirebaseDatabase.getInstance().getReference()
-                                       .child("Communities")
-                                       .child(PostKeyForEdit)
-                                       .child("coverimage")
-                                       .setValue(uri.toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                   @Override
-                                   public void onComplete(@NonNull Task<Void> task) {
-                                       if (task.isSuccessful()) {
-                                           //MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-                                           //showDialogMessageSuccess("Successfully uploaded the cover photo.");
-                                           progressBar.setVisibility(View.GONE);
-                                           getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                                           getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-                                           getWindow().setDimAmount(0);
-                                           communityDataList.get(position).setCoverImage(uri.toString());
-                                           mainHorizontalAdapter.notifyItemChanged(position);
-                                       } else {
-                                           // MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
-                                           progressBar.setVisibility(View.GONE);
-                                           getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                                           getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-                                           getWindow().setDimAmount(0);
+                        FilePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                FirebaseDatabase.getInstance().getReference()
+                                        .child("Communities")
+                                        .child(PostKeyForEdit)
+                                        .child("coverimage")
+                                        .setValue(uri.toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            //MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
+                                            //showDialogMessageSuccess("Successfully uploaded the cover photo.");
+                                            progressBar.setVisibility(View.GONE);
+                                            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                                            getWindow().setDimAmount(0);
+                                            communityDataList.get(position).setCoverImage(uri.toString());
+                                            mainHorizontalAdapter.notifyItemChanged(position);
+                                        } else {
+                                            // MainBottomSheetAlbumCoverEditprogressBar.setVisibility(View.INVISIBLE);
+                                            progressBar.setVisibility(View.GONE);
+                                            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                                            getWindow().setDimAmount(0);
 
-                                       }
-                                   }
-                               });
+                                        }
+                                    }
+                                });
 
-                           }
-                       }).addOnFailureListener(new OnFailureListener() {
-                           @Override
-                           public void onFailure(@NonNull Exception e) {
-                               progressBar.setVisibility(View.GONE);
-                               getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                               getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-                               getWindow().setDimAmount(0);
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                progressBar.setVisibility(View.GONE);
+                                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                                getWindow().setDimAmount(0);
 
-                           }
-                       });
+                            }
+                        });
 
 
                     } else {
@@ -2705,8 +2705,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void showDialogMessageError(String message) {
-       SnackShow snackShow=new SnackShow(rootForMainActivity,MainActivity.this);
-       snackShow.showErrorSnack(message);
+        SnackShow snackShow=new SnackShow(rootForMainActivity,MainActivity.this);
+        snackShow.showErrorSnack(message);
     }
 
     public void showDialogMessageSuccess(String message) {
@@ -2842,27 +2842,27 @@ public class MainActivity extends AppCompatActivity implements
 
                     viewHolder.PostProgressbar.setVisibility(View.VISIBLE);
 
-                        Glide.with(activity)
-                                .load(PostList.get(position).getUri())
-                                .apply(reqOpt)
-                                .listener(new RequestListener<Drawable>() {
-                                    @Override
-                                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                        viewHolder.PostProgressbar.setVisibility(View.GONE);
-                                        viewHolder.postRefresButton.setVisibility(View.VISIBLE);
-                                        return false;
-                                    }
+                    Glide.with(activity)
+                            .load(PostList.get(position).getUri())
+                            .apply(reqOpt)
+                            .listener(new RequestListener<Drawable>() {
+                                @Override
+                                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                    viewHolder.PostProgressbar.setVisibility(View.GONE);
+                                    viewHolder.postRefresButton.setVisibility(View.VISIBLE);
+                                    return false;
+                                }
 
-                                    @Override
-                                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                                        viewHolder.PostProgressbar.setVisibility(View.GONE);
-                                        viewHolder.postRefresButton.setVisibility(View.GONE);
-                                        return false;
-                                    }
+                                @Override
+                                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                    viewHolder.PostProgressbar.setVisibility(View.GONE);
+                                    viewHolder.postRefresButton.setVisibility(View.GONE);
+                                    return false;
+                                }
 
-                                })
-                                .into(viewHolder.PostImageView);
-                        holder.itemView.setOnClickListener(new View.OnClickListener() {
+                            })
+                            .into(viewHolder.PostImageView);
+                    holder.itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
 
@@ -3007,11 +3007,29 @@ public class MainActivity extends AppCompatActivity implements
                                         return false;
                                     }
                                 }).into(viewHolder.AlbumCoverButton);
-                    } else if (communityDetails.get(position).getType().contentEquals("Others")) {
+                    }else if (communityDetails.get(position).getType().contentEquals("Party")) {
+                        Glide.with(activity)
+                                .load(communityDetails.get(position)
+                                        .getCoverImage()).placeholder(R.drawable.ic_others_foreground).addListener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+
+
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                return false;
+                            }
+                        }).into(viewHolder.AlbumCoverButton);
+                    } else {
 
                         Glide.with(activity)
                                 .load(communityDetails.get(position)
-                                        .getCoverImage()).addListener(new RequestListener<Drawable>() {
+                                        .getCoverImage()).
+                                placeholder(R.drawable.ic_party_foreground)
+                                .addListener(new RequestListener<Drawable>() {
                             @Override
                             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
 
@@ -3025,22 +3043,6 @@ public class MainActivity extends AppCompatActivity implements
                         }).into(viewHolder.AlbumCoverButton);
 
 
-                    } else if (communityDetails.get(position).getType().contentEquals("Party")) {
-                        Glide.with(activity)
-                                .load(communityDetails.get(position)
-                                        .getCoverImage()).placeholder(R.drawable.ic_party_foreground).addListener(new RequestListener<Drawable>() {
-                            @Override
-                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-
-
-                                return false;
-                            }
-
-                            @Override
-                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                                return false;
-                            }
-                        }).into(viewHolder.AlbumCoverButton);
                     }
 
 

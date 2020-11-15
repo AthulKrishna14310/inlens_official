@@ -200,6 +200,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                 );
                 dialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
                 dialog.getDatePicker().setMaxDate(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 4);
+
                 dialog.setOnCancelListener(dialogInterface -> {
                     albumTime = "";
                     dateofCompletionCheckbox.setChecked(false);
@@ -567,12 +568,11 @@ public class CreateCloudAlbum extends AppCompatActivity {
         final MaterialButton EventTypeDone = eventDialog.findViewById(R.id.event_done_btn);
         ChipGroup chipGroup = eventDialog.findViewById(R.id.event_chipgroup);
         List<String> defaultEvents =new ArrayList<>();
-        defaultEvents.add("wedding");
-        defaultEvents.add("hangouts");
-        defaultEvents.add("ceremony");
-        defaultEvents.add("others");
-        defaultEvents.add("party");
-        defaultEvents.add("travel");
+        defaultEvents.add("Hangouts");
+        defaultEvents.add("Party");
+        defaultEvents.add("Ceremony");
+        defaultEvents.add("Reunion");
+        defaultEvents.add("Travel");
         List<String> tagEvents=new ArrayList<>();
         tagEvents.addAll(defaultEvents);
         TagsQueueDB tagsQueue = new TagsQueueDB(CreateCloudAlbum.this);
@@ -626,7 +626,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
                 for(Integer id:ids)
                 {
                     Chip chip = chipGroup.findViewById(id);
-                    eventType=chip.getText()+" ";
+                    eventType=chip.getText()+"";
                     eventPickerCheckbox.setText(eventType);
                 }
                 eventType.trim();

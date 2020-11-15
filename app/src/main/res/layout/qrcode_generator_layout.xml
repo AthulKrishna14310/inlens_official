@@ -23,11 +23,26 @@
             android:textAlignment="textStart"
             android:layout_marginBottom="8dp"
             android:fontFamily="@font/montserrat"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textStyle="bold"
             android:text="@string/add_photographers"
             android:textColor="?attr/colorPrimary"
             />
-
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:drawableLeft="@drawable/ic_group_add"
+            android:drawableTint="?attr/colorPrimary"
+            android:layout_height="wrap_content"
+            android:textAlignment="textStart"
+            android:layout_marginBottom="8dp"
+            android:layout_below="@+id/textv"
+            android:fontFamily="@font/montserrat"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textStyle="bold"
+            android:text="@string/add_photographers"
+            android:textColor="?attr/colorPrimary"
+            />
         <ImageButton
             android:id="@+id/QR_dialog_closebtn"
             android:layout_width="24dp"
