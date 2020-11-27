@@ -45,6 +45,7 @@ public class PhotographerFragementBottomSheetAdmin extends BottomSheetDialogFrag
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
     @Nullable
@@ -58,14 +59,12 @@ public class PhotographerFragementBottomSheetAdmin extends BottomSheetDialogFrag
             if(themePref.getString(AppConstants.appDataPref_theme,AppConstants.themeLight).equals(AppConstants.themeLight))
             {
                 ContextWrapper contextWrapper = new ContextWrapper(context);
-                contextWrapper.setTheme(R.style.AppTheme);
                 view= inflater.cloneInContext(contextWrapper).inflate(R.layout.photographer_display_layout_admin, container, false);
 
             }
             else
             {
                 ContextWrapper contextWrapper = new ContextWrapper(context);
-                contextWrapper.setTheme(R.style.DarkTheme);
                 view = inflater.cloneInContext(contextWrapper).inflate(R.layout.photographer_display_layout_admin, container, false);
 
             }
@@ -73,7 +72,6 @@ public class PhotographerFragementBottomSheetAdmin extends BottomSheetDialogFrag
         else
         {
             ContextWrapper contextWrapper = new ContextWrapper(context);
-            contextWrapper.setTheme(R.style.AppTheme);
             view= inflater.cloneInContext(contextWrapper).inflate(R.layout.photographer_display_layout_admin, container, false);
 
         }

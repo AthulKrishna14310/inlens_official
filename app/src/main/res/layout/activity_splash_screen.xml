@@ -7,48 +7,15 @@
     android:background="?attr/default_bg_color"
     tools:context=".Activities.SplashScreenActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text="@string/app_name"
-        android:layout_below="@id/appicon"
-        android:id="@+id/inlens"
-        android:padding="8dp"
-        android:textStyle="bold"
-        android:fontFamily="@font/montserrat"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-        android:textColor="?attr/colorPrimary"/>
-
-    <ProgressBar
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_above="@+id/desc"
-        android:alpha="0.8"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="8dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text="Shared Cloud-Albums"
-
-        android:textStyle="normal"
-        android:id="@+id/desc"
-        android:layout_alignParentBottom="true"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-        android:alpha="0.8"
-        android:layout_marginBottom="8dp"
-        android:textColor="?attr/colorPrimary"/>
 
     <ImageView
         android:id="@+id/appicon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="140dp"
-        android:tint="?attr/colorPrimary"
+
+        android:layout_centerVertical="true"
+
         android:src="@mipmap/ic_launcher_foreground" />
 
 

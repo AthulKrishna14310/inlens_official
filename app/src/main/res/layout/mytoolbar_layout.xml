@@ -11,7 +11,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:background="?attr/default_dim_bg"
+        android:background="?attr/default_bg_color"
         >
         <ImageButton
             android:id="@+id/mytoolbar_back_button"
@@ -28,7 +28,7 @@
             android:id="@+id/mytoolbar_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            style="@style/TextAppearance.MaterialComponents.Headline6"
             android:text="@string/app_name"
             android:fontFamily="@font/montserrat"
             android:textStyle="bold"

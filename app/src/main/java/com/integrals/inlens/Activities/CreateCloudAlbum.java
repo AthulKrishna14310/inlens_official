@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
@@ -31,6 +33,7 @@ import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -249,23 +252,7 @@ public class CreateCloudAlbum extends AppCompatActivity {
 
         submitButton.setOnClickListener(v -> {
 
-            Cursor cursor = new UploadQueueDB(CreateCloudAlbum.this).getQueuedData();
-            if (cursor.getCount() > 0) {
-                provideQueueOptions(rootCreateCloudAlbum);
-            } else {
-                if (eventTypeSet && albumDateSet) {
-                    if (!new PreOperationCheck().checkInternetConnectivity(getApplicationContext())) {
-                        showDialogue("No Internet.", false);
-
-                    } else {
-                        uploadNewAlbumData(travelBackInTime, startTime);
-
-                    }
-                } else {
-                    SnackShow snackShow = new SnackShow(rootCreateCloudAlbum, this);
-                    snackShow.showErrorSnack("Please fill all the fields to create your Cloud-Album");
-                }
-            }
+            createAlbum();
 
 
         });
@@ -452,10 +439,63 @@ public class CreateCloudAlbum extends AppCompatActivity {
                 });
 
 
+            }else if (str.contentEquals("Instant")){
+
+
+                rootCreateCloudAlbum.setVisibility(View.INVISIBLE);
+
+                ProgressBar progressBar;
+                LinearLayout layout = new LinearLayout(this);
+                layout.setOrientation(LinearLayout.VERTICAL);
+
+                progressBar = new ProgressBar(CreateCloudAlbum.this,null,android.R.attr.progressBarStyle);
+                progressBar.setIndeterminate(true);
+                progressBar.setVisibility(View.VISIBLE);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.gravity=Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL;
+                params.weight=1.0f;
+                layout.addView(progressBar,params);
+                TextView t=new TextView(this);
+                setContentView(layout);
+                eventPickerCheckbox.setChecked(true);
+                dateofCompletionCheckbox.setChecked(true);
+                eventType="Instant";
+                eventTypeSet=true;
+                albumDateSet=true;
+                Calendar c = Calendar.getInstance();
+                SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");// HH:mm:ss");
+                String reg_date = df.format(c.getTime());
+                c.add(Calendar.DATE, 2);  // number of days to add
+                String end_date = df.format(c.getTime());
+                albumTitleEditText.setText("@ "+reg_date);
+                albumDescEditText.setText("New Instant Album for your event");
+
+                albumTime=end_date;
+                createAlbum();
             }
         } catch (NullPointerException e) {
             e.printStackTrace();
 
+        }
+    }
+
+    private void createAlbum() {
+        Cursor cursor = new UploadQueueDB(CreateCloudAlbum.this).getQueuedData();
+        if (cursor.getCount() > 0) {
+            provideQueueOptions(rootCreateCloudAlbum);
+        } else {
+            if (eventTypeSet && albumDateSet) {
+                if (!new PreOperationCheck().checkInternetConnectivity(getApplicationContext())) {
+                    showDialogue("No Internet.", false);
+
+                } else {
+                    uploadNewAlbumData(travelBackInTime, startTime);
+
+                }
+            } else {
+                SnackShow snackShow = new SnackShow(rootCreateCloudAlbum, this);
+                snackShow.showErrorSnack("Please fill all the fields to create your Cloud-Album");
+            }
         }
     }
 

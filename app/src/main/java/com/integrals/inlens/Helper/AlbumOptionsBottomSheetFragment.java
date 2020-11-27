@@ -34,20 +34,20 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 @SuppressLint("ValidFragment")
 public class AlbumOptionsBottomSheetFragment extends BottomSheetDialogFragment {
     Button createLayout;
+    Button instantAlbum;
     RelativeLayout scanLayout;
     ImageButton scanImageButton,createImageButton;
     ImageView imageQR;
     Activity activity;
     FirebaseAuth firebaseAuth;
 
-    public interface IScanCallback
-    {
-        void scanQR();
-    }
+
 
     public interface  ICreateCallback
     {
         void createAlbum();
+
+        void createInstantAlbum();
     }
 
     public interface  IDismissDialog
@@ -55,13 +55,11 @@ public class AlbumOptionsBottomSheetFragment extends BottomSheetDialogFragment {
         void dismissDialog();
     }
 
-    IScanCallback scanCallback;
     ICreateCallback createCallback;
     IDismissDialog dismissDialog;
 
     public AlbumOptionsBottomSheetFragment(Activity activity) {
         this.activity = activity;
-        scanCallback = (IScanCallback) activity;
         createCallback = (ICreateCallback) activity;
         dismissDialog = (IDismissDialog) activity;
         firebaseAuth=FirebaseAuth.getInstance();
@@ -105,7 +103,17 @@ public class AlbumOptionsBottomSheetFragment extends BottomSheetDialogFragment {
         createLayout = albumOptionsView.findViewById(R.id.option_create_layout);
         scanImageButton = albumOptionsView.findViewById(R.id.main_horizontal_scan_button);
         imageQR=albumOptionsView.findViewById(R.id.QR_Display);
+        instantAlbum=albumOptionsView.findViewById(R.id.option_create_layout_instant);
 
+        instantAlbum.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                createCallback.createInstantAlbum();
+                dismissDialog.dismissDialog();
+
+            }
+        });
         scanLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -122,13 +130,7 @@ public class AlbumOptionsBottomSheetFragment extends BottomSheetDialogFragment {
                 dismissDialog.dismissDialog();
             }
         });
-        scanImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                scanCallback.scanQR();
-                dismissDialog.dismissDialog();
-            }
-        });
+
 
         final MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
         BitMatrix bitMatrix = null;

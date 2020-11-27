@@ -6,12 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/phoneAuth"
+    android:background="?attr/default_bg_color"
     tools:context=".Activities.PhoneAuth">
     <com.google.android.material.textview.MaterialTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
         android:textColor="?attr/colorPrimary"
+        style="@style/TextAppearance.MaterialComponents.Headline4"
         android:text="Sign in"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="24dp"
@@ -20,7 +21,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/title"
+        android:layout_alignParentBottom="true"
+
         >
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
@@ -35,18 +37,20 @@
             />
         <View
             android:layout_width="match_parent"
-            android:layout_height="4dp"
+            android:layout_height="40dp"
             android:layout_below="@id/featureText"
             android:background="?attr/image_bg_color"
             />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:id="@+id/auth_next_button"
+            app:iconSize="24dp"
+            app:iconPadding="16dp"
             android:layout_marginRight="16dp"
-            android:layout_centerVertical="true"
+            android:layout_marginBottom="16dp"
             app:icon="@drawable/ic_arrow_forward"
             app:iconTint="?attr/default_bg_color"
             app:backgroundTint="?attr/colorPrimary"/>
@@ -58,14 +62,14 @@
         android:id="@+id/signintxtlayout"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="40dp"
         android:layout_below="@id/title"
         android:orientation="vertical"
         >
     <com.google.android.material.textview.MaterialTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        style="@style/TextAppearance.MaterialComponents.Headline6"
         android:textColor="?attr/colorPrimary"
         android:text="Phone Number"
         android:id="@+id/signintxt"
@@ -127,31 +131,5 @@
     </RelativeLayout>
 
 </com.google.android.material.textfield.TextInputLayout>
-<LinearLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_centerHorizontal="true"
-    android:layout_alignParentBottom="true"
-    android:layout_marginBottom="16dp"
-    android:orientation="vertical"
-    >
-    <ImageView
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_weight="1"
-        android:layout_gravity="center_horizontal"
-        android:src="@mipmap/ic_launcher"
-        ></ImageView>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="By Team-InLens"
-        android:textColor="?attr/colorPrimary"
-        android:alpha="1"
-
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-        ></TextView>
-
-</LinearLayout>
 
 </RelativeLayout>

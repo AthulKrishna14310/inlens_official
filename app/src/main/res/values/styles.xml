@@ -27,7 +27,8 @@
         <item name="image_bg_color">@color/Light_image_bg_color</item>
         <item name="action_menu">@color/Light_actionMenuTextColor</item>
         <item name="otpViewStyle">@style/OtpWidget.OtpView</item>
-     </style>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
+    </style>
 
     <style name="DarkTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:windowLightStatusBar">false</item>
@@ -54,6 +55,8 @@
         <item name="image_bg_color">@color/Dark_image_bg_color</item>
         <item name="action_menu">@color/Dark_actionMenuTextColor</item>
         <item name="otpViewStyle">@style/OtpWidget.OtpView</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
+
 
     </style>
 
@@ -139,16 +142,19 @@
         <item name="android:background">@color/black_overlay</item>
     </style>
 
-    <style name="BottomSheet" parent="@style/Widget.Design.BottomSheet.Modal">
-        <item name="android:background">@drawable/rounded_bottom_sheet_drawable</item>
+    <style name="AppBottomSheetDialogTheme"
+        parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/AppModalStyle</item>
+
+
     </style>
 
-    <style name="BaseBottomSheetDialog" parent="@style/Theme.Design.Light.BottomSheetDialog">
-        <item name="android:windowIsFloating">false</item>
-        <item name="bottomSheetStyle">@style/BottomSheet</item>
-    </style>
+    <style name="AppModalStyle"
+        parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/curved_corners</item>
 
-    <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog" />
+
+    </style>
 
     <style name="tooltip" parent="AppTheme">
 

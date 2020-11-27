@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/verify_layout"
+    android:background="?attr/default_bg_color"
     tools:context=".Activities.PhoneAuth">
 
     <com.google.android.material.textview.MaterialTextView
@@ -16,36 +17,38 @@
         android:layout_marginTop="24dp"
         android:fontFamily="@font/montserrat"
         android:text="Verify"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
+        style="@style/TextAppearance.MaterialComponents.Headline4"
         android:textColor="?attr/colorPrimary" />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/title"
+        android:layout_alignParentBottom="true"
+        android:background="?attr/image_bg_color"
         >
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="?attr/default_bg_color"
+
+            />
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Time out"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+            style="@style/TextAppearance.MaterialComponents.Subtitle1"
             android:id="@+id/timeoutText"
             android:layout_marginLeft="16dp"
+            />
 
-            />
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="4dp"
-            android:layout_centerVertical="true"
-            android:background="?attr/image_bg_color"
-            android:id="@+id/view"
-            />
+
 
         <RelativeLayout
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:layout_alignParentRight="true"
             android:layout_marginRight="16dp"
-            android:layout_centerVertical="true"
+            android:layout_marginBottom="16dp"
             android:elevation="8dp"
             android:background="@drawable/circle_primary">
             <ImageButton
@@ -87,12 +90,12 @@
             android:layout_gravity="center_horizontal"
             android:background="@drawable/ic_verify_otp"
             android:backgroundTint="?attr/colorPrimary"
-            android:layout_below="@+id/view"
+
             />
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+            style="@style/TextAppearance.MaterialComponents.Subtitle1"
             android:textColor="?attr/colorPrimary"
             android:text="Please enter the otp"
             android:id="@+id/signintxt"
@@ -132,7 +135,7 @@
                 app:itemWidth="48dp"
                 android:hint="******"
                 android:layout_centerHorizontal="true"
-                android:itemBackground="?attr/default_bg_color"
+                android:itemBackground="?attr/image_bg_color"
                 app:hideLineWhenFilled="true"
                 app:itemCount="6"
                 app:lineColor="?attr/colorPrimary"
@@ -154,31 +157,5 @@
         </RelativeLayout>
 
     </com.google.android.material.textfield.TextInputLayout>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="16dp"
-        android:orientation="vertical"
-        >
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_weight="1"
-            android:layout_gravity="center_horizontal"
-            android:src="@mipmap/ic_launcher"
-            ></ImageView>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="By Team-InLens"
-            android:textColor="?attr/colorPrimary"
-            android:alpha="1"
-
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-            ></TextView>
-
-    </LinearLayout>
 
 </RelativeLayout>

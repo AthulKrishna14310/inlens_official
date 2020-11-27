@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="?attr/default_dim_bg">
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+    app:behavior_hideable="true"
+    android:background="@drawable/curved_corners">
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="?attr/default_dim_bg"
+        android:background="@drawable/curved_corners"
         >
         <ImageButton
             android:layout_width="wrap_content"
@@ -39,7 +41,7 @@
             android:background="?attr/default_dim_bg"
             android:text="Album Header"
             android:textStyle="bold"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+            style="@style/TextAppearance.MaterialComponents.Headline5"
             android:textColor="?attr/colorSecondary"/>
 
         <TextView
@@ -50,7 +52,7 @@
             android:textColor="?attr/colorPrimary"
             android:layout_margin="1dp"
             android:background="?attr/default_dim_bg"
-            android:textSize="12sp"
+            style="@style/TextAppearance.MaterialComponents.Subtitle2"
             android:alpha="0.6"
             android:textAlignment="center"
             android:textStyle="bold" />
@@ -72,12 +74,12 @@
                 android:layout_height="wrap_content"
                 android:text="Album subtitle"
                 android:textStyle="bold"
+                style="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:layout_marginTop="6dp"
                 android:background="?attr/default_dim_bg"
                 android:layout_marginBottom="6dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:textColor="?attr/colorSecondary"
                 />
 
@@ -106,7 +108,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="?attr/default_dim_bg"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+                    style="@style/TextAppearance.MaterialComponents.Subtitle2"
                     android:gravity="center"
                     android:inputType="text"
                     android:text="typw"
@@ -131,8 +133,8 @@
                     android:inputType="text"
                     android:text="Started at -"
                     android:textColor="?attr/colorSecondary"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-                    />
+                    style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                     />
 
                 <TextView
                     android:id="@+id/albumstartdate"
@@ -140,7 +142,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="?attr/default_dim_bg"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+                    style="@style/TextAppearance.MaterialComponents.Subtitle2"
                     android:gravity="center"
                     android:inputType="text"
                     android:text="start"
@@ -161,7 +163,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="?attr/default_dim_bg"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+                    style="@style/TextAppearance.MaterialComponents.Subtitle2"
                     android:gravity="center"
                     android:inputType="text"
                     android:text="End -"
@@ -174,7 +176,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="?attr/default_dim_bg"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+                    style="@style/TextAppearance.MaterialComponents.Subtitle2"
                     android:gravity="center"
                     android:inputType="text"
 
@@ -192,7 +194,7 @@
             android:layout_height="wrap_content"
             android:text="OPTIONS"
             android:textAlignment="center"
-            android:textSize="12sp"
+            style="@style/TextAppearance.MaterialComponents.Subtitle2"
             android:alpha="0.6"
             android:fontFamily="@font/montserrat"
             android:textColor="?attr/colorPrimary"
@@ -229,7 +231,7 @@
                 android:layout_gravity="center_vertical"
                 android:text="Change Cover Photo"
                 android:textColor="?attr/colorSecondary"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                style="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:background="?attr/default_dim_bg"
                 android:layout_marginStart="16dp"
 
@@ -262,9 +264,8 @@
                 android:layout_gravity="center_vertical"
                 android:text="Report Abuse"
                 android:textColor="?attr/colorSecondary"
-
+                style="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:background="?attr/default_dim_bg"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:layout_marginStart="16dp"
 
 
@@ -294,7 +295,7 @@
                 android:layout_gravity="center_vertical"
                 android:text="Delete Album"
                 android:textColor="?attr/colorSecondary"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                style="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:background="?attr/default_dim_bg"
                 android:layout_marginStart="16dp"
 

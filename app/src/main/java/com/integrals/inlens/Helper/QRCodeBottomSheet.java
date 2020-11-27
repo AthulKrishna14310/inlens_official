@@ -64,14 +64,20 @@ public class QRCodeBottomSheet extends BottomSheetDialogFragment {
     View rootView;
     List<PhotographerModel> membersList;
     RequestedUserAdapter requestedUserAdapter;
+    String userName,albumName;
 
-    public QRCodeBottomSheet(View rootView,String id, DatabaseReference rootRef, boolean initialStart, MainActivity activity, boolean isAdmin) {
+    public QRCodeBottomSheet(View rootView,String id,
+                             String userName,String albumName,
+                             DatabaseReference rootRef,
+                             boolean initialStart, MainActivity activity, boolean isAdmin) {
         this.rootView=rootView;
         currentActiveCommunityId = id;
         this.reqRef = rootRef.child(FirebaseConstants.REQUESTS).child(currentActiveCommunityId);
         this.userRef = rootRef.child(FirebaseConstants.USERS);
         this.initialStart=initialStart;
         this.activity=activity;
+        this.albumName=albumName;
+        this.userName=userName;
         membersList = new ArrayList<>();
         this.isAdmin =isAdmin;
         requestedUserAdapter = new RequestedUserAdapter(membersList);
@@ -177,6 +183,8 @@ public class QRCodeBottomSheet extends BottomSheetDialogFragment {
             @Override
             public void onClick(View view) {
                 dismiss();
+                showSnackbarMessage(rootView,"Starting your QR-Code Reader");
+
                 startActivity(new Intent(activity, QRCodeReader.class).putStringArrayListExtra(AppConstants.USER_ID_LIST, (ArrayList<String>)activity.getUserCommunityIdList()));
             }
         });
@@ -362,6 +370,8 @@ public class QRCodeBottomSheet extends BottomSheetDialogFragment {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String uid = user.getUid();
+        String name=userName;
+
         String link = "https://inlens.com/?invitedby="+ uid+"&comId="+currentActiveCommunityId+"&time="+System.currentTimeMillis()+"&adminId="+FirebaseAuth.getInstance().getCurrentUser().getUid();
         FirebaseDynamicLinks.getInstance().createDynamicLink()
                 .setLink(Uri.parse(link))
@@ -376,11 +386,14 @@ public class QRCodeBottomSheet extends BottomSheetDialogFragment {
                     public void onSuccess(ShortDynamicLink shortDynamicLink) {
                         String invitationUrl = shortDynamicLink.getShortLink().toString();
                         final Intent SharingIntent = new Intent(Intent.ACTION_SEND);
-                        SharingIntent.setType("text/plain");
-                        SharingIntent.putExtra(Intent.EXTRA_TEXT, "InLens Album \n" + invitationUrl);
-                        activity.startActivity(SharingIntent);
+                        SharingIntent.setType("text/*");
+                        SharingIntent.putExtra(Intent.EXTRA_TEXT, "*InLens Shared Album*\n\nClick the below link to collaborate with the Shared Album created by *"+name+"* \n\n"
+                                + invitationUrl);
+
+                        activity.startActivity(Intent.createChooser(SharingIntent, "InLens Shared Album"));
                     }
                 })
+
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {

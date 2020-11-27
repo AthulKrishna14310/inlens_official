@@ -75,7 +75,6 @@ public class PhotographerFragementBottomSheetNA extends BottomSheetDialogFragmen
             if(themePref.getString(AppConstants.appDataPref_theme,AppConstants.themeLight).equals(AppConstants.themeLight))
             {
                 ContextWrapper contextWrapper = new ContextWrapper(context);
-                contextWrapper.setTheme(R.style.AppTheme);
                 view= inflater.cloneInContext(contextWrapper).inflate(R.layout.photographer_display_layout_not_admin, container, false);
 
             }
@@ -83,7 +82,6 @@ public class PhotographerFragementBottomSheetNA extends BottomSheetDialogFragmen
             {
                 themeId=R.style.DarkTheme;
                 ContextWrapper contextWrapper = new ContextWrapper(context);
-                contextWrapper.setTheme(R.style.DarkTheme);
                 view = inflater.cloneInContext(contextWrapper).inflate(R.layout.photographer_display_layout_not_admin, container, false);
 
             }
@@ -91,7 +89,6 @@ public class PhotographerFragementBottomSheetNA extends BottomSheetDialogFragmen
         else
         {
             ContextWrapper contextWrapper = new ContextWrapper(context);
-            contextWrapper.setTheme(R.style.AppTheme);
             view= inflater.cloneInContext(contextWrapper).inflate(R.layout.photographer_display_layout_not_admin, container, false);
 
         }

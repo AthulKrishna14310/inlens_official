@@ -21,11 +21,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Report Statement"
-        android:textStyle="bold"
         android:textColor="?attr/colorPrimary"
         android:layout_marginTop="56dp"
         android:fontFamily="@font/montserrat"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+        style="@style/TextAppearance.MaterialComponents.Headline5"
         android:background="?attr/default_bg_color"
         android:padding="16dp"/>
 
@@ -51,10 +50,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/default_bg_color"
-
+        style="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:text="Help us understand why you found this album unfit or the reason for reporting it."
         android:textColor="?attr/colorPrimary"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:layout_below="@id/head"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"/>

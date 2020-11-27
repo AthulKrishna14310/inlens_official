@@ -37,7 +37,8 @@
                  android:layout_height="wrap_content"
                  android:text="James Pratterson"
                  android:fontFamily="@font/montserrat"
-                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                 style="@style/TextAppearance.MaterialComponents.Headline6"
+                 android:textStyle="bold"
                  android:textColor="?attr/default_dim_bg"
                 />
 
@@ -57,7 +58,7 @@
                     android:id="@+id/headerEmailX"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+                    style="@style/TextAppearance.MaterialComponents.Subtitle2"
                     android:text="San Francisco, CA"
                     android:textColor="?attr/default_dim_bg"
                      />

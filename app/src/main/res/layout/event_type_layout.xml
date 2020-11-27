@@ -17,7 +17,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
         android:text="Select an Event Tag"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        style="@style/TextAppearance.MaterialComponents.Headline6"
         android:textColor="?attr/colorPrimary"
         android:layout_gravity="center_horizontal"/>
     <com.google.android.material.chip.ChipGroup
@@ -38,7 +38,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
         android:text="OR"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        style="@style/TextAppearance.MaterialComponents.Headline6"
         android:textColor="?attr/colorPrimary"
         android:layout_gravity="center_horizontal"/>
     <com.google.android.material.textfield.TextInputLayout

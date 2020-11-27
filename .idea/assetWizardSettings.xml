@@ -103,8 +103,8 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="/home/athul/Downloads/balloons.png" />
-                                                <entry key="scalingPercent" value="52" />
+                                                <entry key="imagePath" value="/home/athul/Downloads/—Pngtree—red vintage camera vector clipart_4236388.png" />
+                                                <entry key="scalingPercent" value="64" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -138,7 +138,7 @@
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
                                       <entry key="backgroundColor" value="ffffff" />
-                                      <entry key="outputName" value="ic_others" />
+                                      <entry key="outputName" value="ic_instant" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -373,7 +373,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:$USER_HOME$/Android/Sdk/icons/material/materialicons/photo_album/baseline_photo_album_24.xml" />
+                                      <entry key="url" value="file:$USER_HOME$/Android/Sdk/icons/material/materialiconsround/menu/round_menu_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -384,7 +384,7 @@
                         <option name="values">
                           <map>
                             <entry key="color" value="6567a0" />
-                            <entry key="outputName" value="ic_baseline_photo_album" />
+                            <entry key="outputName" value="ic_round_menu_24" />
                             <entry key="sourceFile" value="$USER_HOME$/C:\Users\deljo" />
                           </map>
                         </option>

@@ -81,10 +81,9 @@
                                     android:layout_marginRight="10dp"
                                     android:layout_marginBottom="10dp"
                                     android:background="?attr/default_bg_color"
-                                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                                    style="@style/TextAppearance.MaterialComponents.Subtitle1"
                                     android:text="Participants"
                                     android:textStyle="bold"
-                                    android:fontFamily="@font/montserrat"
                                     android:textColor="?attr/colorPrimary"
                                     />
 
@@ -111,12 +110,10 @@
                             android:layout_marginTop="10dp"
                             android:layout_marginBottom="10dp"
                             android:background="?attr/default_bg_color"
-                            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                             android:text="Photos"
-
-                            android:textStyle="bold"
-                            android:fontFamily="@font/montserrat"
+                            style="@style/TextAppearance.MaterialComponents.Subtitle1"
                             android:textColor="?attr/colorPrimary"
+                            android:textStyle="bold"
                             android:visibility="gone" />
 
                     </LinearLayout>
@@ -151,9 +148,9 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_centerInParent="true"
-                                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                                     android:text="Shared Albums"
                                     android:textStyle="bold"
+                                    style="@style/TextAppearance.MaterialComponents.Headline6"
                                     android:fontFamily="@font/montserrat"
                                     android:textColor="?attr/colorPrimary"
                                      />
@@ -170,7 +167,7 @@
                                     android:layout_marginRight="5dp"
                                     android:layout_marginBottom="5dp"
                                     android:background="?attr/selectableItemBackgroundBorderless"
-                                    android:src="@drawable/ic_menu_icon" />
+                                    android:src="@drawable/ic_round_menu_24" />
 
                                 <ImageButton
                                     android:id="@+id/plus_button"
@@ -185,7 +182,7 @@
                                     android:layout_marginBottom="5dp"
                                     android:tint="?attr/colorPrimary"
                                     android:background="?selectableItemBackgroundBorderless"
-                                    android:src="@drawable/ic_add_memberdp" />
+                                    android:src="@drawable/ic_baseline_add_40" />
                             </RelativeLayout>
 
                             <RelativeLayout
@@ -295,7 +292,8 @@
                 android:padding="2dp"
                 android:text=" Internet connection lost."
                 android:textColor="?attr/default_bg_color"
-                android:textSize="14sp" />
+                style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                />
 
         </RelativeLayout>
 

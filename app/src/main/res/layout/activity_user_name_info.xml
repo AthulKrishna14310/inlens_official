@@ -21,7 +21,7 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:visibility="visible"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
+
         android:layout_height="180dp">
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="164dp"
@@ -57,7 +57,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+        style="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:text="Type your name and an email for your account."
         android:textColor="?attr/colorPrimary"
         android:gravity="center"/>
@@ -161,16 +161,22 @@
             android:id="@+id/phone_activity_edittext"
             />
     </com.google.android.material.textfield.TextInputLayout>
-
+ <View
+     android:layout_width="match_parent"
+     android:layout_height="40dp"
+     android:layout_alignParentBottom="true"
+     android:background="?attr/image_bg_color"
+     />
 
     <RelativeLayout
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_alignParentRight="true"
         android:layout_marginRight="16dp"
-        android:layout_alignParentTop="true"
+        android:layout_marginBottom="16dp"
         android:layout_marginTop="24dp"
         android:elevation="8dp"
+        android:layout_alignParentBottom="true"
         android:background="@drawable/circle_primary">
         <ImageButton
             android:layout_width="wrap_content"

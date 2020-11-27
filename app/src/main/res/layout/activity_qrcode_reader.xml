@@ -27,12 +27,10 @@
        android:layout_height="wrap_content"
        android:layout_alignParentTop="true"
        android:paddingStart="16dp"
-       android:textSize="20sp"
        android:layout_marginTop="40dp"
-       android:textStyle="bold"
        android:id="@+id/title"
        android:fontFamily="@font/montserrat"
-       android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+       style="@style/TextAppearance.MaterialComponents.Headline6"
        android:text="@string/scan_your_participant_s_qr_code"
        android:textColor="?attr/colorPrimary"
        />
@@ -42,7 +40,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_below="@id/title"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        style="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:text="@string/added_participants_can_also_collaborate_by_upload_their_recent_images_to_your_album"
         android:textColor="?attr/colorPrimary"
         />

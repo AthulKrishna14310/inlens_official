@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="?attr/default_dim_bg"
     android:id="@+id/album_options_bottomsheet_wrapper"
+    android:background="@drawable/curved_corners"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+    app:behavior_hideable="true"
     >
 
     <androidx.cardview.widget.CardView
@@ -12,6 +15,7 @@
         android:layout_width="match_parent"
         app:cardBackgroundColor="?attr/default_dim_bg"
         android:layout_height="wrap_content"
+        app:cardCornerRadius="12dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
         >
         <LinearLayout
@@ -36,10 +40,10 @@
                     android:textAlignment="textStart"
                     android:text="@string/new_album"
                     android:textStyle="bold"
+                    style="@style/TextAppearance.MaterialComponents.Headline5"
                     android:background="?attr/default_dim_bg"
                     android:textColor="?attr/colorPrimary"
                     android:fontFamily="@font/montserrat"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                     android:layout_marginBottom="2dp"
 
                     />
@@ -61,7 +65,7 @@
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:padding="16dp"
                     android:textAllCaps="false"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
                     android:id="@+id/option_create_layout_instant"
@@ -73,7 +77,7 @@
                     android:drawableTint="?attr/colorPrimary"
                     android:text="Detailed Album"
                     android:textAllCaps="false"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                     android:layout_below="@+id/option_create_layout_instant"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:padding="16dp"
@@ -119,13 +123,13 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="16dp"
                         android:text="Join"
+                        style="@style/TextAppearance.MaterialComponents.Headline6"
                         android:layout_centerHorizontal="true"
                         android:id="@+id/scan_text"
                         android:textAllCaps="false"
                         android:padding="8dp"
                         android:layout_margin="4dp"
                         android:textAlignment="center"
-                        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                         android:textColor="?attr/colorPrimary"
                         />
                     <TextView
@@ -139,7 +143,7 @@
                         android:layout_below="@+id/scan_text"
                         android:id="@+id/scndetailstext"
                         android:layout_margin="4dp"
-                        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+                        style="@style/TextAppearance.MaterialComponents.Subtitle2"
                         >
 
                     </TextView>
