@@ -83,8 +83,8 @@
                                     android:background="?attr/default_bg_color"
                                     style="@style/TextAppearance.MaterialComponents.Subtitle1"
                                     android:text="Participants"
-                                    android:textStyle="bold"
                                     android:textColor="?attr/colorPrimary"
+                                    android:textStyle="bold"
                                     />
 
                                 <androidx.recyclerview.widget.RecyclerView
@@ -111,9 +111,9 @@
                             android:layout_marginBottom="10dp"
                             android:background="?attr/default_bg_color"
                             android:text="Photos"
+                            android:textStyle="bold"
                             style="@style/TextAppearance.MaterialComponents.Subtitle1"
                             android:textColor="?attr/colorPrimary"
-                            android:textStyle="bold"
                             android:visibility="gone" />
 
                     </LinearLayout>
@@ -149,10 +149,10 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerInParent="true"
                                     android:text="Shared Albums"
-                                    android:textStyle="bold"
                                     style="@style/TextAppearance.MaterialComponents.Headline6"
                                     android:fontFamily="@font/montserrat"
                                     android:textColor="?attr/colorPrimary"
+                                    android:textStyle="bold"
                                      />
 
                                 <ImageButton
