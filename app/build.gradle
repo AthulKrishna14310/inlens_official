@@ -52,7 +52,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'com.crowdfire.cfalertdialog:cfalertdialog:1.1.0'
-    implementation 'info.androidhive:barcode-reader:1.1.5'
+    implementation 'com.budiyev.android:code-scanner:2.1.0'
     implementation 'com.google.android.gms:play-services-vision:20.1.0'
     implementation 'com.skyfishjy.ripplebackground:library:1.0.1'
     implementation 'com.github.Shashank02051997:FancyToast-Android:0.1.6'

@@ -1,73 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rlQR"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/rlQR"
     android:background="?attr/default_bg_color"
     tools:context=".Activities.QRCodeReader">
+
     <ImageButton
+        android:id="@+id/closeBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginRight="16dp"
-        android:id="@+id/closeBtn"
         android:layout_alignParentRight="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_cancel_black_24dp"
         android:text=""
         android:tint="?attr/colorPrimary"
-        android:src="@drawable/ic_cancel_black_24dp"
-        android:layout_marginTop="8dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
 
         />
-   <TextView
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:layout_alignParentTop="true"
-       android:paddingStart="16dp"
-       android:layout_marginTop="40dp"
-       android:id="@+id/title"
-       android:fontFamily="@font/montserrat"
-       style="@style/TextAppearance.MaterialComponents.Headline6"
-       android:text="@string/scan_your_participant_s_qr_code"
-       android:textColor="?attr/colorPrimary"
-       />
+
     <TextView
+        android:id="@+id/title"
+        style="@style/TextAppearance.MaterialComponents.Headline6"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="40dp"
+        android:fontFamily="@font/montserrat"
+        android:paddingStart="16dp"
+        android:text="@string/scan_your_participant_s_qr_code"
+        android:textColor="?attr/colorPrimary" />
+
+    <TextView
+        style="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_below="@id/title"
-        style="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:text="@string/added_participants_can_also_collaborate_by_upload_their_recent_images_to_your_album"
-        android:textColor="?attr/colorPrimary"
-        />
+        android:textColor="?attr/colorPrimary" />
 
 
-    <fragment
-        android:id="@+id/barcode_fragment"
-        android:name="info.androidhive.barcode.BarcodeReader"
+    <com.budiyev.android.codescanner.CodeScannerView
+        android:id="@+id/scanner_view"
         android:layout_width="match_parent"
         android:layout_height="480dp"
         android:layout_alignParentBottom="true"
-        app:auto_focus="true"
-        app:use_flash="false" />
-
-    <info.androidhive.barcode.ScannerOverlay
-        android:layout_width="match_parent"
-        android:layout_height="480dp"
-        android:id="@+id/scanOverlay"
-        android:alpha="0.8"
-        android:background="?attr/default_dim_bg"
-        app:line_color="?attr/colorPrimary"
-        app:line_speed="4"
-        app:line_width="4"
-        android:layout_alignParentBottom="true"
-        app:square_height="250"
-        app:square_width="250" />
-
+        app:autoFocusButtonVisible="true"
+        app:autoFocusButtonColor="@color/cfdialog_button_white_text_color"
+        app:flashButtonVisible="true"
+        app:maskColor="@color/cfdialog_button_white_text_color"/>
 
 
     <ProgressBar
@@ -77,8 +64,7 @@
         android:layout_centerInParent="true"
         android:indeterminate="true"
         android:indeterminateTint="?attr/colorAccent"
-        android:visibility="gone"
-        />
+        android:visibility="gone" />
 
 </RelativeLayout>
 
